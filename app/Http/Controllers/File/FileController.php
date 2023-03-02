@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\File;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\file;
+use App\Models\backend\file as BackendFile;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class FileController extends Controller
 {
@@ -16,7 +18,7 @@ class FileController extends Controller
      */
     public function index()
     {
-        $query = file::select('*');
+        $query = BackendFile::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -108,7 +110,7 @@ class FileController extends Controller
             ];
 
 
-            file::create($data);
+            BackendFile::create($data);
 
             //redirect to index
             return redirect()->back()->with(['success' => 'Data File Berhasil Disimpan!']);
@@ -130,7 +132,8 @@ class FileController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $file = BackendFile::findOrFail(decrypt($id));
+        return view('backend.file.edit', compact(['file']));
     }
 
     /**
@@ -138,7 +141,50 @@ class FileController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            // VALIDASI DATA
+            $request->validate([
+                'nama_file' => 'required|unique:file',
+                'image_file' => 'mimes:csv,xlx,xls,xlsx,pdf|max:100000',
+                'isi_file' => 'required',
+            ]);
+
+            // // SLUG
+
+            // $slug = Str::slug($request->judul);
+
+            // TAMPUNGAN REQUEST DATA DARI FORM
+            $data = [
+                'nama_file' => $request->nama_file,
+                'isi_file' => $request->isi_file
+
+            ];
+            if ($request->hasFile('image_file')) {
+                $request->validate([
+                    'image_file' => 'mimes:csv,xlx,xls,xlsx,pdf|max:100000',
+                ], [
+                    'image_file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF',
+                ]);
+
+                //UPLOAD IMAGE
+                $image = $request->file('image_file');
+                $image->storeAs('public/romadan_file_web', $image->hashName());
+
+                $data_gambar = BackendFile::findOrFail(decrypt($id));
+                File::delete(public_path('storage/romadan_file_web/') . $data_gambar->image_file);
+
+                $data = [
+                    'image_file' => $image->hashName(),
+                ];
+            }
+
+            BackendFile::findOrFail(decrypt($id))->update($data);
+            // $berita = Berita::find($id)->update($data);
+            return redirect()->route('file.index')->with('success', "File $request->nama_file berhasil diupdate!");
+        } catch (Exception $e) {
+            return redirect()->route('file.index')->with(['failed' => 'Data File Gagal Di Update! error :' . $e->getMessage()]);
+            // return redirect()->back()->with(['failed' => 'Data File Gagal Disimpan! error :' . $e->getMessage()]);
+        }
     }
 
     /**
