@@ -38,18 +38,25 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
 
     // BERITA
-    Route::resource('berita', BeritaController::class);
-    Route::get('/berita-sampah', [BeritaController::class, 'beritaSampah'])->name('berita.sampah');
-    Route::post('/{beritum}/restore', [BeritaController::class, 'restore'])->name('berita.restore');
-    Route::delete('/{beritum}/force-delete', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
-    Route::post('/restore-all', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
+    Route::prefix('/berita')->group(function () {
+        Route::resource('/berita', BeritaController::class);
+
+        Route::get('/berita-sampah', [BeritaController::class, 'beritaSampah'])->name('berita.sampah');
+        Route::post('/{beritum}/restore', [BeritaController::class, 'restore'])->name('berita.restore');
+        Route::delete('/{beritum}/force-delete', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
+        Route::post('/restore-all', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
+    });
+
 
     // FILE
-    Route::resource('file', FileController::class);
-    Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
-    Route::post('/{file}/restore', [FileController::class, 'restore'])->name('file.restore');
-    Route::delete('/{file}/force-delete', [FileController::class, 'forceDelete'])->name('file.force-delete');
-    Route::post('/restore-all', [FileController::class, 'restoreAll'])->name('file.restore-all');
+    Route::prefix('/file')->group(function () {
+        Route::resource('file', FileController::class);
+
+        Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
+        Route::post('/{file}/restore', [FileController::class, 'restore'])->name('file.restore');
+        Route::delete('/{file}/force-delete', [FileController::class, 'forceDelete'])->name('file.force-delete');
+        Route::post('/restore-all', [FileController::class, 'restoreAll'])->name('file.restore-all');
+    });
 });
 
 Route::middleware('auth')->group(function () {

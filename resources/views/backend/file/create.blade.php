@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<label class="col-form-label col-lg-2">Deskripsi Isi File <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<textarea name="isi_file" class="form-control @error('isi_file') is-invalid @enderror" required placeholder="Deskripsi File" id="ckeditor_classic_empty">{{ old('isi_file') }}</textarea>
+											
 										</div>
 									</div>
 									<!-- /Deskripsi Isi File -->

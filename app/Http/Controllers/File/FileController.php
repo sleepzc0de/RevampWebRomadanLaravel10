@@ -87,7 +87,7 @@ class FileController extends Controller
                 'nama_file' => 'required|unique:file',
                 // 'sub_judul' => 'required',
                 // 'kategori' => 'required',
-                'image_file' => 'required|mimes:csv,xlx,xls,xlsx,pdf|max:100000',
+                'image_file' => 'required|mimes:csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'isi_file' => 'required',
             ]);
 
@@ -144,8 +144,8 @@ class FileController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_file' => 'required|unique:file',
-                'image_file' => 'mimes:csv,xlx,xls,xlsx,pdf|max:100000',
+                'nama_file' => 'required',
+                'image_file' => 'mimes:csv,xlx,xls,xlsx,pdf,zip,rar|max:250000',
                 'isi_file' => 'required',
             ]);
 
@@ -161,9 +161,9 @@ class FileController extends Controller
             ];
             if ($request->hasFile('image_file')) {
                 $request->validate([
-                    'image_file' => 'mimes:csv,xlx,xls,xlsx,pdf|max:100000',
+                    'image_file' => 'mimes:csv,xlx,xls,xlsx,pdf,zip,rar|max:250000',
                 ], [
-                    'image_file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF',
+                    'image_file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF, ZIP, RAR',
                 ]);
 
                 //UPLOAD IMAGE
@@ -192,6 +192,102 @@ class FileController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            // $data = [
+            //     'status' => 3,
+            // // ];
+            // BackendFile::findOrFail(decrypt($id))->update($data);
+            BackendFile::findOrFail(decrypt($id))->delete();
+            return redirect()->route('file.index')->with('success', "File berhasil dihapus!");
+        } catch (Exception $e) {
+            return redirect()->route('file.index')->with(['failed' => 'File Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+        }
+    }
+
+    public function fileSampah(Request $request)
+    {
+        $query = BackendFile::onlyTrashed()->select('*');
+        if (request()->ajax()) {
+            return datatables()->of($query)
+
+                ->addColumn('image_file', function ($query) {
+                    $url = asset('storage/romadan_file_web/' . $query->image_file);
+                    return '<a href="' . $url . '">' . $query->nama_file . '</a>';
+                })
+                ->addColumn('opsi', function ($query) {
+                    $restore = route('file.restore', encrypt($query->id));
+                    $paksahapus = route('file.force-delete', encrypt($query->id));
+                    return '<div class="d-inline-flex">
+											<div class="dropdown">
+												<a href="#" class="text-body" data-bs-toggle="dropdown">
+													<i class="ph-list"></i>
+												</a>
+
+												<div class="dropdown-menu dropdown-menu-end">
+													<form action="' . $restore . '" method="POST">
+													' . @csrf_field() . '
+													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Restore</button>
+													</form>
+													<form action="' . $paksahapus . '" method="POST">
+													' . @csrf_field() . '
+													' . @method_field('DELETE') . '
+													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Paksa Hapus</button>
+													</form>
+												</div>
+											</div>
+										</div>
+                ';
+                })
+
+                ->editColumn('created_at', function ($query) {
+                    return date('d-M-Y H:i:s', strtotime($query->created_at));
+                })
+
+
+                ->rawColumns(['opsi', 'image_file'])
+                ->addIndexColumn()
+                ->make(true);
+        }
+        return view('backend.file.sampah');
+    }
+
+    public function restore($id)
+    {
+        try {
+            // $data = [
+            //     'status' => 2,
+            // ];
+            // BackendFile::onlyTrashed()->findOrFail(decrypt($id))->update($data);
+            BackendFile::onlyTrashed()->findOrFail(decrypt($id))->restore();
+            return redirect()->route('file.sampah')->with('success', "Data File berhasil direstore!, silahkan cek pada berita aktif yah guys!");
+        } catch (Exception $e) {
+            return redirect()->route('file.sampah')->with(['failed' => 'Data File GAGAL di Restore ! error :' . $e->getMessage()]);
+        }
+    }
+
+    public function restoreAll()
+    {
+        try {
+            // $data = [
+            //     'status' => 2,
+            // ];
+            // BackendFile::onlyTrashed()->update($data);
+            BackendFile::onlyTrashed()->restore();
+            return redirect()->route('file.sampah')->with('success', "Semua Data File berhasil direstore!, silahkan cek pada file aktif yah guys!");
+        } catch (Exception $e) {
+            return redirect()->route('file.sampah')->with(['failed' => 'Semua Data File GAGAL di Restore ! error :' . $e->getMessage()]);
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            $data_file = BackendFile::withTrashed()->findOrFail(decrypt($id));
+            File::delete(public_path('storage/romadan_file_web/') . $data_file->image_file);
+            BackendFile::withTrashed()->findOrFail(decrypt($id))->forceDelete();
+            return redirect()->route('file.sampah')->with('success', "File Berhasil dihapus PERMANEN");
+        } catch (Exception $e) {
+            return redirect()->route('file.sampah')->with(['failed' => 'File Gagal dihapus Permanen ! error :' . $e->getMessage()]);
+        }
     }
 }
