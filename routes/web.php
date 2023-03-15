@@ -3,6 +3,8 @@
 use App\Http\Controllers\Berita\BeritaController;
 use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Referensi\RefKategoriController;
+use App\Http\Controllers\Referensi\RefStatusController;
 use App\Http\Controllers\UserManajemen\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +58,12 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::post('/{file}/restore', [FileController::class, 'restore'])->name('file.restore');
         Route::delete('/{file}/force-delete', [FileController::class, 'forceDelete'])->name('file.force-delete');
         Route::post('/restore-all', [FileController::class, 'restoreAll'])->name('file.restore-all');
+    });
+
+    // REFERENSI KATEGORI DAN STATUS
+    Route::prefix('/referensi')->group(function () {
+        Route::resource('kategori', RefKategoriController::class);
+        Route::resource('status', RefStatusController::class);
     });
 });
 

@@ -86,10 +86,44 @@
                         <span>Referensi</span>
                     </a>
                     <ul class="nav-group-sub collapse">
-                        <li class="nav-item"><a href="components_accordion.html" class="nav-link">Accordion</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Kategori Berita</a></li>
+                         <li class="nav-item"><a href="{{route('status.index')}}" class="nav-link">Status Berita</a></li>
                     </ul>
                 </li>
                 <!-- /Referensi -->
+
+                <!-- Gambar-->
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Gambar</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-squares-four"></i>
+                        <span>Gambar</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Slider Home</a></li>
+                         <li class="nav-item"><a href="{{route('status.index')}}" class="nav-link">Status Berita</a></li>
+                    </ul>
+                </li>
+                <!-- /Gambar-->
+
+                <!-- Menu-->
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Menu</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-squares-four"></i>
+                        <span>Menu</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Menu Romadan</a></li>
+                    </ul>
+                </li>
+                <!-- /Menu-->
 
                 <!-- User Management -->
                 <li class="nav-item-header">
