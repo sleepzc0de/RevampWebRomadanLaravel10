@@ -43,7 +43,7 @@
 
                 <!-- Berita -->
                 <li class="nav-item-header">
-                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Berita</div>
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Publikasi</div>
                     <i class="ph-dots-three sidebar-resize-show"></i>
                 </li>
                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/berita' ? 'nav-item-open': ''}}">
@@ -53,6 +53,26 @@
                     </a>
                     <ul class="nav-group-sub collapse {{Request::path() == 'backend/berita' ? 'show': ''}}">
                         <li class="nav-item"><a href="{{route('berita.index')}}" class="nav-link {{Request::path() == 'backend/berita' ? 'active': ''}}">Daftar Berita</a></li>
+                    </ul>
+                    
+                </li>
+                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/berita' ? 'nav-item-open': ''}}">
+                    <a href="#" class="nav-link">
+                        <i class="ph-note-pencil"></i>
+                        <span>Warta</span>
+                    </a>
+                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/artikel' ? 'show': ''}}">
+                        <li class="nav-item"><a href="{{route('artikel.index')}}" class="nav-link {{Request::path() == 'backend/artikel' ? 'active': ''}}">Daftar Warta</a></li>
+                    </ul>
+                    
+                </li>
+                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/artikel' ? 'nav-item-open': ''}}">
+                    <a href="#" class="nav-link">
+                        <i class="ph-note-pencil"></i>
+                        <span>Artikel</span>
+                    </a>
+                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/artikel' ? 'show': ''}}">
+                        <li class="nav-item"><a href="{{route('artikel.index')}}" class="nav-link {{Request::path() == 'backend/artikel' ? 'active': ''}}">Daftar Artikel</a></li>
                     </ul>
                     
                 </li>

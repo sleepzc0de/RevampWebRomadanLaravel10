@@ -216,7 +216,7 @@ class FileController extends Controller
                 })
                 ->addColumn('opsi', function ($query) {
                     $restore = route('file.restore', encrypt($query->id));
-                    $paksahapus = route('file.force-delete', encrypt($query->id));
+                    $paksahapus = route('file.force-delete-sampah', encrypt($query->id));
                     return '<div class="d-inline-flex">
 											<div class="dropdown">
 												<a href="#" class="text-body" data-bs-toggle="dropdown">
@@ -279,7 +279,7 @@ class FileController extends Controller
         }
     }
 
-    public function forceDelete($id)
+    public function forceDeleteSampah($id)
     {
         try {
             $data_file = BackendFile::withTrashed()->findOrFail(decrypt($id));

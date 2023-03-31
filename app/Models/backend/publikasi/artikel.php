@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Models\backend;
+namespace App\Models\backend\publikasi;
 
+use App\Models\backend\ref_kategori;
+use App\Models\backend\ref_status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class berita extends Model
+class artikel extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $table = 'berita';
+    protected $table = 'artikel';
     protected $guarded = [];
     protected $fillable = ['judul', 'sub_judul', 'image', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status'];
     protected $dates = ['deleted_at'];

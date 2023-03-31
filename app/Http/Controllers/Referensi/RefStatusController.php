@@ -64,7 +64,7 @@ class RefStatusController extends Controller
      */
     public function create()
     {
-        //
+        return view('backend.referensi.status.create');
     }
 
     /**

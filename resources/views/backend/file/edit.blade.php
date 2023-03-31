@@ -83,7 +83,8 @@
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-							<a href="{{route('file.index')}}"><button class="btn btn-light">Batal</button></a>
+							<a href="{{ URL::previous() }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+							<a href="{{route('file.index')}}"><button class="btn btn-light ms-3">Batal</button></a>
 							<button type="submit" class="btn btn-primary ms-3">Update <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>
 							</form>

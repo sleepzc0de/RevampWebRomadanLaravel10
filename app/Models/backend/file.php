@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class file extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $primaryKey = 'id';
     protected $table = 'file';
     protected $guarded = [];
     protected $fillable = ['nama_file', 'image_file', 'kategori_file', 'status_file', 'isi_file', 'pembuat_file'];

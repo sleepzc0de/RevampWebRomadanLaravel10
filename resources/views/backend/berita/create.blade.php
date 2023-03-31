@@ -186,7 +186,8 @@ document.addEventListener('DOMContentLoaded', function() {
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-							<button type="reset" class="btn btn-light" id="reset">Reset</button>
+							<a href="{{ URL::previous() }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
 							<button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>
 							</form>

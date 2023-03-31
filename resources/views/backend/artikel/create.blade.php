@@ -93,63 +93,100 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Form validation -->
 					<div class="card">
 						<div class="card-header">
-							<h5 class="mb-0">Tambah File</h5>
+							<h5 class="mb-0">Tambah Artikel</h5>
                             @include('layouts.webromadan_backend.session_notif')
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('file.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('artikel.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
 							
 								<div class="mb-4">
 
-									<!-- Nama File Input -->
+									<!-- Judul Artikel input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Nama File <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Judul Artikel <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_file') }}" type="text" name="nama_file" class="form-control @error('nama_file') is-invalid @enderror" required placeholder="Masukkan Nama File">
-											<!-- error message untuk nama_file -->
-											@error('nama_file')
+											<input value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Artikel">
+											<!-- error message untuk judul -->
+											@error('judul')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
 											@enderror
 										</div>
 									</div>
-									<!-- /Nama File Input -->
+									<!-- /Judul Artikel input -->
 
-                                    <!-- File Berita -->
+                                    <!-- Sub Judul Artikel input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">File <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Sub Judul Artikel <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input type="file" class="form-control @error('image_file') is-invalid @enderror required" id="customFile" name="image_file">
-											@error('image_file')
+											<input value="{{ old('sub_judul') }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul Artikel">
+											<!-- error message untuk judul -->
+												@error('sub_judul')
+												<div class="alert alert-danger mt-2">
+													{{ $message }}
+												</div>
+												@enderror
+										</div>
+									</div>
+									<!-- /Sub Judul Artikel input -->
+
+                                    <!-- Kategori Artikel -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Kategori Artikel <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<select value="{{ old('kategori') }}" name="kategori" class="form-control form-control-select2 select" @error('kategori') is-invalid @enderror required>
+												<option>--PILIH--</option>
+												@foreach ($kategori as $item)
+												<option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
+												@endforeach
+													
+												
+											</select>
+
+											<!-- error message untuk judul -->
+											@error('kategori')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
 											@enderror
 										</div>
 									</div>
-									<!-- /File Berita -->
+									<!-- /Kategori Artikel -->
 
-                                   
+                                    <!-- Image file uploader -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Gambar Artikel <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<input type="file" class="form-control @error('image') is-invalid @enderror required" id="customFile" name="image">
+											@error('image')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /image file uploader -->
                                     
-									<!-- Deskripsi Isi File -->
+									<!-- Isi Artikel Input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Deskripsi Isi File <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Isi Artikel <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="isi_file" class="form-control @error('isi_file') is-invalid @enderror" required placeholder="Deskripsi File" id="ckeditor_classic_empty">{{ old('isi_file') }}</textarea>
-											
+											{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi Artikel">{{ old('isi') }}</textarea> --}}
+
+											<textarea name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi Artikel" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
 										</div>
 									</div>
-									<!-- /Deskripsi Isi File -->
+									<!-- /Isi Artikel Input -->
 
 								</div>
 
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-							<a href="{{ URL::previous() }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+							<a href="{{route('artikel.index')}}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
 							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
 							<button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>

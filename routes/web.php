@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Artikel\ArtikelController;
 use App\Http\Controllers\Berita\BeritaController;
 use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\ProfileController;
@@ -35,36 +36,63 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         return view('backend.dashboard');
     })->name('home');
 
+    // INTERFACE BACKEND
+    Route::prefix('/romadan-interface')->group(function () {
 
-    // USERS
-    Route::resource('users', UserController::class);
+        // USERS
+        Route::resource('users', UserController::class);
 
-    // BERITA
-    Route::prefix('/berita')->group(function () {
+        // BERITA
         Route::resource('/berita', BeritaController::class);
-
         Route::get('/berita-sampah', [BeritaController::class, 'beritaSampah'])->name('berita.sampah');
-        Route::post('/{beritum}/restore', [BeritaController::class, 'restore'])->name('berita.restore');
-        Route::delete('/{beritum}/force-delete', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
-        Route::post('/restore-all', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
+        Route::post('/{beritum}/restore-berita', [BeritaController::class, 'restore'])->name('berita.restore');
+        Route::delete('/{beritum}/force-delete-berita', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
+        Route::post('/restore-all-berita', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
+
+        // ARTIKEL
+        Route::resource('/artikel', ArtikelController::class);
+        Route::get('/artikel-sampah', [ArtikelController::class, 'artikelSampah'])->name('artikel.sampah');
+        Route::post('/{artikum}/restore-artikel', [ArtikelController::class, 'restore'])->name('artikel.restore');
+        Route::delete('/{artikum}/force-delete-artikel', [ArtikelController::class, 'forceDelete'])->name('artikel.force-delete');
+        Route::post('/restore-all-artikel', [ArtikelController::class, 'restoreAll'])->name('artikel.restore-all');
+
+        // WARTA
+        Route::resource('/berita', BeritaController::class);
+        Route::get('/berita-sampah', [BeritaController::class, 'beritaSampah'])->name('berita.sampah');
+        Route::post('/{beritum}/restore-berita', [BeritaController::class, 'restore'])->name('berita.restore');
+        Route::delete('/{beritum}/force-delete-berita', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
+        Route::post('/restore-all-berita', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
+
+
+
+        // FILE
+        Route::resource('file', FileController::class);
+        Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
+        Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
+        Route::delete('/{file}/force-delete', [FileController::class, 'forceDeleteSampah'])->name('file.force-delete-sampah');
+        Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
+
+        // REFERENSI
+        Route::resource('kategori', RefKategoriController::class);
+        Route::resource('status', RefStatusController::class);
     });
 
 
     // FILE
-    Route::prefix('/file')->group(function () {
-        Route::resource('file', FileController::class);
+    // Route::prefix('/file')->group(function () {
+    //     Route::resource('file', FileController::class);
 
-        Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
-        Route::post('/{file}/restore', [FileController::class, 'restore'])->name('file.restore');
-        Route::delete('/{file}/force-delete', [FileController::class, 'forceDelete'])->name('file.force-delete');
-        Route::post('/restore-all', [FileController::class, 'restoreAll'])->name('file.restore-all');
-    });
+    //     Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
+    //     Route::post('/{file}/restore', [FileController::class, 'restore'])->name('file.restore');
+    //     Route::delete('/{file}/force-delete', [FileController::class, 'forceDelete'])->name('file.force-delete');
+    //     Route::post('/restore-all', [FileController::class, 'restoreAll'])->name('file.restore-all');
+    // });
 
     // REFERENSI KATEGORI DAN STATUS
-    Route::prefix('/referensi')->group(function () {
-        Route::resource('kategori', RefKategoriController::class);
-        Route::resource('status', RefStatusController::class);
-    });
+    // Route::prefix('/referensi')->group(function () {
+    //     Route::resource('kategori', RefKategoriController::class);
+    //     Route::resource('status', RefStatusController::class);
+    // });
 });
 
 Route::middleware('auth')->group(function () {
