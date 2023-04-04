@@ -116,6 +116,29 @@
 									</div>
 									<!-- /Isi Berita Input -->
 
+									<!-- Status Warta -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Status Berita <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<select id="status" name="status" class="form-control form-control-select2 select" @error('status') is-invalid @enderror required>
+												<option>--PILIH--</option>
+												@foreach ($status as $item)
+												<option value="{{ $item->id_status }}" {{ old('status',$berita->status) == $item->id_status ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_status}}</option>
+												@endforeach
+													
+												
+											</select>
+
+											<!-- error message untuk judul -->
+											@error('status')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /Status Warta -->
+
 								</div>
 
 						</div>

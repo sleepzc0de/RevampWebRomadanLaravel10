@@ -10,7 +10,7 @@
 @endsection
 
 @section('script_bawah')
-<script src="{{asset('webromadan/dist/datatables_artikel_sampah.js')}}"></script>
+<script src="{{asset('webromadan/dist/datatables_warta_sampah.js')}}"></script>
 @endsection
 
 @section('content')
@@ -18,25 +18,25 @@
 <!-- Basic datatable -->
 					<div class="card">
 						<div class="card-header text-center">
-							<h2 class="mb-0">Data Artikel Terhapus Romadan</h2>
+							<h2 class="mb-0">Data Warta Terhapus Romadan</h2>
                              @include('layouts.webromadan_backend.session_notif')
 						</div>
 						<div class="card-header d-flex justify-content-start">
-                            <a href="{{route('artikel.index')}}">
+                            <a href="{{route('warta.index')}}">
 								 <button type="button" class="btn btn-flat-success btn-labeled btn-labeled-start rounded-pill">
                                         <span class="btn-labeled-icon bg-success text-white rounded-pill">
                                             <i class="ph-check-square-offset"></i>
                                         </span>
-                                        Daftar Artikel Aktif
+                                        Daftar Warta Aktif
                                     </button>
 							</a>
-							<form action="{{route('artikel.restore-all')}}" method="POST">
+							<form action="{{route('warta.restore-all')}}" method="POST">
                             @csrf
 							 <button type="submit" class="btn btn-flat-warning btn-labeled btn-labeled-start rounded-pill ms-2">
                                         <span class="btn-labeled-icon bg-warning text-white rounded-pill">
                                             <i class="ph-check-square-offset"></i>
                                         </span>
-                                        Restore Semua Artikel
+                                        Restore Semua Warta
                                     </button>
 							</form>
 							

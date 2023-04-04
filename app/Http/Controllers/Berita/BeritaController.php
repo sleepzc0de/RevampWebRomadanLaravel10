@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Berita;
 use App\Http\Controllers\Controller;
 use App\Models\backend\berita as BackendBerita;
 use App\Models\backend\ref_kategori;
+use App\Models\backend\ref_status as BackendRef_status;
 use App\Models\Berita;
 use Exception;
 use Illuminate\Http\Request;
@@ -159,9 +160,10 @@ class BeritaController extends Controller
     public function edit($id)
     {
         $kategori = ref_kategori::all();
-        $berita = BackendBerita::with('kategori')->findOrFail(decrypt($id));
+        $status = BackendRef_status::all();
+        $berita = BackendBerita::with(['kategori', 'status'])->findOrFail(decrypt($id));
         // dd($berita);
-        return view('backend.berita.edit', compact(['berita', 'kategori']));
+        return view('backend.berita.edit', compact(['berita', 'kategori', 'status']));
     }
 
     /**
@@ -193,7 +195,7 @@ class BeritaController extends Controller
                 'sub_judul' => $request->sub_judul,
                 'kategori' => $request->kategori,
                 'isi' => $request->isi,
-                'status' => 2,
+                'status' => $request->status,
                 'slug' => $slug
 
             ];

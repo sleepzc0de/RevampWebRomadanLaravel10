@@ -24,21 +24,21 @@
 <!-- Form validation -->
 					<div class="card">
 						<div class="card-header">
-							<h5 class="mb-0">Edit Artikel</h5>
+							<h5 class="mb-0">Edit Warta</h5>
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('artikel.update', encrypt($artikel->id))}}" method="post" enctype="multipart/form-data" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('warta.update', encrypt($warta->id))}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
                             @method('PUT')
 							<div class="card-body">
 							
 								<div class="mb-4">
 
-									<!-- Judul Artikel input -->
+									<!-- Judul warta input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Judul Artikel <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Judul Warta <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') ?? $artikel->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Artikel">
+											<input value="{{ old('judul') ?? $warta->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul warta">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -47,13 +47,13 @@
 											@enderror
 										</div>
 									</div>
-									<!-- /Judul Artikel input -->
+									<!-- /Judul warta input -->
 
-                                    <!-- Sub Judul Artikel input -->
+                                    <!-- Sub Judul warta input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Sub Judul Artikel <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Sub Judul Warta <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('sub_judul') ?? $artikel->sub_judul }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul Artikel">
+											<input value="{{ old('sub_judul') ?? $warta->sub_judul }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul warta">
 											<!-- error message untuk judul -->
 												@error('sub_judul')
 												<div class="alert alert-danger mt-2">
@@ -62,16 +62,16 @@
 												@enderror
 										</div>
 									</div>
-									<!-- /Sub Judul Artikel input -->
+									<!-- /Sub Judul warta input -->
 
-                                    <!-- Kategori Artikel -->
+                                    <!-- Kategori warta -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Kategori Artikel <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Kategori Warta <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<select id="kategori" name="kategori" class="form-control form-control-select2 select" @error('kategori') is-invalid @enderror required>
 												<option>--PILIH--</option>
 												@foreach ($kategori as $item)
-												<option value="{{ $item->id_kategori }}" {{ old('kategori',$artikel->kategori) == $item->id_kategori ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
+												<option value="{{ $item->id_kategori }}" {{ old('kategori',$warta->kategori) == $item->id_kategori ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
 												@endforeach
 													
 												
@@ -85,15 +85,15 @@
 											@enderror
 										</div>
 									</div>
-									<!-- /Kategori Artikel -->
+									<!-- /Kategori warta -->
 
                                     <!-- Image file uploader -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Gambar Artikel <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Gambar Warta <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<input type="file" class="form-control @error('image') is-invalid @enderror" id="customFile" name="image">
 											<div class="mt-3">
-												<img src="{{asset('storage/romadan_gambar_web/'.$artikel->image)}}" alt="" width="300px">
+												<img src="{{asset('storage/romadan_gambar_web/'.$warta->image)}}" alt="" width="300px">
 											</div>
 											
                                             
@@ -106,24 +106,24 @@
 									</div>
 									<!-- /image file uploader -->
                                     
-									<!-- Isi Artikel Input -->
+									<!-- Isi warta Input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Isi Artikel <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Isi Warta <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi Artikel">{{old('isi')?? $artikel->isi}}</textarea> --}}
-											<textarea name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi Artikel" id="ckeditor_classic_empty">{{ old('isi') ?? $artikel->isi }}</textarea>
+											{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi warta">{{old('isi')?? $warta->isi}}</textarea> --}}
+											<textarea name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi warta" id="ckeditor_classic_empty">{{ old('isi') ?? $warta->isi }}</textarea>
 										</div>
 									</div>
-									<!-- /Isi Artikel Input -->
+									<!-- /Isi warta Input -->
 
 									<!-- Status Warta -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Status Artikel <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Status Warta <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<select id="status" name="status" class="form-control form-control-select2 select" @error('status') is-invalid @enderror required>
 												<option>--PILIH--</option>
 												@foreach ($status as $item)
-												<option value="{{ $item->id_status }}" {{ old('status',$artikel->status) == $item->id_status ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_status}}</option>
+												<option value="{{ $item->id_status }}" {{ old('status',$warta->status) == $item->id_status ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_status}}</option>
 												@endforeach
 													
 												
@@ -144,7 +144,7 @@
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-							<a href="{{ route('artikel.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+							<a href="{{ route('warta.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
 							<button type="reset" class="btn btn-dark ms-3">Reset</button>
 							<button type="submit" class="btn btn-primary ms-3">Update <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>

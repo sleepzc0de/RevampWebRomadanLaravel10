@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Artikel;
 use App\Http\Controllers\Controller;
 use App\Models\backend\publikasi\artikel;
 use App\Models\backend\ref_kategori;
+use App\Models\backend\ref_status;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -157,9 +158,10 @@ class ArtikelController extends Controller
     public function edit($id)
     {
         $kategori = ref_kategori::all();
-        $artikel = artikel::with('kategori')->findOrFail(decrypt($id));
+        $status = ref_status::all();
+        $artikel = artikel::with(['kategori', 'status'])->findOrFail(decrypt($id));
         // dd($artikel);
-        return view('backend.artikel.edit', compact(['artikel', 'kategori']));
+        return view('backend.artikel.edit', compact(['artikel', 'kategori', 'status']));
     }
 
     /**
@@ -191,7 +193,7 @@ class ArtikelController extends Controller
                 'sub_judul' => $request->sub_judul,
                 'kategori' => $request->kategori,
                 'isi' => $request->isi,
-                'status' => 2,
+                'status' => $request->status,
                 'slug' => $slug,
                 'pengedit' => Auth::user()->name,
 

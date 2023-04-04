@@ -56,13 +56,13 @@
                     </ul>
                     
                 </li>
-                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/berita' ? 'nav-item-open': ''}}">
+                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/warta' ? 'nav-item-open': ''}}">
                     <a href="#" class="nav-link">
                         <i class="ph-note-pencil"></i>
                         <span>Warta</span>
                     </a>
-                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/artikel' ? 'show': ''}}">
-                        <li class="nav-item"><a href="{{route('artikel.index')}}" class="nav-link {{Request::path() == 'backend/artikel' ? 'active': ''}}">Daftar Warta</a></li>
+                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/warta' ? 'show': ''}}">
+                        <li class="nav-item"><a href="{{route('warta.index')}}" class="nav-link {{Request::path() == 'backend/warta' ? 'active': ''}}">Daftar Warta</a></li>
                     </ul>
                     
                 </li>
@@ -94,6 +94,61 @@
                     
                 </li>
                 <!-- /File -->
+
+
+                {{-- PROFILE --}}
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Profile</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-squares-four"></i>
+                        <span>Profile</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                         <li class="nav-item"><a href="{{route('tentang.index')}}" class="nav-link">Tentang</a></li>
+                        <li class="nav-item"><a href="{{route('visi-misi.index')}}" class="nav-link">Visi dan Misi</a></li>
+                        <li class="nav-item"><a href="{{route('sejarah.index')}}" class="nav-link">Sejarah</a></li>
+                        <li class="nav-item"><a href="{{route('struktur-organisasi.index')}}" class="nav-link">Struktur Organisasi</a></li>
+                    </ul>
+                </li>
+                {{-- END PROFILE --}}
+
+                {{-- LAYANAN --}}
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Layanan</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-squares-four"></i>
+                        <span>Layanan</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Helpdesk LPSE</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Helpdesk BMN</a></li>
+                    </ul>
+                </li>
+                {{-- END LAYANAN --}}
+
+                {{-- INFORMASI PUBLIK --}}
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Info Publik</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-squares-four"></i>
+                        <span>Informasi Publik</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Peraturan</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Pedoman</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Link Aplikasi</a></li>
+                    </ul>
+                </li>
+                {{-- END INFORMASI PUBLIK --}}
 
                 <!-- Referensi -->
                 <li class="nav-item-header">
@@ -140,7 +195,10 @@
                         <span>Menu</span>
                     </a>
                     <ul class="nav-group-sub collapse">
-                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Menu Romadan</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Sejarah</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Visi dan Misi</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Struktur Organisasi</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Layanan</a></li>
                     </ul>
                 </li>
                 <!-- /Menu-->

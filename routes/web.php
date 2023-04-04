@@ -3,10 +3,15 @@
 use App\Http\Controllers\Artikel\ArtikelController;
 use App\Http\Controllers\Berita\BeritaController;
 use App\Http\Controllers\File\FileController;
+use App\Http\Controllers\MenuProfile\SejarahController;
+use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
+use App\Http\Controllers\MenuProfile\TentangController;
+use App\Http\Controllers\MenuProfile\VisiMisiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Referensi\RefKategoriController;
 use App\Http\Controllers\Referensi\RefStatusController;
 use App\Http\Controllers\UserManajemen\UserController;
+use App\Http\Controllers\Warta\WartaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,11 +62,11 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::post('/restore-all-artikel', [ArtikelController::class, 'restoreAll'])->name('artikel.restore-all');
 
         // WARTA
-        Route::resource('/berita', BeritaController::class);
-        Route::get('/berita-sampah', [BeritaController::class, 'beritaSampah'])->name('berita.sampah');
-        Route::post('/{beritum}/restore-berita', [BeritaController::class, 'restore'])->name('berita.restore');
-        Route::delete('/{beritum}/force-delete-berita', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
-        Route::post('/restore-all-berita', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
+        Route::resource('/warta', WartaController::class);
+        Route::get('/warta-sampah', [WartaController::class, 'wartaSampah'])->name('warta.sampah');
+        Route::post('/{beritum}/restore-warta', [WartaController::class, 'restore'])->name('warta.restore');
+        Route::delete('/{beritum}/force-delete-warta', [WartaController::class, 'forceDelete'])->name('warta.force-delete');
+        Route::post('/restore-all-warta', [WartaController::class, 'restoreAll'])->name('warta.restore-all');
 
 
 
@@ -71,6 +76,19 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
         Route::delete('/{file}/force-delete', [FileController::class, 'forceDeleteSampah'])->name('file.force-delete-sampah');
         Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
+
+
+        // MENU PROFILE
+        Route::prefix('/profile')->group(function () {
+            // TENTANG
+            Route::resource('tentang', TentangController::class);
+            // VISI DAN MISI
+            Route::resource('visi-misi', VisiMisiController::class);
+            // SEJARAH
+            Route::resource('sejarah', SejarahController::class);
+            // STRUKTUR ORGANISASI
+            Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
+        });
 
         // REFERENSI
         Route::resource('kategori', RefKategoriController::class);
