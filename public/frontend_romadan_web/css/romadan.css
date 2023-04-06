@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500&display=swap');
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap');
+
+.romadan-judul-terkini {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #FFFFFF;
+    width: 106px;
+    height: 20px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    text-transform: uppercase;
+}
+
+.btn-romadan-title {
+    background: transparent;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+.btn-romadan-title:hover {
+    background-color: black;
+    opacity: 30%;
+    color: white;
+    border: 1px solid white;
+}
+
+
+.txt3-romadan {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: white;
+    
+}
+
+.romadan-judul {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: white;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 50px;
+    line-height: 40px;
+}
+
+.romadan-menu {
+    font-family:'Inter';
+    color: #000000;;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    
+}
+
+.romadan-berita{
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #0F5FAE;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+}
+
+.romadan-kumpulan-peraturan {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #0F5FAE;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+}
+
+.btn-romadan1 {
+    background: transparent;
+    border-radius: 10px;
+    color: #5B92DC;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 40px;
+    
+}
+
+.btn-romadan1:hover {
+    background-color: white;
+    color: #5B92DC;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+}
+
+.size-romadan1 {
+    width: 150px;
+    height: 50px;
+}
+
+.blo-romadan1{
+box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 1px, rgba(0, 0, 0, 0.12) 0px -1px 1px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 1px 1px, rgba(0, 0, 0, 0.09) 0px -1px 1px;
+border-radius: 3%;
+}
+
+/* FOOTER*/
+
+.footer1-romadan-bg {
+    background-color: #0F5FAE;
+}
+
+.footer2-romadan-bg {
+    background-color: #003060;
+}
+
+.footer1-ikuti-kami{
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 36px;
+    color: #FFFFFF;
+}
+.footer1-medsos {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    color: #FFFFFF;
+}
+
+.footer1-medsos > a {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    color: #FFFFFF;
+}
+
+.footer2-hubungi-kami > div > h9 {
+    /* Hubungi Kami */
+
+    
+        font-family: 'Plus Jakarta Sans';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 28px;
+    
+        color: #FFFFFF;
+}
+
+.footer2-hubungi-kami > div > h10 {
+    /* Hubungi Kami */
+
+
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+
+
+.dropdown-menu-romadan{
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-size: 14px;
+    background-color: #FFFFFF;
+    justify-content: space-between;
+    align-items: center;
+    border-width: 0;
+}
+
+
+.dropdown-menu-romadan > li > a:hover {
+    text-decoration: none;
+    color: #ffb300;
+}
+
+.dropdown-submenu-romadan {
+  position: relative;
+  
+}
+
+.dropdown-submenu-romadan > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: 1px;
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-size: 14px;
+  justify-content: space-between;
+  align-items: center;
+  border-width: 0;
+}
+
+.dropdown-submenu-romadan:hover > .dropdown-menu {
+  display: block;
+}

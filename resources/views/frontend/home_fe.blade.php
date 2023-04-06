@@ -1,0 +1,1 @@
+@extends('layouts.webromadan_frontend.fe_master')

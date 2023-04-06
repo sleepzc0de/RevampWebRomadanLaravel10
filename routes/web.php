@@ -3,6 +3,7 @@
 use App\Http\Controllers\Artikel\ArtikelController;
 use App\Http\Controllers\Berita\BeritaController;
 use App\Http\Controllers\File\FileController;
+use App\Http\Controllers\Frontend\HomeFeController;
 use App\Http\Controllers\MenuProfile\SejarahController;
 use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
@@ -25,9 +26,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('frontend');
+// });
+
+Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

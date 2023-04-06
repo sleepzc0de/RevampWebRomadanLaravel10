@@ -9,8 +9,8 @@
 
          <div class="navbar-brand flex-1 flex-lg-0">
              <a href="/" class="d-inline-flex align-items-center">
-                 <img src="{{asset('webromadan/be/images/logo_icon.svg')}}" alt="">
-                 <img src="{{asset('webromadan/be/images/logo_text_light.svg')}}" class="d-none d-sm-inline-block h-16px ms-3" alt="">
+                 {{-- <img src="{{asset('webromadan/fe/images/logo_icon.svg')}}" alt=""> --}}
+                 <img src="{{asset('webromadan/fe/images/romadan/logo_4.png')}}" class="d-none d-sm-inline-block ms-3" style="height: 50px;" alt="RomadanBE">
              </a>
          </div>
 
