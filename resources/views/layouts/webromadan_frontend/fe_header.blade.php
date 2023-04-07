@@ -5,7 +5,7 @@
 				<div class="wrap_header trans-0-3">
 					<!-- Logo -->
 					<div class="logo">
-						<a href="index.html">
+						<a href="{{route('homefe')}}">
 							<img src="{{asset('frontend_romadan_web/images/icons/romadan/logo_4.png')}}" alt="ROMADAN-LOGO" data-logofixed="{{asset('frontend_romadan_web/images/icons/romadan/logo_3.png')}}">
 						</a>
 					</div>
@@ -18,9 +18,9 @@
 									<a href="#" class="" data-toggle="dropdown">Profile </span></a>
 									<ul class="dropdown-menu p-l-20 p-l-0-xl mt-4 dropdown-menu-romadan">
 									{{-- MENU PROFILE --}}
-									<li><a href="#">Visi Misi</a></li>
-									<li><a href="#">Sejarah</a></li>
-									<li><a href="#">Organisasi</a></li>
+									<li><a href="{{route('visi-misi-fe')}}">Visi Misi</a></li>
+									<li><a href="{{route('sejarah-fe')}}">Sejarah</a></li>
+									<li><a href="{{route('organisasi-fe')}}">Organisasi</a></li>
 									{{-- END MENU PROFILE --}}
 									</ul>
 								</li>

@@ -32,26 +32,19 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/main.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan.css')}}">
 <!--===============================================================================================-->
+	@yield('css_fe')
 </head>
 <body class="animsition">
 
 	<!-- Header -->
      @include('layouts.webromadan_frontend.fe_header')
+	 
 
-	<!-- Sidebar -->
-    @include('layouts.webromadan_frontend.fe_sidebar')
+	 {{-- CONTENTS --}}
+ 	@include('layouts.webromadan_frontend.fe_sidebar')
+	 @yield('content')
 
-	<!-- Slide1 -->
-    @include('layouts.webromadan_frontend.fe_slider')
-
-	<!-- Welcome -->
-    @include('layouts.webromadan_frontend.fe_welcome')
-
-	<!-- Berita -->
-    @include('layouts.webromadan_frontend.fe_berita')
-
-	<!-- Kumpulan Peraturan -->
-    @include('layouts.webromadan_frontend.fe_kumpulperaturan')
+	{{-- END CONTENTS --}}
 	
 	<!-- Footer -->
     @include('layouts.webromadan_frontend.fe_footer')
@@ -86,6 +79,7 @@
 	<script type="text/javascript" src="{{asset('frontend_romadan_web/vendor/lightbox2/js/lightbox.min.js')}}"></script>
 <!--===============================================================================================-->
 	<script src="{{asset('frontend_romadan_web/js/main.js')}}"></script>
+	@yield('script_fe')
 
 </body>
 </html>

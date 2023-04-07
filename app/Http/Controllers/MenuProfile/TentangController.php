@@ -132,7 +132,7 @@ class TentangController extends Controller
             $request->validate([
                 'judul' => 'required',
                 'tentang' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'image|mimes:jpeg,png,jpg,svg|max:2000',
             ]);
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
@@ -142,7 +142,7 @@ class TentangController extends Controller
             ];
             if ($request->hasFile('image')) {
                 $request->validate([
-                    'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                    'image' => 'image|mimes:jpeg,png,jpg,svg|max:2000',
                 ], [
                     'image.mimes' => 'Gambar hanya diperbolehkaan berekstensi JPEG, JPG, PNG, SVG',
                 ]);

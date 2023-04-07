@@ -163,6 +163,17 @@ border-radius: 3%;
     color: #FFFFFF;
 }
 
+.footer2-hubungi-kami> div > h10 > a {
+    /* Hubungi Kami */
+
+
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
 
 
 .dropdown-menu-romadan{
@@ -201,4 +212,66 @@ border-radius: 3%;
 
 .dropdown-submenu-romadan:hover > .dropdown-menu {
   display: block;
+}
+
+.btn-tentang-romadan {
+    background: #3778C8;
+    border-radius: 10px;
+    color: white;
+    width: 189px;
+        height: 46px;
+}
+
+.btn-tentang-romadan:hover {
+    background-color: #3778C8;
+    color: white;
+    opacity: 80%;
+}
+
+.txt-tentang-romadan{
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 54px;
+    letter-spacing: 0px;
+    color: #0F5FAE;
+}
+
+.txt-judul-visi-misi{
+    font-family: 'Plus Jakarta Sans';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 32px;
+        line-height: 40px;
+        color: #0F5FAE;
+}
+
+.txt-visi-misi > p {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-size: 14px;
+    color: #000000;
+    justify-content: space-between;
+}
+
+.size2-visi-misi {
+    max-width: 450px;
+}
+
+.txt-judul-sejarah {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+    color: #0F5FAE;
+}
+
+.txt-sejarah> p {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-size: 14px;
+    color: #000000;
+    line-height: 24px;
+    justify-content: space-between;
 }

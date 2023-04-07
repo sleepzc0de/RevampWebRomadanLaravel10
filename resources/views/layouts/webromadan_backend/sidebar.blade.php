@@ -103,7 +103,7 @@
                 </li>
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link">
-                        <i class="ph-squares-four"></i>
+                        <i class="ph-mask-happy"></i>
                         <span>Profile</span>
                     </a>
                     <ul class="nav-group-sub collapse">
@@ -149,6 +149,7 @@
                     </ul>
                 </li>
                 {{-- END INFORMASI PUBLIK --}}
+                
 
                 <!-- Referensi -->
                 <li class="nav-item-header">
@@ -202,6 +203,23 @@
                     </ul>
                 </li>
                 <!-- /Menu-->
+
+
+                {{-- FRONTEND SISTEM --}}
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Frontend</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-puzzle-piece"></i>
+                        <span>Interface</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                        <li class="nav-item"><a href="{{route('medsos.index')}}" class="nav-link">Media Sosial</a></li>
+                    </ul>
+                </li>
+                {{-- END FRONTEND SISTEM --}}
 
                 <!-- User Management -->
                 <li class="nav-item-header">

@@ -38,7 +38,7 @@
 								<div class="mt-5" style="text-align: justify;">
 									<h9>Hubungi Kami</h9>
 									<br>
-									<h10><i class="fa-regular fa-envelope mr-2 mt-4"aria-hidden="true"></i></i>romadan@kemenkeu.go.id</h10>
+									<h10><i class="fa-regular fa-envelope mr-2 mt-4"aria-hidden="true"></i></i><a href="mailto:romadan@kemenkeu.go.id">romadan@kemenkeu.go.id</a></h10>
 									<br>
 									<h10><i class="fa fa-phone mr-2 mt-3" aria-hidden="true"></i>081-2311-2345-678</h10>
 									<br>

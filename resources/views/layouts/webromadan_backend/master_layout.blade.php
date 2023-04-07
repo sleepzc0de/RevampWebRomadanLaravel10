@@ -5,13 +5,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+    <title>CMS - Biro Manajemen BMN dan Pengadaan</title>
 
     <!-- Global stylesheets -->
     <link href="{{ asset('webromadan/be/fonts/inter/inter.css')}}" rel="stylesheet" type="text/css">
     <link href="{{ asset('webromadan/be/icons/phosphor/styles.min.css')}}" rel="stylesheet" type="text/css">
     <link href="{{ asset('webromadan/fe/css/ltr/all.min.css')}}" id="stylesheet" rel="stylesheet" type="text/css">
     @yield('css')
+    <link rel="icon" type="image/png" href="{{asset('frontend_romadan_web/images/icons/romadanlogo.png')}}"/>
     <!-- /global stylesheets -->
 
     <!-- Core JS files -->

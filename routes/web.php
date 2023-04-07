@@ -4,6 +4,7 @@ use App\Http\Controllers\Artikel\ArtikelController;
 use App\Http\Controllers\Berita\BeritaController;
 use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\Frontend\HomeFeController;
+use App\Http\Controllers\Medsos\MedsosController;
 use App\Http\Controllers\MenuProfile\SejarahController;
 use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
@@ -30,11 +31,31 @@ use Illuminate\Support\Facades\Route;
 //     return view('frontend');
 // });
 
-Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// FRONT END
+
+Route::group(
+    ['prefix' => '/'],
+    function () {
+
+        // HOME 
+        Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
+
+        // MENU PROFILE
+        Route::prefix('/profile')->group(function () {
+            // VISI DAN MISI
+            Route::get('/visi-misi', [HomeFeController::class, 'profile_visi_misi'])->name('visi-misi-fe');
+            // SEJARAH
+            Route::get('/sejarah', [HomeFeController::class, 'profile_sejarah'])->name('sejarah-fe');
+            // ORGANISASI
+            Route::get('/organisasi', [HomeFeController::class, 'profile_organisasi'])->name('organisasi-fe');
+        });
+    }
+);
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 // BACK END
 
@@ -96,6 +117,11 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         // REFERENSI
         Route::resource('kategori', RefKategoriController::class);
         Route::resource('status', RefStatusController::class);
+
+
+
+        // MEDSOS
+        Route::resource('medsos', MedsosController::class);
     });
 
 
