@@ -27,9 +27,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('frontend');
-// });
+Route::get('/coba-login', function () {
+    return view('cobalogin');
+});
 
 
 // FRONT END

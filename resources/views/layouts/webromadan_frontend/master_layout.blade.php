@@ -15,25 +15,6 @@
     <link href="{{ asset('webromadan/be/icons/material/styles.min.css')}}" rel="stylesheet" type="text/css">
     <link href="{{ asset('webromadan/be/icons/fontawesome/styles.min.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('webromadan/be/css/animate.min.css')}}" rel="stylesheet" type="text/css">
-    
-    <style>
-.btn-link {
-  color: black;
-}
-
-.btn-link:hover {
-  color: orange;
-}
-
-/* #preloader{
-    background: #000 url('webromadan/fe/images/romadan/8.gif') no-repeat center center;
-    height: 100vh;
-    width: 100%;
-    position: fixed;
-    z-index: 100;
-} */
-
-</style>
     @yield('css')
     <!-- /global stylesheets -->
 
@@ -60,7 +41,7 @@
 <body background="#F5F5F5">
     
 
-    @include('layouts.webromadan_frontend.navbar')
+    {{-- @include('layouts.webromadan_frontend.navbar') --}}
 
     <!-- Page content -->
     <div class="page-content">
@@ -78,7 +59,7 @@
                 {{-- </div> --}}
                 <!-- /content area -->
 
-                @include('layouts.webromadan_frontend.footer')
+                {{-- @include('layouts.webromadan_frontend.footer') --}}
 
             </div>
             <!-- /inner content -->

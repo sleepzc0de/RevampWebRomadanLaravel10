@@ -275,3 +275,37 @@ border-radius: 3%;
     line-height: 24px;
     justify-content: space-between;
 }
+
+.login-romadan-gambar {
+    background-image: url('asset(webromadan/fe/images/romadan/test1.png)');  
+    /* background-image: url('<?= base_url(); ?>/pastiv1/authpasti/images/img-01.jpg');" */
+    background-size: cover;
+        background-position: center;
+    /* background-color: #cccccc;  */
+    /* width: 310px; */
+}
+
+.txt-login-romadan{
+    font-family: 'Plus Jakarta Sans';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 32px;
+        line-height: 40px;
+}
+
+.txt-login-romadan-user-pass {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12;
+    line-height: 16px;
+    color: #000000;
+}
+.txt-login-romadan-submit {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12;
+    line-height: 16px;
+    color: white;
+}

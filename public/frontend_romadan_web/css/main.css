@@ -99,10 +99,15 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 	box-sizing: border-box;
 }
 
+body{
+  background-color: transparent;
+}
+
 body, html {
 	height: 100%;
 	font-family: Montserrat, sans-serif;
   font-weight: 400;
+  
 }
 
 /* ------------------------------------ */
@@ -217,7 +222,7 @@ iframe {
 */
 
 .animsition-loading-1 {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
@@ -236,7 +241,7 @@ iframe {
 }
 
 .cp-meter {
-    border-radius: 50%;
+    border-radius: 30%;
     border-top: solid 6px #003060;
     border-right: solid 6px #003060;
     border-bottom: solid 6px #003060;
