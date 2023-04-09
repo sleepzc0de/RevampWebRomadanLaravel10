@@ -82,6 +82,7 @@ const DatatableBasic = function() {
             {data: 'kategori.nama_kategori',name:'kategori.nama_kategori',orderable:false,searchable:false},
             {data: 'status.nama_status',name:'status.nama_status',orderable:false,searchable:false},
             {data: 'penulis',name:'penulis'},
+            {data: 'pengedit',name:'pengedit'},
             {data: 'created_at',name:'created_at'},
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
 
@@ -194,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<th>Kategori</th>
 									<th>Status</th>
                                     <th>Penulis</th>
+                                    <th>Pengedit</th>
                                     <th>Tanggal Berita</th>
                                     <th>Aksi</th>
 								</tr>

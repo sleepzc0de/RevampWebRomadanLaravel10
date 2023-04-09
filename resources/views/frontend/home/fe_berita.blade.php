@@ -9,7 +9,54 @@
 					</h5>
 				</div>
 				<div class="row">
-					<div class="col-md-4 p-t-30">
+					@forelse ($berita_terkini as $item)
+						<div class="col-md-4 p-t-30">
+						<!-- Block1 -->
+						<div class="blo4">
+							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
+								<a href="{{asset('storage/romadan_gambar_web/'.$item->image)}}">
+									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG">
+								</a>
+
+								<div class="date-blo4-romadan flex-col-c-m">
+									<span class="txt30-romadan m-b-4">
+										{{date('d', strtotime($item->created_at))}}
+									</span>
+
+									<span class="txt31">
+										{{date('M, Y', strtotime($item->created_at))}}
+									</span>
+								</div>
+							</div>
+							
+
+							<div class="text-blo4 p-t-33">
+								<div class="txt32 flex-w p-b-24">
+									<span>
+										{{date('d F, Y', strtotime($item->created_at))}}
+										<span class="m-r-6 m-l-4">|</span>
+									</span>
+
+									<span>
+										{{$item->nama_kategori}}
+										<span class="m-r-6 m-l-4"></span>
+									</span>
+								</div>
+								<div>
+									<a href="{{route('berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
+								</div>
+
+
+
+								
+							</div>
+						</div>
+					</div>
+					@empty
+					<h2>BERITA TERKINI KOSONG!</h2>
+						
+					@endforelse
+					{{-- <div class="col-md-4 p-t-30">
 						<!-- Block1 -->
 						<div class="blo1">
 							<div class="wrap-pic-blo1 bo-rad-10 hov-img-zoom">
@@ -76,7 +123,7 @@
 								
 							</div>
 						</div>
-					</div>
+					</div> --}}
 
 				</div>
 			</div>

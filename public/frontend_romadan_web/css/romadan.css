@@ -309,3 +309,33 @@ border-radius: 3%;
     line-height: 16px;
     color: white;
 }
+
+
+.berita-terkini-judul-romadan{
+    font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 22px;
+        line-height: 28px;
+        color: #000000;
+}
+
+.date-blo4-romadan {
+    width: 75px;
+    height: 82px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    border-radius: 10px;
+    background-color: #0F5FAE;
+}
+
+.txt30-romadan {
+    font-family: Montserrat;
+    font-weight: 700;
+    font-size: 39px;
+    color: white;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

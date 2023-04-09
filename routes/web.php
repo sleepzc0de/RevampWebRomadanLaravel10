@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Artikel\ArtikelController;
-use App\Http\Controllers\Berita\BeritaController;
 use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\Frontend\HomeFeController;
 use App\Http\Controllers\Medsos\MedsosController;
@@ -10,10 +8,12 @@ use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
 use App\Http\Controllers\MenuProfile\VisiMisiController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Publikasi\ArtikelController;
+use App\Http\Controllers\Publikasi\BeritaController;
+use App\Http\Controllers\Publikasi\WartaController;
 use App\Http\Controllers\Referensi\RefKategoriController;
 use App\Http\Controllers\Referensi\RefStatusController;
 use App\Http\Controllers\UserManajemen\UserController;
-use App\Http\Controllers\Warta\WartaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +41,7 @@ Route::group(
         // HOME 
         Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
 
+
         // MENU PROFILE
         Route::prefix('/profile')->group(function () {
             // VISI DAN MISI
@@ -49,6 +50,23 @@ Route::group(
             Route::get('/sejarah', [HomeFeController::class, 'profile_sejarah'])->name('sejarah-fe');
             // ORGANISASI
             Route::get('/organisasi', [HomeFeController::class, 'profile_organisasi'])->name('organisasi-fe');
+        });
+
+        // MENU PUBLIKASI
+        Route::prefix('/publikasi')->group(function () {
+            // VISI DAN MISI
+            Route::get('/berita/{publikasi}', [HomeFeController::class, 'publikasi_berita'])->name('berita-fe');
+            // SEJARAH
+            Route::get('/warta/{publikasi}', [HomeFeController::class, 'publikasi_warta'])->name('warta-fe');
+            // ORGANISASI
+            Route::get('/artikel/{publikasi}', [HomeFeController::class, 'publikasi_artikel'])->name('artikel-fe');
+
+            // COBA
+
+            // Route::get('beritacoba/{slug}', function ($slug) {
+            //     $result =   DB::table('campains')->where('slug', $slug)->get();
+            //     // .... call controller etc...
+            // });
         });
     }
 );

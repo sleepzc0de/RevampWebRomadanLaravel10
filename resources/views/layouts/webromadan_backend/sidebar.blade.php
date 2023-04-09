@@ -41,42 +41,23 @@
                     </a>
                 </li>
 
-                <!-- Berita -->
+                {{-- PUBLIKASI --}}
                 <li class="nav-item-header">
                     <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Publikasi</div>
                     <i class="ph-dots-three sidebar-resize-show"></i>
                 </li>
-                <li class="nav-item nav-item-submenu {{Request::path() == 'backend/berita' ? 'nav-item-open': ''}}">
+                <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link">
-                        <i class="ph-note-pencil"></i>
-                        <span>Berita</span>
+                        <i class="ph-mask-happy"></i>
+                        <span>Publikasi</span>
                     </a>
-                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/berita' ? 'show': ''}}">
-                        <li class="nav-item"><a href="{{route('berita.index')}}" class="nav-link {{Request::path() == 'backend/berita' ? 'active': ''}}">Daftar Berita</a></li>
+                    <ul class="nav-group-sub collapse">
+                         <li class="nav-item"><a href="{{route('berita.index')}}" class="nav-link">Berita</a></li>
+                        <li class="nav-item"><a href="{{route('warta.index')}}" class="nav-link">Warta</a></li>
+                        <li class="nav-item"><a href="{{route('artikel.index')}}" class="nav-link">Artikel</a></li>
                     </ul>
-                    
                 </li>
-                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/warta' ? 'nav-item-open': ''}}">
-                    <a href="#" class="nav-link">
-                        <i class="ph-note-pencil"></i>
-                        <span>Warta</span>
-                    </a>
-                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/warta' ? 'show': ''}}">
-                        <li class="nav-item"><a href="{{route('warta.index')}}" class="nav-link {{Request::path() == 'backend/warta' ? 'active': ''}}">Daftar Warta</a></li>
-                    </ul>
-                    
-                </li>
-                 <li class="nav-item nav-item-submenu {{Request::path() == 'backend/artikel' ? 'nav-item-open': ''}}">
-                    <a href="#" class="nav-link">
-                        <i class="ph-note-pencil"></i>
-                        <span>Artikel</span>
-                    </a>
-                    <ul class="nav-group-sub collapse {{Request::path() == 'backend/artikel' ? 'show': ''}}">
-                        <li class="nav-item"><a href="{{route('artikel.index')}}" class="nav-link {{Request::path() == 'backend/artikel' ? 'active': ''}}">Daftar Artikel</a></li>
-                    </ul>
-                    
-                </li>
-                <!-- /Berita -->
+                {{-- END PUBLIKASI --}}
 
                  <!-- File -->
                 <li class="nav-item-header">

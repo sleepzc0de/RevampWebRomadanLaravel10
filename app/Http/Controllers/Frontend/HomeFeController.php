@@ -7,6 +7,7 @@ use App\Models\backend\MenuProfile\SejarahModel;
 use App\Models\backend\MenuProfile\StrukturOrganisasiModel;
 use App\Models\backend\MenuProfile\TentangModel;
 use App\Models\backend\MenuProfile\VisiMisiModel;
+use App\Models\backend\publikasi\berita;
 use App\Models\medsos\medsos;
 use Illuminate\Http\Request;
 
@@ -16,9 +17,10 @@ class HomeFeController extends Controller
     {
         $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
         $tentang = TentangModel::first()->get();
+        $berita_terkini = berita::join('ref_kategori', 'berita.kategori', '=', 'ref_kategori.id_kategori')->select('berita.*', 'ref_kategori.nama_kategori')->orderBy("id", "DESC")->take(3)->get();
 
-        // dd($tentang);
-        return view('frontend.home_fe', compact(['medsos', 'tentang']));
+        // dd($berita_terkini);
+        return view('frontend.home_fe', compact(['medsos', 'tentang', 'berita_terkini']));
     }
 
     public function profile_visi_misi()
@@ -43,5 +45,13 @@ class HomeFeController extends Controller
         $tentang = TentangModel::first()->get();
         $organisasi = StrukturOrganisasiModel::firstorFail()->get();
         return view('frontend.profile.fe_organisasi', compact(['medsos', 'tentang', 'organisasi']));
+    }
+
+    public function publikasi_berita($publikasi)
+    {
+        $data = berita::where('slug', $publikasi)->join('ref_kategori', 'berita.kategori', '=', 'ref_kategori.id_kategori')->select('berita.*', 'ref_kategori.nama_kategori')->firstorFail();
+        // dd($data);
+
+        return view('frontend.publikasi.fe_berita', compact(['data']));
     }
 }
