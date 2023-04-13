@@ -46,7 +46,7 @@ const CKEditorClassic = function() {
         }
 
         // Editor with placeholder
-        ClassicEditor.create(document.querySelector('#ckeditor_classic_empty'), {
+        ClassicEditor.create(document.querySelector('#ckeditor_classic_empty_layanan'), {
             heading: {
                 options: [
                     { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
@@ -63,6 +63,7 @@ const CKEditorClassic = function() {
         }).catch(error => {
             console.error(error);
         });
+
 
 
     };
@@ -93,39 +94,64 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Form validation -->
 					<div class="card">
 						<div class="card-header">
-							<h5 class="mb-0">Tambah Referensi Status Berita</h5>
+							<h5 class="mb-0">Layanan Romadan</h5>
                             @include('layouts.webromadan_backend.session_notif')
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('status.store')}}" method="post" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('layanan.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
 							
 								<div class="mb-4">
 
-									<!-- Nama Status Berita -->
+									<!-- Judul Artikel input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Nama Status <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Judul layanan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_status') }}" type="text" name="nama_status" class="form-control @error('nama_status') is-invalid @enderror" required placeholder="Masukkan Nama Status">
-											<!-- error message untuk nama_status -->
-											@error('nama_status')
+											<input value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul layanan">
+											<!-- error message untuk judul -->
+											@error('judul')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
 											@enderror
 										</div>
 									</div>
-									<!-- /Nama Kategori Berita -->
+									<!-- /Judul Artikel input -->
+
+									<!-- layanan -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Layanan <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<textarea name="layanan" class="form-control @error('layanan') is-invalid @enderror" required placeholder="Layanan" id="ckeditor_classic_empty_layanan">{{ old('layanan') }}</textarea>
+										</div>
+									</div>
+									<!-- /layanan -->
+
+                                    <!-- Image file uploader -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Gambar <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<input type="file" class="form-control @error('image') is-invalid @enderror required" id="customFile" name="image">
+											@error('image')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /image file uploader -->
+                                    
+									
 
 								</div>
 
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-                            <a href="{{ route('status.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+							<a href="{{route('layanan.index')}}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
 							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
-							<button type="submit" class="btn btn-primary ms-3 ">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
+							<button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>
 							</form>
 					</div>

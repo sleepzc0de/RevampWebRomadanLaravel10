@@ -93,23 +93,23 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Form validation -->
 					<div class="card">
 						<div class="card-header">
-							<h5 class="mb-0">Tambah Referensi Status Berita</h5>
+							<h5 class="mb-0">Tambah Referensi Tipe</h5>
                             @include('layouts.webromadan_backend.session_notif')
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('status.store')}}" method="post" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('tipe.store')}}" method="post" autocomplete="off">
 							@csrf
 							<div class="card-body">
 							
 								<div class="mb-4">
 
-									<!-- Nama Status Berita -->
+									<!-- Nama tipe Berita -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Nama Status <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Nama tipe <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_status') }}" type="text" name="nama_status" class="form-control @error('nama_status') is-invalid @enderror" required placeholder="Masukkan Nama Status">
-											<!-- error message untuk nama_status -->
-											@error('nama_status')
+											<input value="{{ old('nama_tipe') }}" type="text" name="nama_tipe" class="form-control @error('nama_tipe') is-invalid @enderror" required placeholder="Masukkan Nama Tipe">
+											<!-- error message untuk nama_tipe -->
+											@error('nama_tipe')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-                            <a href="{{ route('status.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+                            <a href="{{ route('tipe.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
 							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
 							<button type="submit" class="btn btn-primary ms-3 ">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>

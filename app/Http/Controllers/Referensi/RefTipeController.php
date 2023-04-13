@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Referensi;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\ref_status;
+use App\Models\backend\ref_tipe;
 use Exception;
 use Illuminate\Http\Request;
 
-class RefStatusController extends Controller
+class RefTipeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = ref_status::select('*');
+        $query = ref_tipe::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -23,8 +23,8 @@ class RefStatusController extends Controller
                 //     return '<a href="' . $url . '">' . $query->nama_file . '</a>';
                 // })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('status.edit', encrypt($query->id_status));
-                    $hapus = route('status.destroy', encrypt($query->id_status));
+                    $edit = route('tipe.edit', encrypt($query->id_tipe));
+                    $hapus = route('tipe.destroy', encrypt($query->id_tipe));
                     return '<div class="d-inline-flex">
 											<div class="dropdown">
 												<a href="#" class="text-body" data-bs-toggle="dropdown">
@@ -57,7 +57,7 @@ class RefStatusController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.referensi.status.index');
+        return view('backend.referensi.tipe.index');
     }
 
     /**
@@ -65,7 +65,7 @@ class RefStatusController extends Controller
      */
     public function create()
     {
-        return view('backend.referensi.status.create');
+        return view('backend.referensi.tipe.create');
     }
 
     /**
@@ -76,22 +76,22 @@ class RefStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_status' => 'required|unique:ref_status',
+                'nama_tipe' => 'required|unique:ref_tipe',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'nama_status' => $request->nama_status,
+                'nama_tipe' => $request->nama_tipe,
 
             ];
 
 
-            ref_status::create($data);
+            ref_tipe::create($data);
 
             //redirect to index
-            return redirect()->back()->with(['success' => 'Status Berhasil Ditambahkan!']);
+            return redirect()->back()->with(['success' => 'Tipe Berhasil Ditambahkan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Status Gagal Ditambahkan! error :' . $e->getMessage()]);
+            return redirect()->back()->with(['failed' => 'Tipe Gagal Ditambahkan! error :' . $e->getMessage()]);
         }
     }
 
@@ -108,8 +108,8 @@ class RefStatusController extends Controller
      */
     public function edit(string $id)
     {
-        $status = ref_status::findOrFail(decrypt($id));
-        return view('backend.referensi.status.edit', compact(['status']));
+        $tipe = ref_tipe::findOrFail(decrypt($id));
+        return view('backend.referensi.tipe.edit', compact(['tipe']));
     }
 
     /**
@@ -120,18 +120,18 @@ class RefStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_status' => 'required',
+                'nama_tipe' => 'required',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'nama_status' => $request->nama_status,
+                'nama_tipe' => $request->nama_tipe,
 
             ];
-            ref_status::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('status.index')->with('success', "Status $request->nama_status berhasil diupdate!");
+            ref_tipe::findOrFail(decrypt($id))->update($data);
+            return redirect()->route('tipe.index')->with('success', "Tipe $request->nama_tipe berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('status.index')->with(['failed' => 'Status Gagal Di Update! error :' . $e->getMessage()]);
+            return redirect()->route('tipe.index')->with(['failed' => 'Tipe Gagal Di Update! error :' . $e->getMessage()]);
             // return redirect()->back()->with(['failed' => 'Data File Gagal Disimpan! error :' . $e->getMessage()]);
         }
     }
@@ -142,10 +142,10 @@ class RefStatusController extends Controller
     public function destroy(string $id)
     {
         try {
-            ref_status::findOrFail(decrypt($id))->delete();
-            return redirect()->route('status.index')->with('success', "Status berhasil dihapus!");
+            ref_tipe::findOrFail(decrypt($id))->delete();
+            return redirect()->route('tipe.index')->with('success', "Tipe berhasil dihapus!");
         } catch (Exception $e) {
-            return redirect()->route('status.index')->with(['failed' => 'Status Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            return redirect()->route('tipe.index')->with(['failed' => 'Tipe Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
         }
     }
 }

@@ -24,30 +24,30 @@
 <!-- Form validation -->
 					<div class="card">
 						<div class="card-header">
-							<h5 class="mb-0">Edit Nama Status</h5>
+							<h5 class="mb-0">Edit Nama Tipe</h5>
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('status.update', encrypt($status->id_status))}}" method="post" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('tipe.update', encrypt($tipe->id_tipe))}}" method="post" autocomplete="off">
 							@csrf
                             @method('PUT')
 							<div class="card-body">
 							
 								<div class="mb-4">
 
-									<!-- Nama status -->
+									<!-- Nama tipe -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Nama Status <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Nama Tipe <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_status') ?? $status->nama_status }}" type="text" name="nama_status" class="form-control @error('nama_status') is-invalid @enderror" required placeholder="Masukkan Nama status">
-											<!-- error message untuk nama_status -->
-											@error('nama_status')
+											<input value="{{ old('nama_tipe') ?? $tipe->nama_tipe }}" type="text" name="nama_tipe" class="form-control @error('nama_tipe') is-invalid @enderror" required placeholder="Masukkan Nama tipe">
+											<!-- error message untuk nama_tipe -->
+											@error('nama_tipe')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
 											@enderror
 										</div>
 									</div>
-									<!-- /Nama status -->
+									<!-- /Nama tipe -->
 
 								</div>
 

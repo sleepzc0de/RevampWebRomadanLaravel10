@@ -339,3 +339,21 @@ border-radius: 3%;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+.txt-judul-layanan {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+    color: #0F5FAE;
+}
+
+.txt-layanan>p {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-size: 14px;
+    color: #000000;
+    line-height: 24px;
+    justify-content: space-between;
+}

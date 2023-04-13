@@ -25,7 +25,7 @@
 									</ul>
 								</li>
 								<li>
-									<a href="menu.html">Layanan</a>
+									<a href="{{route('layanan-fe')}}">Layanan</a>
 								</li>
 								<li class="dropdown">
 									<a href="#" class="" data-toggle="dropdown">Kegiatan </span></a>

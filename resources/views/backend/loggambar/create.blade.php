@@ -93,37 +93,51 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Form validation -->
 					<div class="card">
 						<div class="card-header">
-							<h5 class="mb-0">Tambah Referensi Status Berita</h5>
+							<h5 class="mb-0">Tambah Login Gambar Romadan</h5>
                             @include('layouts.webromadan_backend.session_notif')
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('status.store')}}" method="post" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('loggambar.store')}}" method="post" autocomplete="off" enctype="multipart/form-data">
 							@csrf
 							<div class="card-body">
 							
 								<div class="mb-4">
 
-									<!-- Nama Status Berita -->
+									<!-- Judul publikasi input -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Nama Status <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Nama Gambar <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_status') }}" type="text" name="nama_status" class="form-control @error('nama_status') is-invalid @enderror" required placeholder="Masukkan Nama Status">
-											<!-- error message untuk nama_status -->
-											@error('nama_status')
+											<input value="{{ old('nama_gambar') }}" type="text" name="nama_gambar" class="form-control @error('nama_gambar') is-invalid @enderror" required placeholder="Masukkan Nama Gambar">
+											<!-- error message untuk nama_gambar -->
+											@error('nama_gambar')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
 											@enderror
 										</div>
 									</div>
-									<!-- /Nama Kategori Berita -->
+									<!-- /Judul publikasi input -->
+
+									 <!-- Image file uploader -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Gambar Login <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<input type="file" class="form-control @error('image') is-invalid @enderror required" id="customFile" name="image">
+											@error('image')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /image file uploader -->
 
 								</div>
 
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-                            <a href="{{ route('status.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+                            <a href="{{route('loggambar.index')}}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
 							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
 							<button type="submit" class="btn btn-primary ms-3 ">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>

@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\MenuProfile;
+namespace App\Http\Controllers\MenuLayanan;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\MenuProfile\SejarahModel;
+use App\Models\backend\MenuLayanan\LayananModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
-class SejarahController extends Controller
+class LayananController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = SejarahModel::select('*');
+        $query = LayananModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
-                ->addColumn('image_sejarah', function ($query) {
+                ->addColumn('image_layanan', function ($query) {
                     $url = asset('storage/romadan_gambar_web/' . $query->image);
                     return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('sejarah.edit', encrypt($query->id));
-                    $hapus = route('sejarah.destroy', encrypt($query->id));
+                    $edit = route('layanan.edit', encrypt($query->id));
+                    $hapus = route('layanan.destroy', encrypt($query->id));
                     return '<div class="d-inline-flex">
 											<div class="dropdown">
 												<a href="#" class="text-body" data-bs-toggle="dropdown">
@@ -54,11 +54,11 @@ class SejarahController extends Controller
                 })
 
 
-                ->rawColumns(['opsi', 'image_sejarah'])
+                ->rawColumns(['opsi', 'image_layanan'])
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.sejarah.index');
+        return view('backend.layanan.index');
     }
 
     /**
@@ -66,7 +66,7 @@ class SejarahController extends Controller
      */
     public function create()
     {
-        return view('backend.sejarah.create');
+        return view('backend.layanan.create');
     }
 
     /**
@@ -78,7 +78,7 @@ class SejarahController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'judul' => 'required',
-                'sejarah' => 'required',
+                'layanan' => 'required',
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000',
             ]);
 
@@ -89,18 +89,18 @@ class SejarahController extends Controller
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'judul' => $request->judul,
-                'sejarah' => $request->sejarah,
+                'layanan' => $request->layanan,
                 'image' => $image->hashName(),
 
             ];
 
 
-            SejarahModel::create($data);
+            LayananModel::create($data);
 
             //redirect to index
-            return redirect()->back()->with(['success' => 'Sejarah Berhasil Ditambahkan!']);
+            return redirect()->back()->with(['success' => 'Layanan Berhasil Ditambahkan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Sejarah Gagal Ditambahkan! error :' . $e->getMessage()]);
+            return redirect()->back()->with(['failed' => 'Layanan Gagal Ditambahkan! error :' . $e->getMessage()]);
         }
     }
 
@@ -118,8 +118,8 @@ class SejarahController extends Controller
     public function edit(string $id)
     {
         // $kategori = ref_kategori::findOrFail(decrypt($id));
-        $sejarah = SejarahModel::findOrFail(decrypt($id));
-        return view('backend.sejarah.edit', compact('sejarah'));
+        $layanan = LayananModel::findOrFail(decrypt($id));
+        return view('backend.layanan.edit', compact('layanan'));
     }
 
     /**
@@ -131,13 +131,13 @@ class SejarahController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'judul' => 'required',
-                'sejarah' => 'required',
+                'layanan' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
             ]);
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'judul' => $request->judul,
-                'sejarah' => $request->sejarah,
+                'layanan' => $request->layanan,
 
             ];
             if ($request->hasFile('image')) {
@@ -151,7 +151,7 @@ class SejarahController extends Controller
                 $image = $request->file('image');
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
-                $data_gambar = SejarahModel::findOrFail(decrypt($id));
+                $data_gambar = LayananModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
 
                 $data = [
@@ -159,10 +159,10 @@ class SejarahController extends Controller
                 ];
             }
 
-            SejarahModel::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('sejarah.index')->with('success', "Sejarah berhasil diupdate!");
+            LayananModel::findOrFail(decrypt($id))->update($data);
+            return redirect()->route('layanan.index')->with('success', "Layanan berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('sejarah.index')->with(['failed' => 'Sejarah Gagal Di Update! error :' . $e->getMessage()]);
+            return redirect()->route('layanan.index')->with(['failed' => 'Layanan Gagal Di Update! error :' . $e->getMessage()]);
         }
     }
 
@@ -172,12 +172,12 @@ class SejarahController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data_gambar = SejarahModel::findOrFail(decrypt($id));
+            $data_gambar = LayananModel::findOrFail(decrypt($id));
             File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
-            SejarahModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('sejarah.index')->with('success', "Sejarah berhasil dihapus!");
+            LayananModel::findOrFail(decrypt($id))->delete();
+            return redirect()->route('layanan.index')->with('success', "Layanan berhasil dihapus!");
         } catch (Exception $e) {
-            return redirect()->route('sejarah.index')->with(['failed' => 'Sejarah Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            return redirect()->route('layanan.index')->with(['failed' => 'Layanan Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
         }
     }
 }

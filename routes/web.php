@@ -1,18 +1,24 @@
 <?php
 
+use App\Http\Controllers\Backend\HomeBeController;
 use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\Frontend\HomeFeController;
+use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Medsos\MedsosController;
+use App\Http\Controllers\MenuKegiatan\KegiatanController;
+use App\Http\Controllers\MenuLayanan\LayananController;
 use App\Http\Controllers\MenuProfile\SejarahController;
 use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
 use App\Http\Controllers\MenuProfile\VisiMisiController;
+use App\Http\Controllers\MenuPublikasi\PublikasiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Publikasi\ArtikelController;
 use App\Http\Controllers\Publikasi\BeritaController;
 use App\Http\Controllers\Publikasi\WartaController;
 use App\Http\Controllers\Referensi\RefKategoriController;
 use App\Http\Controllers\Referensi\RefStatusController;
+use App\Http\Controllers\Referensi\RefTipeController;
 use App\Http\Controllers\UserManajemen\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +58,12 @@ Route::group(
             Route::get('/organisasi', [HomeFeController::class, 'profile_organisasi'])->name('organisasi-fe');
         });
 
+        // MENU PROFILE
+        Route::prefix('/layanan')->group(function () {
+            // VISI DAN MISI
+            Route::get('/', [HomeFeController::class, 'layanan_layanan'])->name('layanan-fe');
+        });
+
         // MENU PUBLIKASI
         Route::prefix('/publikasi')->group(function () {
             // VISI DAN MISI
@@ -79,38 +91,26 @@ Route::group(
 
 Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
-    Route::get('/home', function () {
-        return view('backend.dashboard');
-    })->name('home');
+    // Route::get('/home', function () {
+    //     return view('backend.dashboard');
+    // })->name('home');
 
     // INTERFACE BACKEND
     Route::prefix('/romadan-interface')->group(function () {
 
+        // HOME
+        Route::get('/dashboard', [HomeBeController::class, 'index'])->name('home');
+
+
         // USERS
         Route::resource('users', UserController::class);
 
-        // BERITA
-        Route::resource('/berita', BeritaController::class);
-        Route::get('/berita-sampah', [BeritaController::class, 'beritaSampah'])->name('berita.sampah');
-        Route::post('/{beritum}/restore-berita', [BeritaController::class, 'restore'])->name('berita.restore');
-        Route::delete('/{beritum}/force-delete-berita', [BeritaController::class, 'forceDelete'])->name('berita.force-delete');
-        Route::post('/restore-all-berita', [BeritaController::class, 'restoreAll'])->name('berita.restore-all');
-
-        // ARTIKEL
-        Route::resource('/artikel', ArtikelController::class);
-        Route::get('/artikel-sampah', [ArtikelController::class, 'artikelSampah'])->name('artikel.sampah');
-        Route::post('/{artikum}/restore-artikel', [ArtikelController::class, 'restore'])->name('artikel.restore');
-        Route::delete('/{artikum}/force-delete-artikel', [ArtikelController::class, 'forceDelete'])->name('artikel.force-delete');
-        Route::post('/restore-all-artikel', [ArtikelController::class, 'restoreAll'])->name('artikel.restore-all');
-
-        // WARTA
-        Route::resource('/warta', WartaController::class);
-        Route::get('/warta-sampah', [WartaController::class, 'wartaSampah'])->name('warta.sampah');
-        Route::post('/{beritum}/restore-warta', [WartaController::class, 'restore'])->name('warta.restore');
-        Route::delete('/{beritum}/force-delete-warta', [WartaController::class, 'forceDelete'])->name('warta.force-delete');
-        Route::post('/restore-all-warta', [WartaController::class, 'restoreAll'])->name('warta.restore-all');
-
-
+        // PUBLIKASI
+        Route::resource('/publikasi', PublikasiController::class);
+        Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
+        Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
+        Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
+        Route::post('/restore-all-publikasi', [PublikasiController::class, 'restoreAllPublikasi'])->name('publikasi.restore-all');
 
         // FILE
         Route::resource('file', FileController::class);
@@ -132,14 +132,30 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
         });
 
+        // MENU LAYANAN
+        Route::prefix('/layanan')->group(function () {
+            // TENTANG
+            Route::resource('layanan', LayananController::class);
+        });
+
+        // MENU LAYANAN
+        Route::prefix('/kegiatan')->group(function () {
+            // TENTANG
+            Route::resource('kegiatan', KegiatanController::class);
+        });
+
         // REFERENSI
         Route::resource('kategori', RefKategoriController::class);
         Route::resource('status', RefStatusController::class);
+        Route::resource('tipe', RefTipeController::class);
 
 
 
         // MEDSOS
         Route::resource('medsos', MedsosController::class);
+
+        // LOGIN GAMBAR
+        Route::resource('loggambar', LoginController::class);
     });
 
 
