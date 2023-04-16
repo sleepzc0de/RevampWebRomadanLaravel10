@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuLayanan\LayananModel;
 use App\Models\backend\MenuProfile\SejarahModel;
 use App\Models\backend\MenuProfile\StrukturOrganisasiModel;
@@ -50,6 +51,14 @@ class HomeFeController extends Controller
         return view('frontend.profile.fe_organisasi', compact(['medsos', 'tentang', 'organisasi']));
     }
 
+    public function profile_tentang()
+    {
+        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+        $tentang = TentangModel::first()->get();
+        $organisasi = StrukturOrganisasiModel::firstorFail()->get();
+        return view('frontend.profile.fe_tentang', compact(['medsos', 'tentang', 'organisasi']));
+    }
+
     public function publikasi_berita($publikasi)
     {
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Berita')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
@@ -72,5 +81,22 @@ class HomeFeController extends Controller
         $tentang = TentangModel::first()->get();
         $layanan = LayananModel::firstorFail()->get();
         return view('frontend.layanan.layanan', compact(['medsos', 'tentang', 'layanan']));
+    }
+
+    public function kegiatan_index()
+    {
+        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+        $tentang = TentangModel::first()->get();
+        $kegiatan = KegiatanModel::paginate(9);
+        return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
+    }
+
+    public function kegiatan_search(Request $request)
+    {
+        $search = $request->search;
+        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+        $tentang = TentangModel::first()->get();
+        $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->paginate();
+        return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
     }
 }

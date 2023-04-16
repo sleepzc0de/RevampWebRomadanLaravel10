@@ -79,6 +79,15 @@
     line-height: 40px;
 }
 
+.romadan-kegiatan-pencarian-kosong {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #ae0f1f;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 40px;
+}
+
 .romadan-kumpulan-peraturan {
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: #0F5FAE;
@@ -366,3 +375,25 @@ border-radius: 3%;
     line-height: 24px;
     justify-content: space-between;
 }
+
+/* KEGIATAN */
+.btn3-kegiatan {
+    background: #003060;
+    border-radius: 10px;
+}
+
+.btn3-kegiatan:hover {
+    background-color: #003060;
+    color: white;
+}
+
+.btn3-kegiatan-refresh {
+    background: #f1c232;
+    border-radius: 10px;
+}
+
+.btn3-kegiatan-refresh:hover {
+    background-color: #f1c232;
+    color: white;
+}
+

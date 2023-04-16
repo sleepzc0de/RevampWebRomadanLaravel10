@@ -56,12 +56,21 @@ Route::group(
             Route::get('/sejarah', [HomeFeController::class, 'profile_sejarah'])->name('sejarah-fe');
             // ORGANISASI
             Route::get('/organisasi', [HomeFeController::class, 'profile_organisasi'])->name('organisasi-fe');
+            // ORGANISASI
+            Route::get('/tentang-kami', [HomeFeController::class, 'profile_tentang'])->name('tentang-fe');
         });
 
-        // MENU PROFILE
+        // MENU lAYANAN
         Route::prefix('/layanan')->group(function () {
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'layanan_layanan'])->name('layanan-fe');
+        });
+
+        // MENU KEGIATAN
+        Route::prefix('/kegiatan')->group(function () {
+            // VISI DAN MISI
+            Route::get('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
+            Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
         });
 
         // MENU PUBLIKASI
@@ -138,7 +147,7 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::resource('layanan', LayananController::class);
         });
 
-        // MENU LAYANAN
+        // MENU KEGIATAN
         Route::prefix('/kegiatan')->group(function () {
             // TENTANG
             Route::resource('kegiatan', KegiatanController::class);

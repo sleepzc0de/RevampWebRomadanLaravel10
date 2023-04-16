@@ -54,11 +54,11 @@
 					</div>
 					@empty
 					<div class="container">
-				<div class="title-section-ourmenu t-center m-b-22">
-					<h5 class="romadan-berita-kosong m-t-2">
-						Berita Terkini Kosong !
-					</h5>
-				</div>
+							<div class="title-section-ourmenu t-center m-b-22">
+								<h5 class="romadan-berita-kosong m-t-2">
+									Berita Terkini Kosong !
+								</h5>
+							</div>
 					</div>
 						
 					@endforelse

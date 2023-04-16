@@ -161,6 +161,13 @@ class KegiatanController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $data_gambar = KegiatanModel::findOrFail(decrypt($id));
+            File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+            KegiatanModel::findOrFail(decrypt($id))->delete();
+            return redirect()->route('kegiatan.index')->with('success', "Kegiatan berhasil dihapus!");
+        } catch (Exception $e) {
+            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+        }
     }
 }

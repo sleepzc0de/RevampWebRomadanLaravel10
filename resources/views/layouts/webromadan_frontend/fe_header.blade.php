@@ -1,6 +1,6 @@
 	<header>
 		<!-- Header desktop -->
-		<div class="wrap-menu-header gradient1 trans-0-4">
+		<div class="wrap-menu-header gradient1 trans-0-10">
 			<div class="container h-full">
 				<div class="wrap_header trans-0-3">
 					<!-- Logo -->
@@ -21,14 +21,18 @@
 									<li><a href="{{route('visi-misi-fe')}}">Visi Misi</a></li>
 									<li><a href="{{route('sejarah-fe')}}">Sejarah</a></li>
 									<li><a href="{{route('organisasi-fe')}}">Organisasi</a></li>
+									<li><a href="{{route('tentang-fe')}}">Tentang</a></li>
 									{{-- END MENU PROFILE --}}
 									</ul>
 								</li>
 								<li>
 									<a href="{{route('layanan-fe')}}">Layanan</a>
 								</li>
+								<li>
+									<a href="{{route('kegiatan-index-fe')}}">Kegiatan</a>
+								</li>
 								<li class="dropdown">
-									<a href="#" class="" data-toggle="dropdown">Kegiatan </span></a>
+									<a href="#" class="" data-toggle="dropdown">Kegiatan BelumFIX</span></a>
 									<ul class="dropdown-menu p-l-20 p-l-0-xl mt-4 dropdown-menu-romadan">
 									<li><a href="#">Kegiatan 1</a></li>
 									<li class="dropdown-submenu-romadan">
