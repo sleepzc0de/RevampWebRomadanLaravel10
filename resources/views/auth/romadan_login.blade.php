@@ -17,7 +17,7 @@
 @section('content')
 
 <div class="page-content" style="background-color: white">
-<div class="col-lg-6" style="background-image: url({{asset('webromadan/fe/images/romadan/ASEAN2.png')}});background-size: cover;background-position: center;
+<div class="col-lg-6" style="background-image: url({{asset('storage/romadan_gambar_web/'.$gambar->image)}});background-size: cover;background-position: center;
 ">
 
 </div>

@@ -141,7 +141,7 @@
                     </a>
                     <ul class="nav-group-sub collapse">
                         <li class="nav-item"><a href="{{route('medsos.index')}}" class="nav-link">Media Sosial</a></li>
-                        <li class="nav-item"><a href="{{route('medsos.index')}}" class="nav-link">Gambar Login</a></li>
+                        <li class="nav-item"><a href="{{route('loggambar.index')}}" class="nav-link">Gambar Login</a></li>
                     </ul>
                 </li>
                 {{-- END FRONTEND SISTEM --}}

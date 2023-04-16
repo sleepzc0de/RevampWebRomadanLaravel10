@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Login\LoginModel;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.romadan_login');
+        $gambar = LoginModel::orderBy('id', 'DESC')->firstorFail();
+        // dd($gambar);
+        return view('auth.romadan_login', compact('gambar'));
     }
 
     /**

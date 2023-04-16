@@ -33,9 +33,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/coba-login', function () {
-    return view('cobalogin');
-});
+// Route::get('/coba-login', function () {
+//     return view('cobalogin');
+// });
 
 
 // FRONT END
