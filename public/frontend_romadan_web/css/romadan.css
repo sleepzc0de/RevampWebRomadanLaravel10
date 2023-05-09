@@ -382,6 +382,11 @@ border-radius: 3%;
     border-radius: 10px;
 }
 
+.btn3-kegiatan-2 {
+    background: #600000;
+    border-radius: 10px;
+}
+
 .btn3-kegiatan:hover {
     background-color: #003060;
     color: white;

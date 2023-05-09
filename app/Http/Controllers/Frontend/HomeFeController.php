@@ -83,20 +83,28 @@ class HomeFeController extends Controller
         return view('frontend.layanan.layanan', compact(['medsos', 'tentang', 'layanan']));
     }
 
-    public function kegiatan_index()
+    public function kegiatan_index(Request $request)
     {
         $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
         $tentang = TentangModel::first()->get();
-        $kegiatan = KegiatanModel::paginate(9);
+
+        if ($request->search) {
+            $search = $request->search;
+            $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
+        } else {
+            $kegiatan = KegiatanModel::latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
         return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
     }
 
-    public function kegiatan_search(Request $request)
-    {
-        $search = $request->search;
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
-        $tentang = TentangModel::first()->get();
-        $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->paginate();
-        return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
-    }
+    // public function kegiatan_search(Request $request)
+    // {
+    //     $search = $request->search;
+    //     $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+    //     $tentang = TentangModel::first()->get();
+    //     $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->paginate(1);
+    //     return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
+    // }
 }

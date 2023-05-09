@@ -14,12 +14,15 @@
 						Kegiatan
 					</h5>
                     <br>
-                    <form class="form-outline" action="{{route('kegiatan-search-fe')}}" method="get" autocomplete="off">
+                    <form class="form-outline" action="{{route('kegiatan-index-fe')}}" method="get" autocomplete="off">
                         <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
 							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="search" placeholder="Cari Kegiatan">
 						</div>
 						<div class="wrap-btn-booking flex-c-m m-t-13">
-						<button type="submit" class="btn3-kegiatan flex-c-m size36 txt11 trans-0-4">
+					<button type="reset" class="btn3-kegiatan-2 flex-c-m size36 txt11 trans-0-4 mr-2">
+						Clear
+					</button>
+					<button type="submit" class="btn3-kegiatan flex-c-m size36 txt11 trans-0-4">
 						Cari
 					</button>
 					<a class="btn3-kegiatan-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('kegiatan-index-fe')}}">Refresh</a>
@@ -69,7 +72,7 @@
 					<div class="container">
 							<div class="title-section-ourmenu t-center m-b-22">
 								<h3 class="romadan-kegiatan-pencarian-kosong m-t-2">
-									Mohon maaf, Data yang dicari tidak ada !
+									Mohon maaf Bapak/Ibu, data yang dicari tidak ada !
 								</h3>
 							</div>
 					</div>
@@ -78,7 +81,7 @@
 
 				</div>
 		<div class="d-flex justify-content-center mt-5">
-              {!! $kegiatan->links() !!}
+              {!! $kegiatan->appends(request()->input())->links() !!}
         </div>
             </div>
 	</section>
