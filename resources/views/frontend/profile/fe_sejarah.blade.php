@@ -32,7 +32,20 @@
 				</div>
 
 				@empty
-							KOSONG
+							<div class="txt-judul-visi-misi t-center m-b-35 m-t-5" style="text-align: justify;">
+							Sejarah
+                        </div>
+				<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
+                                <div class="container">
+                                    <div class="title-section-ourmenu m-b-22">
+                                            <h5 class="romadan-faq m-t-2">
+                                                Tidak ada Data, Harap hubungi Administrator !
+                                            </h5>
+                                    </div>
+                                    
+                                </div>
+                            
+                            </section>
 				@endforelse
 			</div>
 		</div>

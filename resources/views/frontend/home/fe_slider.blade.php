@@ -41,7 +41,7 @@
 
 						<div class="wrap-btn-slide1 animated visible-false" data-appear="zoomIn">
 							<!-- Button1 -->
-							<a href="menu.html" class="btn-romadan-title flex-c-m size-romadan1 txt3-romadan trans-0-4">
+							<a href="mailto:kemenkeu.prime@kemenkeu.go.id" class="btn-romadan-title flex-c-m size-romadan1 txt3-romadan trans-0-4">
 								Hubungi Admin
 							</a>
 						</div>

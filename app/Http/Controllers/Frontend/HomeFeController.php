@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\backend\MenuFAQ\FAQModel;
+use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuLayanan\LayananModel;
 use App\Models\backend\MenuProfile\SejarahModel;
@@ -18,45 +20,45 @@ class HomeFeController extends Controller
 {
     public function index()
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
-        $tentang = TentangModel::first()->get();
+        // 
+        $tentang = TentangModel::latest()->take(1)->get();
         $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
 
 
         // dd($berita_terkini);
-        return view('frontend.home_fe', compact(['medsos', 'tentang', 'berita_terkini']));
+        return view('frontend.home_fe', compact(['tentang', 'berita_terkini']));
     }
 
     public function profile_visi_misi()
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+
         $tentang = TentangModel::first()->get();
-        $visimisi = VisiMisiModel::firstorFail()->get();
-        return view('frontend.profile.fe_visi_misi', compact(['medsos', 'tentang', 'visimisi']));
+        $visimisi = VisiMisiModel::latest()->take(1)->get();
+        return view('frontend.profile.fe_visi_misi', compact(['tentang', 'visimisi']));
     }
 
     public function profile_sejarah()
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+
         $tentang = TentangModel::first()->get();
-        $sejarah = SejarahModel::firstorFail()->get();
-        return view('frontend.profile.fe_sejarah', compact(['medsos', 'tentang', 'sejarah']));
+        $sejarah = SejarahModel::latest()->take(1)->get();
+        return view('frontend.profile.fe_sejarah', compact(['tentang', 'sejarah']));
     }
 
     public function profile_organisasi()
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+
         $tentang = TentangModel::first()->get();
-        $organisasi = StrukturOrganisasiModel::firstorFail()->get();
-        return view('frontend.profile.fe_organisasi', compact(['medsos', 'tentang', 'organisasi']));
+        $organisasi = StrukturOrganisasiModel::latest()->take(1)->get();
+        return view('frontend.profile.fe_organisasi', compact(['tentang', 'organisasi']));
     }
 
     public function profile_tentang()
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
-        $tentang = TentangModel::first()->get();
-        $organisasi = StrukturOrganisasiModel::firstorFail()->get();
-        return view('frontend.profile.fe_tentang', compact(['medsos', 'tentang', 'organisasi']));
+
+        // $tentang = TentangModel::first()->get();
+        $tentang = TentangModel::latest()->take(1)->get();
+        return view('frontend.profile.fe_tentang', compact(['tentang']));
     }
 
     public function publikasi_berita($publikasi)
@@ -77,34 +79,65 @@ class HomeFeController extends Controller
 
     public function layanan_layanan()
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
-        $tentang = TentangModel::first()->get();
-        $layanan = LayananModel::firstorFail()->get();
-        return view('frontend.layanan.layanan', compact(['medsos', 'tentang', 'layanan']));
+
+        // $tentang = TentangModel::first()->get();
+        $layanan = LayananModel::latest()->take(1)->get();
+        return view('frontend.layanan.layanan', compact(['layanan']));
     }
 
     public function kegiatan_index(Request $request)
     {
-        $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
-        $tentang = TentangModel::first()->get();
 
-        if ($request->search) {
-            $search = $request->search;
+        // $tentang = TentangModel::first()->get();
+
+        if ($request->cari_kegiatan) {
+            $search = $request->cari_kegiatan;
             $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
         } else {
             $kegiatan = KegiatanModel::latest()->paginate(9);
             // return redirect()->back()->with('message', 'Empty Search');
         }
 
-        return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
+        return view('frontend.kegiatan.fe-index', compact(['kegiatan']));
     }
+
+    public function kegiatan_detail($kegiatan)
+    {
+        $data = KegiatanModel::where('slug', $kegiatan)->firstorFail();
+
+        // dd($data);
+
+        return view('frontend.kegiatan.fe-detail', compact(['data',]));
+    }
+
+    public function infopublik_index()
+    {
+
+        // $tentang = TentangModel::first()->get();
+        $info_publik = InformasiPublikModel::orderBy("id", "DESC")->take(1)->get();
+        // dd($info_publik);
+        return view('frontend.infopublik.index', compact(['info_publik']));
+    }
+
+
+    public function faq_index()
+    {
+
+        $tentang = TentangModel::first()->get();
+        $faq = FAQModel::all();
+        // dd($faq);
+        return view('frontend.faq.fe-index', compact(['tentang', 'faq']));
+    }
+
+
+
 
     // public function kegiatan_search(Request $request)
     // {
     //     $search = $request->search;
-    //     $medsos = medsos::orderBy("id", "ASC")->take(5)->get();
+    //     
     //     $tentang = TentangModel::first()->get();
     //     $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->paginate(1);
-    //     return view('frontend.kegiatan.index', compact(['medsos', 'tentang', 'kegiatan']));
+    //     return view('frontend.kegiatan.index', compact([, 'tentang', 'kegiatan']));
     // }
 }

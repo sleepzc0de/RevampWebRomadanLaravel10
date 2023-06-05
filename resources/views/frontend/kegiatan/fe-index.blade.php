@@ -14,9 +14,10 @@
 						Kegiatan
 					</h5>
                     <br>
+					@forelse ($kegiatan as $item)
                     <form class="form-outline" action="{{route('kegiatan-index-fe')}}" method="get" autocomplete="off">
                         <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
-							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="search" placeholder="Cari Kegiatan">
+							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_kegiatan" placeholder="Cari Kegiatan">
 						</div>
 						<div class="wrap-btn-booking flex-c-m m-t-13">
 					<button type="reset" class="btn3-kegiatan-2 flex-c-m size36 txt11 trans-0-4 mr-2">
@@ -31,7 +32,7 @@
                     </form>
 				</div>
 			<div class="row">
-					@forelse ($kegiatan as $item)
+					
 						<div class="col-md-4 p-t-30">
 						<!-- Block1 -->
 						<div class="blo4">
@@ -52,14 +53,14 @@
 							</div>
 							
 
-							<div class="text-blo4 p-t-33">
-								<div class="txt32 flex-w p-b-24">
+							<div class="text-blo4 p-t-10">
+								<div class="txt32 flex-w p-b-4">
 									<span>
 										{{date('d F Y', strtotime($item->created_at))}}
 									</span>
 								</div>
 								<div>
-									<a href="{{route('berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
+									<a href="{{route('kegiatan-detail-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
 								</div>
 
 
@@ -69,13 +70,17 @@
 						</div>
 					</div>
 					@empty
-					<div class="container">
-							<div class="title-section-ourmenu t-center m-b-22">
-								<h3 class="romadan-kegiatan-pencarian-kosong m-t-2">
-									Mohon maaf Bapak/Ibu, data yang dicari tidak ada !
-								</h3>
-							</div>
-					</div>
+					<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
+                                <div class="container">
+                                    <div class="title-section-ourmenu m-b-22">
+                                            <h5 class="romadan-faq m-t-2">
+                                                Tidak ada Data, Harap hubungi Administrator !
+                                            </h5>
+                                    </div>
+                                    
+                                </div>
+                            
+                            </section>
 						
 					@endforelse
 

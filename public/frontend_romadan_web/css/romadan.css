@@ -70,6 +70,34 @@
     line-height: 40px;
 }
 
+.romadan-infopublik {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #000000;
+}
+
+.romadan-infopublik > p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #000000;
+}
+
+
+.romadan-faq {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #600000;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+}
+
 .romadan-berita-kosong {
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: #ae0f1f;
@@ -365,6 +393,42 @@ border-radius: 3%;
     font-size: 32px;
     line-height: 40px;
     color: #0F5FAE;
+}
+
+.txt-judul-faq {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 40px;
+    color: #000000;
+}
+
+.txt-judul-kegiatan-detail {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 40px;
+    color: #000000;
+}
+
+.txt-judul-kegiatan-detail > p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: #000000;
+}
+
+.txt-judul-kegiatan-detail-tanggal {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #74777F;
 }
 
 .txt-layanan>p {

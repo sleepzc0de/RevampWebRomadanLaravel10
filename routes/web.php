@@ -5,6 +5,8 @@ use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\Frontend\HomeFeController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Medsos\MedsosController;
+use App\Http\Controllers\MenuFAQ\FAQController;
+use App\Http\Controllers\MenuInformasiPublik\InformasiPublikController;
 use App\Http\Controllers\MenuKegiatan\KegiatanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
 use App\Http\Controllers\MenuProfile\SejarahController;
@@ -70,7 +72,23 @@ Route::group(
         Route::prefix('/kegiatan')->group(function () {
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
-            Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
+            // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
+            // VISI DAN MISI
+            Route::get('/detail/{kegiatan}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
+        });
+
+        // MENU INFORMASI PUBLIK
+        Route::prefix('/informasi-publik')->group(function () {
+            // VISI DAN MISI
+            Route::get('/', [HomeFeController::class, 'infopublik_index'])->name('informasi-publik-index-fe');
+            // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
+        });
+
+        // MENU FAQ
+        Route::prefix('/faq')->group(function () {
+            // VISI DAN MISI
+            Route::get('/', [HomeFeController::class, 'faq_index'])->name('faq-index-fe');
+            // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
         });
 
         // MENU PUBLIKASI
@@ -149,8 +167,23 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
         // MENU KEGIATAN
         Route::prefix('/kegiatan')->group(function () {
-            // TENTANG
+
             Route::resource('kegiatan', KegiatanController::class);
+        });
+
+        // MENU INFORMASI PUBLIK
+
+        Route::prefix('/informasi-publik')->group(function () {
+
+            Route::resource('informasi-publik', InformasiPublikController::class);
+        });
+
+
+        // MENU FAQ
+
+        Route::prefix('/faq')->group(function () {
+
+            Route::resource('faq', FAQController::class);
         });
 
         // REFERENSI

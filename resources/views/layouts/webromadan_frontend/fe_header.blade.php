@@ -31,7 +31,7 @@
 								<li>
 									<a href="{{route('kegiatan-index-fe')}}">Kegiatan</a>
 								</li>
-								<li class="dropdown">
+								{{-- <li class="dropdown">
 									<a href="#" class="" data-toggle="dropdown">Kegiatan BelumFIX</span></a>
 									<ul class="dropdown-menu p-l-20 p-l-0-xl mt-4 dropdown-menu-romadan">
 									<li><a href="#">Kegiatan 1</a></li>
@@ -51,9 +51,9 @@
 									</li>
 									<li><a href="#">Kegiatan 3</a></li>
 									</ul>
-								</li>
+								</li> --}}
 								<li>
-									<a href="menu.html">Informasi Publik</a>
+									<a href="{{route('informasi-publik-index-fe')}}">Informasi Publik</a>
 								</li>
 								<li class="dropdown">
 									<a href="#" class="" data-toggle="dropdown">Publikasi </span></a>
@@ -66,7 +66,7 @@
 									</ul>
 								</li>
 								<li>
-									<a href="menu.html">FAQ</a>
+									<a href="{{route('faq-index-fe')}}">FAQ</a>
 								</li>
 								<li>
 									<a href="menu.html">Search</a>

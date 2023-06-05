@@ -247,8 +247,8 @@ iframe {
     border-right: solid 6px #003060;
     border-bottom: solid 6px #003060;
     border-left: solid 6px #003060;
-    width: 48px;
-    height: 48px;
+    width: 130px;
+    height: 130px;
     display: inline-block;
     box-sizing: border-box
 }
@@ -256,14 +256,14 @@ iframe {
 .cp-meter:before {
     border-radius: 3px;
     content: " ";
-    width: 6px;
-    height: 12px;
+    width: 10px;
+    height: 60px;
     display: inline-block;
     box-sizing: border-box;
     background-color: #003060;
     position: absolute;
     top: 5px;
-    left: 16px;
+    left: 50px;
     transform-origin: center bottom;
     animation: cp-meter-animate-before 1s linear infinite
 }

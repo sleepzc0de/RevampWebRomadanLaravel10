@@ -112,6 +112,18 @@
                     </ul>
                 </li>
                 {{-- END INFORMASI PUBLIK --}}
+
+                {{-- FAQ --}}
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="ph-balloon"></i>
+                        <span>FAQ</span>
+                    </a>
+                    <ul class="nav-group-sub collapse">
+                        <li class="nav-item"><a href="{{route('faq.index')}}" class="nav-link">FAQ</a></li>
+                    </ul>
+                </li>
+                {{-- END INFORMASI PUBLIK --}}
                 
 
                 {{-- REFERENSI --}}

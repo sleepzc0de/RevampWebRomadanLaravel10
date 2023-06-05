@@ -29,6 +29,18 @@
 				</div>
 
 				@empty
+				
+                  <div class="container">   
+					<div class="title-section-ourmenu t-center m-b-22">
+					<h5 class="romadan-berita m-t-2">
+						Tentang Kami
+					</h5>
+				</div>                      
+				<h5 class="romadan-faq m-t-2">
+					Tentang Kami Kosong !
+				</h5>
+				  </div>
+                                
 							
 				@endforelse
 			</div>

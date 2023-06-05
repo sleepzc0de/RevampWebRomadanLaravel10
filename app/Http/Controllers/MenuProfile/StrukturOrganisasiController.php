@@ -160,9 +160,9 @@ class StrukturOrganisasiController extends Controller
             }
 
             StrukturOrganisasiModel::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('struktur-organisasi.index')->with('success', "struktur-organisasi berhasil diupdate!");
+            return redirect()->route('struktur-organisasi.index')->with('success', "struktur organisasi berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('struktur-organisasi.index')->with(['failed' => 'struktur-organisasi Gagal Di Update! error :' . $e->getMessage()]);
+            return redirect()->route('struktur-organisasi.index')->with(['failed' => 'struktur organisasi Gagal Di Update! error :' . $e->getMessage()]);
         }
     }
 
@@ -175,9 +175,9 @@ class StrukturOrganisasiController extends Controller
             $data_gambar = StrukturOrganisasiModel::findOrFail(decrypt($id));
             File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
             StrukturOrganisasiModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('struktur-organisasi.index')->with('success', "Visi Misi berhasil dihapus!");
+            return redirect()->route('struktur-organisasi.index')->with('success', "Struktur Organisasi berhasil dihapus!");
         } catch (Exception $e) {
-            return redirect()->route('struktur-organisasi.index')->with(['failed' => 'Visi Misi Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            return redirect()->route('struktur-organisasi.index')->with(['failed' => 'Struktur Organisasi Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
         }
     }
 }

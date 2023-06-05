@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\MenuKegiatan;
+namespace App\Http\Controllers\MenuInformasiPublik;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\MenuKegiatan\KegiatanModel;
+use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class KegiatanController extends Controller
+class InformasiPublikController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = KegiatanModel::select('*');
+        $query = InformasiPublikModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
-                ->addColumn('image_kegiatan', function ($query) {
+                ->addColumn('info_pub', function ($query) {
                     $url = asset('storage/romadan_gambar_web/' . $query->image);
                     return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
@@ -76,11 +76,11 @@ class KegiatanController extends Controller
                 })
 
 
-                ->rawColumns(['opsi', 'image_kegiatan', 'file_kegiatan'])
+                ->rawColumns(['opsi', 'info_pub', 'file_kegiatan'])
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.kegiatan.index');
+        return view('backend.infopub.index');
     }
 
     /**
@@ -136,7 +136,7 @@ class KegiatanController extends Controller
             ];
 
 
-            KegiatanModel::create($data);
+            InformasiPublikModel::create($data);
 
             //redirect to index
             return redirect()->back()->with(['success' => 'Data Kegiatan Berhasil Disimpan!']);
@@ -150,7 +150,6 @@ class KegiatanController extends Controller
      */
     public function show(string $id)
     {
-
         return redirect()->route('kegiatan.index');
     }
 
@@ -159,7 +158,7 @@ class KegiatanController extends Controller
      */
     public function edit(string $id)
     {
-        $kegiatan = KegiatanModel::findOrFail(decrypt($id));
+        $kegiatan = InformasiPublikModel::findOrFail(decrypt($id));
         // dd($kegiatan);
         return view('backend.kegiatan.edit', compact(['kegiatan']));
     }
@@ -207,7 +206,7 @@ class KegiatanController extends Controller
                 $image = $request->file('image');
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
-                $data_gambar = KegiatanModel::findOrFail(decrypt($id));
+                $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
 
                 $data = [
@@ -226,7 +225,7 @@ class KegiatanController extends Controller
                 $file = $request->file('file');
                 $file->storeAs('public/romadan_file_web', $file->hashName());
 
-                $data_file = KegiatanModel::findOrFail(decrypt($id));
+                $data_file = InformasiPublikModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
 
                 $data = [
@@ -234,7 +233,7 @@ class KegiatanController extends Controller
                 ];
             }
 
-            KegiatanModel::findOrFail(decrypt($id))->update($data);
+            InformasiPublikModel::findOrFail(decrypt($id))->update($data);
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('kegiatan.index')->with('success', "Kegiatan $request->judul berhasil diupdate!");
         } catch (Exception $e) {
@@ -248,9 +247,9 @@ class KegiatanController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data_gambar = KegiatanModel::findOrFail(decrypt($id));
+            $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
             File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
-            KegiatanModel::findOrFail(decrypt($id))->delete();
+            InformasiPublikModel::findOrFail(decrypt($id))->delete();
             return redirect()->route('kegiatan.index')->with('success', "Kegiatan berhasil dihapus!");
         } catch (Exception $e) {
             return redirect()->route('kegiatan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
