@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('informasi_publik', function (Blueprint $table) {
+        Schema::create('infopublik_home', function (Blueprint $table) {
             $table->id();
-            $table->string('judul_list_informasi');
-            $table->text('isi_list_informasi');
-            $table->string('link_list_informasi');
+            $table->string('judul');
+            $table->text('isi');
             $table->timestamps();
-            $table->softDeletes($column = 'deleted_at', $precision = 0);
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('informasi_publik');
+        Schema::dropIfExists('infopublik_home');
     }
 };

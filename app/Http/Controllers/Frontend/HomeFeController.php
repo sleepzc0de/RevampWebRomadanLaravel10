@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuFAQ\FAQModel;
+use App\Models\backend\MenuInformasiPublik\InfopublikHomeModel;
 use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuLayanan\LayananModel;
@@ -32,7 +33,7 @@ class HomeFeController extends Controller
     public function profile_visi_misi()
     {
 
-        $tentang = TentangModel::first()->get();
+        $tentang = TentangModel::first();
         $visimisi = VisiMisiModel::latest()->take(1)->get();
         return view('frontend.profile.fe_visi_misi', compact(['tentang', 'visimisi']));
     }
@@ -40,7 +41,7 @@ class HomeFeController extends Controller
     public function profile_sejarah()
     {
 
-        $tentang = TentangModel::first()->get();
+        $tentang = TentangModel::first();
         $sejarah = SejarahModel::latest()->take(1)->get();
         return view('frontend.profile.fe_sejarah', compact(['tentang', 'sejarah']));
     }
@@ -48,7 +49,7 @@ class HomeFeController extends Controller
     public function profile_organisasi()
     {
 
-        $tentang = TentangModel::first()->get();
+        $tentang = TentangModel::first();
         $organisasi = StrukturOrganisasiModel::latest()->take(1)->get();
         return view('frontend.profile.fe_organisasi', compact(['tentang', 'organisasi']));
     }
@@ -114,9 +115,23 @@ class HomeFeController extends Controller
     {
 
         // $tentang = TentangModel::first()->get();
-        $info_publik = InformasiPublikModel::orderBy("id", "DESC")->take(1)->get();
-        // dd($info_publik);
-        return view('frontend.infopublik.index', compact(['info_publik']));
+
+        $info_publik = InfopublikHomeModel::orderBy("id", "DESC")->take(1)->first();
+        $infolist =  InformasiPublikModel::orderBy("id", "ASC")->take(3)->get();
+        // dd($infolist);
+        return view('frontend.infopublik.index', compact(['info_publik', 'infolist']));
+    }
+
+    public function infopublik_peraturan_index()
+    {
+        $tanggal = date(now());
+        dd($tanggal);
+        return view('frontend.infopublik.peraturan-index');
+    }
+
+    public function infopublik_pedoman_index()
+    {
+        return view('frontend.infopublik.pedoman-index');
     }
 
 

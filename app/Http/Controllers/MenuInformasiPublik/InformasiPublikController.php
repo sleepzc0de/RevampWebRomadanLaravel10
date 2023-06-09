@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MenuInformasiPublik;
 
 use App\Http\Controllers\Controller;
+use App\Models\backend\MenuInformasiPublik\InfopublikHomeModel;
 use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
 use Carbon\Carbon;
 use Exception;
@@ -20,20 +21,10 @@ class InformasiPublikController extends Controller
         $query = InformasiPublikModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
-
-                ->addColumn('info_pub', function ($query) {
-                    $url = asset('storage/romadan_gambar_web/' . $query->image);
-                    return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
-                })
-
-                ->addColumn('file_kegiatan', function ($query) {
-                    $url = asset('storage/romadan_file_web/' . $query->file);
-                    return '<a href="' . $url . '" target="_blank">' . $query->judul . '</a>';
-                })
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('kegiatan.show', encrypt($query->id));
-                    $edit = route('kegiatan.edit', encrypt($query->id));
-                    $hapus = route('kegiatan.destroy', encrypt($query->id));
+                    $preview = route('informasi-publik.show', encrypt($query->id));
+                    $edit = route('informasi-publik.edit', encrypt($query->id));
+                    $hapus = route('informasi-publik.destroy', encrypt($query->id));
                     return '<div class="d-inline-flex">
 											<div class="dropdown">
 												<a href="#" class="text-body" data-bs-toggle="dropdown">
@@ -60,23 +51,8 @@ class InformasiPublikController extends Controller
                 ';
                 })
 
-                ->editColumn('tanggal_mulai', function ($query) {
-                    return date('d-F-Y H:i', strtotime($query->tanggal_mulai));
-                })
-                ->editColumn('tanggal_selesai', function ($query) {
-                    $x = '';
-                    if ($query->tanggal_selesai != null) {
-                        $x = date('d-F-Y H:i', strtotime($query->tanggal_selesai));
-                    }
-                    if ($query->tanggal_selesai == null) {
-                        $x = 'Tidak Diisi';
-                    }
 
-                    return $x;
-                })
-
-
-                ->rawColumns(['opsi', 'info_pub', 'file_kegiatan'])
+                ->rawColumns(['opsi'])
                 ->addIndexColumn()
                 ->make(true);
         }
@@ -88,7 +64,12 @@ class InformasiPublikController extends Controller
      */
     public function create()
     {
-        return view('backend.kegiatan.create');
+        return view('backend.infopub.create');
+    }
+
+    public function create_home()
+    {
+        return view('backend.infopub.create-home');
     }
 
     /**
@@ -99,39 +80,17 @@ class InformasiPublikController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required|unique:kegiatan',
-                'tempat' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000|dimensions:max_width=1650,max_height=990',
-                'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
-                'isi' => 'required',
-                'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
-            ], [
-                'image.dimensions' => 'Gambar maksimal lebar (width) 1650 pixels dan tinggi (height) 990 pixels',
+                'judul_list_informasi' => 'required',
+                'isi_list_informasi' => 'required',
+                'link_list_informasi' => 'required'
             ]);
-
-            //UPLOAD IMAGE
-            $image = $request->file('image');
-            $image->storeAs('public/romadan_gambar_web', $image->hashName());
-
-            //UPLOAD FILE
-            $file = $request->file('file');
-            $file->storeAs('public/romadan_file_web', $file->hashName());
-
-            // SLUG
-
-            $slug = Str::slug($request->judul);
 
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'tempat' => $request->tempat,
-                'image' => $image->hashName(),
-                'file' => $file->hashName(),
-                'isi' => $request->isi,
-                'slug' => $slug,
-                'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d H:i'),
-                'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d H:i'),
+                'judul_list_informasi' => $request->judul_list_informasi,
+                'isi_list_informasi' => $request->isi_list_informasi,
+                'link_list_informasi' => $request->link_list_informasi
 
             ];
 
@@ -139,9 +98,36 @@ class InformasiPublikController extends Controller
             InformasiPublikModel::create($data);
 
             //redirect to index
-            return redirect()->back()->with(['success' => 'Data Kegiatan Berhasil Disimpan!']);
+            return redirect()->back()->with(['success' => 'Data Informasi Publik Berhasil Disimpan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Kegiatan Gagal Disimpan! error :' . $e->getMessage()]);
+            return redirect()->back()->with(['failed' => 'Data Informasi Publik Gagal Disimpan! error :' . $e->getMessage()]);
+        }
+    }
+
+    public function store_home(Request $request)
+    {
+        try {
+            // VALIDASI DATA
+            $request->validate([
+                'judul' => 'required',
+                'isi' => 'required',
+            ]);
+
+
+            // TAMPUNGAN REQUEST DATA DARI FORM
+            $data = [
+                'judul' => $request->judul,
+                'isi' => $request->isi,
+
+            ];
+
+
+            InfopublikHomeModel::create($data);
+
+            //redirect to index
+            return redirect()->back()->with(['success' => 'Data Informasi Publik Home Berhasil Disimpan!']);
+        } catch (Exception $e) {
+            return redirect()->back()->with(['failed' => 'Data Informasi Publik Home Gagal Disimpan! error :' . $e->getMessage()]);
         }
     }
 
@@ -150,7 +136,7 @@ class InformasiPublikController extends Controller
      */
     public function show(string $id)
     {
-        return redirect()->route('kegiatan.index');
+        return redirect()->route('infopub.index');
     }
 
     /**
@@ -160,7 +146,7 @@ class InformasiPublikController extends Controller
     {
         $kegiatan = InformasiPublikModel::findOrFail(decrypt($id));
         // dd($kegiatan);
-        return view('backend.kegiatan.edit', compact(['kegiatan']));
+        return view('backend.infopub.edit', compact(['kegiatan']));
     }
 
     /**
@@ -172,72 +158,28 @@ class InformasiPublikController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'judul' => 'required',
-                'tempat' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
-                'file' => 'mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'isi' => 'required',
-                'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
+                'judul_list_informasi' => 'required',
+                'isi_list_informasi' => 'required',
+                'link_list_informasi' => 'required'
             ]);
 
-            // SLUG
-
-            $slug = Str::slug($request->judul);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'judul' => $request->judul,
-                'tempat' => $request->tempat,
-                // 'image' => $image->hashName(),
-                // 'file' => $file->hashName(),
                 'isi' => $request->isi,
-                'slug' => $slug,
-                'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d H:i'),
-                'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d H:i'),
+                'judul_list_informasi' => $request->judul_list_informasi,
+                'isi_list_informasi' => $request->isi_list_informasi,
+                'link_list_informasi' => $request->link_list_informasi
 
             ];
-            if ($request->hasFile('image')) {
-                $request->validate([
-                    'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
-                ], [
-                    'image.mimes' => 'Gambar hanya diperbolehkaan berekstensi JPEG, JPG, PNG, SVG',
-                ]);
-
-                //UPLOAD IMAGE
-                $image = $request->file('image');
-                $image->storeAs('public/romadan_gambar_web', $image->hashName());
-
-                $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
-                File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
-
-                $data = [
-                    'image' => $image->hashName(),
-                ];
-            }
-
-            if ($request->hasFile('file')) {
-                $request->validate([
-                    'file' => 'mimes:csv,xlx,xls,xlsx,pdf,zip,rar|max:250000',
-                ], [
-                    'file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF, ZIP, RAR',
-                ]);
-
-                //UPLOAD IMAGE
-                $file = $request->file('file');
-                $file->storeAs('public/romadan_file_web', $file->hashName());
-
-                $data_file = InformasiPublikModel::findOrFail(decrypt($id));
-                File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
-
-                $data = [
-                    'file' => $file->hashName(),
-                ];
-            }
 
             InformasiPublikModel::findOrFail(decrypt($id))->update($data);
             // $berita = Berita::find($id)->update($data);
-            return redirect()->route('kegiatan.index')->with('success', "Kegiatan $request->judul berhasil diupdate!");
+            return redirect()->route('infopub.index')->with('success', "Data Informasi Publik berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Kegiatan Gagal Di Update! error :' . $e->getMessage()]);
+            return redirect()->route('infopub.index')->with(['failed' => 'Data Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
         }
     }
 

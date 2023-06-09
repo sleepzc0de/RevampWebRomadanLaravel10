@@ -5,12 +5,12 @@ namespace App\Models\backend\MenuInformasiPublik;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InformasiPublikModel extends Model
+class InfopublikHomeModel extends Model
 {
     use HasFactory;
-    protected $table = 'informasi_publik';
+    protected $table = 'infopublik_home';
     protected $guarded = [];
-    protected $fillable = ['judul_list_informasi', 'isi_list_informasi', 'link_list_informasi'];
+    protected $fillable = ['judul', 'isi'];
 
     protected $hidden = [
         'created_at',

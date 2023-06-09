@@ -81,6 +81,12 @@ Route::group(
         Route::prefix('/informasi-publik')->group(function () {
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'infopublik_index'])->name('informasi-publik-index-fe');
+
+            Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+
+            Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
+
+            Route::get('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
             // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
         });
 
@@ -176,6 +182,8 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::prefix('/informasi-publik')->group(function () {
 
             Route::resource('informasi-publik', InformasiPublikController::class);
+            Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
+            Route::post('/create-home', [InformasiPublikController::class, 'store_home'])->name('informasi-publik.store-home');
         });
 
 
