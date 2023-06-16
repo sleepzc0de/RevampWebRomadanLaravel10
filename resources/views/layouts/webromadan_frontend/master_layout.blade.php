@@ -22,6 +22,7 @@
     <script src="{{ asset('webromadan/be/demo/demo_configurator.js')}}">
     </script>
     <script src="{{asset('webromadan/be/js/bootstrap/bootstrap.bundle.min.js')}}"></script>
+    
     <!-- /core JS files -->
 
     <!-- Theme JS files -->

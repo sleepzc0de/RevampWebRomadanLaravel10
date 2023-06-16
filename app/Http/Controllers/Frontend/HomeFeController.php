@@ -124,8 +124,7 @@ class HomeFeController extends Controller
 
     public function infopublik_peraturan_index()
     {
-        $tanggal = date(now());
-        dd($tanggal);
+
         return view('frontend.infopublik.peraturan-index');
     }
 
@@ -134,11 +133,16 @@ class HomeFeController extends Controller
         return view('frontend.infopublik.pedoman-index');
     }
 
+    public function infopublik_aplikasi_index()
+    {
+        return view('frontend.infopublik.aplikasi-index');
+    }
+
 
     public function faq_index()
     {
 
-        $tentang = TentangModel::first()->get();
+        $tentang = TentangModel::latest()->take(1)->get();
         $faq = FAQModel::all();
         // dd($faq);
         return view('frontend.faq.fe-index', compact(['tentang', 'faq']));
