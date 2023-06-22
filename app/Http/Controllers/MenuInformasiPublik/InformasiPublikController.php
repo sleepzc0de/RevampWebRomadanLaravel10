@@ -58,6 +58,41 @@ class InformasiPublikController extends Controller
         }
         return view('backend.infopub.index');
     }
+    public function indexHome()
+    {
+        $query = InfopublikHomeModel::select('*');
+        if (request()->ajax()) {
+            return datatables()->of($query)
+                ->addColumn('opsi', function ($query) {
+                    $preview = route('informasi-publik.show', encrypt($query->id));
+                    $edit = route('informasi-publik.edit', encrypt($query->id));
+                    $hapus = route('informasi-publik.delete-home', encrypt($query->id));
+                    return '<div class="d-inline-flex">
+											<div class="dropdown">
+												<a href="#" class="text-body" data-bs-toggle="dropdown">
+													<i class="ph-list"></i>
+												</a>
+
+												<div class="dropdown-menu dropdown-menu-end">
+													
+													<form action="' . $hapus . '" method="POST">
+													' . @csrf_field() . '
+													' . @method_field('DELETE') . '
+													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
+													</form>
+												</div>
+											</div>
+										</div>
+                ';
+                })
+
+
+                ->rawColumns(['opsi'])
+                ->addIndexColumn()
+                ->make(true);
+        }
+        return view('backend.infopub.index');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -177,9 +212,9 @@ class InformasiPublikController extends Controller
 
             InformasiPublikModel::findOrFail(decrypt($id))->update($data);
             // $berita = Berita::find($id)->update($data);
-            return redirect()->route('infopub.index')->with('success', "Data Informasi Publik berhasil diupdate!");
+            return redirect()->route('informasi-publik.index')->with('success', "Data Informasi Publik berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('infopub.index')->with(['failed' => 'Data Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
         }
     }
 
@@ -192,9 +227,19 @@ class InformasiPublikController extends Controller
             $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
             File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
             InformasiPublikModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('kegiatan.index')->with('success', "Kegiatan berhasil dihapus!");
+            return redirect()->route('informasi-publik.index')->with('success', "Informasi Publik berhasil dihapus!");
         } catch (Exception $e) {
-            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+        }
+    }
+
+    public function delete_home(string $id)
+    {
+        try {
+            InfopublikHomeModel::findOrFail(decrypt($id))->delete();
+            return redirect()->route('informasi-publik.index')->with('success', "Informasi Publik Home berhasil dihapus!");
+        } catch (Exception $e) {
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
         }
     }
 }

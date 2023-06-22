@@ -114,8 +114,8 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Mulai <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local" value="{{ old('tempat') ?? $kegiatan->tanggal_mulai }}">
-											@error('image_file')
+											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local" value="{{ old('tanggal_mulai') ?? $kegiatan->tanggal_mulai }}">
+											@error('tanggal_mulai')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
@@ -128,7 +128,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Selesai</label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_selesai') is-invalid @enderror" id="tanggal_selesai" name="tanggal_selesai" type="datetime-local" value="{{ old('tempat') ?? $kegiatan->tanggal_selesai }}">
+											<input class="form-control @error('tanggal_selesai') is-invalid @enderror" id="tanggal_selesai" name="tanggal_selesai" type="datetime-local" value="{{ old('tanggal_selesai') ?? $kegiatan->tanggal_selesai }}">
 											@error('tanggal_selesai')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}

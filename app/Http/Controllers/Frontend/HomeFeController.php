@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\backend\MenuFAQ\FAQModel;
 use App\Models\backend\MenuInformasiPublik\InfopublikHomeModel;
 use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
+use App\Models\backend\MenuInformasiPublik\PeraturanModel;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuLayanan\LayananModel;
 use App\Models\backend\MenuProfile\SejarahModel;
@@ -13,9 +14,12 @@ use App\Models\backend\MenuProfile\StrukturOrganisasiModel;
 use App\Models\backend\MenuProfile\TentangModel;
 use App\Models\backend\MenuProfile\VisiMisiModel;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
+use App\Models\backend\MenuReferensi\ref_jenis_peraturan;
 use App\Models\backend\publikasi\berita;
+use App\Models\backend\ref_kategori;
 use App\Models\medsos\medsos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class HomeFeController extends Controller
 {
@@ -122,10 +126,42 @@ class HomeFeController extends Controller
         return view('frontend.infopublik.index', compact(['info_publik', 'infolist']));
     }
 
-    public function infopublik_peraturan_index()
+    public function infopublik_peraturan_index(Request $request)
+    {
+        // $peraturan = PeraturanModel::latest()->paginate(9);
+        // dd($peraturan);
+        $kategori = ref_kategori::all();
+        $jenis_peraturan = ref_jenis_peraturan::all();
+        $searchValue = strip_tags($request->input('cari_peraturan'));
+        if (strip_tags($request->cari_peraturan)) {
+            $search = strip_tags($request->cari_peraturan);
+            $peraturan = PeraturanModel::with('kategori', 'jenis_peraturan')
+                ->where(function ($query) use ($search) {
+                    $query->where('nomor_peraturan', 'like', '%' . $search . '%')
+                        ->orWhere('judul_peraturan', 'like', '%' . $search . '%')
+                        ->orWhereHas('kategori', function ($query) use ($search) {
+                            $query->where('nama_kategori', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('jenis_peraturan', function ($query) use ($search) {
+                            $query->where('nama_jenis_peraturan', 'like', '%' . $search . '%');
+                        });
+                })
+                ->latest()->paginate(9);
+        } else {
+            $peraturan = PeraturanModel::with('kategori', 'jenis_peraturan', 'status_peraturan')->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
+        // $peraturannew = PeraturanModel::with('kategori')->get();
+        // dd($peraturannew->kategori->nama_kategori);
+        return view('frontend.infopublik.peraturan-index', compact(['peraturan', 'searchValue', 'kategori', 'jenis_peraturan']));
+    }
+
+    public function infopublik_peraturan_detail($peraturan)
     {
 
-        return view('frontend.infopublik.peraturan-index');
+        $data = PeraturanModel::where('slug', $peraturan)->firstorFail();
+        return view('frontend.infopublik.peraturan-detail', compact(['data']));
     }
 
     public function infopublik_pedoman_index()

@@ -4,6 +4,13 @@
 	<title>Biro Manajemen BMN dan Pengadaan</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<meta content="Website Biro Manajemen BMN dan Pengadaan" name="description">
+  	<meta content="Biro Manajemen BMN dan Pengadaan" name="keywords">
+	<meta name="author" content="Auliya Putra Azhari, Winny Irmarooke, Kementerian Keuangan, Romadan">
+
+	<meta name="robots" content="index, follow">
+
 <!--===============================================================================================-->
 	<link rel="icon" type="image/png" href="{{asset('frontend_romadan_web/images/icons/romadanlogo.png')}}"/>
 <!--===============================================================================================-->

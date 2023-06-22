@@ -11,14 +11,14 @@
 		<div class="container">
             <div class="title-section-ourmenu m-b-22">
 					<h5 class="romadan-berita m-t-2">
-						{{$info_publik->judul}}
+						{{$info_publik->judul??'Informasi Publik'}}
 					</h5>
                     <br>
 			</div>
 			<div class="row">
 					
 						<div class="romadan-infopublik col-md-12 p-t-30">
-						{!!$info_publik->isi!!}
+						{!!$info_publik->isi??''!!}
 					    </div>
 
                         @forelse ($infolist as $item)

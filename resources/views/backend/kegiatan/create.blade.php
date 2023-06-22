@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<label class="col-form-label col-lg-2">Tanggal Mulai <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local">
-											@error('image_file')
+											@error('tanggal_mulai')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>

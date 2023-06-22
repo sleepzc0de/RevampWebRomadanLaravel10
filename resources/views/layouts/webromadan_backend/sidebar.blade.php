@@ -107,7 +107,7 @@
                     </a>
                     <ul class="nav-group-sub collapse">
                         <li class="nav-item"><a href="{{route('informasi-publik.index')}}" class="nav-link">Infopublik</a></li>
-                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Peraturan</a></li>
+                        <li class="nav-item"><a href="{{route('peraturan.index')}}" class="nav-link">Peraturan</a></li>
                         <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Pedoman</a></li>
                         <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Link Aplikasi</a></li>
                     </ul>
@@ -134,9 +134,11 @@
                         <span>Referensi</span>
                     </a>
                     <ul class="nav-group-sub collapse">
-                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Kategori</a></li>
-                         <li class="nav-item"><a href="{{route('status.index')}}" class="nav-link">Status</a></li>
-                          <li class="nav-item"><a href="{{route('tipe.index')}}" class="nav-link">Tipe</a></li>
+                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Kategori Publikasi</a></li>
+                        <li class="nav-item"><a href="{{route('status.index')}}" class="nav-link">Status Publikasi</a></li>
+                        <li class="nav-item"><a href="{{route('tipe.index')}}" class="nav-link">Tipe Publikasi</a></li>
+                        <li class="nav-item"><a href="{{route('jenis-peraturan.index')}}" class="nav-link">Jenis Peraturan</a></li>
+                        <li class="nav-item"><a href="{{route('status-peraturan.index')}}" class="nav-link">Status Peraturan</a></li>
                     </ul>
                 </li>
                 {{-- REFERENSI --}}

@@ -7,6 +7,7 @@ use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Medsos\MedsosController;
 use App\Http\Controllers\MenuFAQ\FAQController;
 use App\Http\Controllers\MenuInformasiPublik\InformasiPublikController;
+use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
 use App\Http\Controllers\MenuKegiatan\KegiatanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
 use App\Http\Controllers\MenuProfile\SejarahController;
@@ -15,10 +16,9 @@ use App\Http\Controllers\MenuProfile\TentangController;
 use App\Http\Controllers\MenuProfile\VisiMisiController;
 use App\Http\Controllers\MenuPublikasi\PublikasiController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Publikasi\ArtikelController;
-use App\Http\Controllers\Publikasi\BeritaController;
-use App\Http\Controllers\Publikasi\WartaController;
+use App\Http\Controllers\Referensi\RefJenisPeraturanController;
 use App\Http\Controllers\Referensi\RefKategoriController;
+use App\Http\Controllers\Referensi\RefPeraturanStatusController;
 use App\Http\Controllers\Referensi\RefStatusController;
 use App\Http\Controllers\Referensi\RefTipeController;
 use App\Http\Controllers\UserManajemen\UserController;
@@ -83,6 +83,8 @@ Route::group(
             Route::get('/', [HomeFeController::class, 'infopublik_index'])->name('informasi-publik-index-fe');
 
             Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+            Route::post('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+            Route::get('/detail/peraturan/{peraturan}', [HomeFeController::class, 'infopublik_peraturan_detail'])->name('informasi-publik-peraturan-detail-fe');
 
             Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
 
@@ -182,8 +184,13 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::prefix('/informasi-publik')->group(function () {
 
             Route::resource('informasi-publik', InformasiPublikController::class);
+            Route::get('/index-home', [InformasiPublikController::class, 'indexHome'])->name('informasi-publik.index-home');
             Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
             Route::post('/create-home', [InformasiPublikController::class, 'store_home'])->name('informasi-publik.store-home');
+            Route::delete('/{infopub}/informasi-publik-home', [InformasiPublikController::class, 'delete_home'])->name('informasi-publik.delete-home');
+
+            // PERATURAN BACKEND
+            Route::resource('peraturan', PeraturanController::class);
         });
 
 
@@ -198,6 +205,12 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::resource('kategori', RefKategoriController::class);
         Route::resource('status', RefStatusController::class);
         Route::resource('tipe', RefTipeController::class);
+        // MENU KEGIATAN
+        Route::prefix('/referensi')->group(function () {
+
+            Route::resource('jenis-peraturan', RefJenisPeraturanController::class);
+            Route::resource('status-peraturan', RefPeraturanStatusController::class);
+        });
 
 
 

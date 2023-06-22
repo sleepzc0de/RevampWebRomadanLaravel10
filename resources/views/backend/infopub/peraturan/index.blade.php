@@ -73,64 +73,20 @@ const DatatableBasic = function() {
             scrollX: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('informasi-publik.index') }}",
+            ajax: "{{ route('peraturan.index') }}",
             columns: [
-            { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
-            {data: 'judul_list_informasi',name:'judul_list_informasi'},
-             {data: 'isi_list_informasi',name:'isi_list_informasi'},
-              {data: 'link_list_informasi',name:'link_list_informasi'},
+            { data:'DT_RowIndex', name:'DT_RowIndex', width:'2px',orderable:false,searchable:false},
+            {data: 'nomor_peraturan',name:'nomor_peraturan'},
+            {data: 'judul_peraturan',name:'judul_peraturan'},
+            {data: 'file_peraturan',name:'file_peraturan',orderable:false, searchable:false},
+            {data: 'kategori.nama_kategori',name:'kategori.nama_kategori',orderable:false,searchable:false},
+            {data: 'jenis_peraturan.nama_jenis_peraturan',name:'jenis_peraturan.nama_jenis_peraturan',orderable:false,searchable:false},
+            {data: 'tanggal_penetapan',name:'tanggal_penetapan'},
+            {data: 'tanggal_berlaku',name:'tanggal_berlaku'},
+            {data: 'status_peraturan.nama_peraturan_status',name:'status_peraturan.nama_peraturan_status',orderable:false,searchable:false},
+            {data: 'slug',name:'slug'},
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
-
-            // {data: 'action', name: 'action', orderable: false, searchable:false},
-            ],
-            order: [[0, 'asc']],
-            buttons: {        
-                dom:{
-                    button: {
-                        className: ''
-                    },
-                }, 
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        className: 'btn btn-outline-success',
-                        text: '<i class="far fa-file-excel me-2"></i> Excel',
-                        exportOptions: {
-                            columns: ':visible',
-                            
-                        }
-                    },
-                    // {
-                    //     extend: 'pdfHtml5',
-                    //     className: 'btn btn-outline-danger',
-                    //     text: '<i class="far fa-file-pdf me-2"></i> Pdf',
-                    //     exportOptions: {
-                    //         columns: [0, 1, 2, 5]
-                    //     }
-                    // },
-                    {
-                        extend: 'colvis',
-                        text: '<i class="ph-squares-four"></i>',
-                        className: 'btn btn-outline-info dropdown-toggle',
-                        collectionLayout: 'fixed four-column'
-                    }
-                ]
-            },
-        });
-
-        // Basic datatable8 home
-        $('.datatable-basic-home').DataTable({
-            autoWidth: true,
-            scrollY: 200,
-            scrollX: true,
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('informasi-publik.index-home') }}",
-            columns: [
-            { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
-            {data: 'judul',name:'judul'},
-             {data: 'isi',name:'isi'},
-            {data: 'opsi',name:'opsi',orderable:false,searchable:false},
+            
 
             // {data: 'action', name: 'action', orderable: false, searchable:false},
             ],
@@ -210,23 +166,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 					<div class="card">
                         <div class="card-header text-center">
-                          <h1>Informasi Publik Web Romadan</h1>
+                          <h1>Peraturan</h1>
                            @include('layouts.webromadan_backend.session_notif')
 						</div>
                         <div class="card-header">
                           
-                                    <a href="{{route('informasi-publik.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
+                                    <a href="{{route('peraturan.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
                                         <span class="btn-labeled-icon bg-purple text-white rounded-pill">
                                             <i class="ph-check-square-offset"></i>
                                         </span>
-                                        Tambah Informasi Publik
-                                    </button></a>
-
-                                    <a href="{{route('informasi-publik.create-home')}}"><button type="button" class="btn btn-flat-warning btn-labeled btn-labeled-start rounded-pill">
-                                        <span class="btn-labeled-icon bg-warning text-white rounded-pill">
-                                            <i class="ph-check-square-offset"></i>
-                                        </span>
-                                        Tambah InfoPublik Home
+                                        Tambah Peraturan
                                     </button></a>
                             
 						</div>
@@ -235,25 +184,15 @@ document.addEventListener('DOMContentLoaded', function() {
 							<thead>
 								<tr>
 									<th>#</th>
-                                    <th>Judul Informasi</th>
-                                    <th>Isi Informasi</th>
-                                    <th>Link Informasi</th>
-                                    <th>Aksi</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-
-                        <div class="card-header text-center">
-                          <h1>Informasi Publik Home Web Romadan</h1>
-						</div>
-                        <table class="table datatable-basic-home table-hover table-striped">
-							<thead>
-								<tr>
-									<th>#</th>
-                                    <th>Judul</th>
-                                    <th>Isi</th>
+                                    <th>Nomor Peraturan</th>
+                                    <th>Judul Peraturan</th>
+                                    <th>File Peraturan</th>
+                                    <th>Kategori Peraturan</th>
+                                    <th>Jenis Peraturan</th>
+                                    <th>Tanggal Penetapan</th>
+                                    <th>Tanggal Berlaku</th>
+                                    <th>Status Peraturan</th>
+                                    <th>Slug</th>
                                     <th>Aksi</th>
 								</tr>
 							</thead>
