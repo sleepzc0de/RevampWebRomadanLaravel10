@@ -77,7 +77,7 @@
 											<a href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}" class="btn romadan-peraturan-link mt-1">Lihat Semuanya<i class="fa-solid fa-arrow-right ml-3"></i></a>
 										</div>
 									</div>
-					   		 </div>
+					   		     </div>
 							@empty
 							
 							<section class="section-welcome p-t-50 p-b-105" style="background-color: white;">

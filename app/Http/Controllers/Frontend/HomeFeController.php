@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuFAQ\FAQModel;
+use App\Models\backend\MenuInformasiPublik\AplikasiModel;
 use App\Models\backend\MenuInformasiPublik\InfopublikHomeModel;
 use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
 use App\Models\backend\MenuInformasiPublik\PeraturanModel;
@@ -94,7 +95,7 @@ class HomeFeController extends Controller
     {
 
         // $tentang = TentangModel::first()->get();
-
+        $searchValue = strip_tags($request->input('cari_kegiatan'));
         if ($request->cari_kegiatan) {
             $search = $request->cari_kegiatan;
             $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
@@ -103,7 +104,7 @@ class HomeFeController extends Controller
             // return redirect()->back()->with('message', 'Empty Search');
         }
 
-        return view('frontend.kegiatan.fe-index', compact(['kegiatan']));
+        return view('frontend.kegiatan.fe-index', compact(['kegiatan', 'searchValue']));
     }
 
     public function kegiatan_detail($kegiatan)
@@ -171,7 +172,8 @@ class HomeFeController extends Controller
 
     public function infopublik_aplikasi_index()
     {
-        return view('frontend.infopublik.aplikasi-index');
+        $data = AplikasiModel::latest()->paginate(9);
+        return view('frontend.infopublik.aplikasi-index', compact('data'));
     }
 
 

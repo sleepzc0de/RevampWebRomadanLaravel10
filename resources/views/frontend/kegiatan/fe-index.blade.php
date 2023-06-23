@@ -14,8 +14,9 @@
 						Kegiatan
 					</h5>
                     <br>
-					@forelse ($kegiatan as $item)
-                    <form class="form-outline" action="{{route('kegiatan-index-fe')}}" method="get" autocomplete="off">
+					
+                    <form class="form-outline" action="{{route('kegiatan-index-fe')}}" method="POST" autocomplete="off">
+						@csrf
                         <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
 							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_kegiatan" placeholder="Cari Kegiatan">
 						</div>
@@ -31,6 +32,7 @@
 					
                     </form>
 				</div>
+				@forelse ($kegiatan as $item)
 			<div class="row">
 					
 						<div class="col-md-4 p-t-30">
@@ -70,11 +72,14 @@
 						</div>
 					</div>
 					@empty
-					<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
+					<section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
+
                                 <div class="container">
+									
                                     <div class="title-section-ourmenu m-b-22">
-                                            <h5 class="romadan-faq m-t-2">
-                                                Tidak ada Data, Harap hubungi Administrator !
+											<h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3>
+                                            <h5 class="romadan-faq m-t-5">
+                                                Mohon maaf, data yang anda cari tidak ada :(
                                             </h5>
                                     </div>
                                     

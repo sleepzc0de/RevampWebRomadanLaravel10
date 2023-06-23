@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\HomeFeController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Medsos\MedsosController;
 use App\Http\Controllers\MenuFAQ\FAQController;
+use App\Http\Controllers\MenuInformasiPublik\AplikasiController;
 use App\Http\Controllers\MenuInformasiPublik\InformasiPublikController;
 use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
 use App\Http\Controllers\MenuKegiatan\KegiatanController;
@@ -72,6 +73,7 @@ Route::group(
         Route::prefix('/kegiatan')->group(function () {
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
+            Route::post('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
             // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
             // VISI DAN MISI
             Route::get('/detail/{kegiatan}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
@@ -191,6 +193,8 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
             // PERATURAN BACKEND
             Route::resource('peraturan', PeraturanController::class);
+            // PORTAL APLIKASI BACKEND
+            Route::resource('aplikasi', AplikasiController::class);
         });
 
 

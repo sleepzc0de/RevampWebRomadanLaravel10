@@ -109,7 +109,7 @@
                         <li class="nav-item"><a href="{{route('informasi-publik.index')}}" class="nav-link">Infopublik</a></li>
                         <li class="nav-item"><a href="{{route('peraturan.index')}}" class="nav-link">Peraturan</a></li>
                         <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Pedoman</a></li>
-                        <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Link Aplikasi</a></li>
+                        <li class="nav-item"><a href="{{route('aplikasi.index')}}" class="nav-link">Link Aplikasi</a></li>
                     </ul>
                 </li>
                 {{-- END INFORMASI PUBLIK --}}
