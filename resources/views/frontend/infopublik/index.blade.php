@@ -24,11 +24,12 @@
                         @forelse ($infolist as $item)
 
                          <div class="col-md-4 p-t-30">
-                            <div class="card w-100" style="background-color:#0F5FAE;">
+                            <div class="card w-100m bo-rad-10 " style="background-color:#0F5FAE;">
                                 <div class="card-body infopublik-card-home">
                                     <h5 class="card-title">
-			                    	<button type="button" class="btn btn-warning mr-2"><i class="fa-solid fa-house"></i></button>{{$item->judul_list_informasi}}</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</p>
+                                         <a href="{{ route($item->link_list_informasi) }}"><button type="button" class="btn btn-warning mr-2"><i class="fa-solid fa-house"></i></button></a>
+			                    	{{$item->judul_list_informasi}}</h5>
+                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates, in?</p>
                                     <a href="{{ route($item->link_list_informasi) }}" class="btn btn-link mt-4">Lihat Semuanya<i class="fa-solid fa-arrow-right ml-3"></i></a>
                                 </div>
                             </div>

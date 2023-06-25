@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        Paginator::useBootstrapFive();
+        Paginator::useBootstrapRomadan();
 
 
         View::share('medsos', medsos::orderBy("id", "ASC")->take(5)->get());

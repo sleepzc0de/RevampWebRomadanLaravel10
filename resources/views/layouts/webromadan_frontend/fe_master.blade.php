@@ -133,6 +133,7 @@
 	{{-- NEW LIGHTBOX --}}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js" integrity="sha512-Ixzuzfxv1EqafeQlTCufWfaC6ful6WFqIz4G+dWvK0beHw0NVJwvCKSgafpy5gwNqKmgUfIBraVwkKI+Cz0SEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!--===============================================================================================-->
+
 	<script src="{{asset('frontend_romadan_web/js/main.js')}}"></script>
 	@yield('script_fe')
 

@@ -21,26 +21,27 @@
 							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_kegiatan" placeholder="Cari Kegiatan">
 						</div>
 						<div class="wrap-btn-booking flex-c-m m-t-13">
-					<button type="reset" class="btn3-kegiatan-2 flex-c-m size36 txt11 trans-0-4 mr-2">
-						Clear
-					</button>
-					<button type="submit" class="btn3-kegiatan flex-c-m size36 txt11 trans-0-4">
-						Cari
-					</button>
-					<a class="btn3-kegiatan-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('kegiatan-index-fe')}}">Refresh</a>
+							<button type="reset" class="btn3-kegiatan-2 flex-c-m size36 txt11 trans-0-4 mr-2">
+								Clear
+							</button>
+							<button type="submit" class="btn3-kegiatan flex-c-m size36 txt11 trans-0-4">
+								Cari
+							</button>
+							<a class="btn3-kegiatan-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('kegiatan-index-fe')}}">Refresh
+							</a>
 						</div>
 					
                     </form>
-				</div>
-				@forelse ($kegiatan as $item)
+			</div>
+				
 			<div class="row">
-					
+					@forelse ($kegiatan as $item)
 						<div class="col-md-4 p-t-30">
 						<!-- Block1 -->
 						<div class="blo4">
 							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
 								<a href="{{asset('storage/romadan_gambar_web/'.$item->image)}}">
-									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG">
+									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG" width="300" height="250">
 								</a>
 
 								<div class="date-blo4-romadan flex-col-c-m">
