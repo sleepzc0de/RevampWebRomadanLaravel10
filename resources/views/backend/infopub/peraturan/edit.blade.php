@@ -159,7 +159,7 @@
 
                                      <!-- /Status Peraturan-->
                                     <div class="row mb-3">
-										<label class="col-form-label col-lg-2">Jenis Peraturan <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Status Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<select id="status_peraturan" name="status_peraturan" class="form-control form-control-select2 select" @error('status_peraturan') is-invalid @enderror required>
 												<option>--PILIH--</option>

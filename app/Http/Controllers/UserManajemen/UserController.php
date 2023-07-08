@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\UserManajemen;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role as ModelsRole;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -19,10 +18,15 @@ class UserController extends Controller
      */
     public function index()
     {
-        $menuUsers = 'active';
+
+        // $role_cek = User::role('HUMAS_PENATAUSAHAAN')->get();
+        // dd($role_cek);
         $query = User::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
+                ->addColumn('role_name', function ($query) {
+                    return $query->roles->pluck('name')->implode(', ');
+                })
                 ->addColumn('action', 'kondisibaik.action')
                 ->addColumn('opsi', function ($query) {
                     $preview = route('users.show', $query->id);
@@ -53,7 +57,12 @@ class UserController extends Controller
 										</div>
                 ';
                 })
-                ->rawColumns(['action', 'opsi'])
+                ->filterColumn('role_name', function ($query, $keyword) {
+                    $query->whereHas('roles', function ($q) use ($keyword) {
+                        $q->where('name', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->rawColumns(['action', 'opsi', 'role_name'])
                 ->addIndexColumn()
                 ->make(true);
         }
@@ -68,7 +77,9 @@ class UserController extends Controller
     public function create()
     {
         // $user = User::find();
-        return view('backend.users.tambah_user');
+        $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
+        $data = ['role' => $role];
+        return view('backend.users.tambah_user', compact('data'));
     }
 
     /**
@@ -98,6 +109,8 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
+
+            $user->assignRole($request->role);
 
 
 
@@ -134,7 +147,12 @@ class UserController extends Controller
 
         $userdata = User::findorFail($id);
         // dd($userdata);
-        return view('backend.users.edit_user', compact('userdata'));
+        $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
+
+        $olduser = $userdata->roles->first();
+        $data = ['role' => $role, 'olduser' => $olduser];
+
+        return view('backend.users.edit_user', compact('userdata', 'data'));
     }
 
     /**

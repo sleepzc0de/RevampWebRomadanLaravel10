@@ -77,6 +77,7 @@ const DatatableResponsive = function() {
             { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
             { data: 'name', name: 'name' },
             { data: 'email', name: 'email' },
+            { data: 'role_name', name: 'role_name' },
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
             ],
             order: [[0, 'asc']],
@@ -131,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<th>#</th>
 									<th>NAMA</th>
 									<th>EMAIL</th>
+                                    <th>ROLE</th>
 									<th>AKSI</th>
 								</tr>
 							</thead>

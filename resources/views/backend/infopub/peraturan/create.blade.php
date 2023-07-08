@@ -87,6 +87,21 @@ document.addEventListener('DOMContentLoaded', function() {
     CKEditorClassic.init();
 });
 </script>
+<script>
+	function handleTanggalMulaiChange() {
+  var tanggalMulai = document.getElementById('tanggal_penetapan').value;
+  var tanggalSelesai = document.getElementById('tanggal_berlaku');
+  
+  if (tanggalMulai) {
+    tanggalSelesai.disabled = false;
+    tanggalSelesai.min = tanggalMulai;
+  } else {
+    tanggalSelesai.disabled = true;
+    tanggalSelesai.value = '';
+  }
+}
+
+</script>
 @endsection
 
 @section('content')
@@ -173,17 +188,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     <!-- Jenis Peraturan-->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Jenis Peraturan <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Kategori Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-                                            @forelse($jenis_peraturan as $item)
 											<select value="{{ old('jenis_peraturan') }}" name="jenis_peraturan" class="form-control form-control-select2 select" @error('jenis_peraturan') is-invalid @enderror required>
-                                                
-                                                <option>--PILIH--</option>
+												<option>--PILIH--</option>
+												@foreach ($jenis_peraturan as $item)
 												<option value="{{ $item->id_jenis_peraturan }}" {{ old('jenis_peraturan') == $item->id_jenis_peraturan ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_jenis_peraturan}}</option>
-                                                    
-                                                @empty
-                                                    <input type="text"  class="form-control" placeholder="DATA KOSONG, HUBUNGI ADMINISTRATOR" disabled>
-                                                @endforelse
+												@endforeach
 													
 												
 											</select>
@@ -202,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Penetapan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_penetapan') is-invalid @enderror required" id="tanggal_penetapan" name="tanggal_penetapan" type="date">
+											<input class="form-control @error('tanggal_penetapan') is-invalid @enderror required" id="tanggal_penetapan" name="tanggal_penetapan" type="date" onchange="handleTanggalMulaiChange()" required>
 											@error('tanggal_penetapan')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -216,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Berlaku <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_berlaku') is-invalid @enderror required" id="tanggal_berlaku" name="tanggal_berlaku" type="date">
+											<input class="form-control @error('tanggal_berlaku') is-invalid @enderror required" id="tanggal_berlaku" name="tanggal_berlaku" type="date" required>
 											@error('tanggal_berlaku')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -226,29 +237,30 @@ document.addEventListener('DOMContentLoaded', function() {
 									</div>
 									<!-- /Tanggal Berlaku Efektif-->
 
-                                    <!-- Jenis Peraturan-->
-									<div class="row mb-3">
+                                    <!-- Status Peraturan-->
+								<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Status Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-                                            @forelse($status_peraturan as $item)
+											@if (count($status_peraturan) <= 0)
+													<input value="{{ old('status_peraturan') }}" type="text" name="status_peraturan" class="form-control @error('status_peraturan') is-invalid @enderror" required placeholder="DATA KOSONG, HARAP HUBUNGI ADMINISTRATOR" @disabled(true)>
+											@else 
 											<select value="{{ old('status_peraturan') }}" name="status_peraturan" class="form-control form-control-select2 select" @error('status_peraturan') is-invalid @enderror required>
-                                                
-                                                <option>--PILIH--</option>
+												<option>--PILIH--</option>
+												@foreach ($status_peraturan as $item)
 												<option value="{{ $item->id_ref_peraturan_status }}" {{ old('status_peraturan') == $item->id_ref_peraturan_status ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_peraturan_status}}</option>
-                                                    
-                                                @empty
-                                                    <input value="{{ $item->id_ref_peraturan_status }}" type="text"  class="form-control" placeholder="DATA KOSONG, HUBUNGI ADMINISTRATOR" disabled>
-                                                @endforelse
+												@endforeach
 													
 												
 											</select>
 
 											<!-- error message untuk judul -->
-											@error('kategori')
+											@error('status_peraturan')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
 											</div>
 											@enderror
+											@endif
+											
 										</div>
 									</div>
 									<!-- /Jenis Peraturan-->

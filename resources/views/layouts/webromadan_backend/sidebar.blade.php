@@ -178,6 +178,22 @@
                 </li>
                 <!-- /User Management -->
 
+
+                <!-- TIM PENGEMBANG -->
+                <li class="nav-item-header">
+                    <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">EXTRAS</div>
+                    <i class="ph-dots-three sidebar-resize-show"></i>
+                </li>
+               <li class="nav-item">
+                    <a href="{{route('home')}}" class="nav-link">
+                        <i class="ph-terminal-window"></i>
+                        <span>
+                            Tim Pengembang
+                        </span>
+                    </a>
+                </li>
+                <!-- /TIM PENGEMBANG -->
+
             </ul>
         </div>
         <!-- /main navigation -->

@@ -12,6 +12,7 @@
 
 @section('script_bawah')
 <script src="{{asset('webromadan/be/demo/pages/form_validation_library.js')}}"></script>
+<script src="{{asset('webromadan/be/demo/pages/form_select2.js')}}"></script>
 @endsection
 
 @section('content')
@@ -83,6 +84,29 @@
 										</div>
 									</div>
 									<!-- /EMAIL INPUT -->
+
+									{{-- ROLE --}}
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-3">Role <span class="text-danger">*</span></label>
+										<div class="col-lg-9">
+											<select id="role" value="{{ old('role') }}" name="role" class="form-control form-control-select2 select" @error('role') is-invalid @enderror required>
+												<option>--Pilih Role--</option>
+												@foreach ($data['role'] as $item)
+												<option value="{{ $item->id }}" {{ old('role',($data['olduser'] ?? null) ? $data['olduser']->id :null) == $item->id ? 'selected' : null}}>{{$loop->iteration." - ".$item->name}}</option>
+												@endforeach
+													
+												
+											</select>
+
+											<!-- error message untuk judul -->
+											@error('kategori')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									{{-- END ROLE --}}
 
                                     <!-- PASSWORD INPUT -->
 									<div class="row mb-3">

@@ -63,6 +63,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/util.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/main.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan.css')}}">
+	
 <!--===============================================================================================-->
 	@yield('css_fe')
 </head>

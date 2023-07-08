@@ -107,7 +107,7 @@ class PeraturanController extends Controller
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
                 'tanggal_penetapan' => 'required|date|date_format:Y-m-d',
-                'tanggal_berlaku' => 'required|date|date_format:Y-m-d',
+                'tanggal_berlaku' => 'required|date|after_or_equal:tanggal_penetapan|date_format:Y-m-d',
             ]);
 
             //UPLOAD FILE
@@ -173,7 +173,7 @@ class PeraturanController extends Controller
             $request->validate([
                 'nomor_peraturan' => 'required',
                 'judul_peraturan' => 'required',
-                'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
+                'file' => 'mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
                 'tanggal_penetapan' => 'required|date|date_format:Y-m-d',
@@ -192,7 +192,7 @@ class PeraturanController extends Controller
                 'jenis_peraturan' => $request->jenis_peraturan,
                 'tanggal_penetapan' => Carbon::parse($request->tanggal_penetapan)->format('Y-m-d'),
                 'tanggal_berlaku' => Carbon::parse($request->tanggal_berlaku)->format('Y-m-d'),
-                'status_peraturan' => $request->status_peraturan,
+                // 'status_peraturan' => $request->status_peraturan,
                 'slug' => $slug,
 
             ];
@@ -217,7 +217,7 @@ class PeraturanController extends Controller
             }
 
             PeraturanModel::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('peraturan.index')->with('success', "Data Peraturan $request->judul_peraturan berhasil diupdate!");
+            return redirect()->route('peraturan.index')->with('success', "Data Peraturan $request->nomor_peraturan berhasil diupdate!");
         } catch (Exception $e) {
             return redirect()->route('peraturan.index')->with(['failed' => 'Data Peraturan Gagal Di Update! error :' . $e->getMessage()]);
         }
@@ -228,6 +228,13 @@ class PeraturanController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $data_file = PeraturanModel::findOrFail(decrypt($id));
+            File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
+            PeraturanModel::findOrFail(decrypt($id))->delete();
+            return redirect()->route('peraturan.index')->with('success', "Peraturan berhasil dihapus!");
+        } catch (Exception $e) {
+            return redirect()->route('peraturan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+        }
     }
 }

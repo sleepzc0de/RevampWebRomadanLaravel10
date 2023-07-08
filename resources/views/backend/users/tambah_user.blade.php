@@ -12,6 +12,46 @@
 
 @section('script_bawah')
 <script src="{{asset('webromadan/be/demo/pages/form_validation_library.js')}}"></script>
+
+<script src="{{asset('webromadan/be/demo/pages/form_select2.js')}}"></script>
+{{-- <script>
+
+		$(function(){
+			$.ajaxSetup({
+				headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+			});
+		});
+
+
+		$(function(){
+
+
+			$('#role').on('change',function(){
+
+				let roleall = $('#role').val();
+
+
+				$.ajax({
+					type: 'POST',
+					url: "{{route('SatkerRole')}}",
+					data : {roleall: roleall},
+					cache: false,
+
+					success: function(msg){
+						$('#satker').html(msg);
+
+					},
+					error: function(data){
+						console.log('error:',data)
+					}
+				})
+			})
+			
+
+
+		});
+
+</script> --}}
 @endsection
 
 @section('content')
@@ -65,6 +105,30 @@
 									</div>
 									<!-- /EMAIL INPUT -->
 
+									<!-- /ROLE INPUT -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-3">Role <span class="text-danger">*</span></label>
+										<div class="col-lg-9">
+											<select id="role" value="{{ old('role') }}" name="role" class="form-control form-control-select2 select" @error('role') is-invalid @enderror required>
+												<option>--Pilih Role--</option>
+												
+												@foreach ($data['role'] as $item)
+												<option value="{{ $item->id }}" {{ old('role') == $item->id ? 'selected' : null}}>{{$loop->iteration." - ".$item->name}}</option>
+												@endforeach
+												
+
+											</select>
+
+											<!-- error message untuk judul -->
+											@error('kategori')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									{{-- /ROLE INPUT --}}
+
                                     <!-- PASSWORD INPUT -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-3">Password <span class="text-danger">*</span></label>
@@ -87,7 +151,8 @@
 						</div>
 
 						<div class="card-footer d-flex justify-content-end">
-							<button type="reset" class="btn btn-light" id="reset">Reset</button>
+							<a href="{{route('users.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
 							<button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
 						</div>
 							</form>

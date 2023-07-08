@@ -24,7 +24,7 @@
                         @forelse ($infolist as $item)
 
                          <div class="col-md-4 p-t-30">
-                            <div class="card w-100m bo-rad-10 " style="background-color:#0F5FAE;">
+                            <div class="card w-100m bo-rad-10 " style="background-color: #0F5FAE; box-shadow: 6px 6px 4px rgba(0, 0, 0, 0.2);">
                                 <div class="card-body infopublik-card-home">
                                     <h5 class="card-title">
                                          <a href="{{ route($item->link_list_informasi) }}"><button type="button" class="btn btn-warning mr-2"><i class="fa-solid fa-house"></i></button></a>

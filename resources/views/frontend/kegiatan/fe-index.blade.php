@@ -32,7 +32,7 @@
 						</div>
 					
                     </form>
-			</div>
+			</div>	
 				
 			<div class="row">
 					@forelse ($kegiatan as $item)

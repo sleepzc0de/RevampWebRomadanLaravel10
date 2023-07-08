@@ -578,4 +578,11 @@ border-radius: 3%;
      color: #FFFFFF;
  }
  
+ .page-item.active .page-link-romadan {
+     z-index: 3;
+     color: #fff;
+     background-color: #0F5FAE;
+     border-color: #0F5FAE;
+ }
  
+

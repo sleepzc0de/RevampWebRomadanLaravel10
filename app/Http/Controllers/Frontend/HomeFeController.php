@@ -129,33 +129,45 @@ class HomeFeController extends Controller
 
     public function infopublik_peraturan_index(Request $request)
     {
-        // $peraturan = PeraturanModel::latest()->paginate(9);
-        // dd($peraturan);
         $kategori = ref_kategori::all();
         $jenis_peraturan = ref_jenis_peraturan::all();
         $searchValue = strip_tags($request->input('cari_peraturan'));
-        if (strip_tags($request->cari_peraturan)) {
-            $search = strip_tags($request->cari_peraturan);
-            $peraturan = PeraturanModel::with('kategori', 'jenis_peraturan')
-                ->where(function ($query) use ($search) {
-                    $query->where('nomor_peraturan', 'like', '%' . $search . '%')
-                        ->orWhere('judul_peraturan', 'like', '%' . $search . '%')
-                        ->orWhereHas('kategori', function ($query) use ($search) {
-                            $query->where('nama_kategori', 'like', '%' . $search . '%');
-                        })
-                        ->orWhereHas('jenis_peraturan', function ($query) use ($search) {
-                            $query->where('nama_jenis_peraturan', 'like', '%' . $search . '%');
-                        });
-                })
-                ->latest()->paginate(9);
-        } else {
-            $peraturan = PeraturanModel::with('kategori', 'jenis_peraturan', 'status_peraturan')->latest()->paginate(9);
-            // return redirect()->back()->with('message', 'Empty Search');
+        $selectedKategori = $request->input('kategori'); // Mengambil nilai checkbox kategori yang dipilih
+        $selectedJenisPeraturan =  $request->input('jenis_peraturan'); // Mengambil nilai checkbox jenis_peraturan yang dipilih
+
+        $query = PeraturanModel::with('kategori', 'jenis_peraturan', 'status_peraturan');
+
+        if ($searchValue) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('nomor_peraturan', 'like', '%' . $searchValue . '%')
+                    ->orWhere('judul_peraturan', 'like', '%' . $searchValue . '%')
+                    ->orWhereHas('kategori', function ($q) use ($searchValue) {
+                        $q->where('nama_kategori', 'like', '%' . $searchValue . '%');
+                    })
+                    ->orWhereHas('jenis_peraturan', function ($q) use ($searchValue) {
+                        $q->where('nama_jenis_peraturan', 'like', '%' . $searchValue . '%');
+                    });
+            });
         }
 
-        // $peraturannew = PeraturanModel::with('kategori')->get();
-        // dd($peraturannew->kategori->nama_kategori);
-        return view('frontend.infopublik.peraturan-index', compact(['peraturan', 'searchValue', 'kategori', 'jenis_peraturan']));
+        if ($selectedKategori) {
+            $query->orWhereHas('kategori', function ($q) use ($selectedKategori) {
+                $q->whereIn('nama_kategori', $selectedKategori);
+            });
+            // Menggunakan kolom yang sesuai di tabel PeraturanModel
+        }
+
+        if ($selectedJenisPeraturan) {
+            $query->orWhereHas('jenis_peraturan', function ($q) use ($selectedJenisPeraturan) {
+                $q->whereIn('nama_jenis_peraturan', $selectedJenisPeraturan);
+            });
+            // Menggunakan kolom yang sesuai di tabel PeraturanModel
+        }
+
+        $peraturan = $query->latest()->paginate(9);
+        // dd($peraturan);
+
+        return view('frontend.infopublik.peraturan-index', compact(['peraturan', 'searchValue', 'kategori', 'jenis_peraturan', 'selectedKategori', 'selectedJenisPeraturan']));
     }
 
     public function infopublik_peraturan_detail($peraturan)
