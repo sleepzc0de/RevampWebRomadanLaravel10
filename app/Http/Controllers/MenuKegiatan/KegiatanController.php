@@ -105,6 +105,7 @@ class KegiatanController extends Controller
                 'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'isi' => 'required',
                 'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
+                'link' => 'required',
             ], [
                 'image.dimensions' => 'Gambar maksimal lebar (width) 1650 pixels dan tinggi (height) 990 pixels',
             ]);
@@ -132,6 +133,7 @@ class KegiatanController extends Controller
                 'slug' => $slug,
                 'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d H:i'),
                 'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d H:i'),
+                'link' => $request->link,
 
             ];
 

@@ -15,6 +15,7 @@ class SejarahController extends Controller
      */
     public function index()
     {
+        $data = SejarahModel::all();
         $query = SejarahModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
@@ -58,7 +59,7 @@ class SejarahController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.sejarah.index');
+        return view('backend.sejarah.index', compact('data'));
     }
 
     /**

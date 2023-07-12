@@ -15,6 +15,7 @@ class TentangController extends Controller
      */
     public function index()
     {
+        $data = TentangModel::all();
         $query = TentangModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
@@ -58,7 +59,7 @@ class TentangController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.tentang.index');
+        return view('backend.tentang.index', compact('data'));
     }
 
     /**

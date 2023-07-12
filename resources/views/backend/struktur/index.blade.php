@@ -162,7 +162,8 @@ document.addEventListener('DOMContentLoaded', function() {
                           <h1>Struktur Organisasi Romadan</h1>
                            @include('layouts.webromadan_backend.session_notif')
 						</div>
-                        <div class="card-header">
+                        @if (count($data) < 1)
+                             <div class="card-header">
                           
                                     <a href="{{route('struktur-organisasi.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
                                         <span class="btn-labeled-icon bg-purple text-white rounded-pill">
@@ -172,6 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </button></a>
                             
 						</div>
+                        @endif
+                       
                         
 						<table class="table datatable-basic table-hover table-striped">
 							<thead>

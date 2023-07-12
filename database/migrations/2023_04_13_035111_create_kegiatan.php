@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('judul');
             $table->string('tempat')->nullable();
             $table->string('image')->nullable();
+            $table->string('link')->nullable();
             $table->string('file')->nullable();
             $table->string('slug')->unique();
             $table->text('isi');

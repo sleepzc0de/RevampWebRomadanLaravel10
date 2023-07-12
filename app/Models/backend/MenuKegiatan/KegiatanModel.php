@@ -11,7 +11,7 @@ class KegiatanModel extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'kegiatan';
     protected $guarded = [];
-    protected $fillable = ['judul', 'tempat', 'image', 'file', 'slug', 'isi', 'tanggal_mulai', 'tanggal_selesai'];
+    protected $fillable = ['judul', 'tempat', 'image', 'file', 'slug', 'isi', 'tanggal_mulai', 'tanggal_selesai', 'link'];
     protected $dates = ['deleted_at'];
 
     protected $hidden = [

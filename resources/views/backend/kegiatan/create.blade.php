@@ -200,6 +200,21 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /Tanggal Selesai -->
+
+									<!-- Link Absen -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Link Absen <span class="text-danger">*</span></label>
+										<div class="col-lg-10">
+											<input value="{{ old('link') }}" type="text" name="link" class="form-control @error('link') is-invalid @enderror" required placeholder="Masukkan Link Absen">
+											<!-- error message untuk link -->
+											@error('link')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /Link Absen -->
                                     
 									
 

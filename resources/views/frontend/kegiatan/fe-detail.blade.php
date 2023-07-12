@@ -20,7 +20,7 @@
 
                         
 
-						<div class="t-center m-b-22 size3 " style="text-align: justify;">
+						<div class="t-center m-b-22 " style="text-align: justify;">
 							<div class="txt-judul-kegiatan-detail">{{$data->judul}}</div>
 						</div>
                         
@@ -51,7 +51,17 @@
                                <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3" style="text-align: justify;">
                                 {!!$data->isi!!}
                                </div>
+
+                            <br>
+                                <a href="{{$data->link}}" class="btn btn3-kegiatan-detail" target="_blank">
+                                <i class="fa-solid fa-link mr-2"></i>Link Absen
+                                </a>
+                                <a href="{{asset('storage/romadan_file_web/'.$data->file)}}" class="btn btn3-kegiatan-detail" target="_blank">
+                                <i class="fa-solid fa-download mr-2"></i>Download Materi
+                                </a>
                             </div>
+
+                            
                                 
                             @endif
 							

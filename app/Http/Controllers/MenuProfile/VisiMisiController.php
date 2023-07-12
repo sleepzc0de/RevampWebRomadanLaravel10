@@ -17,6 +17,7 @@ class VisiMisiController extends Controller
      */
     public function index()
     {
+        $data = VisiMisiModel::all();
         $query = VisiMisiModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
@@ -60,7 +61,7 @@ class VisiMisiController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.visimisi.index');
+        return view('backend.visimisi.index', compact('data'));
     }
 
     /**

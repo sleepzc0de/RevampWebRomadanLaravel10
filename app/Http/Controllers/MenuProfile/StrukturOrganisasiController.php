@@ -15,6 +15,7 @@ class StrukturOrganisasiController extends Controller
      */
     public function index()
     {
+        $data = StrukturOrganisasiModel::all();
         $query = StrukturOrganisasiModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
@@ -58,7 +59,7 @@ class StrukturOrganisasiController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.struktur.index');
+        return view('backend.struktur.index', compact('data'));
     }
 
     /**
