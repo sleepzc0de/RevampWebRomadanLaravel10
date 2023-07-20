@@ -1,6 +1,7 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
+
 @endsection
 
 

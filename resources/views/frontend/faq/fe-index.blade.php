@@ -71,7 +71,7 @@
 		<div class="container">
 
             <div class="title-section-ourmenu m-b-2">
-					<h5 class="romadan-berita m-t-2">
+					<h5 class="txt-judul-faq  m-t-2">
 						Frequently Asked Questions
 					</h5>
 			</div>
@@ -80,7 +80,7 @@
 				@forelse ($faq as $item)
 				<div class="col-md-6 ">
 					<div class="wrap-text-welcome">
-						<div class="txt-judul-faq t-center m-b-35 m-t-5" style="text-align: justify;">
+						<div class="txt-judul-faq-pertanyaan t-center m-b-35 m-t-5" style="text-align: justify;">
 							{{$item->faq_judul}}
                         </div>
 

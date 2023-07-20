@@ -33,7 +33,7 @@
                             <br>
                                 <i class="fa-solid fa-location-dot mt-3 mr-2"></i> {{$data->tempat}}
                             <br>
-                                <img class="mt-3 pic-blo4 hov-img-zoom bo-rad-10 pos-relative" src="{{asset('storage/romadan_gambar_web/'.$data->image)}}" alt="IMG-KEGIATAN-DETAIL" width="1200" height="600">
+                                <img class="mt-3 pic-blo4 hov-img-zoom bo-rad-10 pos-relative w-100" src="{{asset('storage/romadan_gambar_web/'.$data->image)}}" alt="IMG-KEGIATAN-DETAIL" height="600">
                             <br>
                                <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3" style="text-align: justify;">
                                 {!!$data->isi!!}

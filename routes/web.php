@@ -91,6 +91,7 @@ Route::group(
             Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
 
             Route::get('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
+            Route::post('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
             // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
         });
 
@@ -103,11 +104,22 @@ Route::group(
 
         // MENU PUBLIKASI
         Route::prefix('/publikasi')->group(function () {
-            // VISI DAN MISI
+            // INDEX
+            Route::get('/', [HomeFeController::class, 'publikasi_index'])->name('publikasi-index-fe');
+            // BERITA INDEX
+            Route::get('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+            Route::post('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+            // WARTA INDEX
+            Route::get('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
+            Route::post('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
+            // ARTIKEL INDEX
+            Route::get('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
+            Route::post('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
+            // BERITA
             Route::get('/berita/{publikasi}', [HomeFeController::class, 'publikasi_berita'])->name('berita-fe');
-            // SEJARAH
+            // WARTA
             Route::get('/warta/{publikasi}', [HomeFeController::class, 'publikasi_warta'])->name('warta-fe');
-            // ORGANISASI
+            // ARTIKEL
             Route::get('/artikel/{publikasi}', [HomeFeController::class, 'publikasi_artikel'])->name('artikel-fe');
 
             // COBA

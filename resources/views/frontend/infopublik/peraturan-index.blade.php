@@ -19,7 +19,7 @@
 	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
 		<div class="container">
             <div class="title-section-ourmenu m-b-22">
-					<h5 class="romadan-berita m-t-2">
+					<h5 class="txt-judul-infopublik m-t-2">
 						Informasi Publik
 					</h5>
                     <br>
@@ -28,7 +28,7 @@
 					<div class="col-lg-4">
 						<div class="alert alert-secondary" role="alert">
 							<h5 class="alert-heading">REFINE YOUR SEARCH</h5>
-							<form class="form-outline" action="{{route('informasi-publik-peraturan-index-fe')}}" method="GET" autocomplete="off">
+							<form class="form-outline" action="{{route('informasi-publik-peraturan-index-fe')}}" method="POST" autocomplete="off">
 								@csrf
 								<div class="form-group">
 									<input name="cari_peraturan" type="text" class="form-control mt-3 input-with-logo" id="cari_peraturan" aria-describedby="cari_peraturan" placeholder="Cari peraturan disini">
@@ -98,7 +98,7 @@
                                 <div class="container">
 									
                                     <div class="title-section-ourmenu m-b-22">
-											<h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3>
+											{{-- <h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3> --}}
                                             <h5 class="romadan-faq m-t-5">
                                                 Mohon maaf, data yang anda cari tidak ada :(
                                             </h5>

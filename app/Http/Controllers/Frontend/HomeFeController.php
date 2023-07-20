@@ -67,6 +67,53 @@ class HomeFeController extends Controller
         return view('frontend.profile.fe_tentang', compact(['tentang']));
     }
 
+    // PUBLIKASI
+
+    public function publikasi_index()
+    {
+        $berita_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
+        // dd($berita_terkini_publikasi);
+
+        $warta_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
+        // dd($warta_terkini_publikasi);
+
+        $artikel_terkini_publikasi =
+            PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
+        // dd($artikel_terkini_publikasi);
+
+        return view('frontend.publikasi.index', compact([
+            'berita_terkini_publikasi',
+            'warta_terkini_publikasi',
+            'artikel_terkini_publikasi'
+        ]));
+    }
+
+    public function publikasi_index_berita()
+    {
+        return view('frontend.publikasi.index-berita');
+    }
+
+    public function publikasi_index_warta()
+    {
+        return view('frontend.publikasi.index-warta');
+    }
+
+    public function publikasi_index_artikel(Request $request)
+    {
+
+        $searchValue = strip_tags($request->input('cari_artikel'));
+        if ($request->cari_artikel) {
+            $search = $request->cari_artikel;
+            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
+        } else {
+            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
+
+        return view('frontend.publikasi.index-artikel', compact(['searchValue', 'artikel']));
+    }
+
     public function publikasi_berita($publikasi)
     {
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Berita')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
@@ -82,6 +129,8 @@ class HomeFeController extends Controller
 
         return view('frontend.publikasi.fe_artikel', compact(['data']));
     }
+
+    // LAYANAN
 
     public function layanan_layanan()
     {
@@ -182,9 +231,16 @@ class HomeFeController extends Controller
         return view('frontend.infopublik.pedoman-index');
     }
 
-    public function infopublik_aplikasi_index()
+    public function infopublik_aplikasi_index(Request $request)
     {
-        $data = AplikasiModel::latest()->paginate(9);
+        $searchValue = strip_tags($request->input('cari_aplikasi'));
+        if ($request->cari_aplikasi) {
+            $search = $request->cari_aplikasi;
+            $data = AplikasiModel::where('judul_aplikasi', 'like', "%" . $search . "%")->orWhere('sub_judul_aplikasi', 'like', "%" . $search . "%")->latest()->paginate(9);
+        } else {
+
+            $data = AplikasiModel::latest()->paginate(9);
+        }
         return view('frontend.infopublik.aplikasi-index', compact('data'));
     }
 

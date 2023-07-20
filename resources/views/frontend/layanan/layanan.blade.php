@@ -11,13 +11,13 @@
 		<div class="container">
 
 			 <div class="title-section-ourmenu m-b-2">
-					<h5 class="romadan-berita m-t-2">
+					<h5 class="txt-judul-layanan m-t-2">
 						Layanan
 					</h5>
 			</div>
 			<div class="row p-t-10">
 				@forelse ($layanan as $item)
-				<div class="col-md-6 ">
+				<div class="col-lg-6 ">
 					<div class="wrap-text-welcome">
 						{{-- <div class="txt-judul-layanan t-center m-b-35 m-t-5" style="text-align: justify;">
 							{{$item->judul}}
@@ -31,7 +31,7 @@
 					</div>
 				</div>
 
-				<div class="col-md-6 p-t-90">
+				<div class="col-lg-6 p-t-90">
 					<div class="wrap-pic-welcome size2-visi-misi bo-rad-10 hov-img-zoom m-l-r-auto">
 						<a href="{{asset('storage/romadan_gambar_web/' . $item->image)}}"><img src="{{asset('storage/romadan_gambar_web/' . $item->image)}}" alt="IMG-OUR"></a>
 					</div>

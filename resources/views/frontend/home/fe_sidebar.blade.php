@@ -10,7 +10,7 @@
 			</li>
 
 			<li class="t-center m-b-13">
-				<a href="menu.html" class="txt19">Menu</a>
+				<a href="menu.html" class="txt19">HOHO</a>
 			</li>
 
 			<li class="t-center m-b-13">

@@ -692,8 +692,8 @@ input[type="date" i] {
 }
 
 .btn-show-sidebar:hover {
-  border-top: 2px solid #ec1d25;
-  border-bottom: 2px solid #ec1d25;
+  border-top: 2px solid #ffc107;
+  border-bottom: 2px solid #ffc107;
 }
 
 @media (max-width: 1200px) {

@@ -63,11 +63,17 @@
 
 .romadan-berita{
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #0F5FAE;
+    color: #000000;
     font-style: normal;
     font-weight: 500;
-    font-size: 32px;
+    font-size: 45px;
     line-height: 40px;
+}
+
+.romadan-berita-button-home {
+    display: flex;
+        justify-content: center;
+        align-items: center;
 }
 
 .romadan-peraturan-utama {
@@ -154,7 +160,14 @@
     color: white;
 }
 
-
+.txt-judul-infopublik{
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+    color: #0F5FAE;
+}
 
 .romadan-infopublik {
     font-family: 'Inter';
@@ -173,6 +186,7 @@
     line-height: 24px;
     color: #000000;
 }
+
 
 
 .romadan-faq {
@@ -204,7 +218,7 @@
 
 .romadan-kumpulan-peraturan {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #0F5FAE;
+    color: #000000;
     font-style: normal;
     font-weight: 500;
     font-size: 32px;
@@ -361,12 +375,21 @@ border-radius: 3%;
 }
 
 .txt-tentang-romadan{
-    font-family: 'Plus Jakarta Sans';
-    font-weight: 700;
-    font-size: 50px;
-    line-height: 54px;
-    letter-spacing: 0px;
-    color: #0F5FAE;
+        font-family: 'Plus Jakarta Sans';
+        font-size: 45px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 52px;
+        color: #000000;
+}
+
+.txt-tentang-romadan-isi > p {
+    font-family: 'Inter';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
 }
 
 .txt-judul-visi-misi{
@@ -481,13 +504,33 @@ border-radius: 3%;
     color: #0F5FAE;
 }
 
+
+
 .txt-judul-faq {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+    color: #0F5FAE;
+}
+
+.txt-judul-faq-pertanyaan {
     font-family: 'Plus Jakarta Sans';
     font-style: normal;
     font-weight: 500;
     font-size: 24px;
     line-height: 40px;
     color: #000000;
+}
+
+.txt-judul-kegiatan {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+    color: #0F5FAE;
 }
 
 .txt-judul-kegiatan-detail {
@@ -563,6 +606,33 @@ border-radius: 3%;
     color: white;
 }
 
+/* ARTIKEL BUTTON */
+
+.btn3-artikel {
+    background: #7A9D54;
+    border-radius: 10px;
+}
+
+.btn3-artikel-2 {
+    background: #8C3333;
+    border-radius: 10px;
+}
+
+/* .btn3-artikel:hover {
+    background-color: #7A9D54;
+    color: white;
+} */
+
+.btn3-artikel-refresh {
+    background: #FFC95F;
+    border-radius: 10px;
+}
+
+.btn3-artikel-refresh:hover {
+    background-color: #FFC95F;
+    color: white;
+}
+
 
 .infopublik-card-home > * {
     color: #FFFFFF;
@@ -589,11 +659,95 @@ border-radius: 3%;
      color: #FFFFFF;
  }
  
+ 
  .page-item.active .page-link-romadan {
      z-index: 3;
      color: #fff;
      background-color: #0F5FAE;
      border-color: #0F5FAE;
  }
+
+
+ .kumper-card-home>* {
+     color: #000000;
+ }
+
+ .kumper-card-home>*>* {
+     color: #000000;
+ }
+
+ .kumper-card-home>*>*>* {
+     color: #000000;
+ }
+
+
+ .kumper-card-home>a:hover {
+     color: #000000;
+ }
+
+ .kumper-card-home>*>a:hover {
+     color: #000000;
+ }
+
+ .kumper-card-home>*>*>a:hover {
+     color: #000000;
+ }
  
+
+ .publikasi-home{
+    font-family: 'Plus Jakarta Sans';
+        font-size: 57px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 64px;
+        color: #000000;
+        text-align: center;
+        margin-top: 70px;
+        
+ }
+ .publikasi-home-sub {
+     font-family: 'Plus Jakarta Sans';
+    font-size: 22px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 28px;
+     color: #667085;
+     text-align: center;
+     margin-top: 20px;
+
+ }
+
+
+ .publikasi-home-berita-terkini {
+     font-family: 'Plus Jakarta Sans';
+    font-size: 45px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 52px;
+     color: #000000;
+     text-align: center;
+
+ }
+
+ .publikasi-home-warta {
+     font-family: 'Plus Jakarta Sans';
+     font-size: 45px;
+     font-style: normal;
+     font-weight: 500;
+     line-height: 52px;
+     color: #000000;
+     text-align: center;
+
+ }
+
+ .publikasi-home-artikel {
+     font-family: 'Plus Jakarta Sans';
+     font-size: 45px;
+     font-style: normal;
+     font-weight: 500;
+     line-height: 52px;
+     color: #000000;
+     text-align: center;
+
+ }
 

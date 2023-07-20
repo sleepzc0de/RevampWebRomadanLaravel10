@@ -55,15 +55,8 @@
 								<li>
 									<a href="{{route('informasi-publik-index-fe')}}">Informasi Publik</a>
 								</li>
-								<li class="dropdown">
-									<a href="#" class="" data-toggle="dropdown">Publikasi </span></a>
-									<ul class="dropdown-menu p-l-20 p-l-0-xl mt-4 dropdown-menu-romadan">
-									{{-- MENU PROFILE --}}
-									<li><a href="#">Berita</a></li>
-									<li><a href="#">Warta</a></li>
-									<li><a href="#">Artikel</a></li>
-									{{-- END MENU PROFILE --}}
-									</ul>
+								<li>
+									<a href="{{route('publikasi-index-fe')}}">Publikasi</a>
 								</li>
 								<li>
 									<a href="{{route('faq-index-fe')}}">FAQ</a>

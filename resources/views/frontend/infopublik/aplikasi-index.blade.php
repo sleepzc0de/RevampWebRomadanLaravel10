@@ -19,16 +19,34 @@
 	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
 		<div class="container">
             <div class="title-section-ourmenu m-b-22">
-					<h5 class="romadan-berita m-t-2">
+					<h5 class="txt-judul-infopublik m-t-2">
 						Informasi Publik
 					</h5>
                     <br>
 			</div>
-                <div class="row">
+                <div class="row"> 
 					<div class="col-lg-12">
                         <h5 class="romadan-peraturan-detail m-t-2">
                             Portal Aplikasi
                         </h5>
+
+                         <form class="form-outline mt-4" action="{{route('informasi-publik-aplikasi-index-fe')}}" method="POST" autocomplete="off">
+						@csrf
+                        <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
+							<input id="search-input" class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_aplikasi" placeholder="Cari Aplikasi">
+						</div>
+						<div class="wrap-btn-booking flex-c-m m-t-13">
+							<button type="reset" class="btn3-kegiatan-2 flex-c-m size36 txt11 trans-0-4 mr-2">
+								Clear
+							</button>
+							<button type="submit" class="btn3-kegiatan flex-c-m size36 txt11 trans-0-4">
+								Cari
+							</button>
+							<a class="btn3-kegiatan-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('informasi-publik-aplikasi-index-fe')}}">Refresh
+							</a>
+						</div>
+					
+                    </form>
                         <div class="row">
 
                           @forelse ($data as $item)
@@ -54,7 +72,11 @@
                                       </div>
 					   	                  </div>   
                           @empty
-                              KOSONG
+                             <div class="container">                         
+                                <h5 class="romadan-faq text-center m-t-2">
+                                  Link Aplikasi Kosong !
+                                </h5>
+                              </div>
                           @endforelse
                                    
 
@@ -69,5 +91,5 @@
 
 @section('script_fe')
 @endsection
-
+      
 @endsection
