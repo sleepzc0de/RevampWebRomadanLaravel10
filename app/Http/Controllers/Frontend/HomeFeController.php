@@ -88,14 +88,32 @@ class HomeFeController extends Controller
         ]));
     }
 
-    public function publikasi_index_berita()
+    public function publikasi_index_berita(Request $request)
     {
-        return view('frontend.publikasi.index-berita');
+
+        $searchValue = strip_tags($request->input('cari_berita_terkini'));
+        if ($request->cari_berita_terkini) {
+            $search = $request->cari_berita_terkini;
+            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
+        } else {
+            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
+        return view('frontend.publikasi.index-berita', compact(['berita', 'searchValue']));
     }
 
-    public function publikasi_index_warta()
+    public function publikasi_index_warta(Request $request)
     {
-        return view('frontend.publikasi.index-warta');
+        $searchValue = strip_tags($request->input('cari_warta'));
+        if ($request->cari_warta) {
+            $search = $request->cari_warta;
+            $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
+        } else {
+            $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+        return view('frontend.publikasi.index-warta', compact(['warta', 'searchValue']));
     }
 
     public function publikasi_index_artikel(Request $request)
@@ -122,9 +140,17 @@ class HomeFeController extends Controller
         return view('frontend.publikasi.fe_berita', compact(['data']));
     }
 
+    public function publikasi_warta($publikasi)
+    {
+        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Warta')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
+        // dd($data);
+
+        return view('frontend.publikasi.fe_warta', compact(['data']));
+    }
+
     public function publikasi_artikel($publikasi)
     {
-        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Artikel')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->select('publikasi.*', 'ref_kategori.nama_kategori')->firstorFail();
+        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Artikel')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data);
 
         return view('frontend.publikasi.fe_artikel', compact(['data']));

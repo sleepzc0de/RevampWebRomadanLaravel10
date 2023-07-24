@@ -1,86 +1,65 @@
 
 	<aside class="sidebar trans-0-4">
 		<!-- Button Hide sidebar -->
-		<button class="btn-hide-sidebar ti-close color0-hov trans-0-4"></button>
+
+		<div class="">
+		<button class="btn-hide-sidebar color0-hov trans-0-4 mb-5"><i class="fa-solid fa-xmark"></i></button>
+		<img src="{{asset('frontend_romadan_web/images/icons/romadan/logo_3.png')}}" alt="romadan_logo" width="280px" class="mt-4 pt-5 pl-3">
+		</div>
 
 		<!-- - -->
-		<ul class="menu-sidebar p-t-95 p-b-70">
+		<ul class="menu-sidebar p-t-20 p-b-70">
 			<li class="t-center m-b-13">
-				<a href="index.html" class="txt19">Home</a>
+				<a href="{{route('homefe')}}" class="txt19">Home</a>
 			</li>
-
+			<hr>
 			<li class="t-center m-b-13">
-				<a href="menu.html" class="txt19">AULS</a>
+				{{-- <a href="menu.html" class="txt19">Profile</a> --}}
+				<div class="btn-group">
+					{{-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						Action
+					</button> --}}
+					<a class="txt19" href="menu.html" data-toggle="dropdown" aria-expanded="false">Profile</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="{{route('visi-misi-fe')}}">Visi Misi</a>
+						<a class="dropdown-item" href="{{route('sejarah-fe')}}">Sejarah</a>
+						<a class="dropdown-item" href="{{route('organisasi-fe')}}">Organisasi</a>
+						<a class="dropdown-item" href="{{route('tentang-fe')}}">Tentang</a>
+				</div>
 			</li>
-
+			
+			<hr>
 			<li class="t-center m-b-13">
-				<a href="gallery.html" class="txt19">Gallery</a>
+				<a href="{{route('layanan-fe')}}" class="txt19">Layanan</a>
 			</li>
-
+			<hr>
 			<li class="t-center m-b-13">
-				<a href="about.html" class="txt19">About</a>
+				<a href="{{route('kegiatan-index-fe')}}" class="txt19">Kegiatan</a>
 			</li>
-
+			<hr>
 			<li class="t-center m-b-13">
-				<a href="blog.html" class="txt19">Blog</a>
+				<a href="{{route('informasi-publik-index-fe')}}" class="txt19">Informasi Publik</a>
 			</li>
-
-			<li class="t-center m-b-33">
-				<a href="contact.html" class="txt19">Contact</a>
+			<hr>
+			<li class="t-center m-b-13">
+				<a href="{{route('publikasi-index-fe')}}" class="txt19">Publikasi</a>
 			</li>
-
+			<hr>
+			<li class="t-center m-b-13">
+				<a href="{{route('faq-index-fe')}}" class="txt19">FAQ</a>
+			</li>
+			<hr>
+			<li class="t-center m-b-13">
+				<a href="contact.html" class="txt19">Search</a>
+			</li>	
+			<hr>
 			<li class="t-center">
 				<!-- Button3 -->
 				<a href="reservation.html" class="btn3 flex-c-m size13 txt11 trans-0-4 m-l-r-auto">
-					Reservation
+					Kontak Kami
 				</a>
 			</li>
+
+			
 		</ul>
-
-		<!-- - -->
-		<div class="gallery-sidebar t-center p-l-60 p-r-60 p-b-40">
-			<!-- - -->
-			<h4 class="txt20 m-b-33">
-				Gallery
-			</h4>
-
-			<!-- Gallery -->
-			<div class="wrap-gallery-sidebar flex-w">
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-01.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-01.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-02.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-02.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-03.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-03.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-05.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-05.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-06.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-06.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-07.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-07.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-09.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-09.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-10.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-10.jpg')}}" alt="GALLERY">
-				</a>
-
-				<a class="item-gallery-sidebar wrap-pic-w" href="images/photo-gallery-11.jpg" data-lightbox="gallery-footer">
-					<img src="{{asset('frontend_romadan_web/images/photo-gallery-thumb-11.jpg')}}" alt="GALLERY">
-				</a>
-			</div>
-		</div>
 	</aside>

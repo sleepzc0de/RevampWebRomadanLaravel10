@@ -70,7 +70,7 @@
 									</span>
 								</div>
 								<div>
-									<a href="{{route('publikasi-index-artikel-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
+									<a href="{{route('artikel-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
 								</div>
 
 

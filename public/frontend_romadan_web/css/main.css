@@ -682,18 +682,18 @@ input[type="date" i] {
 .btn-show-sidebar {
   width: 26px;
   height: 15px;
-  border-top: 2px solid white;
-  border-bottom: 2px solid white;
+  /* border-top: 2px solid white;
+  border-bottom: 2px solid white; */
 }
 
 .header-fixed .btn-show-sidebar {
-  border-top: 2px solid #222222;
-  border-bottom: 2px solid #222222;
+  /* border-top: 2px solid #222222;
+  border-bottom: 2px solid #222222; */
 }
 
 .btn-show-sidebar:hover {
-  border-top: 2px solid #ffc107;
-  border-bottom: 2px solid #ffc107;
+  /* border-top: 2px solid #ffc107;
+  border-bottom: 2px solid #ffc107; */
 }
 
 @media (max-width: 1200px) {
