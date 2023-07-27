@@ -20,6 +20,7 @@ use App\Models\backend\publikasi\berita;
 use App\Models\backend\ref_kategori;
 use App\Models\medsos\medsos;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Hash;
 
 class HomeFeController extends Controller
@@ -100,8 +101,30 @@ class HomeFeController extends Controller
             // return redirect()->back()->with('message', 'Empty Search');
         }
 
-        return view('frontend.publikasi.index-berita', compact(['berita', 'searchValue']));
+        $kategori = ref_kategori::all();
+        // dd($kategori);
+
+        return view('frontend.publikasi.index-berita', compact(['berita', 'searchValue', 'kategori']));
     }
+
+    public function publikasi_berita_kategori(Request $request, $kategori)
+    {
+
+        $searchValue = strip_tags($request->input('cari_berita_terkini'));
+        if ($request->cari_berita_terkini) {
+            $search = $request->cari_berita_terkini;
+            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('judul', 'like', "%" . $search . "%")->where('ref_kategori.nama_kategori', strip_tags(strtolower($kategori)))->latest()->paginate(9);
+        } else {
+            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('ref_kategori.nama_kategori', strip_tags(strtolower($kategori)))->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
+        $kategori = ref_kategori::all();
+
+
+        return view('frontend.publikasi.kategori-berita', compact(['berita', 'searchValue', 'kategori']));
+    }
+
 
     public function publikasi_index_warta(Request $request)
     {

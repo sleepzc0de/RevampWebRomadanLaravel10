@@ -121,6 +121,10 @@ Route::group(
             Route::get('/warta/{publikasi}', [HomeFeController::class, 'publikasi_warta'])->name('warta-fe');
             // ARTIKEL
             Route::get('/artikel/{publikasi}', [HomeFeController::class, 'publikasi_artikel'])->name('artikel-fe');
+            // FILTER KATEGORI BERITA TERKINI
+
+            Route::get('/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
+
 
             // COBA
 

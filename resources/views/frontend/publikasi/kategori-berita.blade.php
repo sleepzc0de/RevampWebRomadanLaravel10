@@ -33,16 +33,25 @@
 						</div> --}}
 
 						<div class="col-lg-12 text-center">
-							
-							<a class="btn btn-light pilihan-kategori-menu {{Request::routeIs('publikasi-index-berita-fe')?'active':''}}" href="{{route('publikasi-index-berita-fe')}}">View All
-							</a>
-							@foreach ($kategori as $item)
-							<a class="btn btn-light pilihan-kategori-menu" href="{{route('berita-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}">{{$item->nama_kategori}}
-							</a>
-							@endforeach
+							<a class="btn btn-light pilihan-kategori-menu" href="{{route('publikasi-index-berita-fe')}}">View All
+							</a>           
+            
+                            @foreach ($kategori as $item)
+                                @php
+                                    $currentURL = Request::url();
+                                    $selectedCategory = strtolower($item->nama_kategori);
+                                    $isActive = $currentURL === route('berita-kategori-fe', $selectedCategory);
+                                @endphp
+
+                                <a id="{{ $item->nama_kategori }}" class="btn btn-light pilihan-kategori-menu {{ $isActive ? 'active' : '' }}" href="{{ route('berita-kategori-fe', $selectedCategory) }}">
+                                    {{ $item->nama_kategori }}
+                                </a>
+                            @endforeach
+
+
+
 							
 						</div>
-					
                     </form>
 				</div>
 				<div class="col-lg-12 mt-5">
@@ -100,9 +109,9 @@
                                 <div class="container">
 									
                                     <div class="title-section-ourmenu m-b-22">
-											<h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3>
+											{{-- <h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3> --}}
                                             <h5 class="romadan-faq m-t-5">
-                                                Mohon maaf, data yang anda cari tidak ada :(
+                                                Mohon maaf, data yang Bapak/Ibu cari belum tersedia :(
                                             </h5>
                                     </div>
                                     
