@@ -19,9 +19,9 @@
 					<form class="form-outline mt-5" action="{{route('publikasi-index-warta-fe')}}" method="POST" autocomplete="off">
 						@csrf
                         <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
-							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_warta" placeholder="Cari Berita Terkini">
+							<input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_warta" placeholder="Cari Warta">
 						</div>
-						<div class="wrap-btn-booking flex-c-m m-t-13">
+						{{-- <div class="wrap-btn-booking flex-c-m m-t-13">
 							<button type="reset" class="btn3-artikel-2 flex-c-m size36 txt11 trans-0-4 mr-2">
 								Clear
 							</button>
@@ -30,6 +30,16 @@
 							</button>
 							<a class="btn3-artikel-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('publikasi-index-warta-fe')}}">Refresh
 							</a>
+						</div> --}}
+						<div class="col-lg-12 text-center">
+							
+							<a class="btn btn-light pilihan-kategori-menu {{Request::routeIs('publikasi-index-warta-fe')?'active':''}}" href="{{route('publikasi-index-warta-fe')}}">View All
+							</a>
+							@foreach ($kategori as $item)
+							<a class="btn btn-light pilihan-kategori-menu" href="{{route('warta-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}">{{$item->nama_kategori}}
+							</a>
+							@endforeach
+							
 						</div>
 					
                     </form>

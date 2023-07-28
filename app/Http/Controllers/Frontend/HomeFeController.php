@@ -125,6 +125,43 @@ class HomeFeController extends Controller
         return view('frontend.publikasi.kategori-berita', compact(['berita', 'searchValue', 'kategori']));
     }
 
+    public function publikasi_warta_kategori(Request $request, $kategori)
+    {
+
+        $searchValue = strip_tags($request->input('cari_warta'));
+        if ($request->cari_warta) {
+            $search = $request->cari_warta;
+            $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->where('judul', 'like', "%" . $search . "%")->where('ref_kategori.nama_kategori', strip_tags(strtolower($kategori)))->latest()->paginate(9);
+        } else {
+            $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->where('ref_kategori.nama_kategori', strip_tags(strtolower($kategori)))->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
+        $kategori = ref_kategori::all();
+
+
+        return view('frontend.publikasi.kategori-warta', compact(['warta', 'searchValue', 'kategori']));
+    }
+
+    public function publikasi_artikel_kategori(Request $request, $kategori)
+    {
+
+        $searchValue = strip_tags($request->input('cari_artikel'));
+        if ($request->cari_artikel) {
+            $search = $request->cari_artikel;
+            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->where('judul', 'like', "%" . $search . "%")->where('ref_kategori.nama_kategori', strip_tags(strtolower($kategori)))->latest()->paginate(9);
+        } else {
+            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->where('ref_kategori.nama_kategori', strip_tags(strtolower($kategori)))->latest()->paginate(9);
+            // return redirect()->back()->with('message', 'Empty Search');
+        }
+
+        $kategori = ref_kategori::all();
+
+
+        return view('frontend.publikasi.kategori-artikel', compact(['artikel', 'searchValue', 'kategori']));
+    }
+
+
 
     public function publikasi_index_warta(Request $request)
     {
@@ -136,7 +173,9 @@ class HomeFeController extends Controller
             $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->latest()->paginate(9);
             // return redirect()->back()->with('message', 'Empty Search');
         }
-        return view('frontend.publikasi.index-warta', compact(['warta', 'searchValue']));
+
+        $kategori = ref_kategori::all();
+        return view('frontend.publikasi.index-warta', compact(['warta', 'searchValue', 'kategori']));
     }
 
     public function publikasi_index_artikel(Request $request)
@@ -151,8 +190,10 @@ class HomeFeController extends Controller
             // return redirect()->back()->with('message', 'Empty Search');
         }
 
+        $kategori = ref_kategori::all();
 
-        return view('frontend.publikasi.index-artikel', compact(['searchValue', 'artikel']));
+
+        return view('frontend.publikasi.index-artikel', compact(['searchValue', 'artikel', 'kategori']));
     }
 
     public function publikasi_berita($publikasi)

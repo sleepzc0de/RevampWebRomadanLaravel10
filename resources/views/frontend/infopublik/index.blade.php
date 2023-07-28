@@ -23,7 +23,7 @@
 
                         @forelse ($infolist as $item)
 
-                         <div class="col-md-4 p-t-30">
+                         {{-- <div class="col-md-4 p-t-30">
                             <div class="card w-100m bo-rad-10 " style="background-color: #0F5FAE; box-shadow: 6px 6px 4px rgba(0, 0, 0, 0.2);">
                                 <div class="card-body infopublik-card-home">
                                     <h5 class="card-title">
@@ -33,7 +33,22 @@
                                     <a href="{{ route($item->link_list_informasi) }}" class="btn btn-link mt-4">Lihat Semuanya<i class="fa-solid fa-arrow-right ml-3"></i></a>
                                 </div>
                             </div>
-					    </div>
+					    </div> --}}
+
+                         <div class="col-md-4 p-t-30">
+                            <a class="card2-peraturan-index" href="{{ route($item->link_list_informasi) }}">
+                                <h4><button type="button" class="btn btn-warning mr-2"><i class="fa-solid fa-house"></i></button>{{$item->judul_list_informasi}}</h4>
+                                <p class="small mt-2 card-text">{!!$item->isi_list_informasi!!}</p>
+                                <h6 class="mt-2">Lihat Semuanya<i class="fa-solid fa-arrow-right ml-3"></i></h6>
+                                
+                                <div class="go-corner" href="{{ route($item->link_list_informasi) }}">
+                                <div class="go-arrow-peraturan-index">
+                                    →
+                                </div>
+                                </div>
+                            </a>
+                        </div>
+                       
                         
                         @empty
 <section class="section-welcome p-t-120 p-b-105 text-center" >
@@ -49,6 +64,8 @@
                             </section>
 
                         @endforelse
+
+                       
 
                         {{-- <div class="col-md-4 p-t-30">
                             <div class="card w-100" style="background-color:#0F5FAE;">

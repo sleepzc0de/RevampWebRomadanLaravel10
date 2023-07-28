@@ -28,21 +28,30 @@
 							<button type="submit" class="btn3-artikel flex-c-m size36 txt11 trans-0-4">
 								Cari
 							</button>
-							<a class="btn3-artikel-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('publikasi-index-artikel-fe')}}">Refresh
+							<a class="btn3-artikel-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('publikasi-index-berita-fe')}}">Refresh
 							</a>
 						</div> --}}
 
 						<div class="col-lg-12 text-center">
-							
-							<a class="btn btn-light pilihan-kategori-menu {{Request::routeIs('publikasi-index-artikel-fe')?'active':''}}" href="{{route('publikasi-index-artikel-fe')}}">View All
-							</a>
-							@foreach ($kategori as $item)
-							<a class="btn btn-light pilihan-kategori-menu" href="{{route('artikel-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}">{{$item->nama_kategori}}
-							</a>
-							@endforeach
+							<a class="btn btn-light pilihan-kategori-menu" href="{{route('publikasi-index-artikel-fe')}}">View All
+							</a>           
+            
+                            @foreach ($kategori as $item)
+                                @php
+                                    $currentURL = Request::url();
+                                    $selectedCategory = strtolower($item->nama_kategori);
+                                    $isActive = $currentURL === route('artikel-kategori-fe', $selectedCategory);
+                                @endphp
+
+                                <a id="{{ $item->nama_kategori }}" class="btn btn-light pilihan-kategori-menu {{ $isActive ? 'active' : '' }}" href="{{ route('artikel-kategori-fe', $selectedCategory) }}">
+                                    {{ $item->nama_kategori }}
+                                </a>
+                            @endforeach
+
+
+
 							
 						</div>
-					
                     </form>
 				</div>
 				<div class="col-lg-12 mt-5">
@@ -100,9 +109,9 @@
                                 <div class="container">
 									
                                     <div class="title-section-ourmenu m-b-22">
-											<h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3>
+											{{-- <h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3> --}}
                                             <h5 class="romadan-faq m-t-5">
-                                                Mohon maaf, data yang anda cari tidak ada :(
+                                                Mohon maaf, data yang Bapak/Ibu cari belum tersedia :(
                                             </h5>
                                     </div>
                                     

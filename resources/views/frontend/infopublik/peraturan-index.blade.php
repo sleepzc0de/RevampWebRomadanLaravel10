@@ -80,9 +80,9 @@
 					</div>
 					<div class="col-lg-8">
 						<h4 class="romadan-peraturan-utama">Daftar Peraturan Tentang Barang Milik Negara & Pengadaan</h4>
-						<div class="row">
+						<div class="row p-t-30">
 							@forelse ($peraturan as $item)
-								 <div class="col-md-6 p-t-30">
+								 {{-- <div class="col-md-6">
 									<div class="card w-100" style="height: 170px; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);">
 										<div class="card-body">
 											<h5 class="card-title romadan-peraturan-judul">{{$item->nomor_peraturan}}</h5>
@@ -90,7 +90,20 @@
 											<a href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}" class="btn romadan-peraturan-link mt-2">Lihat Semuanya<i class="fa-solid fa-arrow-right ml-3"></i></a>
 										</div>
 									</div>
-					   		     </div>
+					   		     </div> --}}
+								 <div class="col-md-6">
+									<a class="card3" href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}">
+										<h5 class="card-title romadan-peraturan-judul">{{$item->nomor_peraturan}}</h5>
+										<p class="small">{{$item->judul_peraturan}}</p>
+										<h6 class="mt-2">Lihat Detail<i class="fa-solid fa-arrow-right ml-3"></i></h6>
+										<div class="dimmer"></div>
+										<div class="go-corner-card3" href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}">
+										<div class="go-arrow-card3">
+											→
+										</div>
+										</div>
+									</a>
+								 </div>
 							@empty
 							
 							<section class="section-welcome p-t-50 p-b-105" style="background-color: white;">

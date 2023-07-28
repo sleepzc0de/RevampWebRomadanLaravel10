@@ -81,7 +81,7 @@
 									</span>
 								</div>
 								<div>
-									<a href="{{route('publikasi-index-berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
+									<a href="{{route('berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
 								</div>
 
 

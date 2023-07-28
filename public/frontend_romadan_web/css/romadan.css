@@ -759,3 +759,206 @@ border-radius: 3%;
         line-height: 20px;
         color: #344054;
  }
+
+
+
+ /* KUMPULAN PERATURAN CSS */
+
+ .go-corner {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     position: absolute;
+     width: 32px;
+     height: 32px;
+     overflow: hidden;
+     top: 0;
+     right: 0;
+     background-color: #ffc107;
+     border-radius: 0 4px 0 32px;
+ }
+
+ .go-arrow {
+     margin-top: -4px;
+     margin-right: -4px;
+     color: black;
+     font-family: courier, sans;
+ }
+
+  .go-arrow-peraturan-index{
+      margin-top: -4px;
+      margin-right: -4px;
+      color: white;
+      font-family: courier, sans;
+  }
+  
+
+ .go-corner-card3 {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     position: absolute;
+     width: 32px;
+     height: 32px;
+     overflow: hidden;
+     top: 0;
+     right: 0;
+     background-color: #FAB715;
+     border-radius: 0 4px 0 32px;
+ }
+
+ .go-arrow-card3 {
+     margin-top: -4px;
+     margin-right: -4px;
+     color: black;
+     font-family: courier, sans;
+ }
+
+ /* * {
+     transition: all 0.3s ease-out;
+ } */
+
+ .card2 {
+     display: block;
+     top: 0px;
+     position: relative;
+     /* max-width: 262px; */
+     background-color: whitesmoke;
+     border-radius: 10px;
+     padding: 32px 24px;
+     /* margin: 12px; */
+     text-decoration: none;
+     z-index: 0;
+     overflow: hidden;
+     border: 1px solid whitesmoke;
+
+     &:hover {
+         transition: all 0.2s ease-out;
+         box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+         top: -4px;
+         border: 1px solid #cccccc;
+         background-color: white;
+     }
+
+     &:before {
+         content: "";
+         position: absolute;
+         z-index: -1;
+         top: -16px;
+         right: -16px;
+         background: #ffc107;
+         height: 32px;
+         width: 32px;
+         border-radius: 32px;
+         transform: scale(2);
+         transform-origin: 50% 50%;
+         transition: transform 0.15s ease-out;
+     }
+
+     &:hover:before {
+         transform: scale(2.15);
+     }
+ }
+
+ .card2-peraturan-index {
+     display: block;
+     top: 0px;
+     position: relative;
+     /* max-width: 262px; */
+     background-color: #0F5FAE;
+     border-radius: 10px;
+     padding: 32px 24px;
+     /* margin: 12px; */
+     text-decoration: none;
+     z-index: 0;
+     overflow: hidden;
+     border: 1px solid #0F5FAE;
+     color: white;
+
+     &:hover {
+         transition: all 0.2s ease-out;
+         box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+         top: -4px;
+         border: 1px solid #cccccc;
+         background-color: white;
+
+         > p{
+            color: #0F5FAE;
+         }
+                  >h4>button>i {
+                      color: black;
+                  }
+
+        .go-arrow-peraturan-index{
+            color: black;
+        }
+
+         
+     }
+
+     &:before {
+         content: "";
+         position: absolute;
+         z-index: -1;
+         top: -16px;
+         right: -16px;
+         background: #ffc107;
+         height: 32px;
+         width: 32px;
+         border-radius: 32px;
+         transform: scale(2);
+         transform-origin: 50% 50%;
+         transition: transform 0.15s ease-out;
+     }
+
+     &:hover:before {
+         transform: scale(2.15);
+     }
+
+     > p{
+        color: white;
+     }
+
+     > h4 > button > i {
+        color: white;
+     }
+
+    
+ }
+
+
+ .card3 {
+     display: block;
+     top: 0px;
+     position: relative;
+     /* max-width: 262px; */
+     background-color: whitesmoke;
+     border-radius: 10px;
+     padding: 32px 24px;
+     /* margin: 12px; */
+     text-decoration: none;
+     overflow: hidden;
+     border: 1px solid whitesmoke;
+
+     .go-corner {
+         opacity: 0.7;
+     }
+
+     &:hover {
+         border: 1px solid #FAB715;
+         box-shadow: 0px 0px 999px 999px rgba(255, 255, 255, 0.5);
+         z-index: 500;
+     }
+    
+ }
+
+ .card3:hover {
+     p {
+         color: #FAB715
+     }
+
+     .go-corner {
+         transition: opactiy 0.3s linear;
+         opacity: 1;
+     }
+ }
