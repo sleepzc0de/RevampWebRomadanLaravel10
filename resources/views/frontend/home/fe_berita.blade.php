@@ -18,15 +18,15 @@
 									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG">
 								</a>
 
-								<div class="date-blo4-romadan flex-col-c-m">
-									<span class="txt30-romadan m-b-4">
-										{{date('d', strtotime($item->created_at))}}
-									</span>
+									{{-- <div class="date-blo4-romadan flex-col-c-m">
+										<span class="txt30-romadan m-b-4">
+											{{date('d', strtotime($item->created_at))}}
+										</span>
 
-									<span class="txt31">
-										{{date('M, Y', strtotime($item->created_at))}}
-									</span>
-								</div>
+										<span class="txt31">
+											{{date('M, Y', strtotime($item->created_at))}}
+										</span>
+									</div> --}}
 							</div>
 							
 

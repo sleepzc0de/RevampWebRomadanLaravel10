@@ -53,7 +53,7 @@
                                             <img src="{{asset('storage/romadan_gambar_web/'.$data->image)}}" alt="IMG-BLOG">
                                         </a>
 
-                                        <div class="date-blo4-romadan flex-col-c-m">
+                                        {{-- <div class="date-blo4-romadan flex-col-c-m">
                                             <span class="txt30-romadan m-b-4">
                                                 {{date('d', strtotime($data->created_at))}}
                                             </span>
@@ -61,7 +61,7 @@
                                             <span class="txt31">
                                                 {{date('M, Y', strtotime($data->created_at))}}
                                             </span>
-                                        </div>
+                                        </div> --}}
 							        </div>
                             <br>
                                <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3" style="text-align: justify;">

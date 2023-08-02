@@ -40,18 +40,18 @@
 						<!-- Block1 -->
 						<div class="blo4">
 							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-								<a href="{{asset('storage/romadan_gambar_web/'.$item->image)}}">
+								<a href="{{route('kegiatan-detail-fe', $item->slug)}}">
 									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG" width="300" height="250">
 								</a>
 
-								<div class="date-blo4-romadan flex-col-c-m">
+								{{-- <div class="date-blo4-romadan flex-col-c-m">
 									<span class="txt30-romadan m-b-4">
 										{{date('d', strtotime($item->created_at))}}
 									</span>
 
 									<span class="txt31">
 										{{date('M, Y', strtotime($item->created_at))}}
-									</span>
+									</span> --}}
 								</div>
 							</div>
 							

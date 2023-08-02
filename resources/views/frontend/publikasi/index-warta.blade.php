@@ -51,11 +51,11 @@
 						<!-- Block1 -->
 						<div class="blo4">
 							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-								<a href="{{asset('storage/romadan_gambar_web/'.$item->image)}}">
+								<a href="{{route('warta-fe', $item->slug)}}">
 									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" height="250px" alt="IMG-BLOG">
 								</a>
 
-								<div class="date-blo4-romadan flex-col-c-m">
+								{{-- <div class="date-blo4-romadan flex-col-c-m">
 									<span class="txt30-romadan m-b-4">
 										{{date('d', strtotime($item->created_at))}}
 									</span>
@@ -63,7 +63,7 @@
 									<span class="txt31">
 										{{date('M, Y', strtotime($item->created_at))}}
 									</span>
-								</div>
+								</div> --}}
 							</div>
 							
 

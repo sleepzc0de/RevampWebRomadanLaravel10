@@ -9,13 +9,18 @@
 
 	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
 		<div class="container">
+			<div class="title-section-ourmenu m-b-2">
+					<h5 class="txt-judul-layanan m-t-2">
+						Visi dan Misi
+					</h5>
+			</div>
 			<div class="row p-t-10">
 				@forelse ($visimisi as $item)
 				<div class="col-md-6 ">
 					<div class="wrap-text-welcome">
-						<div class="txt-judul-visi-misi t-center m-b-35 m-t-5" style="text-align: justify;">
+						{{-- <div class="txt-judul-visi-misi t-center m-b-35 m-t-5" style="text-align: justify;">
 							Visi dan Misi
-                        </div>
+                        </div> --}}
 
 						<div class="t-center m-b-22 size3 " style="text-align: justify;">
 							<div class="txt-visi-misi">{!!$item->visi!!}</div>
@@ -34,9 +39,9 @@
 				</div>
 
 				@empty
-						<div class="txt-judul-visi-misi t-center m-b-35 m-t-5" style="text-align: justify;">
+						{{-- <div class="txt-judul-visi-misi t-center m-b-35 m-t-5" style="text-align: justify;">
 							Visi dan Misi
-                        </div>
+                        </div> --}}
 				<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
                                 <div class="container">
                                     <div class="title-section-ourmenu m-b-22">

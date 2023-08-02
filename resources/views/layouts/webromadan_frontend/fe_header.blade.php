@@ -11,7 +11,7 @@
 					</div>
 
 					<!-- Menu -->
-					<div class="wrap_menu p-l-45 p-l-0-xl">
+					<div class="wrap_menu p-l-200 p-l-0-xl">
 						<nav class="menu">
 							<ul class="main_menu">
 								<li class="dropdown">
@@ -61,9 +61,9 @@
 								<li>
 									<a href="{{route('faq-index-fe')}}">FAQ</a>
 								</li>
-								<li>
+								{{-- <li>
 									<a href="menu.html">Search</a>
-								</li>
+								</li> --}}
 							</ul>
 							
 						</nav>

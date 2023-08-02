@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-6 col-sm-6">
+                <div class="col-sm-6">
                                     <div class="card bg-white text-dark" style="background-image: url({{asset('webromadan/be/images/backgrounds/panel_bg.png')}}); background-size: contain;">
                                             <div class="card-body text-justify">
                                                 <div class="card-img-actions d-inline-block mb-3">
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             </div>
                                     </div>
                 </div>
-                <div class="col-xl-6 col-sm-6">
+                <div class="col-sm-6">
                                     <div class="card bg-white text-dark" style="background-image: url({{asset('webromadan/be/images/backgrounds/panel_bg.png')}}); background-size: contain;">
                                             <div class="card-body text-justify">
                                                 <div class="card-img-actions d-inline-block mb-3">
@@ -239,6 +239,24 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="btn-group d-flex">
+                    <a href="url_berita" class="btn btn-warning"><i class="ph-info ph-1x me-1"></i>Berita</a>
+                    <a href="url_artikel" class="btn btn-primary"><i class="ph-info ph-1x me-1"></i>Artikel</a>
+                    <a href="url_warta" class="btn btn-pink"><i class="ph-info ph-1x me-1"></i>Warta</a>
+                     <a href="url_artikel" class="btn btn-primary"><i class="ph-info ph-1x me-1"></i>Artikel</a>
+                    <a href="url_warta" class="btn btn-pink"><i class="ph-info ph-1x me-1"></i>Warta</a>
+                </div>
+
+            </div>
+             <div class="row pt-2 pb-2">
+                  <div class="btn-group d-flex">
+                    <a href="url_berita" class="btn btn-warning"><i class="ph-info ph-1x me-1"></i>Kegiatan</a>
+                    <a href="url_artikel" class="btn btn-primary"><i class="ph-info ph-1x me-1"></i>Peraturan</a>
+                    <a href="url_warta" class="btn btn-pink"><i class="ph-info ph-1x me-1"></i>FAQ</a>
+                </div>
+            </div>
+            
     </div>
     <div class="col-lg-8">
         <!-- Basic datatable -->
@@ -257,66 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
 								</tr>
 							</thead>
 							<tbody>
-								{{-- <tr>
-									<td>Marth</td>
-									<td><a href="#">Enright</a></td>
-									<td>Traffic Court Referee</td>
-									<td>22 Jun 1972</td>
-									<td class="text-center">
-										<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="#" class="dropdown-item">
-														<i class="ph-file-pdf me-2"></i>
-														Export to .pdf
-													</a>
-													<a href="#" class="dropdown-item">
-														<i class="ph-file-xls me-2"></i>
-														Export to .csv
-													</a>
-													<a href="#" class="dropdown-item">
-														<i class="ph-file-doc me-2"></i>
-														Export to .doc
-													</a>
-												</div>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Jackelyn</td>
-									<td>Weible</td>
-									<td><a href="#">Airline Transport Pilot</a></td>
-									<td>3 Oct 1981</td>
-									<td class="text-center">
-										<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="#" class="dropdown-item">
-														<i class="ph-file-pdf me-2"></i>
-														Export to .pdf
-													</a>
-													<a href="#" class="dropdown-item">
-														<i class="ph-file-xls me-2"></i>
-														Export to .csv
-													</a>
-													<a href="#" class="dropdown-item">
-														<i class="ph-file-doc me-2"></i>
-														Export to .doc
-													</a>
-												</div>
-											</div>
-										</div>
-									</td>
-								</tr> --}}
 								
 							</tbody>
 						</table>

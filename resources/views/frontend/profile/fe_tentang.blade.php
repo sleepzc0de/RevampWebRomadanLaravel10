@@ -9,6 +9,7 @@
 
 	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
 		<div class="container">
+			
 			<div class="row p-t-10">
 				@forelse ($tentang as $item)
 				<div class="col-md-6 ">
@@ -32,9 +33,11 @@
 				</div>
 
 				@empty
-							<div class="txt-judul-visi-misi t-center m-b-35 m-t-5" style="text-align: justify;">
-							Tentang Kami
-                        </div>
+							<div class="title-section-ourmenu m-b-2">
+									<h5 class="txt-judul-layanan m-t-2">
+										Tentang
+									</h5>
+							</div>
 				<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
                                 <div class="container">
                                     <div class="title-section-ourmenu m-b-22">

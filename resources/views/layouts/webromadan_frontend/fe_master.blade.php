@@ -68,7 +68,7 @@
 <!--===============================================================================================-->
 	@yield('css_fe')
 </head>
-<body class="animsition">
+<body class="">
 
 	<!-- Header -->
      @include('layouts.webromadan_frontend.fe_header')

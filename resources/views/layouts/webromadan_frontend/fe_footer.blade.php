@@ -28,7 +28,7 @@
 		<div class="end-footer footer2-romadan-bg">
 			<div class="container">
 				
-					<div class="row" style="text-align: center;">
+					<div class="row p-b-40" style="text-align: center;">
 						<div class="col-lg-6">
 									<div class="mt-5">
 										<img src="{{asset('frontend_romadan_web/images/icons/romadan/logo_4.png')}}" alt="ROMADAN-LOGO" width="400" class="mt-5">

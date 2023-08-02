@@ -61,7 +61,7 @@
 						<!-- Block1 -->
 						<div class="blo4">
 							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-								<a href="{{asset('storage/romadan_gambar_web/'.$item->image)}}">
+								<a href="{{route('warta-fe', $item->slug)}}">
 									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" height="250px" alt="IMG-BLOG">
 								</a>
 
