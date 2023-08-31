@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
 											<textarea name="isi_list_informasi" class="form-control @error('isi_list_informasi') is-invalid @enderror" required placeholder="Isi list informasi" id="ckeditor_classic_empty_infopub_list_info">{{ old('isi_list_informasi') }}</textarea>
 										</div>
 									</div>
+									
+				
 									<!-- /Isi List Informasi Publik -->
 
                                     <!-- Link List Informasi Publik -->

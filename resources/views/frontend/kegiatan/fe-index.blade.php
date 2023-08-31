@@ -51,8 +51,8 @@
 
 									<span class="txt31">
 										{{date('M, Y', strtotime($item->created_at))}}
-									</span> --}}
-								</div>
+									</span>
+								</div> --}}
 							</div>
 							
 

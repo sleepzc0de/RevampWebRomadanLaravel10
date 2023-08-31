@@ -233,7 +233,7 @@ iframe {
   transform: translate(-50%, -50%);
 }
 
-.cp-spinner {
+/* .cp-spinner {
     width: 40px;
     height: 40px;
     display: inline-block;
@@ -276,7 +276,7 @@ iframe {
     100% {
         transform: rotate(315deg)
     }
-}
+} */
 
 /*[ BACK TO TOP ]
 ///////////////////////////////////////////////////////////

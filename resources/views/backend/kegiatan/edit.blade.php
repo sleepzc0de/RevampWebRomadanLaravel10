@@ -17,6 +17,27 @@
 <script src="{{asset('webromadan/be/demo/pages/form_validation_library.js')}}"></script>
 <script src="{{asset('webromadan/be/demo/pages/form_select2.js')}}"></script>
 <script src="{{asset('webromadan/be/demo/pages/editor_ckeditor_classic.js')}}"></script>
+
+<script>
+	function handleTanggalMulaiChange() {
+  var tanggalMulai = document.getElementById('tanggal_mulai').value;
+  var tanggalSelesai = document.getElementById('tanggal_selesai');
+  
+  if (tanggalMulai) {
+    tanggalSelesai.disabled = false;
+    tanggalSelesai.min = tanggalMulai;
+  } else {
+    tanggalSelesai.disabled = true;
+    tanggalSelesai.value = '';
+  }
+}
+
+// Memanggil fungsi saat halaman selesai dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        handleTanggalMulaiChange();
+    });
+
+</script>
 @endsection
 
 @section('content')
@@ -114,7 +135,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Mulai <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local" value="{{ old('tanggal_mulai') ?? $kegiatan->tanggal_mulai }}">
+											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local" value="{{ old('tanggal_mulai') ?? $kegiatan->tanggal_mulai }}" oninput="handleTanggalMulaiChange()">
 											@error('tanggal_mulai')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}

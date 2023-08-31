@@ -88,6 +88,22 @@ document.addEventListener('DOMContentLoaded', function() {
     CKEditorClassic.init();
 });
 </script>
+
+<script>
+	function handleTanggalMulaiChange() {
+  var tanggalMulai = document.getElementById('tanggal_mulai').value;
+  var tanggalSelesai = document.getElementById('tanggal_selesai');
+  
+  if (tanggalMulai) {
+    tanggalSelesai.disabled = false;
+    tanggalSelesai.min = tanggalMulai;
+  } else {
+    tanggalSelesai.disabled = true;
+    tanggalSelesai.value = '';
+  }
+}
+
+</script>
 @endsection
 
 @section('content')
@@ -177,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Mulai <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local">
+											<input class="form-control @error('tanggal_mulai') is-invalid @enderror required" id="tanggal_mulai" name="tanggal_mulai" type="datetime-local" onchange="handleTanggalMulaiChange()">
 											@error('tanggal_mulai')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}

@@ -148,7 +148,7 @@ class PeraturanController extends Controller
      */
     public function show(string $id)
     {
-        //
+         return redirect()->back();
     }
 
     /**
@@ -177,7 +177,7 @@ class PeraturanController extends Controller
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
                 'tanggal_penetapan' => 'required|date|date_format:Y-m-d',
-                'tanggal_berlaku' => 'required|date|date_format:Y-m-d',
+                'tanggal_berlaku' => 'required|date|after_or_equal:tanggal_penetapan|date_format:Y-m-d',
             ]);
 
             // SLUG
@@ -192,7 +192,7 @@ class PeraturanController extends Controller
                 'jenis_peraturan' => $request->jenis_peraturan,
                 'tanggal_penetapan' => Carbon::parse($request->tanggal_penetapan)->format('Y-m-d'),
                 'tanggal_berlaku' => Carbon::parse($request->tanggal_berlaku)->format('Y-m-d'),
-                // 'status_peraturan' => $request->status_peraturan,
+                'status_peraturan' => $request->status_peraturan,
                 'slug' => $slug,
 
             ];

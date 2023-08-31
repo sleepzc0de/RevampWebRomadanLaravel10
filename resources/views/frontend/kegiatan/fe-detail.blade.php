@@ -42,7 +42,7 @@
 
                             @else
                              <div class="txt-judul-kegiatan-detail-tanggal">
-                                <i class="fa-solid fa-calendar-days mr-2"></i> {{date('d F Y', strtotime($data->tanggal_mulai))}}
+                                <i class="fa-solid fa-calendar-days mr-2"></i> {{date('d F Y', strtotime($data->tanggal_mulai))}} ( Pukul : {{date('H:i', strtotime($data->tanggal_mulai))}} WIB - {{date('H:i', strtotime($data->tanggal_selesai))}} WIB)
                             <br>
                                 <i class="fa-solid fa-location-dot mt-3 mr-2"></i> {{$data->tempat}}
                             <br>

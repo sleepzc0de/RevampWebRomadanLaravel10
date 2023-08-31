@@ -18,11 +18,12 @@ class InformasiPublikController extends Controller
      */
     public function index()
     {
+        $data = InformasiPublikModel::all();
+        $data2 = InfopublikHomeModel::all();
         $query = InformasiPublikModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('informasi-publik.show', encrypt($query->id));
                     $edit = route('informasi-publik.edit', encrypt($query->id));
                     $hapus = route('informasi-publik.destroy', encrypt($query->id));
                     return '<div class="d-inline-flex">
@@ -32,10 +33,7 @@ class InformasiPublikController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $preview . '" class="dropdown-item">
-														<i class="ph-detective me-2"></i>
-														Preview
-													</a>
+													
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -56,7 +54,7 @@ class InformasiPublikController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.infopub.index');
+        return view('backend.infopub.index', compact(['data', 'data2']));
     }
     public function indexHome()
     {
@@ -65,7 +63,7 @@ class InformasiPublikController extends Controller
             return datatables()->of($query)
                 ->addColumn('opsi', function ($query) {
                     $preview = route('informasi-publik.show', encrypt($query->id));
-                    $edit = route('informasi-publik.edit', encrypt($query->id));
+                    $edit = route('informasi-publik.edit-home', encrypt($query->id));
                     $hapus = route('informasi-publik.delete-home', encrypt($query->id));
                     return '<div class="d-inline-flex">
 											<div class="dropdown">
@@ -74,7 +72,10 @@ class InformasiPublikController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+													<a href="' . $edit . '" class="dropdown-item">
+														<i class="ph-note-pencil me-2"></i>
+														Edit
+													</a>
 													<form action="' . $hapus . '" method="POST">
 													' . @csrf_field() . '
 													' . @method_field('DELETE') . '
@@ -91,7 +92,7 @@ class InformasiPublikController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.infopub.index');
+        // return view('backend.infopub.index');
     }
 
     /**
@@ -105,6 +106,37 @@ class InformasiPublikController extends Controller
     public function create_home()
     {
         return view('backend.infopub.create-home');
+    }
+
+    public function edit_home(string $id)
+    {
+        $data = InfopublikHomeModel::findOrFail(decrypt($id));
+        return view('backend.infopub.edit-home', compact('data'));
+    }
+
+    public function update_home(Request $request, string $id)
+    {
+        try {
+            // VALIDASI DATA
+            $request->validate([
+                'judul' => 'required',
+                'isi' => 'required',
+            ]);
+
+
+            // TAMPUNGAN REQUEST DATA DARI FORM
+            $data = [
+                'judul' => $request->judul,
+                'isi' => $request->isi,
+
+            ];
+
+            InfopublikHomeModel::findOrFail(decrypt($id))->update($data);
+            // $berita = Berita::find($id)->update($data);
+            return redirect()->route('informasi-publik.index')->with('success', "Data Home Informasi Publik berhasil diupdate!");
+        } catch (Exception $e) {
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Home Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -179,9 +211,9 @@ class InformasiPublikController extends Controller
      */
     public function edit(string $id)
     {
-        $kegiatan = InformasiPublikModel::findOrFail(decrypt($id));
+        $infopub = InformasiPublikModel::findOrFail(decrypt($id));
         // dd($kegiatan);
-        return view('backend.infopub.edit', compact(['kegiatan']));
+        return view('backend.infopub.edit', compact(['infopub']));
     }
 
     /**
@@ -192,8 +224,6 @@ class InformasiPublikController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'isi' => 'required',
                 'judul_list_informasi' => 'required',
                 'isi_list_informasi' => 'required',
                 'link_list_informasi' => 'required'
@@ -202,8 +232,6 @@ class InformasiPublikController extends Controller
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'isi' => $request->isi,
                 'judul_list_informasi' => $request->judul_list_informasi,
                 'isi_list_informasi' => $request->isi_list_informasi,
                 'link_list_informasi' => $request->link_list_informasi
@@ -224,8 +252,8 @@ class InformasiPublikController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
-            File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+            // $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
+            // File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
             InformasiPublikModel::findOrFail(decrypt($id))->delete();
             return redirect()->route('informasi-publik.index')->with('success', "Informasi Publik berhasil dihapus!");
         } catch (Exception $e) {

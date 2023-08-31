@@ -27,12 +27,12 @@ class PeraturanModel extends Model
         return $this->belongsTo(ref_kategori::class, 'kategori', 'id_kategori')->withDefault(['nama_jenis_peraturan' => 'KATEGORI BELUM DIPILIH']);
     }
 
-    public function jenis_peraturan()
+    public function data_jenis_peraturan()
     {
         return $this->belongsTo(ref_jenis_peraturan::class, 'jenis_peraturan', 'id_jenis_peraturan')->withDefault(['nama_jenis_peraturan' => 'JENIS PERATURAN BELUM DIPILIH']);
     }
 
-    public function status_peraturan()
+    public function data_status_peraturan()
     {
         return $this->belongsTo(ref_peraturan_status::class, 'status_peraturan', 'id_ref_peraturan_status')->withDefault(['nama_peraturan_status' => 'STATUS BELUM DIISI']);
     }

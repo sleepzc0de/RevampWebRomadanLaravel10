@@ -86,9 +86,11 @@ Route::group(
 
             Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
             Route::post('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+            
             Route::get('/detail/peraturan/{peraturan}', [HomeFeController::class, 'infopublik_peraturan_detail'])->name('informasi-publik-peraturan-detail-fe');
 
             Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
+            // Route::post('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
 
             Route::get('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
             Route::post('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
@@ -163,7 +165,7 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::resource('users', UserController::class);
 
         // PUBLIKASI
-        Route::resource('/publikasi', PublikasiController::class);
+        Route::resource('publikasi', PublikasiController::class);
         Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
         Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
         Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
@@ -208,7 +210,9 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::resource('informasi-publik', InformasiPublikController::class);
             Route::get('/index-home', [InformasiPublikController::class, 'indexHome'])->name('informasi-publik.index-home');
             Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
+            Route::get('/{infopub}/edit-home', [InformasiPublikController::class, 'edit_home'])->name('informasi-publik.edit-home');
             Route::post('/create-home', [InformasiPublikController::class, 'store_home'])->name('informasi-publik.store-home');
+            Route::post('/{infopub}/edit-home', [InformasiPublikController::class, 'update_home'])->name('informasi-publik.update-home');
             Route::delete('/{infopub}/informasi-publik-home', [InformasiPublikController::class, 'delete_home'])->name('informasi-publik.delete-home');
 
             // PERATURAN BACKEND

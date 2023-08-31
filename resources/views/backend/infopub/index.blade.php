@@ -213,23 +213,36 @@ document.addEventListener('DOMContentLoaded', function() {
                           <h1>Informasi Publik Web Romadan</h1>
                            @include('layouts.webromadan_backend.session_notif')
 						</div>
+                        
+                        
                         <div class="card-header">
-                          
-                                    <a href="{{route('informasi-publik.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
+
+                            @if (count($data) < 3)
+                            <a href="{{route('informasi-publik.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
                                         <span class="btn-labeled-icon bg-purple text-white rounded-pill">
                                             <i class="ph-check-square-offset"></i>
                                         </span>
                                         Tambah Informasi Publik
-                                    </button></a>
+                                    </button>
+                            </a>
+                            @endif
 
-                                    <a href="{{route('informasi-publik.create-home')}}"><button type="button" class="btn btn-flat-warning btn-labeled btn-labeled-start rounded-pill">
+                            @if (count($data2) < 1)
+                                 <a href="{{route('informasi-publik.create-home')}}"><button type="button" class="btn btn-flat-warning btn-labeled btn-labeled-start rounded-pill">
                                         <span class="btn-labeled-icon bg-warning text-white rounded-pill">
                                             <i class="ph-check-square-offset"></i>
                                         </span>
                                         Tambah InfoPublik Home
-                                    </button></a>
+                                    </button>
+                            </a>
+                            @endif
+
+                           
+ 
                             
 						</div>
+                         
+                          
                         
 						<table class="table datatable-basic table-hover table-striped">
 							<thead>

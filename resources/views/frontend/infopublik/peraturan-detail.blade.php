@@ -40,7 +40,7 @@
                             </tr>
                             <tr>
                                 <th scope="row">Bentuk</th>
-                                <td>{{$data->jenis_peraturan}}</td>
+                                <td>{{$data->data_jenis_peraturan->nama_jenis_peraturan}}</td>
                             </tr>
                              <tr>
                                 <th scope="row">Tanggal Penetapan</th>
@@ -52,7 +52,7 @@
                             </tr>
                             <tr>
                                 <th scope="row">Status</th>
-                                <td>{{$data->status_peraturan}}</td>
+                                <td>{{$data->data_status_peraturan->nama_peraturan_status}}</td>
                             </tr>
                             <tr>
                                 <th scope="row"><a href="{{asset('storage/romadan_file_web/'.$data->file)}}" class="btn btn-peraturan-download romadan-peraturan-download btn-lg active" role="button" aria-pressed="true"><i class="fa-solid fa-download mr-2"></i>Download Peraturan</a>

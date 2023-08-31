@@ -240,21 +240,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <div class="row">
-                <div class="btn-group d-flex">
-                    <a href="url_berita" class="btn btn-warning"><i class="ph-info ph-1x me-1"></i>Berita</a>
-                    <a href="url_artikel" class="btn btn-primary"><i class="ph-info ph-1x me-1"></i>Artikel</a>
-                    <a href="url_warta" class="btn btn-pink"><i class="ph-info ph-1x me-1"></i>Warta</a>
-                     <a href="url_artikel" class="btn btn-primary"><i class="ph-info ph-1x me-1"></i>Artikel</a>
-                    <a href="url_warta" class="btn btn-pink"><i class="ph-info ph-1x me-1"></i>Warta</a>
+                <div class="btn-group d-flex py-1">
+                    <a href="{{route('publikasi.create')}}" class="btn btn-secondary"></i>Berita</a>
+                    <a href="{{route('publikasi.create')}}" class="btn btn-secondary"></i>Artikel</a>
+                    <a href="{{route('publikasi.create')}}" class="btn btn-secondary"></i>Warta</a>
+                </div>
+                <div class="btn-group d-flex py-1">
+                    <a href="{{route('kegiatan.create')}}" class="btn btn-secondary"></i>Kegiatan</a>
+                    <a href="{{route('faq.create')}}" class="btn btn-secondary"></i>FAQ</a>
+                    <a href="{{route('users.create')}}" class="btn btn-secondary"></i>User</a>
                 </div>
 
-            </div>
-             <div class="row pt-2 pb-2">
-                  <div class="btn-group d-flex">
-                    <a href="url_berita" class="btn btn-warning"><i class="ph-info ph-1x me-1"></i>Kegiatan</a>
-                    <a href="url_artikel" class="btn btn-primary"><i class="ph-info ph-1x me-1"></i>Peraturan</a>
-                    <a href="url_warta" class="btn btn-pink"><i class="ph-info ph-1x me-1"></i>FAQ</a>
-                </div>
             </div>
             
     </div>
