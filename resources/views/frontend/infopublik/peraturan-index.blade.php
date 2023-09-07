@@ -92,7 +92,7 @@
 									</div>
 					   		     </div> --}}
 								 <div class="col-md-6">
-									<a class="card3" href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}">
+									<a class="card3" style="height: 100%;" href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}">
 										<h5 class="card-title romadan-peraturan-judul">{{$item->nomor_peraturan}}</h5>
 										<p class="small">{{$item->judul_peraturan}}</p>
 										<h6 class="mt-2">Lihat Detail<i class="fa-solid fa-arrow-right ml-3"></i></h6>

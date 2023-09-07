@@ -31,31 +31,31 @@
                        <table class="table mt-5 table-borderless romadan-peraturan-data">
                         <tbody>
                             <tr>
-                                <th scope="row">Nomor</th>
+                                <th scope="row" width="400px">Nomor</th>
                                 <td>{{$data->nomor_peraturan}}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Judul</th>
+                                <th scope="row" width="400px">Judul</th>
                                 <td>{{$data->judul_peraturan}}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Bentuk</th>
+                                <th scope="row" width="400px">Bentuk</th>
                                 <td>{{$data->data_jenis_peraturan->nama_jenis_peraturan}}</td>
                             </tr>
                              <tr>
-                                <th scope="row">Tanggal Penetapan</th>
+                                <th scope="row" width="400px">Tanggal Penetapan</th>
                                 <td>{{$data->tanggal_penetapan}}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Tanggal Berlaku Efektif</th>
+                                <th scope="row" width="400px">Tanggal Berlaku Efektif</th>
                                 <td>{{$data->tanggal_berlaku}}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Status</th>
+                                <th scope="row" width="400px">Status</th>
                                 <td>{{$data->data_status_peraturan->nama_peraturan_status}}</td>
                             </tr>
                             <tr>
-                                <th scope="row"><a href="{{asset('storage/romadan_file_web/'.$data->file)}}" class="btn btn-peraturan-download romadan-peraturan-download btn-lg active" role="button" aria-pressed="true"><i class="fa-solid fa-download mr-2"></i>Download Peraturan</a>
+                                <th scope="row" width="400px"><a href="{{asset('storage/romadan_file_web/'.$data->file)}}" class="btn btn-peraturan-download romadan-peraturan-download btn-lg active" role="button" aria-pressed="true"><i class="fa-solid fa-download mr-2"></i>Download Peraturan</a>
 
 </th>
                             </tr>

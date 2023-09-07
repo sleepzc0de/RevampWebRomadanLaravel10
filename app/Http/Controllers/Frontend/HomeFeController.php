@@ -274,7 +274,7 @@ class HomeFeController extends Controller
         $selectedKategori = $request->input('kategori'); // Mengambil nilai checkbox kategori yang dipilih
         $selectedJenisPeraturan =  $request->input('jenis_peraturan'); // Mengambil nilai checkbox jenis_peraturan yang dipilih
 
-        $query = PeraturanModel::with('kategori', 'jenis_peraturan', 'status_peraturan');
+        $query = PeraturanModel::with('kategori', 'data_jenis_peraturan', 'data_status_peraturan');
 
         if ($searchValue) {
             $query->where(function ($q) use ($searchValue) {
@@ -283,7 +283,7 @@ class HomeFeController extends Controller
                     ->orWhereHas('kategori', function ($q) use ($searchValue) {
                         $q->where('nama_kategori', 'like', '%' . $searchValue . '%');
                     })
-                    ->orWhereHas('jenis_peraturan', function ($q) use ($searchValue) {
+                    ->orWhereHas('data_jenis_peraturan', function ($q) use ($searchValue) {
                         $q->where('nama_jenis_peraturan', 'like', '%' . $searchValue . '%');
                     });
             });
@@ -297,7 +297,7 @@ class HomeFeController extends Controller
         }
 
         if ($selectedJenisPeraturan) {
-            $query->orWhereHas('jenis_peraturan', function ($q) use ($selectedJenisPeraturan) {
+            $query->orWhereHas('data_jenis_peraturan', function ($q) use ($selectedJenisPeraturan) {
                 $q->whereIn('nama_jenis_peraturan', $selectedJenisPeraturan);
             });
             // Menggunakan kolom yang sesuai di tabel PeraturanModel

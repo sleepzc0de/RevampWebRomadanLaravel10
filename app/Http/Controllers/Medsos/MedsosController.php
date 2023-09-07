@@ -57,7 +57,9 @@ class MedsosController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('backend.medsos.index');
+
+        $data = medsos::all();
+        return view('backend.medsos.index',compact(['data']));
     }
 
     /**

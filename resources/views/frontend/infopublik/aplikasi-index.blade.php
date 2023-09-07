@@ -72,9 +72,9 @@
                                       </div>
 					   	                  </div>   
                           @empty
-                             <div class="container">                         
+                             <div class="container pt-5">                         
                                 <h5 class="romadan-faq text-center m-t-2">
-                                  Link Aplikasi Kosong !
+                                  Mohon maaf link aplikasi tidak ada !
                                 </h5>
                               </div>
                           @endforelse

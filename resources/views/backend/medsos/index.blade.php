@@ -162,16 +162,22 @@ document.addEventListener('DOMContentLoaded', function() {
                           <h1>List Medsos Web Romadan</h1>
                            @include('layouts.webromadan_backend.session_notif')
 						</div>
-                        <div class="card-header">
+
+                        @if (count($data)<5)
+                            <div class="card-header">
                           
-                                    <a href="{{route('medsos.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
-                                        <span class="btn-labeled-icon bg-purple text-white rounded-pill">
-                                            <i class="ph-check-square-offset"></i>
-                                        </span>
-                                        Tambah Medsos
-                                    </button></a>
+                                    <a href="{{route('medsos.create')}}">
+                                        <button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
+                                            <span class="btn-labeled-icon bg-purple text-white rounded-pill">
+                                                <i class="ph-check-square-offset"></i>
+                                            </span>
+                                            Tambah Medsos
+                                        </button>
+                                    </a>
                             
 						</div>
+                        @endif
+                        
                         
 						<table class="table datatable-basic table-hover table-striped">
 							<thead>
