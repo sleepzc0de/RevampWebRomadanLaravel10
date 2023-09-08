@@ -76,7 +76,7 @@ Route::group(
             Route::post('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
             // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
             // VISI DAN MISI
-            Route::get('/detail/{kegiatan}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
+            Route::get('/detail/{kegiatan}/{ranstring}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
         });
 
         // MENU INFORMASI PUBLIK

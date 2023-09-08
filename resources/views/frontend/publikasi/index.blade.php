@@ -54,7 +54,7 @@
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
 									<span>
-										{{date('d F, Y', strtotime($item->created_at))}}
+										{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
 										<span class="m-r-6 m-l-4">|</span>
 									</span>
 
@@ -131,7 +131,7 @@
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
 									<span>
-										{{date('d F, Y', strtotime($item->created_at))}}
+										{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
 										<span class="m-r-6 m-l-4">|</span>
 									</span>
 
@@ -207,7 +207,7 @@
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
 									<span>
-										{{date('d F, Y', strtotime($item->created_at))}}
+										{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
 										<span class="m-r-6 m-l-4">|</span>
 									</span>
 

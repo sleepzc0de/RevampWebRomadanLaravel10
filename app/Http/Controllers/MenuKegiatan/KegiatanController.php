@@ -88,6 +88,8 @@ class KegiatanController extends Controller
      */
     public function create()
     {
+        // $randomString = Str::random(10).uniqid().Str::random(4);
+        // dd($randomString);
         return view('backend.kegiatan.create');
     }
 
@@ -122,6 +124,7 @@ class KegiatanController extends Controller
             // SLUG
 
             $slug = Str::slug($request->judul);
+            // $slug = Str::slug($request->judul).'-'.Str::random(10).uniqid().Str::random(4);
 
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -135,6 +138,7 @@ class KegiatanController extends Controller
                 'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d H:i'),
                 'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d H:i'),
                 'link' => $request->link,
+                'static_random_string' => Str::random(10).uniqid().Str::random(4),
 
             ];
 
@@ -187,6 +191,7 @@ class KegiatanController extends Controller
             // SLUG
 
             $slug = Str::slug($request->judul);
+            //  $slug = Str::slug($request->judul).'-'.Str::random(10).uniqid().Str::random(4);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [

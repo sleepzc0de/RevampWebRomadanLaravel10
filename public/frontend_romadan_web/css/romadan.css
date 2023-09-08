@@ -525,6 +525,15 @@
     color: #000000;
 }
 
+.txt-judul-berita-terkini-detail {
+    font-family: "Plus Jakarta Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 52px;
+    color: #000000;
+}
+
 .txt-kegiatan-detail-isi {
     font-family: "Inter";
     font-style: normal;

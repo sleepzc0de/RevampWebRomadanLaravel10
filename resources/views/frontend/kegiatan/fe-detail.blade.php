@@ -64,7 +64,7 @@
                                         </div> --}}
 							        </div>
                             <br>
-                               <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3" style="text-align: justify;">
+                               <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3 px-3" style="text-align: justify;">
                                 {!!$data->isi!!}
                                </div>
 

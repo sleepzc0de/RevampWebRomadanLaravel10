@@ -40,7 +40,7 @@
 						<!-- Block1 -->
 						<div class="blo4">
 							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-								<a href="{{route('kegiatan-detail-fe', $item->slug)}}">
+								<a href="{{route('kegiatan-detail-fe', [$item->slug,$item->static_random_string])}}">
 									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG" width="300" height="250">
 								</a>
 
@@ -63,7 +63,7 @@
 									</span>
 								</div>
 								<div>
-									<a href="{{route('kegiatan-detail-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
+									<a href="{{route('kegiatan-detail-fe', [$item->slug,$item->static_random_string])}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
 								</div>
 
 

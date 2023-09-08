@@ -19,6 +19,7 @@ use App\Models\backend\MenuReferensi\ref_jenis_peraturan;
 use App\Models\backend\publikasi\berita;
 use App\Models\backend\ref_kategori;
 use App\Models\medsos\medsos;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Hash;
@@ -104,6 +105,7 @@ class HomeFeController extends Controller
         $kategori = ref_kategori::all();
         // dd($kategori);
 
+
         return view('frontend.publikasi.index-berita', compact(['berita', 'searchValue', 'kategori']));
     }
 
@@ -156,6 +158,7 @@ class HomeFeController extends Controller
         }
 
         $kategori = ref_kategori::all();
+        
 
 
         return view('frontend.publikasi.kategori-artikel', compact(['artikel', 'searchValue', 'kategori']));
@@ -201,7 +204,9 @@ class HomeFeController extends Controller
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Berita')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data);
 
-        return view('frontend.publikasi.fe_berita', compact(['data']));
+        $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
+
+        return view('frontend.publikasi.fe_berita', compact(['data','tb']));
     }
 
     public function publikasi_warta($publikasi)
@@ -209,7 +214,9 @@ class HomeFeController extends Controller
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Warta')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data);
 
-        return view('frontend.publikasi.fe_warta', compact(['data']));
+        $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
+
+        return view('frontend.publikasi.fe_warta', compact(['data','tb']));
     }
 
     public function publikasi_artikel($publikasi)
@@ -217,7 +224,9 @@ class HomeFeController extends Controller
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Artikel')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data);
 
-        return view('frontend.publikasi.fe_artikel', compact(['data']));
+        $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
+
+        return view('frontend.publikasi.fe_artikel', compact(['data','tb']));
     }
 
     // LAYANAN
@@ -246,9 +255,9 @@ class HomeFeController extends Controller
         return view('frontend.kegiatan.fe-index', compact(['kegiatan', 'searchValue']));
     }
 
-    public function kegiatan_detail($kegiatan)
+    public function kegiatan_detail($kegiatan, $ranstring)
     {
-        $data = KegiatanModel::where('slug', $kegiatan)->firstorFail();
+        $data = KegiatanModel::where('slug', $kegiatan)->where('static_random_string',$ranstring)->firstorFail();
 
         // dd($data);
 

@@ -191,7 +191,8 @@ class PublikasiController extends Controller
 
             // SLUG
 
-            $slug = Str::slug($request->judul);
+            // $slug = Str::slug($request->judul);
+             $slug = Str::slug($request->judul).'-'.Str::random(10).uniqid().Str::random(4);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
