@@ -10,23 +10,13 @@
 				</div>
 				<div class="row">
 					@forelse ($berita_terkini as $item)
-						<div class="col-md-4 p-t-30">
+						<div class="col-md-4 p-t-33">
 						<!-- Block1 -->
-						<div class="blo4">
+						<div class="">
 							<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
 								<a href="{{route('berita-fe', $item->slug)}}">
-									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG">
+									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG" height="220px">
 								</a>
-
-									{{-- <div class="date-blo4-romadan flex-col-c-m">
-										<span class="txt30-romadan m-b-4">
-											{{date('d', strtotime($item->created_at))}}
-										</span>
-
-										<span class="txt31">
-											{{date('M, Y', strtotime($item->created_at))}}
-										</span>
-									</div> --}}
 							</div>
 							
 
@@ -45,10 +35,6 @@
 								<div>
 									<a href="{{route('berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
 								</div>
-
-
-
-								
 							</div>
 						</div>
 

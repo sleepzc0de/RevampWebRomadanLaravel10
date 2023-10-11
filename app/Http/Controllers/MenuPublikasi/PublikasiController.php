@@ -102,9 +102,21 @@ class PublikasiController extends Controller
                 'sub_judul' => 'required',
                 'kategori' => 'required',
                 'tipe' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
-            ]);
+            ],[
+                'judul.required' => 'Judul Wajib diisi.',
+                'judul.unique' => 'Judul ini sudah digunakan sebelumnya.',
+                'sub_judul.required' => 'Sub judul Wajib diisi.',
+                'kategori.required' => 'Kategori Wajib dipilih.',
+                'tipe.required' => 'Tipe Wajib dipilih.',
+                'image.required' => 'Gambar Wajib diunggah.',
+                'image.image' => 'File yang diunggah Wajib berupa gambar.',
+                'image.mimes' => 'File gambar Wajib berformat jpeg, png, jpg, atau svg.',
+                'image.max' => 'Ukuran gambar tidak boleh melebihi 4MB (4096KB).',
+                'image.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel.',
+                'isi.required' => 'Isi Publikasi Wajib diisi.',
+]);
 
             //UPLOAD IMAGE
             $image = $request->file('image');
@@ -126,6 +138,7 @@ class PublikasiController extends Controller
                 'status' => 2,
                 'slug' => $slug,
                 'penulis' => Auth::user()->name,
+                'static_random_string' => Str::random(10).uniqid().Str::random(4),
 
             ];
 
@@ -135,7 +148,7 @@ class PublikasiController extends Controller
             //redirect to index
             return redirect()->back()->with(['success' => 'Data Publikasi Berhasil Disimpan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Publikasi Gagal Disimpan! error :' . $e->getMessage()]);
+            return redirect()->back()->with(['failed' => 'Data Publikasi Gagal Disimpan! | Pesan Error: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -185,7 +198,7 @@ class PublikasiController extends Controller
                 'sub_judul' => 'required',
                 'kategori' => 'required',
                 'tipe' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
             ]);
 
@@ -208,9 +221,13 @@ class PublikasiController extends Controller
             ];
             if ($request->hasFile('image')) {
                 $request->validate([
-                    'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                    'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 ], [
-                    'image.mimes' => 'Gambar hanya diperbolehkaan berekstensi JPEG, JPG, PNG, SVG',
+                    'image.required' => 'Gambar Wajib diunggah.',
+                    'image.image' => 'File yang diunggah Wajib berupa gambar.',
+                    'image.mimes' => 'File gambar Wajib berformat jpeg, png, jpg, atau svg.',
+                    'image.max' => 'Ukuran gambar tidak boleh melebihi 4MB (4096KB).',
+                    'image.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel.',
                 ]);
 
                 //UPLOAD IMAGE

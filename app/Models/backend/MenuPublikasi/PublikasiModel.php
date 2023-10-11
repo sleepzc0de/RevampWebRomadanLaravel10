@@ -14,7 +14,7 @@ class PublikasiModel extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'publikasi';
     protected $guarded = [];
-    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status'];
+    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string'];
     protected $dates = ['deleted_at'];
 
     protected $hidden = [

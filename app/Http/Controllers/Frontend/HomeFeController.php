@@ -257,6 +257,7 @@ class HomeFeController extends Controller
 
     public function kegiatan_detail($kegiatan, $ranstring)
     {
+
         $data = KegiatanModel::where('slug', $kegiatan)->where('static_random_string',$ranstring)->firstorFail();
 
         // dd($data);

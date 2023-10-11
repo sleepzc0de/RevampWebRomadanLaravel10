@@ -19,7 +19,7 @@
 					{{-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 						Action
 					</button> --}}
-					<a class="txt19" href="menu.html" data-toggle="dropdown" aria-expanded="false">Profile</a>
+					<a class="txt19" data-toggle="dropdown" aria-expanded="false">Profile</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="{{route('visi-misi-fe')}}">Visi Misi</a>
 						<a class="dropdown-item" href="{{route('sejarah-fe')}}">Sejarah</a>
@@ -49,10 +49,10 @@
 				<a href="{{route('faq-index-fe')}}" class="txt19">FAQ</a>
 			</li>
 			<hr>
-			<li class="t-center m-b-13">
+			{{-- <li class="t-center m-b-13">
 				<a href="contact.html" class="txt19">Search</a>
 			</li>	
-			<hr>
+			<hr> --}}
 			<li class="t-center">
 				<!-- Button3 -->
 				<a href="reservation.html" class="btn3 flex-c-m size13 txt11 trans-0-4 m-l-r-auto">
