@@ -147,7 +147,8 @@ class UserController extends Controller
 
         $userdata = User::findorFail($id);
         // dd($userdata);
-        $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
+        // $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
+        $role = Role::all();
 
         $olduser = $userdata->roles->first();
         $data = ['role' => $role, 'olduser' => $olduser];

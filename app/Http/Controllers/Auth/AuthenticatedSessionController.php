@@ -18,7 +18,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        $gambar = LoginModel::orderBy('id', 'DESC')->firstorFail();
+        $gambar = LoginModel::orderBy('id', 'DESC')->first();
         // dd($gambar);
         return view('auth.romadan_login', compact('gambar'));
     }

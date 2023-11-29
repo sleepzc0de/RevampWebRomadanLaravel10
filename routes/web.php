@@ -47,7 +47,7 @@ Route::group(
     ['prefix' => '/'],
     function () {
 
-        // HOME 
+        // HOME
         Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
 
 
@@ -86,7 +86,7 @@ Route::group(
 
             Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
             Route::post('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
-            
+
             Route::get('/detail/peraturan/{peraturan}', [HomeFeController::class, 'infopublik_peraturan_detail'])->name('informasi-publik-peraturan-detail-fe');
 
             Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
@@ -142,9 +142,9 @@ Route::group(
     }
 );
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // BACK END
 

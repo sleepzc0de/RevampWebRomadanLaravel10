@@ -15,6 +15,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Paginator::defaultView('pagination.bootstrap-5');
+        View::composer('*', function ($view) {
+            $view->with('medsos', medsos::orderBy("id", "ASC")->take(5)->get());
+        });
     }
 
     /**
@@ -26,8 +29,5 @@ class AppServiceProvider extends ServiceProvider
         // Paginator::useBootstrapRomadan();
 
 
-
-
-        View::share('medsos', medsos::orderBy("id", "ASC")->take(5)->get());
     }
 }

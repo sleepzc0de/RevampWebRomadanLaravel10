@@ -17,8 +17,14 @@
 @section('content')
 
 <div class="page-content" style="background-color: white">
-<div class="col-lg-6" style="background-image: url({{asset('storage/romadan_gambar_web/'.$gambar->image)}});background-size: cover;background-position: center;
+{{-- <div class="col-lg-6" style="background-image: url({{asset('storage/romadan_gambar_web/'.$gambar->image)}});background-size: cover;background-position: center;
+"> --}}
+<div class="col-lg-6" style="background-size: cover; background-position: center;
+@if($gambar && $gambar->image)
+    background-image: url({{ asset('storage/romadan_gambar_web/' . $gambar->image) }});
+@endif
 ">
+
 
 </div>
 <div class="col-lg-6 mt-4">
@@ -33,7 +39,7 @@
 								<div class="d-inline-flex align-items-center justify-content-center mb-2 mt-2">
 									<img src="{{asset('webromadan/fe/images/romadan/logo_3.png')}}" class="h-48px" alt="">
 								</div>
-								
+
 							</div>
                             <div class="txt-login-romadan mb-3">LOGIN</div>
 
@@ -72,7 +78,7 @@
 <div class="navbar navbar-sm navbar-footer">
     <div class="container-fluid">
         <span></span>
-        
+
         <span>&copy; {{date("Y",strtotime(now()))}} <a style="color: #0F5FAE;" href="http://www.romadan.kemenkeu.go.id/">Biro Manajemen BMN dan Pengadaan.</a> Powered by MTDI</span>
         <span></span>
     </div>
@@ -81,7 +87,7 @@
 </div>
 </div>
 
-				
+
 
 
 
