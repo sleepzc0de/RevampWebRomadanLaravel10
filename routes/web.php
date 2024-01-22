@@ -212,7 +212,7 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
             Route::get('/{infopub}/edit-home', [InformasiPublikController::class, 'edit_home'])->name('informasi-publik.edit-home');
             Route::post('/create-home', [InformasiPublikController::class, 'store_home'])->name('informasi-publik.store-home');
-            Route::post('/{infopub}/edit-home', [InformasiPublikController::class, 'update_home'])->name('informasi-publik.update-home');
+            Route::put('/{infopub}/edit-home', [InformasiPublikController::class, 'update_home'])->name('informasi-publik.update-home');
             Route::delete('/{infopub}/informasi-publik-home', [InformasiPublikController::class, 'delete_home'])->name('informasi-publik.delete-home');
 
             // PERATURAN BACKEND

@@ -20,7 +20,7 @@ class PeraturanController extends Controller
      */
     public function index()
     {
-        $query = PeraturanModel::with(['kategori', 'jenis_peraturan', 'status_peraturan'])->select('*');
+        $query = PeraturanModel::with(['kategori', 'data_jenis_peraturan', 'data_status_peraturan'])->select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -89,7 +89,7 @@ class PeraturanController extends Controller
         $status_peraturan = ref_peraturan_status::all();
         // dd($status_peraturan);
 
-        return view('backend.infopub.peraturan.create', compact(['kategori', 'jenis_peraturan', 'status_peraturan']));
+        return view('backend.infopub.peraturan.create', compact(['kategori', 'data_jenis_peraturan', 'data_status_peraturan']));
     }
 
     /**
@@ -159,7 +159,7 @@ class PeraturanController extends Controller
         $kategori = ref_kategori::all();
         $jenis_peraturan = ref_jenis_peraturan::all();
         $status_peraturan = ref_peraturan_status::all();
-        $peraturan = PeraturanModel::with(['kategori', 'jenis_peraturan', 'status_peraturan'])->findOrFail(decrypt($id));
+        $peraturan = PeraturanModel::with(['kategori', 'data_jenis_peraturan', 'data_status_peraturan'])->findOrFail(decrypt($id));
         return view('backend.infopub.peraturan.edit', compact(['kategori', 'jenis_peraturan', 'status_peraturan', 'peraturan']));
     }
 

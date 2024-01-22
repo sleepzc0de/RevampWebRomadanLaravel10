@@ -80,10 +80,10 @@ const DatatableBasic = function() {
             {data: 'judul_peraturan',name:'judul_peraturan'},
             {data: 'file_peraturan',name:'file_peraturan',orderable:false, searchable:false},
             {data: 'kategori.nama_kategori',name:'kategori.nama_kategori',orderable:false,searchable:false},
-            {data: 'jenis_peraturan.nama_jenis_peraturan',name:'jenis_peraturan.nama_jenis_peraturan',orderable:false,searchable:false},
+            {data: 'data_jenis_peraturan.nama_jenis_peraturan',name:'data_jenis_peraturan.nama_jenis_peraturan',orderable:false,searchable:false},
             {data: 'tanggal_penetapan',name:'tanggal_penetapan'},
             {data: 'tanggal_berlaku',name:'tanggal_berlaku'},
-            {data: 'status_peraturan.nama_peraturan_status',name:'status_peraturan.nama_peraturan_status',orderable:false,searchable:false},
+            {data: 'data_status_peraturan.nama_peraturan_status',name:'data_status_peraturan.nama_peraturan_status',orderable:false,searchable:false},
             {data: 'slug',name:'slug'},
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
             
