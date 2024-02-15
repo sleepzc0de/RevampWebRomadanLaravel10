@@ -87,7 +87,7 @@
 									</div> --}}
 									<!-- /NIP INPUT -->
 
-                                     <!-- NAMA INPUT -->
+                                    <!-- NAMA INPUT -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-3">Nama <span class="text-danger">*</span></label>
 										<div class="col-lg-9">

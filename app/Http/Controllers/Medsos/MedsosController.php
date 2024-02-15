@@ -114,8 +114,8 @@ class MedsosController extends Controller
      */
     public function edit(string $id)
     {
-        $medsos = medsos::findOrFail(decrypt($id));
-        return view('backend.medsos.edit', compact(['medsos']));
+        $medsos2 = medsos::findOrFail(decrypt($id));
+        return view('backend.medsos.edit', compact(['medsos2']));
     }
 
     /**

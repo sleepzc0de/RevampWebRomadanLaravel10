@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<div class="col-lg-10">
 											<select value="{{ old('jenis_peraturan') }}" name="jenis_peraturan" class="form-control form-control-select2 select" @error('jenis_peraturan') is-invalid @enderror required>
 												<option>--PILIH--</option>
-												@foreach ($jenis_peraturan as $item)
+												@foreach ($data_jenis_peraturan as $item)
 												<option value="{{ $item->id_jenis_peraturan }}" {{ old('jenis_peraturan') == $item->id_jenis_peraturan ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_jenis_peraturan}}</option>
 												@endforeach
 													
@@ -241,12 +241,12 @@ document.addEventListener('DOMContentLoaded', function() {
 								<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Status Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											@if (count($status_peraturan) <= 0)
+											@if (count($data_status_peraturan) <= 0)
 													<input value="{{ old('status_peraturan') }}" type="text" name="status_peraturan" class="form-control @error('status_peraturan') is-invalid @enderror" required placeholder="DATA KOSONG, HARAP HUBUNGI ADMINISTRATOR" @disabled(true)>
 											@else 
 											<select value="{{ old('status_peraturan') }}" name="status_peraturan" class="form-control form-control-select2 select" @error('status_peraturan') is-invalid @enderror required>
 												<option>--PILIH--</option>
-												@foreach ($status_peraturan as $item)
+												@foreach ($data_status_peraturan as $item)
 												<option value="{{ $item->id_ref_peraturan_status }}" {{ old('status_peraturan') == $item->id_ref_peraturan_status ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_peraturan_status}}</option>
 												@endforeach
 													

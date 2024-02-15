@@ -138,7 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Logo Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('logo_medsos') }}" type="text" name="logo_medsos" class="form-control @error('logo_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Logo Medsos dari Fontawesome">
+											<input value="{{ old('logo_medsos') }}" type="text" name="logo_medsos" class="form-control @error('logo_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Logo Medsos dari Fontawesome, contoh:fa-brands fa-facebook	
+											">
 											<!-- error message untuk logo_medsos -->
 											@error('logo_medsos')
 											<div class="alert alert-danger mt-2">

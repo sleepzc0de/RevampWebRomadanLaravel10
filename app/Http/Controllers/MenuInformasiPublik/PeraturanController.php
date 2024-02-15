@@ -85,8 +85,8 @@ class PeraturanController extends Controller
     public function create()
     {
         $kategori = ref_kategori::all();
-        $jenis_peraturan = ref_jenis_peraturan::all();
-        $status_peraturan = ref_peraturan_status::all();
+        $data_jenis_peraturan = ref_jenis_peraturan::all();
+        $data_status_peraturan = ref_peraturan_status::all();
         // dd($status_peraturan);
 
         return view('backend.infopub.peraturan.create', compact(['kategori', 'data_jenis_peraturan', 'data_status_peraturan']));

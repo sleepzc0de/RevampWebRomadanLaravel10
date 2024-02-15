@@ -27,7 +27,7 @@
 							<h5 class="mb-0">Edit Medsos Romadan</h5>
 						</div>
 
-						<form class="form-validate-jquery" action="{{route('medsos.update', encrypt($medsos->id))}}" method="post" autocomplete="off">
+						<form class="form-validate-jquery" action="{{route('medsos.update', encrypt($medsos2->id))}}" method="post" autocomplete="off">
 							@csrf
                             @method('PUT')
 							<div class="card-body">
@@ -38,7 +38,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_medsos') ?? $medsos->nama_medsos }}" type="text" name="nama_medsos" class="form-control @error('nama_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Medsos">
+											<input value="{{ old('nama_medsos') ?? $medsos2->nama_medsos }}" type="text" name="nama_medsos" class="form-control @error('nama_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Medsos">
 											<!-- error message untuk nama_medsos -->
 											@error('nama_medsos')
 											<div class="alert alert-danger mt-2">
@@ -53,7 +53,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Link Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('link_medsos') ?? $medsos->link_medsos }}" type="text" name="link_medsos" class="form-control @error('link_medsos') is-invalid @enderror" required placeholder="Masukkan Link Medsos">
+											<input value="{{ old('link_medsos') ?? $medsos2->link_medsos }}" type="text" name="link_medsos" class="form-control @error('link_medsos') is-invalid @enderror" required placeholder="Masukkan Link Medsos">
 											<!-- error message untuk link_medsos -->
 											@error('link_medsos')
 											<div class="alert alert-danger mt-2">
@@ -68,7 +68,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Logo Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('logo_medsos') ?? $medsos->logo_medsos }}" type="text" name="logo_medsos" class="form-control @error('logo_medsos') is-invalid @enderror" required placeholder="Masukkan Logo Medsos">
+											<input value="{{ old('logo_medsos') ?? $medsos2->logo_medsos }}" type="text" name="logo_medsos" class="form-control @error('logo_medsos') is-invalid @enderror" required placeholder="Masukkan Logo Medsos">
 											<!-- error message untuk logo_medsos -->
 											@error('logo_medsos')
 											<div class="alert alert-danger mt-2">
