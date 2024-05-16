@@ -71,7 +71,7 @@
 
                                      <!-- Judul Peraturan-->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Nomor Peraturan <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Judul Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<input value="{{ old('judul_peraturan') ?? $peraturan->judul_peraturan }}" type="text" name="judul_peraturan" class="form-control @error('judul_peraturan') is-invalid @enderror" required placeholder="Masukkan Judul Peraturan">
 											<!-- error message untuk judul_peraturan -->

@@ -7,11 +7,13 @@ use App\Models\backend\MenuPublikasi\PublikasiModel;
 use App\Models\backend\ref_kategori;
 use App\Models\backend\ref_status;
 use App\Models\backend\ref_tipe;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PublikasiController extends Controller
 {
@@ -102,8 +104,9 @@ class PublikasiController extends Controller
                 'sub_judul' => 'required',
                 'kategori' => 'required',
                 'tipe' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
+                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
+                'backdate' => 'date|date_format:Y-m-d\TH:i',
             ],[
                 'judul.required' => 'Judul Wajib diisi.',
                 'judul.unique' => 'Judul ini sudah digunakan sebelumnya.',
@@ -113,9 +116,10 @@ class PublikasiController extends Controller
                 'image.required' => 'Gambar Wajib diunggah.',
                 'image.image' => 'File yang diunggah Wajib berupa gambar.',
                 'image.mimes' => 'File gambar Wajib berformat jpeg, png, jpg, atau svg.',
-                'image.max' => 'Ukuran gambar tidak boleh melebihi 4MB (4096KB).',
+                'image.max' => 'Ukuran gambar tidak boleh melebihi 10MB (10240KB).',
                 'image.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel.',
                 'isi.required' => 'Isi Publikasi Wajib diisi.',
+                
 ]);
 
             //UPLOAD IMAGE
@@ -135,19 +139,29 @@ class PublikasiController extends Controller
                 'tipe' => $request->tipe,
                 'image' => $image->hashName(),
                 'isi' => $request->isi,
-                'status' => 2,
                 'slug' => $slug,
                 'penulis' => Auth::user()->name,
                 'static_random_string' => Str::random(10).uniqid().Str::random(4),
+                'backdate' => Carbon::parse($request->backdate)->format('Y-m-d H:i'),
 
             ];
+
+            if ($request->has('backdate') && !empty($request->backdate)) {
+                $data['backdate'] = Carbon::parse($request->backdate)->format('Y-m-d H:i');
+                $data['status'] = 'published';
+            } else {
+                $data['status'] = 'draft';
+            }
 
 
             PublikasiModel::create($data);
 
             //redirect to index
             return redirect()->back()->with(['success' => 'Data Publikasi Berhasil Disimpan!']);
-        } catch (Exception $e) {
+        } catch (ValidationException $e) {
+            // Validation failed, return to previous page with errors and input data
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }catch (Exception $e) {
             return redirect()->back()->with(['failed' => 'Data Publikasi Gagal Disimpan! | Pesan Error: ' . $e->getMessage()])->withInput();
         }
     }

@@ -11,7 +11,7 @@ class ref_peraturan_status extends Model
     protected $primaryKey = 'id_ref_peraturan_status';
     protected $table = 'ref_peraturan_status';
     protected $guarded = [];
-    protected $fillable = ['nama_peraturan_status'];
+    protected $fillable = ['nama_peraturan_status',];
 
     protected $hidden = [
         'created_at',

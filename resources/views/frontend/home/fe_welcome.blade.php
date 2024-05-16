@@ -18,7 +18,7 @@
 						</h6>
 
 						<div class="txt-tentang-romadan-isi t-center m-b-22 size3 " style="text-align: justify;">
-							{!!$item->tentang!!}
+							{!!$item->excerpt!!}
 
 							<a href="{{route('tentang-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
 								Baca Profil Kami<i class="ml-3 fa fa-arrow-right"

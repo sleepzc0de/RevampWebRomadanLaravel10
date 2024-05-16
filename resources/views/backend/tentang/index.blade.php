@@ -78,6 +78,7 @@ const DatatableBasic = function() {
             { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
              {data: 'judul',name:'judul'},
             {data: 'tentang',name:'tentang'},
+            {data: 'excerpt',name:'excerpt'},
             {data: 'image_tentang',name:'image_tentang',orderable:false, searchable:false},
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
 
@@ -182,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<th>#</th>
                                     <th>Judul</th>
                                     <th>Tentang</th>
+                                    <th>Excerpt</th>
 									<th>Gambar</th>
                                     <th>Aksi</th>
 								</tr>

@@ -14,7 +14,7 @@ class PublikasiModel extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'publikasi';
     protected $guarded = [];
-    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string'];
+    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string','backdate'];
     protected $dates = ['deleted_at'];
 
     protected $hidden = [
@@ -31,7 +31,7 @@ class PublikasiModel extends Model
 
     public function status()
     {
-        return $this->belongsTo(ref_status::class, 'status', 'id_status');
+        return $this->belongsTo(ref_status::class, 'status', 'nama_status');
     }
 
     public function tipe()

@@ -7,6 +7,8 @@ use App\Models\backend\MenuProfile\TentangModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
 
 class TentangController extends Controller
 {
@@ -87,12 +89,19 @@ class TentangController extends Controller
             $image = $request->file('image');
             $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
+            // EXCERPT TENTANG ROMADAN
+
+            $excerpt = Str::excerpt($request->tentang, '', [
+                'radius' => 100,
+                'omission' => '(...) '
+            ]);
+
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'judul' => $request->judul,
                 'tentang' => $request->tentang,
+                'excerpt' => $excerpt,
                 'image' => $image->hashName(),
-
             ];
 
 

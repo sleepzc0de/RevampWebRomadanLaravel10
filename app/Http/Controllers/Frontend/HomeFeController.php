@@ -73,6 +73,8 @@ class HomeFeController extends Controller
 
     public function publikasi_index()
     {
+        $status_artikel='Published';
+
         $berita_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
         // dd($berita_terkini_publikasi);
 
@@ -80,7 +82,8 @@ class HomeFeController extends Controller
         // dd($warta_terkini_publikasi);
 
         $artikel_terkini_publikasi =
-            PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
+            PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_artikel)."%"]) // Menggunakan LOWER() dan strtolower() untuk pencarian case-insensitive
+            ->orderBy("id", "DESC")->take(3)->get();
         // dd($artikel_terkini_publikasi);
 
         return view('frontend.publikasi.index', compact([

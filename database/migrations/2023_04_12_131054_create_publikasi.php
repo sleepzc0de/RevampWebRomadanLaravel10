@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('slug')->unique();
             $table->unsignedSmallInteger('kategori')->nullable();
-            $table->unsignedSmallInteger('status')->nullable();
+            $table->string('status')->nullable();
             $table->unsignedSmallInteger('tipe')->nullable();
             $table->text('isi');
             $table->string('penulis')->nullable();

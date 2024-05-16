@@ -10,7 +10,7 @@ class TentangModel extends Model
     use HasFactory;
     protected $table = 'tentang';
     protected $guarded = [];
-    protected $fillable = ['tentang', 'image', 'judul'];
+    protected $fillable = ['tentang', 'image', 'judul', 'excerpt'];
 
     protected $hidden = [
         'created_at',

@@ -146,7 +146,7 @@
 											<select id="status" name="status" class="form-control form-control-select2 select" @error('status') is-invalid @enderror required>
 												<option>--PILIH--</option>
 												@foreach ($status as $item)
-												<option value="{{ $item->id_status }}" {{ old('status',$publikasi->status) == $item->id_status ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_status}}</option>
+												<option value="{{ $item->nama_status }}" {{ old('status',$publikasi->status) == $item->nama_status ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_status}}</option>
 												@endforeach
 													
 												

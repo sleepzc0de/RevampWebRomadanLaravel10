@@ -84,7 +84,14 @@ const DatatableBasic = function() {
             {data: 'tanggal_penetapan',name:'tanggal_penetapan'},
             {data: 'tanggal_berlaku',name:'tanggal_berlaku'},
             {data: 'data_status_peraturan.nama_peraturan_status',name:'data_status_peraturan.nama_peraturan_status',orderable:false,searchable:false},
-            {data: 'slug',name:'slug'},
+            { 
+            data: 'slug',
+            name: 'slug',
+            render: function (data) {
+                // Mengambil hanya 10 karakter pertama sebagai excerp
+                return data.length > 10 ? data.substr(0, 10) + '...' : data;
+            }
+        },
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
             
 

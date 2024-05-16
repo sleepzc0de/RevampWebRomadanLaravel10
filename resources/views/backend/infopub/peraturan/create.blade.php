@@ -102,6 +102,18 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 </script>
+
+<script>
+    document.getElementById('file').addEventListener('change', function() {
+        const file = this.files[0];
+        const maxSize = 100 * 1024 * 1024; // 100 MB (dalam bytes)
+        
+        if (file && file.size > maxSize) {
+            alert('Ukuran file melebihi batas maksimum (100MB).');
+            this.value = ''; // Membersihkan input file
+        }
+    });
+</script>
 @endsection
 
 @section('content')
@@ -188,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     <!-- Jenis Peraturan-->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Kategori Peraturan <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Jenis Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<select value="{{ old('jenis_peraturan') }}" name="jenis_peraturan" class="form-control form-control-select2 select" @error('jenis_peraturan') is-invalid @enderror required>
 												<option>--PILIH--</option>
@@ -213,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Penetapan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_penetapan') is-invalid @enderror required" id="tanggal_penetapan" name="tanggal_penetapan" type="date" onchange="handleTanggalMulaiChange()" required>
+											<input class="form-control @error('tanggal_penetapan') is-invalid @enderror required" id="tanggal_penetapan" name="tanggal_penetapan" type="date" onchange="handleTanggalMulaiChange()" value="{{ old('tanggal_penetapan') }}" required  >
 											@error('tanggal_penetapan')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -227,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tanggal Berlaku <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input class="form-control @error('tanggal_berlaku') is-invalid @enderror required" id="tanggal_berlaku" name="tanggal_berlaku" type="date" required>
+											<input class="form-control @error('tanggal_berlaku') is-invalid @enderror required" id="tanggal_berlaku" name="tanggal_berlaku" type="date" value="{{ old('tanggal_berlaku') }}" required>
 											@error('tanggal_berlaku')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -278,6 +290,14 @@ document.addEventListener('DOMContentLoaded', function() {
 					</div>
 <!-- /form validation -->
 @endsection
+
+
+@push('script_bawah')
+
+
+
+	
+@endpush
 
 
 

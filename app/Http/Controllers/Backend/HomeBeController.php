@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\backend\MenuInformasiPublik\PeraturanModel;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
 use Carbon\Carbon;
@@ -23,14 +24,17 @@ class HomeBeController extends Controller
 
         $jumlah_kegiatan = KegiatanModel::all()->count();
 
+        $jumlah_peraturan = PeraturanModel::all()->count();
 
-        // dd($jumlah_berita);
+
+        // dd($jumlah_peraturan);
 
         $data = [
             'jumlah_berita' => $jumlah_berita,
             'jumlah_artikel' => $jumlah_artikel,
             'jumlah_warta' => $jumlah_warta,
             'jumlah_kegiatan' => $jumlah_kegiatan,
+            'jumlah_peraturan' => $jumlah_peraturan,
         ];
 
         $query = PublikasiModel::with(['kategori', 'status', 'tipe'])->select('*');

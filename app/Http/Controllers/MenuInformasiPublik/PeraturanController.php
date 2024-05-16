@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\ValidationException;
 
 class PeraturanController extends Controller
 {
@@ -108,6 +109,22 @@ class PeraturanController extends Controller
                 'jenis_peraturan' => 'required',
                 'tanggal_penetapan' => 'required|date|date_format:Y-m-d',
                 'tanggal_berlaku' => 'required|date|after_or_equal:tanggal_penetapan|date_format:Y-m-d',
+            ],[
+                'nomor_peraturan.required' => 'Nomor peraturan harus diisi.',
+                'nomor_peraturan.unique' => 'Nomor peraturan sudah digunakan.',
+                'judul_peraturan.required' => 'Judul peraturan harus diisi.',
+                'file.required' => 'File harus diunggah.',
+                'file.mimes' => 'File harus berupa dokumen (doc, docx), presentasi (ppt, pptx), spreadsheet (csv, xlsx), PDF, ZIP, atau RAR.',
+                'file.max' => 'Ukuran file tidak boleh melebihi 100 MB.',
+                'kategori.required' => 'Kategori peraturan harus dipilih.',
+                'jenis_peraturan.required' => 'Jenis peraturan harus dipilih.',
+                'tanggal_penetapan.required' => 'Tanggal penetapan harus diisi.',
+                'tanggal_penetapan.date' => 'Format tanggal penetapan tidak valid.',
+                'tanggal_penetapan.date_format' => 'Format tanggal penetapan harus YYYY-MM-DD (contoh: 2024-05-16).',
+                'tanggal_berlaku.required' => 'Tanggal berlaku harus diisi.',
+                'tanggal_berlaku.date' => 'Format tanggal berlaku tidak valid.',
+                'tanggal_berlaku.after_or_equal' => 'Tanggal berlaku harus setelah atau sama dengan tanggal penetapan.',
+                'tanggal_berlaku.date_format' => 'Format tanggal berlaku harus YYYY-MM-DD (contoh: 2024-05-16).',
             ]);
 
             //UPLOAD FILE
@@ -138,7 +155,10 @@ class PeraturanController extends Controller
 
             //redirect to index
             return redirect()->back()->with(['success' => 'Data Peraturan Berhasil Disimpan!']);
-        } catch (Exception $e) {
+        } catch (ValidationException $e) {
+            // Validation failed, return to previous page with errors and input data
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }catch (Exception $e) {
             return redirect()->back()->with(['failed' => 'Data Peraturan Gagal Disimpan! error :' . $e->getMessage()]);
         }
     }

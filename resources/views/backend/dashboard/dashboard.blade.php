@@ -232,8 +232,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                                     
                                                 </div>
 
-                                                <h2 class="mb-0">{{$data['jumlah_kegiatan']}}</h2>
-                                                <span class="opacity-75">Jumlah Kegiatan</span>
+                                                <h2 class="mb-0">{{$data['jumlah_peraturan']}}</h2>
+                                                <span class="opacity-75">Jumlah Peraturan</span>
 
                                             </div>
                                     </div>
