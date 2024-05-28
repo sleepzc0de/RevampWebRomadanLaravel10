@@ -47,6 +47,7 @@
 		</div>
 	</section>
 @section('script_fe')
+
 @endsection
 
 @endsection

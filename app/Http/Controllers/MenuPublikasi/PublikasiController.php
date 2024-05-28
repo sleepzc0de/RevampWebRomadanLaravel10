@@ -120,7 +120,7 @@ class PublikasiController extends Controller
                 'image.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel.',
                 'isi.required' => 'Isi Publikasi Wajib diisi.',
                 
-]);
+    ]);
 
             //UPLOAD IMAGE
             $image = $request->file('image');
@@ -192,7 +192,12 @@ class PublikasiController extends Controller
         $status = ref_status::all();
         $tipe = ref_tipe::all();
         $publikasi = PublikasiModel::with(['kategori', 'status', 'tipe'])->findOrFail(decrypt($id));
-        // dd($berita);
+
+
+        // dd($publikasi['created_at']);
+
+        // dd(Carbon::parse($publikasi->created_at)->format('Y-m-d H:i:s'));
+
         return view('backend.publikasi.edit', compact(['publikasi', 'kategori', 'status', 'tipe']));
     }
 
@@ -214,12 +219,10 @@ class PublikasiController extends Controller
                 'tipe' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
+                'created_at' => 'required|date|before:now|date_format:Y-m-d\TH:i',
             ]);
 
             // SLUG
-
-            // $slug = Str::slug($request->judul);
-             $slug = Str::slug($request->judul).'-'.Str::random(10).uniqid().Str::random(4);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
@@ -229,10 +232,12 @@ class PublikasiController extends Controller
                 'tipe' => $request->tipe,
                 'isi' => $request->isi,
                 'status' => $request->status,
-                'slug' => $slug,
+                // 'slug' => $slug,
                 'pengedit' => Auth::user()->name,
+                'created_at' => Carbon::parse($request->created_at)->format('Y-m-d H:i'),
 
             ];
+
             if ($request->hasFile('image')) {
                 $request->validate([
                     'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
@@ -247,6 +252,7 @@ class PublikasiController extends Controller
                 //UPLOAD IMAGE
                 $image = $request->file('image');
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
+                
 
                 $data_gambar = PublikasiModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
@@ -254,6 +260,7 @@ class PublikasiController extends Controller
                 $data = [
                     'image' => $image->hashName(),
                 ];
+                
             }
 
             PublikasiModel::findOrFail(decrypt($id))->update($data);
@@ -273,9 +280,7 @@ class PublikasiController extends Controller
     public function destroy($id)
     {
         try {
-            $data = [
-                'status' => 3,
-            ];
+            $data['status'] = 'draft';
             PublikasiModel::findOrFail(decrypt($id))->update($data);
             PublikasiModel::findOrFail(decrypt($id))->delete($data);
             return redirect()->route('publikasi.index')->with('success', "Publikasi berhasil dihapus!");
@@ -330,9 +335,7 @@ class PublikasiController extends Controller
     public function restorePublikasi($id)
     {
         try {
-            $data = [
-                'status' => 2,
-            ];
+            $data['status'] = 'draft';
             PublikasiModel::onlyTrashed()->findOrFail(decrypt($id))->update($data);
             PublikasiModel::onlyTrashed()->findOrFail(decrypt($id))->restore();
             return redirect()->route('publikasi.sampah')->with('success', "Data publikasi berhasil direstore!, silahkan cek pada publikasi aktif yah guys!");
@@ -348,9 +351,7 @@ class PublikasiController extends Controller
 
         if (count($dataterhapus) > 0) {
             try {
-                $data = [
-                    'status' => 2,
-                ];
+                $data['status'] = 'draft';
                 PublikasiModel::onlyTrashed()->update($data);
                 PublikasiModel::onlyTrashed()->restore();
                 return redirect()->route('publikasi.sampah')->with('success', "Semua Data publikasi berhasil direstore!, silahkan cek pada publikasi aktif yah guys!");

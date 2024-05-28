@@ -8,13 +8,15 @@ use App\Models\backend\ref_tipe;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Cohensive\OEmbed\Facades\OEmbed;
 
 class PublikasiModel extends Model
 {
     use HasFactory, SoftDeletes;
     protected $table = 'publikasi';
     protected $guarded = [];
-    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string','backdate'];
+    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string','backdate','created_at',
+    'updated_at',];
     protected $dates = ['deleted_at'];
 
     protected $hidden = [
@@ -37,5 +39,12 @@ class PublikasiModel extends Model
     public function tipe()
     {
         return $this->belongsTo(ref_tipe::class, 'tipe', 'id_tipe');
+    }
+
+    public function getVideoAtrribute($value){
+        $embed = OEmbed::get($value);
+        if ($embed) {
+            return $embed->html(['width'=>200]);
+        }
     }
 }

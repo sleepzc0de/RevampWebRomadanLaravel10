@@ -20,6 +20,7 @@ use App\Models\backend\publikasi\berita;
 use App\Models\backend\ref_kategori;
 use App\Models\medsos\medsos;
 use Carbon\Carbon;
+use Cohensive\OEmbed\Facades\OEmbed;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Hash;
@@ -29,8 +30,17 @@ class HomeFeController extends Controller
     public function index()
     {
         // 
+        $status_berita='Published';
         $tentang = TentangModel::latest()->take(1)->get();
-        $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')->where('nama_status', 'Tayang')->orderBy("id", "DESC")->take(3)->get();
+        $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+        ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+        ->where('nama_tipe', 'Berita')
+        ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_berita)."%"])
+        ->orderBy("id", "DESC")->take(3)->get();
+        // $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        // ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+        // ->orderBy('id','DESC')->take(3)->get();
 
 
         // dd($berita_terkini);
@@ -77,17 +87,31 @@ class HomeFeController extends Controller
         $status_warta='Published';
         $status_berita='Published';
 
-        $berita_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.id_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Berita')
+        $berita_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+        ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+        ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+        ->where('nama_tipe', 'Berita')
         ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_berita)."%"])
         ->orderBy("id", "DESC")->take(3)->get();
         // dd($berita_terkini_publikasi);
 
-        $warta_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Warta')->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_warta)."%"])
+        $warta_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+        ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+        ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+        ->where('nama_tipe', 'Warta')
+        ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_warta)."%"])
         ->orderBy("id", "DESC")->take(3)->get();
         // dd($warta_terkini_publikasi);
 
         $artikel_terkini_publikasi =
-            PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', 'Artikel')->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_artikel)."%"]) // Menggunakan LOWER() dan strtolower() untuk pencarian case-insensitive
+            PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+            ->where('nama_tipe', 'Artikel')
+            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_artikel)."%"])
             ->orderBy("id", "DESC")->take(3)->get();
         // dd($artikel_terkini_publikasi);
 
@@ -229,8 +253,11 @@ class HomeFeController extends Controller
 
     public function publikasi_artikel($publikasi)
     {
-        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Artikel')->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
-        // dd($data);
+        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe', 'Artikel')
+        ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+        ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
+        // dd($data->isi);
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
@@ -246,6 +273,7 @@ class HomeFeController extends Controller
         $layanan = LayananModel::latest()->take(1)->get();
         return view('frontend.layanan.layanan', compact(['layanan']));
     }
+
 
     public function kegiatan_index(Request $request)
     {

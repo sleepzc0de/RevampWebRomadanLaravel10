@@ -8,6 +8,8 @@
 
 				@forelse ($berita_terkini as $item)
 				<div class="item-slick1 item1-slick1" style="background-image: url({{asset('storage/romadan_gambar_web/'.$item->image)}});">
+					<div class="background-overlay"></div>
+
 					
 					<div class="wrap-content-slide1 sizefull flex-col-c-m p-l-15 p-r-15 p-t-150 p-b-170">
 						<span class="caption1-slide1 romadan-judul-terkini t-center animated visible-false m-b-35" data-appear="fadeInDown">

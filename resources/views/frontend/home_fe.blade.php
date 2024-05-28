@@ -1,6 +1,7 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
+
 @endsection
 
 
@@ -22,6 +23,7 @@
     @include('frontend.home.fe_kumpulperaturan')
 
 @section('script_fe')
+
 @endsection
 
 @endsection
