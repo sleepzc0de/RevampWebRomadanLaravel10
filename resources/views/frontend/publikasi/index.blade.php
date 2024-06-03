@@ -232,10 +232,12 @@
 					
 					@empty
 							<div class="container">                         
-						<h5 class="romadan-faq text-center m-t-2">
+						<h5 class="romadan-faq m-t-2">
 							Artikel Terkini Kosong !
 						</h5>
 							  </div>
+
+							  
 						
 					@endforelse
 					<div class="col-md-12 p-t-20 romadan-berita-button-home">

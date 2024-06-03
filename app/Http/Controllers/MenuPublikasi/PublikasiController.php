@@ -219,7 +219,7 @@ class PublikasiController extends Controller
                 'tipe' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
-                'created_at' => 'required|date|before:now|date_format:Y-m-d\TH:i',
+                'created_at' => 'required|date|before:now|date_format:Y-m-d\TH:i:s',
             ]);
 
             // SLUG
@@ -234,7 +234,7 @@ class PublikasiController extends Controller
                 'status' => $request->status,
                 // 'slug' => $slug,
                 'pengedit' => Auth::user()->name,
-                'created_at' => Carbon::parse($request->created_at)->format('Y-m-d H:i'),
+                'created_at' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),
 
             ];
 

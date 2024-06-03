@@ -79,7 +79,7 @@ class LayananController extends Controller
             $request->validate([
                 'judul' => 'required',
                 'layanan' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240',
             ]);
 
             //UPLOAD IMAGE

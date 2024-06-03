@@ -84,6 +84,7 @@
                     <span>Informasi Publik</span>
                 </a>
                 <ul class="nav-group-sub collapse">
+                    <li class="nav-item"><a href="{{route('informasi-publik.index')}}" class="nav-link">Home Infopublik</a></li>
                     <li class="nav-item"><a href="{{route('peraturan.index')}}" class="nav-link">Peraturan</a></li>
                     <li class="nav-item"><a href="{{route('kategori.index')}}" class="nav-link">Pedoman</a></li>
                     <li class="nav-item"><a href="{{route('aplikasi.index')}}" class="nav-link">Link Aplikasi</a></li>
