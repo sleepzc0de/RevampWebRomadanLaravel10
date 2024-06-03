@@ -83,7 +83,7 @@ class VisiMisiController extends Controller
                 'judul' => 'required',
                 'visi' => 'required',
                 'misi' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240',
             ]);
 
             //UPLOAD IMAGE
@@ -138,7 +138,7 @@ class VisiMisiController extends Controller
                 'judul' => 'required',
                 'visi' => 'required',
                 'misi' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'image|mimes:jpeg,png,jpg,svg|max:10240',
             ]);
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [

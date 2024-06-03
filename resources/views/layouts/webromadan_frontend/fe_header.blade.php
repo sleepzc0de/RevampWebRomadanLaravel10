@@ -28,9 +28,9 @@
 								<li>
 									<a href="{{route('layanan-fe')}}">Layanan</a>
 								</li>
-								<li>
+								{{-- <li>
 									<a href="{{route('kegiatan-index-fe')}}">Kegiatan</a>
-								</li>
+								</li> --}}
 								{{-- <li class="dropdown">
 									<a href="#" class="" data-toggle="dropdown">Kegiatan BelumFIX</span></a>
 									<ul class="dropdown-menu p-l-20 p-l-0-xl mt-4 dropdown-menu-romadan">

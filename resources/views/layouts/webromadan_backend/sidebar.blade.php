@@ -151,8 +151,8 @@
             </li>
             {{-- END LAYANAN --}} -->
 
-            <!-- {{-- KEGIATAN --}}
-            <li class="nav-item nav-item-submenu">
+            {{-- KEGIATAN --}}
+            {{-- <li class="nav-item nav-item-submenu">
                 <a href="#" class="nav-link">
                     <i class="ph-bicycle"></i>
                     <span>Kegiatan</span>
@@ -160,8 +160,8 @@
                 <ul class="nav-group-sub collapse">
                     <li class="nav-item"><a href="{{route('kegiatan.index')}}" class="nav-link">Kegiatan</a></li>
                 </ul>
-            </li>
-            {{-- END KEGIATAN --}} -->
+            </li> --}}
+            {{-- END KEGIATAN --}}
 
             <!-- {{-- INFORMASI PUBLIK --}}
             <li class="nav-item nav-item-submenu">

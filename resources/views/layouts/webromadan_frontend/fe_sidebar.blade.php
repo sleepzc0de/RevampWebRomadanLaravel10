@@ -33,9 +33,9 @@
 				<a href="{{route('layanan-fe')}}" class="txt19">Layanan</a>
 			</li>
 			<hr>
-			<li class="t-center m-b-13">
+			{{-- <li class="t-center m-b-13">
 				<a href="{{route('kegiatan-index-fe')}}" class="txt19">Kegiatan</a>
-			</li>
+			</li> --}}
 			<hr>
 			<li class="t-center m-b-13">
 				<a href="{{route('informasi-publik-index-fe')}}" class="txt19">Informasi Publik</a>

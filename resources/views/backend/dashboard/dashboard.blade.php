@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="{{route('publikasi.create')}}" class="btn btn-secondary"></i>Warta</a>
                 </div>
                 <div class="btn-group d-flex py-1">
-                    <a href="{{route('kegiatan.create')}}" class="btn btn-secondary"></i>Kegiatan</a>
+                    {{-- <a href="{{route('kegiatan.create')}}" class="btn btn-secondary"></i>Kegiatan</a> --}}
                     <a href="{{route('faq.create')}}" class="btn btn-secondary"></i>FAQ</a>
                     <a href="{{route('users.create')}}" class="btn btn-secondary"></i>User</a>
                 </div>

@@ -103,8 +103,8 @@ class KegiatanController extends Controller
             $request->validate([
                 'judul' => 'required|unique:kegiatan',
                 'tempat' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000|dimensions:max_width=1650,max_height=990',
-                'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
+                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240|dimensions:max_width=1650,max_height=990',
+                'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:10240',
                 'isi' => 'required',
                 'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
                 'tanggal_selesai' => 'date|after_or_equal:tanggal_mulai|date_format:Y-m-d\TH:i',

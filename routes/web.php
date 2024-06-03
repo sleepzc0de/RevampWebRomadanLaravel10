@@ -70,14 +70,14 @@ Route::group(
         });
 
         // MENU KEGIATAN
-        Route::prefix('/kegiatan')->group(function () {
-            // VISI DAN MISI
-            Route::get('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
-            Route::post('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
-            // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
-            // VISI DAN MISI
-            Route::get('/detail/{kegiatan}/{ranstring}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
-        });
+        // Route::prefix('/kegiatan')->group(function () {
+        //     // VISI DAN MISI
+        //     Route::get('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
+        //     Route::post('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
+        //     // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
+        //     // VISI DAN MISI
+        //     Route::get('/detail/{kegiatan}/{ranstring}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
+        // });
 
         // MENU INFORMASI PUBLIK
         Route::prefix('/informasi-publik')->group(function () {
@@ -198,10 +198,10 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         });
 
         // MENU KEGIATAN
-        Route::prefix('/kegiatan')->group(function () {
+        // Route::prefix('/kegiatan')->group(function () {
 
-            Route::resource('kegiatan', KegiatanController::class);
-        });
+        //     Route::resource('kegiatan', KegiatanController::class);
+        // });
 
         // MENU INFORMASI PUBLIK
 
