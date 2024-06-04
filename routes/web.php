@@ -84,17 +84,21 @@ Route::group(
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'infopublik_index'])->name('informasi-publik-index-fe');
 
-            Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
-            Route::post('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+            // Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+            // Route::post('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+
+            Route::match(['get','post'],'/peraturan',[HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
 
             Route::get('/detail/peraturan/{peraturan}', [HomeFeController::class, 'infopublik_peraturan_detail'])->name('informasi-publik-peraturan-detail-fe');
 
             Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
             // Route::post('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
 
-            Route::get('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
-            Route::post('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
+            // Route::get('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
+            // Route::post('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
             // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
+
+            Route::match(['get','post'],'/aplikasi',[HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
         });
 
         // MENU FAQ
@@ -109,14 +113,21 @@ Route::group(
             // INDEX
             Route::get('/', [HomeFeController::class, 'publikasi_index'])->name('publikasi-index-fe');
             // BERITA INDEX
-            Route::get('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
-            Route::post('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+            // Route::get('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+            // Route::post('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+
+            Route::match(['get','post'],'/berita',[HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+
             // WARTA INDEX
-            Route::get('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
-            Route::post('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
+            // Route::get('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
+            // Route::post('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
+
+            Route::match(['get','post'],'/warta',[HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
             // ARTIKEL INDEX
-            Route::get('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
-            Route::post('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
+            // Route::get('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
+            // Route::post('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
+
+            Route::match(['get','post'],'/artikel',[HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
             // BERITA
             Route::get('/berita/{publikasi}', [HomeFeController::class, 'publikasi_berita'])->name('berita-fe');
             // WARTA
