@@ -29,7 +29,7 @@ class HomeFeController extends Controller
 {
     public function index()
     {
-        // 
+        //
         $status_berita='Published';
         $tentang = TentangModel::latest()->take(1)->get();
         $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
@@ -212,7 +212,7 @@ class HomeFeController extends Controller
         }
 
         $kategori = ref_kategori::all();
-        
+
 
 
         return view('frontend.publikasi.kategori-artikel', compact(['artikel', 'searchValue', 'kategori']));
@@ -433,7 +433,7 @@ class HomeFeController extends Controller
     // public function kegiatan_search(Request $request)
     // {
     //     $search = $request->search;
-    //     
+    //
     //     $tentang = TentangModel::first()->get();
     //     $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->paginate(1);
     //     return view('frontend.kegiatan.index', compact([, 'tentang', 'kegiatan']));
