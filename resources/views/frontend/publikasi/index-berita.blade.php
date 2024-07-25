@@ -37,7 +37,8 @@
 							<a class="btn btn-light pilihan-kategori-menu {{Request::routeIs('publikasi-index-berita-fe')?'active':''}}" href="{{route('publikasi-index-berita-fe')}}">View All
 							</a>
 							@foreach ($kategori as $item)
-							<a class="btn btn-light pilihan-kategori-menu" href="{{route('berita-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}">{{$item->nama_kategori}}
+							<a class="btn btn-light pilihan-kategori-menu" href="{{route('berita-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}">
+                                {{strtoupper($item->nama_kategori)}}
 							</a>
 							@endforeach
 

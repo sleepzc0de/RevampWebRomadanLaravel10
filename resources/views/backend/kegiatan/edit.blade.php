@@ -22,7 +22,7 @@
 	function handleTanggalMulaiChange() {
   var tanggalMulai = document.getElementById('tanggal_mulai').value;
   var tanggalSelesai = document.getElementById('tanggal_selesai');
-  
+
   if (tanggalMulai) {
     tanggalSelesai.disabled = false;
     tanggalSelesai.min = tanggalMulai;
@@ -52,7 +52,7 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
                                 <!-- Judul Artikel input -->
@@ -111,7 +111,7 @@
 									</div>
 									<!-- /kegiatan -->
 
-                                    
+
 
 									 <!-- File Kegiatan -->
 									<div class="row mb-3">

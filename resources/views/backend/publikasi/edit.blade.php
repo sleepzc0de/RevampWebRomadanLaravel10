@@ -147,6 +147,24 @@
 				</div>
 				<!-- /image file uploader -->
 
+                 <!-- File publikasi -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">File Publikasi <span class="text-danger"></span></label>
+										<div class="col-lg-10">
+											<input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
+											<div class="mt-3">
+                                                <a target="_blank" href="{{asset('storage/romadan_file_web/'.$publikasi->file)}}">{{$publikasi->file}}</a>
+											</div>
+
+											@error('file')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /File publikasi -->
+
 				<!-- Isi publikasi Input -->
 				<div class="row mb-3">
 					<label class="col-form-label col-lg-2">Isi publikasi <span class="text-danger">*</span></label>

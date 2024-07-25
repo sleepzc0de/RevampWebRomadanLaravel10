@@ -10,7 +10,7 @@
 	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
 		<div class="container">
 			<div class="row p-t-10">
-				
+
 				<div class="col-md-12">
 					<div class="wrap-text-welcome">
 
@@ -21,10 +21,10 @@
 						<div class="t-center m-b-22 " style="text-align: left;">
 							<div class="txt-judul-berita-terkini-detail text-center">{{$data->judul}}</div>
 						</div>
-                        
+
 
                         <div class="t-center m-b-22 " style="text-align: justify;">
-                            
+
                              <div class="txt-judul-kegiatan-detail-tanggal">
                                 <div class="mt-3 pic-blo4 hov-img-zoom bo-rad-10 pos-relative w-100">
                                         <a href="{{asset('storage/romadan_gambar_web/'.$data->image)}}">
@@ -35,13 +35,17 @@
                                 {!!$data->isi!!}
                                </div>
                             </div>
-							
+
 						</div>
-						
-											
+
+                        <a href="{{asset('storage/romadan_file_web/'.$data->file)}}" class="btn btn3-kegiatan-detail" target="_blank">
+                            <i class="fa-solid fa-download mr-2"></i>Download Warta
+                            </a>
+
+
 					</div>
 				</div>
-                
+
 
 			</div>
 		</div>

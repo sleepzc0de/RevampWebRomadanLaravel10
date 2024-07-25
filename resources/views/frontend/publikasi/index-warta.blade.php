@@ -32,16 +32,16 @@
 							</a>
 						</div> --}}
 						<div class="col-lg-12 text-center">
-							
+
 							<a class="btn btn-light pilihan-kategori-menu {{Request::routeIs('publikasi-index-warta-fe')?'active':''}}" href="{{route('publikasi-index-warta-fe')}}">View All
 							</a>
 							@foreach ($kategori as $item)
-							<a class="btn btn-light pilihan-kategori-menu" href="{{route('warta-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}">{{$item->nama_kategori}}
+							<a class="btn btn-light pilihan-kategori-menu" href="{{route('warta-kategori-fe', strip_tags(strtolower($item->nama_kategori)))}}"> {{strtoupper($item->nama_kategori)}}
 							</a>
 							@endforeach
-							
+
 						</div>
-					
+
                     </form>
 				</div>
 				<div class="col-lg-12 mt-5">
@@ -65,7 +65,7 @@
 									</span>
 								</div> --}}
 							</div>
-							
+
 
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
@@ -85,32 +85,32 @@
 
 
 
-								
+
 							</div>
 						</div>
 
-						
-						
+
+
 					</div>
-					
+
 					@empty
 						<section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
 
                                 <div class="container">
-									
+
                                     <div class="title-section-ourmenu m-b-22">
 											<h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3>
                                             <h5 class="romadan-faq m-t-5">
                                                 Mohon maaf, data yang anda cari tidak ada :(
                                             </h5>
                                     </div>
-                                    
+
                                 </div>
-                            
+
                             </section>
-						
+
 					@endforelse
-					
+
 
 				</div>
 

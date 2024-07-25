@@ -32,6 +32,10 @@ class PublikasiController extends Controller
                     $url = asset('storage/romadan_gambar_web/' . $query->image);
                     return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
+                ->addColumn('file_publikasi', function ($query) {
+                    $url = asset('storage/romadan_file_web/' . $query->file);
+                    return '<a href="' . $url . '" target="_blank">' . $query->judul . '</a>';
+                })
                 ->addColumn('opsi', function ($query) {
                     $preview = route('publikasi.show', encrypt($query->id));
                     $edit = route('publikasi.edit', encrypt($query->id));
@@ -67,7 +71,7 @@ class PublikasiController extends Controller
                 })
 
 
-                ->rawColumns(['opsi', 'image_publikasi'])
+                ->rawColumns(['opsi', 'image_publikasi','file_publikasi'])
                 ->addIndexColumn()
                 ->make(true);
         }
@@ -107,6 +111,7 @@ class PublikasiController extends Controller
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
                 'backdate' => 'date|date_format:Y-m-d\TH:i',
+                'file' => 'mimes:pdf|max:10240',
             ],[
                 'judul.required' => 'Judul Wajib diisi.',
                 'judul.unique' => 'Judul ini sudah digunakan sebelumnya.',
@@ -116,15 +121,29 @@ class PublikasiController extends Controller
                 'image.required' => 'Gambar Wajib diunggah.',
                 'image.image' => 'File yang diunggah Wajib berupa gambar.',
                 'image.mimes' => 'File gambar Wajib berformat jpeg, png, jpg, atau svg.',
-                'image.max' => 'Ukuran gambar tidak boleh melebihi 10MB (10240KB).',
+                'image.max' => 'Ukuran gambar tidak boleh melebihi 10MB (10240 KB).',
                 'image.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel.',
                 'isi.required' => 'Isi Publikasi Wajib diisi.',
-                
+                // 'file.required'=>'File Wajib Diisi',
+                'file.max' => 'Ukuran File tidak boleh melebihi 10MB (10240 KB)',
+                'file.mimes' => 'File yang diunggah Wajib berupa PDF'
+
     ]);
 
             //UPLOAD IMAGE
             $image = $request->file('image');
             $image->storeAs('public/romadan_gambar_web', $image->hashName());
+
+            //UPLOAD FILE
+            // $file = $request->file('file');
+            // $file->storeAs('public/romadan_file_web', $file->hashName());
+            // Proses file jika diunggah
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $file = $file->storeAs('public/romadan_file_web', $file->hashName());
+            } else {
+                $file = null; // atau atur default value lainnya
+            }
 
             // SLUG
 
@@ -143,6 +162,7 @@ class PublikasiController extends Controller
                 'penulis' => Auth::user()->name,
                 'static_random_string' => Str::random(10).uniqid().Str::random(4),
                 'backdate' => Carbon::parse($request->backdate)->format('Y-m-d H:i'),
+                'file' => $file,
 
             ];
 
@@ -220,6 +240,8 @@ class PublikasiController extends Controller
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
                 'created_at' => 'required|date|before:now|date_format:Y-m-d\TH:i:s',
+                'file' => 'mimes:pdf|max:10240',
+
             ]);
 
             // SLUG
@@ -238,6 +260,7 @@ class PublikasiController extends Controller
 
             ];
 
+            // UPLOAD IMAGE
             if ($request->hasFile('image')) {
                 $request->validate([
                     'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
@@ -252,7 +275,7 @@ class PublikasiController extends Controller
                 //UPLOAD IMAGE
                 $image = $request->file('image');
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
-                
+
 
                 $data_gambar = PublikasiModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
@@ -260,7 +283,29 @@ class PublikasiController extends Controller
                 $data = [
                     'image' => $image->hashName(),
                 ];
-                
+
+            }
+
+            // UPLOAD FILE
+
+            if ($request->hasFile('file')) {
+                $request->validate([
+                    'file' => 'mimes:pdf|max:10240',
+                ], [
+                    'file.mimes' => 'File hanya diperbolehkaan berekstensi PDF',
+                    'file.max' => 'Ukuran File tidak boleh melebihi 10MB (10240 KB)',
+                ]);
+
+                //UPLOAD IMAGE
+                $file = $request->file('file');
+                $file->storeAs('public/romadan_file_web', $file->hashName());
+
+                $data_file = PublikasiModel::findOrFail(decrypt($id));
+                File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
+
+                $data = [
+                    'file' => $file->hashName(),
+                ];
             }
 
             PublikasiModel::findOrFail(decrypt($id))->update($data);

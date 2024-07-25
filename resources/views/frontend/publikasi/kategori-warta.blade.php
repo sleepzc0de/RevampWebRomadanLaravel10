@@ -34,8 +34,8 @@
 
 						<div class="col-lg-12 text-center">
 							<a class="btn btn-light pilihan-kategori-menu" href="{{route('publikasi-index-warta-fe')}}">View All
-							</a>           
-            
+							</a>
+
                             @foreach ($kategori as $item)
                                 @php
                                     $currentURL = Request::url();
@@ -44,13 +44,13 @@
                                 @endphp
 
                                 <a id="{{ $item->nama_kategori }}" class="btn btn-light pilihan-kategori-menu {{ $isActive ? 'active' : '' }}" href="{{ route('warta-kategori-fe', $selectedCategory) }}">
-                                    {{ $item->nama_kategori }}
+                                    {{ strtoupper($item->nama_kategori) }}
                                 </a>
                             @endforeach
 
 
 
-							
+
 						</div>
                     </form>
 				</div>
@@ -75,7 +75,7 @@
 									</span>
 								</div> --}}
 							</div>
-							
+
 
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
@@ -95,32 +95,32 @@
 
 
 
-								
+
 							</div>
 						</div>
 
-						
-						
+
+
 					</div>
-					
+
 					@empty
 						<section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
 
                                 <div class="container">
-									
+
                                     <div class="title-section-ourmenu m-b-22">
 											{{-- <h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3> --}}
                                             <h5 class="romadan-faq m-t-5">
                                                 Mohon maaf, data yang Bapak/Ibu cari belum tersedia :(
                                             </h5>
                                     </div>
-                                    
+
                                 </div>
-                            
+
                             </section>
-						
+
 					@endforelse
-					
+
 
 				</div>
 

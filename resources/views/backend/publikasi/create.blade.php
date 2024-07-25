@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -87,6 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
     CKEditorClassic.init();
 });
 </script>
+
+
+
 @endsection
 
 @section('content')
@@ -100,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('publikasi.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul publikasi input -->
@@ -142,8 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
 												@foreach ($tipe as $item)
 												<option value="{{ $item->id_tipe }}" {{ old('tipe') == $item->id_tipe ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_tipe}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -165,8 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
 												@foreach ($kategori as $item)
 												<option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -192,7 +195,21 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /image file uploader -->
-                                    
+
+                                     <!-- File Publikasi -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">File Publikasi<span class="text-danger"></span></label>
+										<div class="col-lg-10">
+											<input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
+											@error('file')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /File Kegiatan -->
+
 									<!-- Isi publikasi Input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Isi publikasi <span class="text-danger">*</span></label>
