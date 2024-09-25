@@ -31,16 +31,17 @@ class HomeFeController extends Controller
     {
         //
         $status_berita='Published';
+
         $tentang = TentangModel::latest()->take(1)->get();
-        $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-        ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+
+        $berita_terkini =PublikasiModel::join('ref_kategori','publikasi.kategori', '=','ref_kategori.id_kategori')
+        ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+        ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
         ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-        ->where('nama_tipe', 'Berita')
+        ->where('nama_tipe', strtolower('Berita'))
         ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_berita)."%"])
-        ->orderBy("id", "DESC")->take(3)->get();
-        // $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-        // ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-        // ->orderBy('id','DESC')->take(3)->get();
+        ->take(3)
+        ->get();
 
 
         // dd($berita_terkini);
