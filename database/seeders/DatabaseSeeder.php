@@ -17,8 +17,12 @@ class DatabaseSeeder extends Seeder
             ReferensiTipe::class,
             ReferensiStatus::class,
             ReferensiKategori::class,
+            ReferensiMedsos::class,
+            ReferensiJenisPeraturan::class,
+            ReferensiPeraturanStatus::class,
             UserAdminRomadan::class,
-            InformasiPublik::class
+            InformasiPublik::class,
+
 
         ]);
     }

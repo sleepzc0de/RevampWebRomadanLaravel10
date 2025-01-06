@@ -24,7 +24,7 @@
 					</h5>
                     <br>
 			</div>
-                <div class="row"> 
+                <div class="row">
 					<div class="col-lg-12">
                         <h5 class="romadan-peraturan-detail m-t-2">
                             Portal Aplikasi
@@ -45,40 +45,41 @@
 							<a class="btn3-kegiatan-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('informasi-publik-aplikasi-index-fe')}}">Refresh
 							</a>
 						</div>
-					
+
                     </form>
                         <div class="row">
 
-                          @forelse ($data as $item)
-                              <div class="col-lg-4 p-t-30">
-                                      <div class="card w-100 border-0">
-                                        <div class="card-body">
-                                                                <div class="row">
-                                                                <div class="col-lg-3">
-                                                                <a href="{{$item->link_aplikasi}}" class="d-inline-block">
-                                                <img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" class="" width="70" alt="">
+                            @forelse ($data as $item)
+                            <div class="col-lg-4 p-t-30">
+                                <div class="card w-100 border-0">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <a href="{{ $item->link_aplikasi }}" class="d-inline-block">
+                                                    <img src="{{ asset('storage/romadan_gambar_web/' . $item->image) }}" class="" width="70" alt="">
                                                 </a>
-                                                                </div>
-                                                                <div class="col-lg-7">
-                                                                <h5 class="card-title romadan-peraturan-judul">{{$item->judul_aplikasi}}</h5>
-                                          <p class="card-text romadan-peraturan-subjudul">{{$item->sub_judul_aplikasi}}</p>
-                                                                </div>
-                                                                <div class="col-lg-2">
-                                                                <a href="{{$item->link_aplikasi}}"><i class="fa-solid fa-arrow-right mt-4"></i></a>
-                                                                </div>
-                                                                </div>
-                                          
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <h5 class="card-title romadan-peraturan-judul">{{ $item->judul_aplikasi }}</h5>
+                                                <p class="card-text romadan-peraturan-subjudul">{{ $item->sub_judul_aplikasi }}</p>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <a href="{{ $item->link_aplikasi }}"><i class="fa-solid fa-arrow-right mt-4"></i></a>
+                                            </div>
                                         </div>
-                                      </div>
-					   	                  </div>   
-                          @empty
-                             <div class="container pt-5">                         
-                                <h5 class="romadan-faq text-center m-t-2">
-                                  Mohon maaf link aplikasi tidak ada !
-                                </h5>
-                              </div>
-                          @endforelse
-                                   
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            @if ($isSearch)
+                                <div class="container pt-5">
+                                    <h5 class="romadan-faq text-center m-t-2">
+                                        Mohon maaf link aplikasi tidak ada!
+                                    </h5>
+                                </div>
+                            @endif
+                        @endforelse
+
 
                         </div>
                         <div class="d-flex justify-content-center mt-5">
@@ -91,5 +92,5 @@
 
 @section('script_fe')
 @endsection
-      
+
 @endsection

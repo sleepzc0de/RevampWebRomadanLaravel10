@@ -18,7 +18,7 @@
 									<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG" height="220px">
 								</a>
 							</div>
-							
+
 
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
@@ -38,25 +38,25 @@
 							</div>
 						</div>
 
-						
-						
+
+
 					</div>
-					
+
 					@empty
-							<div class="container">                         
+							<div class="container">
 						<h5 class="romadan-faq m-t-2">
 							Berita Terkini Kosong !
 						</h5>
 							  </div>
-						
+
 					@endforelse
 					<div class="col-md-12 p-t-20 romadan-berita-button-home">
-						<a href="{{route('tentang-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
+						<a href="{{route('publikasi-index-berita-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
 								Lihat Selengkapnya<i class="ml-3 fa fa-arrow-right"
 								aria-hidden="true"></i>
 							</a>
 					</div>
-					
+
 
 				</div>
 			</div>

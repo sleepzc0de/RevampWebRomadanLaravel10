@@ -125,29 +125,38 @@ class HomeFeController extends Controller
 
     public function publikasi_index_berita(Request $request)
     {
-        $status_berita='Published';
-
+        $status_berita = 'Published';
         $searchValue = strip_tags($request->input('cari_berita_terkini'));
+        $searchMessage = null; // Untuk pesan pencarian
+        $berita = collect([]); // Default untuk empty collection
+
         if ($request->cari_berita_terkini) {
             $search = $request->cari_berita_terkini;
-            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', strtolower('Berita'))->where('judul', 'like', "%" . $search . "%")
-            //->where('nama_status', 'Tayang')
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_berita)."%"])
-            ->latest()->paginate(9);
+            $searchMessage = "Anda sedang mencari : \"$search\"";
+
+            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+                ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+                ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+                ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+                ->where('nama_tipe', strtolower('Berita'))
+                ->where('judul', 'like', "%" . $search . "%")
+                ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_berita) . "%"])
+                ->latest()->paginate(9);
         } else {
-            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', strtolower('Berita'))
-            // ->where('nama_status', 'Tayang')
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_berita)."%"])
-            ->latest()->paginate(9);
-            // return redirect()->back()->with('message', 'Empty Search');
+            $berita = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+                ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+                ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+                ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+                ->where('nama_tipe', strtolower('Berita'))
+                ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_berita) . "%"])
+                ->latest()->paginate(9);
         }
 
         $kategori = ref_kategori::all();
-        // dd($kategori);
 
-
-        return view('frontend.publikasi.index-berita', compact(['berita', 'searchValue', 'kategori']));
+        return view('frontend.publikasi.index-berita', compact(['berita', 'searchValue', 'kategori', 'searchMessage']));
     }
+
 
     public function publikasi_berita_kategori(Request $request, $kategori)
     {
@@ -228,53 +237,68 @@ class HomeFeController extends Controller
 
 
     public function publikasi_index_warta(Request $request)
-    {
-        $status_warta='Published';
+{
+    $status_warta = 'Published';
+    $searchValue = strip_tags($request->input('cari_warta'));
+    $isSearch = false; // Menandakan apakah pencarian dilakukan atau tidak
 
-
-        $searchValue = strip_tags($request->input('cari_warta'));
-        if ($request->cari_warta) {
-            $search = $request->cari_warta;
-            $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', strtolower('Warta'))->where('judul', 'like', "%" . $search . "%")
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_warta)."%"])
-            ->latest()->paginate(9);
-        } else {
-            $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+    if ($request->cari_warta) {
+        $isSearch = true; // Jika ada pencarian, set ke true
+        $search = $request->cari_warta;
+        $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
             ->where('nama_tipe', strtolower('Warta'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_warta)."%"])
+            ->where('judul', 'like', "%" . $search . "%")
+            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_warta) . "%"])
             ->latest()->paginate(9);
-            // return redirect()->back()->with('message', 'Empty Search');
-        }
-
-        $kategori = ref_kategori::all();
-        return view('frontend.publikasi.index-warta', compact(['warta', 'searchValue', 'kategori']));
+    } else {
+        $warta = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+            ->where('nama_tipe', strtolower('Warta'))
+            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_warta) . "%"])
+            ->latest()->paginate(9);
     }
+
+    $kategori = ref_kategori::all();
+    return view('frontend.publikasi.index-warta', compact(['warta', 'searchValue', 'kategori', 'isSearch']));
+}
+
 
     public function publikasi_index_artikel(Request $request)
     {
-
-        $status_artikel='Published';
-
-
+        $status_artikel = 'Published';
         $searchValue = strip_tags($request->input('cari_artikel'));
+        $isSearch = false;
+        $artikel = null;
+
         if ($request->cari_artikel) {
+            $isSearch = true; // Tandai bahwa pengguna sedang mencari
             $search = $request->cari_artikel;
-            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', strtolower('Artikel'))->where('judul', 'like', "%" . $search . "%")
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_artikel)."%"])
-            ->latest()->paginate(9);
+            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+                ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+                ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+                ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+                ->where('nama_tipe', strtolower('Artikel'))
+                ->where('judul', 'like', "%" . $search . "%")
+                ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_artikel) . "%"])
+                ->latest()->paginate(9);
         } else {
-            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')->where('nama_tipe', strtolower('Artikel'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%".strtolower($status_artikel)."%"])
-            ->latest()->paginate(9);
-            // return redirect()->back()->with('message', 'Empty Search');
+            $artikel = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+                ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+                ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+                ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+                ->where('nama_tipe', strtolower('Artikel'))
+                ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_artikel) . "%"])
+                ->latest()->paginate(9);
         }
 
         $kategori = ref_kategori::all();
 
-
-        return view('frontend.publikasi.index-artikel', compact(['searchValue', 'artikel', 'kategori']));
+        return view('frontend.publikasi.index-artikel', compact('searchValue', 'isSearch', 'artikel', 'kategori'));
     }
 
     public function publikasi_berita($publikasi)
@@ -421,14 +445,20 @@ class HomeFeController extends Controller
     public function infopublik_aplikasi_index(Request $request)
     {
         $searchValue = strip_tags($request->input('cari_aplikasi'));
-        if ($request->cari_aplikasi) {
-            $search = $request->cari_aplikasi;
-            $data = AplikasiModel::where('judul_aplikasi', 'like', "%" . $search . "%")->orWhere('sub_judul_aplikasi', 'like', "%" . $search . "%")->latest()->paginate(9);
-        } else {
+        $data = null;
+        $isSearch = false;
 
+        if ($request->cari_aplikasi) {
+            $isSearch = true; // Tandai bahwa pencarian dilakukan
+            $search = $request->cari_aplikasi;
+            $data = AplikasiModel::where('judul_aplikasi', 'like', "%" . $search . "%")
+                ->orWhere('sub_judul_aplikasi', 'like', "%" . $search . "%")
+                ->latest()->paginate(9);
+        } else {
             $data = AplikasiModel::latest()->paginate(9);
         }
-        return view('frontend.infopublik.aplikasi-index', compact('data'));
+
+        return view('frontend.infopublik.aplikasi-index', compact('data', 'isSearch'));
     }
 
 
