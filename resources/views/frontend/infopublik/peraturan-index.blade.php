@@ -11,6 +11,184 @@
             /* Sesuaikan jarak logo dengan input */
         }
     </style>
+    <style>
+        .search-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+        }
+
+        .search-header {
+            margin-bottom: 20px;
+        }
+
+        .search-header h5 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin: 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid #eaeaea;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #0F5FAE;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 95, 174, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        .filter-section {
+            margin-bottom: 24px;
+        }
+
+        .filter-section h5 {
+            font-size: 16px;
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-wrapper:hover {
+            background: #f5f5f5;
+        }
+
+        /* Updated checkbox styles */
+        .checkbox-input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cccccc;
+            /* Lighter border color for better visibility */
+            border-radius: 4px;
+            margin-right: 12px;
+            cursor: pointer;
+            position: relative;
+            background-color: #fff;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow to make it stand out */
+        }
+
+        .checkbox-input:hover {
+            border-color: #999999;
+            /* Darker border on hover */
+            background-color: #f8f8f8;
+        }
+
+        .checkbox-input:checked {
+            background: #0F5FAE;
+            border-color: #0F5FAE;
+        }
+
+        .checkbox-input:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .checkbox-input:focus {
+            outline: none;
+            border-color: #0F5FAE;
+            box-shadow: 0 0 0 3px rgba(15, 95, 174, 0.2);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: #4a4a4a;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-btn {
+            flex: 1;
+            padding: 12px 24px;
+            background: #0F5FAE;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-btn:hover {
+            background: #0d4d8f;
+        }
+
+        .refresh-btn {
+            padding: 12px 24px;
+            background: white;
+            color: #0F5FAE;
+            border: 1px solid #0F5FAE;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            background: #f5f8ff;
+        }
+
+        .divider {
+            height: 1px;
+            background: #eaeaea;
+            margin: 24px 0;
+        }
+    </style>
 @endsection
 
 
@@ -27,71 +205,71 @@
             </div>
             <div class="row">
                 <div class="col-lg-4">
-                    <div class="alert alert-secondary" role="alert">
-                        <h5 class="alert-heading">REFINE YOUR SEARCH</h5>
-                        <form class="form-outline" action="{{ route('informasi-publik-peraturan-index-fe') }}"
-                            method="POST" autocomplete="off">
+                    <div class="search-container">
+                        <div class="search-header">
+                            <h5>REFINE YOUR SEARCH</h5>
+                        </div>
+
+                        <form action="{{ route('informasi-publik-peraturan-index-fe') }}" method="POST" autocomplete="off">
                             @csrf
-                            <div class="form-group">
-                                <input name="cari_peraturan" type="text" class="form-control mt-3 input-with-logo"
-                                    id="cari_peraturan" aria-describedby="cari_peraturan"
+                            <div class="search-input-wrapper">
+                                <input name="cari_peraturan" type="text" class="search-input"
                                     placeholder="Cari peraturan disini">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#999">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
                             </div>
 
-                            <hr>
-                            <h5>Kategori</h5>
-                            @forelse ($kategori as $item)
-                            <div class="form-check mt-3">
-                                <input
-                                    name="kategori[]"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    value="{{$item->nama_kategori}}"
-                                    id="{{$item->nama_kategori}}"
-                                    {{ is_array($selectedKategori) && in_array($item->nama_kategori, $selectedKategori) ? 'checked' : '' }}>
-                                <label
-                                    class="form-check-label"
-                                    for="{{$item->nama_kategori}}"
-                                    onChange="submitForm()">
-                                    {{
-                                        collect(explode(' ', strtolower($item->nama_kategori)))->map(function($word) {
-                                            return strlen($word) <= 3 ? strtoupper($word) : ucfirst($word);
-                                        })->join(' ')
-                                    }}
-                                </label>
-                            </div>
-                            @empty
-                            <label class="form-check-label" for="DataKosongKategori">
-                                Tidak Ada Data
-                            </label>
-                            @endforelse
-
-
-                            {{-- <input type="submit" value="Submit"> --}}
-
-                            <h5 class="mt-4">Jenis Peraturan</h5>
-                            @forelse ($jenis_peraturan as $item)
-                                <div class="form-check mt-3">
-                                    <input name="jenis_peraturan[]" class="form-check-input" type="checkbox"
-                                        value="{{ $item->nama_jenis_peraturan }}" id="{{ $item->nama_jenis_peraturan }}"
-                                        {{ is_array($selectedJenisPeraturan) && in_array($item->nama_jenis_peraturan, $selectedJenisPeraturan) ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="{{ $item->nama_jenis_peraturan }}">
-                                        {{ $item->nama_jenis_peraturan }}
-                                    </label>
+                            <div class="filter-section">
+                                <h5>Kategori</h5>
+                                <div class="checkbox-group">
+                                    @forelse ($kategori as $item)
+                                        <label class="checkbox-wrapper">
+                                            <input name="kategori[]" type="checkbox" class="checkbox-input"
+                                                value="{{ $item->nama_kategori }}"
+                                                {{ is_array($selectedKategori) && in_array($item->nama_kategori, $selectedKategori) ? 'checked' : '' }}>
+                                            <span class="checkbox-label">
+                                                {{ collect(explode(' ', strtolower($item->nama_kategori)))->map(function ($word) {
+                                                        return strlen($word) <= 3 ? strtoupper($word) : ucfirst($word);
+                                                    })->join(' ') }}
+                                            </span>
+                                        </label>
+                                    @empty
+                                        <span class="checkbox-label">Tidak Ada Data</span>
+                                    @endforelse
                                 </div>
-                            @empty
-                                <label class="form-check-label" for="DataKosongJenisPeraturan">
-                                    Tidak Ada Data
-                                </label>
-                            @endforelse
+                            </div>
 
-                            <div class="wrap-btn-booking flex-c-m m-t-13">
-                                <button type="submit" class="btn3-kegiatan flex-c-m size36 txt11 trans-0-4">
+                            <div class="divider"></div>
+
+                            <div class="filter-section">
+                                <h5>Jenis Peraturan</h5>
+                                <div class="checkbox-group">
+                                    @forelse ($jenis_peraturan as $item)
+                                        <label class="checkbox-wrapper">
+                                            <input name="jenis_peraturan[]" type="checkbox" class="checkbox-input"
+                                                value="{{ $item->nama_jenis_peraturan }}"
+                                                {{ is_array($selectedJenisPeraturan) && in_array($item->nama_jenis_peraturan, $selectedJenisPeraturan) ? 'checked' : '' }}>
+                                            <span class="checkbox-label">{{ $item->nama_jenis_peraturan }}</span>
+                                        </label>
+                                    @empty
+                                        <span class="checkbox-label">Tidak Ada Data</span>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                            <div class="button-group">
+                                <button type="submit" class="search-btn">
                                     Cari
                                 </button>
-                                <a class="btn3-kegiatan-refresh flex-c-m size36 txt11 trans-0-4 ml-2"
-                                    href="{{ route('informasi-publik-peraturan-index-fe') }}">Refresh
+                                <a href="{{ route('informasi-publik-peraturan-index-fe') }}" class="refresh-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor">
+                                        <path
+                                            d="M21.5 2v6h-6M2.5 22v-6h6M2 12c0-4.4 3.6-8 8-8 3.4 0 6.3 2.1 7.4 5M22 12c0 4.4-3.6 8-8 8-3.4 0-6.3-2.1-7.4-5" />
+                                    </svg>
+                                    Refresh
                                 </a>
                             </div>
                         </form>

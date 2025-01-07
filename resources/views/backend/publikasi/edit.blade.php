@@ -202,7 +202,7 @@
 				<div class="row mb-3">
 					<label class="col-form-label col-lg-2">Tanggal Terbit <span class="text-danger">*</span></label>
 					<div class="col-lg-10">
-						<input class="form-control @error('created_at') is-invalid @enderror required" id="created_at" name="created_at" type="datetime-local" value="{{ old('created_at') ?? $publikasi->created_at }}">
+						<input class="form-control @error('created_at') is-invalid @enderror required" id="created_at" name="created_at" type="datetime-local" value="{{ old('created_at', $publikasi->created_at ? Carbon\Carbon::parse($publikasi->created_at)->format('Y-m-d\TH:i') : '') }}">
 						@error('created_at')
 						<div class="alert alert-danger mt-2">
 							{{ $message }}

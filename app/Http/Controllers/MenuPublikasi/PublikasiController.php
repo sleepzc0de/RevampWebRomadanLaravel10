@@ -210,9 +210,13 @@ class PublikasiController extends Controller
                 'tipe' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => 'required',
-                'created_at' => 'required|date|before:now|date_format:Y-m-d\TH:i:s',
+                'created_at' => 'required|date|before:now',
                 'file' => 'mimes:pdf|max:10240',
 
+            ], [
+                'created_at.required' => 'Tanggal wajib diisi',
+                'created_at.date' => 'Format tanggal tidak valid',
+                'created_at.before' => 'Tanggal harus sebelum waktu sekarang',
             ]);
 
             // SLUG
@@ -228,6 +232,7 @@ class PublikasiController extends Controller
                 // 'slug' => $slug,
                 'pengedit' => Auth::user()->name,
                 'created_at' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),
+
 
             ];
 

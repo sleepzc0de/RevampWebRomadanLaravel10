@@ -177,6 +177,7 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
         // PUBLIKASI
         Route::resource('publikasi', PublikasiController::class);
+
         Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
         Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
         Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');

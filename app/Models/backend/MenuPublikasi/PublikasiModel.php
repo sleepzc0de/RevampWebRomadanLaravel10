@@ -16,7 +16,7 @@ class PublikasiModel extends Model
     protected $table = 'publikasi';
     protected $guarded = [];
     protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string','backdate','created_at',
-    'updated_at','file'];
+    'updated_at','file','views'];
     protected $dates = ['deleted_at'];
 
     protected $hidden = [

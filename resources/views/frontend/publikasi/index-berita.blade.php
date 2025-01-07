@@ -42,7 +42,8 @@
                         @foreach ($kategori as $item)
                             <a class="btn btn-light pilihan-kategori-menu"
                                 href="{{ route('berita-kategori-fe', strip_tags(strtolower($item->nama_kategori))) }}">
-                                {{ strtoupper($item->nama_kategori) }}
+                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+
                             </a>
                         @endforeach
 
@@ -74,8 +75,11 @@
                                         <span class="m-r-6 m-l-4">|</span>
                                     </span>
                                     <span>
-                                        {{ $item->nama_kategori }}
+                                        {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
                                         <span class="m-r-6 m-l-4"></span>
+                                    </span>
+                                    <span class="m-l-4">
+                                        <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
                                     </span>
                                 </div>
                                 <a href="{{ route('berita-fe', $item->slug) }}" class="berita-terkini-judul-romadan">
@@ -84,17 +88,17 @@
                             </div>
                         </div>
                     </div>
-                @empty
-                    <section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
-                        <div class="container">
-                            <div class="title-section-ourmenu m-b-22">
-                                <h5 class="romadan-faq m-t-5 text-center">
-                                    Mohon maaf, data yang anda cari tidak ada :(
-                                </h5>
+                    @empty
+                        <section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
+                            <div class="container">
+                                <div class="title-section-ourmenu m-b-22">
+                                    <h5 class="romadan-faq m-t-5 text-center">
+                                        Mohon maaf, data yang anda cari tidak ada :(
+                                    </h5>
+                                </div>
                             </div>
-                        </div>
-                    </section>
-                @endforelse
+                        </section>
+                    @endforelse
 
                 </div>
 
