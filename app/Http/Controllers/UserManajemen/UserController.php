@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -29,9 +30,10 @@ class UserController extends Controller
                 })
                 ->addColumn('action', 'kondisibaik.action')
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('users.show', $query->id);
-                    $edit = route('users.edit', $query->id);
-                    $hapus = route('users.destroy', $query->id);
+                    $encryptedId = Crypt::encrypt($query->id);
+                    $preview = route('users.show', $encryptedId);
+                    $edit = route('users.edit', $encryptedId);
+                    $hapus = route('users.destroy', $encryptedId);
                     return '<div class="d-inline-flex">
 											<div class="dropdown">
 												<a href="#" class="text-body" data-bs-toggle="dropdown">
@@ -129,9 +131,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($encryptedId)
     {
-        $showdata = User::findorFail($id);
+        $id = Crypt::decrypt($encryptedId);
+        $showdata = User::findOrFail($id);
+        // $showdata = User::findorFail($id);
         // dd($userdata);
         return view('backend.users.show_user', compact('showdata'));
     }
@@ -142,9 +146,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($encryptedId)
     {
-
+        $id = Crypt::decrypt($encryptedId);
         $userdata = User::findorFail($id);
         // dd($userdata);
         // $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
@@ -163,14 +167,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $encryptedId)
     {
+        $id = Crypt::decrypt($encryptedId);
         try {
             $request->validate([
-                // 'username' => 'required',
-                // 'nip' => 'required|max:18',
                 'name' => 'required',
-                'email' => 'required',
+                'email' => 'required|email',
+                'role' => 'required|exists:roles,id',
             ]);
 
             $user = User::findorFail($id);
@@ -187,6 +191,11 @@ class UserController extends Controller
                 $user->password = Hash::make($request->password);
             }
 
+            if ($request->has('role')) {
+                $role = Role::findById($request->role); // Ambil role berdasarkan ID
+                $user->syncRoles($role); // Sinkronisasi role user
+            }
+
             $user->update();
 
             return redirect()->route('users.index')->with(['success' => 'User Berhasil di Update !']);
@@ -201,8 +210,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($encryptedId)
     {
+        $id = Crypt::decrypt($encryptedId);
         $user = User::findorFail($id);
 
         if ($user) {

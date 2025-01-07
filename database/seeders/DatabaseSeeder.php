@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ReferensiPeraturanStatus::class,
             UserAdminRomadan::class,
             InformasiPublik::class,
+            RoleSeeder::class
 
 
         ]);

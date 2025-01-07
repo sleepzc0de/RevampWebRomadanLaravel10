@@ -14,7 +14,7 @@ class UserAdminRomadan extends Seeder
     public function run(): void
     {
         DB::table('users')->insert([
-            ['name' => 'Admin Romadan','email'=>'admin@romadan.kemenkeu.go.id','password'=>bcrypt('4dM!nR00M4D4N2O23!))(!((^!#!$!(')],
+            ['name' => 'Admin Romadan','email'=>'admin@romadan.kemenkeu.go.id','password'=>bcrypt('4dM!nR00M4D4N2O24!))(!((^!#!$!(')],
         ]);
     }
 }

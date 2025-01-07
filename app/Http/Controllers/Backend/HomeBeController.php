@@ -27,6 +27,7 @@ class HomeBeController extends Controller
         $jumlah_peraturan = PeraturanModel::all()->count();
 
 
+
         // dd($jumlah_peraturan);
 
         $data = [

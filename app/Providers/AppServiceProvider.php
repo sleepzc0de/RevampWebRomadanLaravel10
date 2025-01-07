@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\medsos\medsos;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,13 +21,12 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
-        // Paginator::useBootstrapRomadan();
+         // Jalankan storage:link jika symbolic link belum ada
+         if (!file_exists(public_path('storage'))) {
+            Artisan::call('storage:link');
+        }
 
 
     }

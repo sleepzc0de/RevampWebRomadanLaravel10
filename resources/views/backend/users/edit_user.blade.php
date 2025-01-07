@@ -26,7 +26,7 @@
 											<span class="alert-icon bg-success text-white">
 												<i class="ph-gear"></i>
 											</span>
-											<span class="fw-semibold">{{$message}}</span> 
+											<span class="fw-semibold">{{$message}}</span>
 											<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 									    </div>
                             @endif
@@ -36,7 +36,7 @@
 											<span class="alert-icon bg-danger text-white">
 												<i class="ph-gear"></i>
 											</span>
-											<span class="fw-semibold">{{$message}}</span> 
+											<span class="fw-semibold">{{$message}}</span>
 											<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 									    </div>
                             @endif
@@ -92,10 +92,12 @@
 											<select id="role" value="{{ old('role') }}" name="role" class="form-control form-control-select2 select" @error('role') is-invalid @enderror required>
 												<option>--Pilih Role--</option>
 												@foreach ($data['role'] as $item)
-												<option value="{{ $item->id }}" {{ old('role',($data['olduser'] ?? null) ? $data['olduser']->id :null) == $item->id ? 'selected' : null}}>{{$loop->iteration." - ".$item->name}}</option>
+												<option value="{{ $item->id }}" {{ old('role', $data['olduser']->id ?? '') == $item->id ? 'selected' : '' }}>
+                                                    {{ $loop->iteration }} - {{ $item->name }}
+                                                </option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -122,7 +124,7 @@
 
 						<div class="card-footer d-flex justify-content-end">
 							<a href="{{route('users.index')}}" class="btn btn-warning ms-2">Kembali</a>
-                            
+
 							<button type="submit" class="btn btn-primary ms-2">Update</button>
 						</div>
 							</form>
