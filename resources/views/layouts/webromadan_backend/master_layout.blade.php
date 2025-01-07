@@ -25,6 +25,7 @@
     @yield('script_atas')
     <script src="{{ asset('webromadan/fe/js/app.js')}}"></script>
     @yield('script_bawah')
+    @stack('scripts')
 
 
 

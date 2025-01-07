@@ -60,34 +60,35 @@
                     @endif
 
                     @forelse ($berita as $item)
-                    <div class="col-md-4 p-t-30">
-                        <!-- Block1 -->
-                        <div class="blo4">
-                            <div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-                                <a href="{{ route('berita-fe', $item->slug) }}">
-                                    <img src="{{ asset('storage/romadan_gambar_web/'.$item->image) }}" height="250px" alt="IMG-BLOG">
-                                </a>
-                            </div>
-                            <div class="text-blo4 p-t-33">
-                                <div class="txt32 flex-w p-b-24">
-                                    <span>
-                                        {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
-                                        <span class="m-r-6 m-l-4">|</span>
-                                    </span>
-                                    <span>
-                                        {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
-                                        <span class="m-r-6 m-l-4"></span>
-                                    </span>
-                                    <span class="m-l-4">
-                                        <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
-                                    </span>
+                        <div class="col-md-4 p-t-30">
+                            <!-- Block1 -->
+                            <div class="blo4">
+                                <div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
+                                    <a href="{{ route('berita-fe', $item->slug) }}">
+                                        <img src="{{ asset('storage/romadan_gambar_web/' . $item->image) }}" height="250px"
+                                            alt="IMG-BLOG">
+                                    </a>
                                 </div>
-                                <a href="{{ route('berita-fe', $item->slug) }}" class="berita-terkini-judul-romadan">
-                                    {{ $item->judul }}
-                                </a>
+                                <div class="text-blo4 p-t-33">
+                                    <div class="txt32 flex-w p-b-24">
+                                        <span>
+                                            {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
+                                            <span class="m-r-6 m-l-4">|</span>
+                                        </span>
+                                        <span>
+                                            {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+                                            <span class="m-r-6 m-l-4"></span>
+                                        </span>
+                                        <span class="m-l-4">
+                                            <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
+                                        </span>
+                                    </div>
+                                    <a href="{{ route('berita-fe', $item->slug) }}" class="berita-terkini-judul-romadan">
+                                        {{ $item->judul }}
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @empty
                         <section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
                             <div class="container">

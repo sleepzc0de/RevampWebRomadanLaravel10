@@ -326,6 +326,9 @@ class HomeFeController extends Controller
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe',  strtolower('Warta'))->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data);
 
+         // Menambah jumlah views
+         $data->increment('views');
+
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
         return view('frontend.publikasi.fe_warta', compact(['data', 'tb']));
@@ -338,6 +341,9 @@ class HomeFeController extends Controller
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data->isi);
+
+         // Menambah jumlah views
+         $data->increment('views');
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 

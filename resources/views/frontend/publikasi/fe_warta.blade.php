@@ -22,6 +22,14 @@
 							<div class="txt-judul-berita-terkini-detail text-center">{{$data->judul}}</div>
 						</div>
 
+                        {{-- Tambahkan jumlah views di sini --}}
+                    <div class="t-center m-b-22" style="text-align: center;">
+                        <span class="txt-judul-kegiatan-detail-tanggal">
+                            <i class="fa-regular fa-eye"></i> {{$data->views ?? 0}} Views
+                        </span>
+                    </div>
+
+
 
                         <div class="t-center m-b-22 " style="text-align: justify;">
 

@@ -22,6 +22,7 @@ use App\Http\Controllers\Referensi\RefKategoriController;
 use App\Http\Controllers\Referensi\RefPeraturanStatusController;
 use App\Http\Controllers\Referensi\RefStatusController;
 use App\Http\Controllers\Referensi\RefTipeController;
+use App\Http\Controllers\Tim\PengembangController;
 use App\Http\Controllers\UserManajemen\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -167,6 +168,13 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
     // INTERFACE BACKEND
     Route::prefix('/romadan-interface')->group(function () {
+
+        // PENGEMBANG
+
+        Route::prefix('/tim')->group(function () {
+            // TENTANG
+            Route::resource('pengembang', PengembangController::class);
+        });
 
         // HOME
         Route::get('/dashboard', [HomeBeController::class, 'index'])->name('home');

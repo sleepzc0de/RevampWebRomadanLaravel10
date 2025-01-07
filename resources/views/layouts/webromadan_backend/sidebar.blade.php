@@ -175,7 +175,7 @@
                     <i class="ph-dots-three sidebar-resize-show"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('home')}}" class="nav-link">
+                    <a href="{{route('pengembang.index')}}" class="nav-link {{ Request::routeIs('pengembang.*') ? 'active' : '' }}">
                         <i class="ph-terminal-window"></i>
                         <span>Tim Pengembang</span>
                     </a>

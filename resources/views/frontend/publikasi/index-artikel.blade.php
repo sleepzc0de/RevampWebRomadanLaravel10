@@ -73,7 +73,10 @@
                                 <span class="m-r-6 m-l-4">|</span>
                             </span>
                             <span>
-                                {{ $item->nama_kategori }}
+                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+                            </span>
+                            <span class="m-l-4">
+                                <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
                             </span>
                         </div>
                         <a href="{{ route('artikel-fe', $item->slug) }}" class="berita-terkini-judul-romadan">{{ $item->judul }}</a>

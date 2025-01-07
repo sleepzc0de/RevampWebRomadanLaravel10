@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-   
+
 	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
 		<div class="container">
 				<div class="col-lg-12">
@@ -49,7 +49,7 @@
 									</span>
 								</div> --}}
 							</div>
-							
+
 
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
@@ -59,9 +59,12 @@
 									</span>
 
 									<span>
-										{{$item->nama_kategori}}
+                                        {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
 										<span class="m-r-6 m-l-4"></span>
 									</span>
+                                    <span class="m-l-4">
+                                        <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
+                                    </span>
 								</div>
 								<div>
 									<a href="{{route('berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
@@ -69,21 +72,21 @@
 
 
 
-								
+
 							</div>
 						</div>
 
-						
-						
+
+
 					</div>
-					
+
 					@empty
-							<div class="container">                         
+							<div class="container">
 						<h5 class="romadan-faq m-t-2">
 							Berita Terkini Kosong !
 						</h5>
 							  </div>
-						
+
 					@endforelse
 					<div class="col-md-12 p-t-20 romadan-berita-button-home">
 						<a href="{{route('publikasi-index-berita-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
@@ -91,7 +94,7 @@
 								aria-hidden="true"></i>
 							</a>
 					</div>
-					
+
 
 				</div>
 				</div>
@@ -126,7 +129,7 @@
 									</span>
 								</div> --}}
 							</div>
-							
+
 
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
@@ -136,9 +139,12 @@
 									</span>
 
 									<span>
-										{{$item->nama_kategori}}
+										{{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
 										<span class="m-r-6 m-l-4"></span>
 									</span>
+                                    <span class="m-l-4">
+                                        <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
+                                    </span>
 								</div>
 								<div>
 									<a href="{{route('warta-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
@@ -146,21 +152,21 @@
 
 
 
-								
+
 							</div>
 						</div>
 
-						
-						
+
+
 					</div>
-					
+
 					@empty
-							<div class="container">                         
+							<div class="container">
 						<h5 class="romadan-faq m-t-2">
 							Warta Terkini Kosong !
 						</h5>
 							  </div>
-						
+
 					@endforelse
 					<div class="col-md-12 p-t-20 romadan-berita-button-home">
 						<a href="{{route('publikasi-index-warta-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
@@ -168,7 +174,7 @@
 								aria-hidden="true"></i>
 							</a>
 					</div>
-					
+
 
 				</div>
 		</div>
@@ -202,7 +208,7 @@
 									</span>
 								</div> --}}
 							</div>
-							
+
 
 							<div class="text-blo4 p-t-33">
 								<div class="txt32 flex-w p-b-24">
@@ -212,9 +218,12 @@
 									</span>
 
 									<span>
-										{{$item->nama_kategori}}
+										{{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
 										<span class="m-r-6 m-l-4"></span>
 									</span>
+                                    <span class="m-l-4">
+                                        <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
+                                    </span>
 								</div>
 								<div>
 									<a href="{{route('artikel-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
@@ -222,23 +231,23 @@
 
 
 
-								
+
 							</div>
 						</div>
 
-						
-						
+
+
 					</div>
-					
+
 					@empty
-							<div class="container">                         
+							<div class="container">
 						<h5 class="romadan-faq m-t-2">
 							Artikel Terkini Kosong !
 						</h5>
 							  </div>
 
-							  
-						
+
+
 					@endforelse
 					<div class="col-md-12 p-t-20 romadan-berita-button-home">
 						<a href="{{route('publikasi-index-artikel-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
@@ -246,12 +255,12 @@
 								aria-hidden="true"></i>
 							</a>
 					</div>
-					
+
 
 				</div>
 		</div>
 	</section>
-    
+
 
 
 @section('script_fe')
