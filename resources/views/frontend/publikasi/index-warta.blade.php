@@ -25,7 +25,7 @@
 							<a class="btn btn-light pilihan-kategori-menu {{ Request::routeIs('publikasi-index-warta-fe') ? 'active' : '' }}" href="{{ route('publikasi-index-warta-fe') }}">View All</a>
 							@foreach ($kategori as $item)
 							<a class="btn btn-light pilihan-kategori-menu" href="{{ route('warta-kategori-fe', strip_tags(strtolower($item->nama_kategori))) }}">
-                                {{ strtoupper($item->nama_kategori) }}
+                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
                             </a>
 							@endforeach
 						</div>

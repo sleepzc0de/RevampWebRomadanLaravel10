@@ -65,17 +65,17 @@
 									<a href="menu.html">Search</a>
 								</li> --}}
 							</ul>
-							
+
 						</nav>
 					</div>
 
 					<!-- Social -->
 					<div class="social flex-w flex-l-m p-r-10">
-						
+
 						{{-- <button class="btn-show-sidebar romadan-menu-mobile m-l-33 trans-0-4"></button> --}}
 						<i class="btn-show-sidebar romadan-menu-mobile m-r-20 fa-solid fa-bars fa-2xl" style="color: white"></i>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>

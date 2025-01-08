@@ -117,7 +117,9 @@ Route::group(
             // Route::get('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
             // Route::post('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
 
+            // Route::match(['get','post'],'/berita',[HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
             Route::match(['get','post'],'/berita',[HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
+
 
             // WARTA INDEX
             // Route::get('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
@@ -138,10 +140,15 @@ Route::group(
             // FILTER KATEGORI BERITA TERKINI
 
             Route::get('/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
+            // Route::match(['get', 'post'], '/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
+            // Route::match(['get', 'post'], '/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
+
 
             Route::get('/warta/kategori/{kategori}', [HomeFeController::class, 'publikasi_warta_kategori'])->name('warta-kategori-fe');
 
-            Route::get('/artikel/kategori/{kategori}', [HomeFeController::class, 'publikasi_artikel_kategori'])->name('artikel-kategori-fe');
+            // Route::get('/artikel/kategori/{kategori}', [HomeFeController::class, 'publikasi_artikel_kategori'])->name('artikel-kategori-fe');
+            Route::match(['get', 'post'], '/artikel/kategori/{kategori}', [HomeFeController::class, 'publikasi_artikel_kategori'])->name('artikel-kategori-fe');
+
 
 
             // COBA

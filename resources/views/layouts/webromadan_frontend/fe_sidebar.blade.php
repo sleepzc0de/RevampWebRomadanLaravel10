@@ -27,12 +27,11 @@
 						<a class="dropdown-item" href="{{route('tentang-fe')}}">Tentang</a>
 				</div>
 			</li>
-			
+
 			<hr>
 			<li class="t-center m-b-13">
 				<a href="{{route('layanan-fe')}}" class="txt19">Layanan</a>
 			</li>
-			<hr>
 			{{-- <li class="t-center m-b-13">
 				<a href="{{route('kegiatan-index-fe')}}" class="txt19">Kegiatan</a>
 			</li> --}}
@@ -51,7 +50,7 @@
 			<hr>
 			{{-- <li class="t-center m-b-13">
 				<a href="contact.html" class="txt19">Search</a>
-			</li>	
+			</li>
 			<hr> --}}
 			<li class="t-center">
 				<!-- Button3 -->
@@ -60,6 +59,6 @@
 				</a>
 			</li>
 
-			
+
 		</ul>
 	</aside>
