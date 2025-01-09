@@ -173,18 +173,18 @@
                         </a>
 
                         @foreach ($kategori as $item)
-                            @php
-                                $currentURL = Request::url();
-                                $selectedCategory = strtolower($item->nama_kategori);
-                                $isActive = $currentURL === route('artikel-kategori-fe', $selectedCategory);
-                            @endphp
+                        @php
+                            $currentURL = Request::url();
+                            $selectedCategory = strtolower($item->nama_kategori);
+                            $isActive = $currentURL === route('artikel-kategori-fe', $selectedCategory);
+                        @endphp
 
-                            <a id="{{ $item->nama_kategori }}"
-                                class="btn btn-light pilihan-kategori-menu {{ $isActive ? 'active' : '' }}"
-                                href="{{ route('artikel-kategori-fe', $selectedCategory) }}">
-                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
-                            </a>
-                        @endforeach
+                        <a id="{{ $item->nama_kategori }}"
+                            class="btn {{ $isActive ? 'active' : 'btn-light' }} pilihan-kategori-menu"{{ $isActive ? 'active' : '' }}"
+                            href="{{ route('artikel-kategori-fe', $selectedCategory) }}">
+                            {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+                        </a>
+                    @endforeach
 
 
 

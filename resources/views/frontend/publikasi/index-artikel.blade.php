@@ -1,139 +1,139 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
-<style>
-/* Search input enhancement */
-.wrap-inputname.size12 {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto;
-}
+    <style>
+        /* Search input enhancement */
+        .wrap-inputname.size12 {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-.wrap-inputname.size12 input {
-    width: 100%;
-    padding: 1rem 3rem 1rem 1.5rem;
-    background-color: #fff;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
+        .wrap-inputname.size12 input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.5rem;
+            background-color: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
-.wrap-inputname.size12 input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-}
+        .wrap-inputname.size12 input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
 
-.wrap-inputname.size12::after {
-    content: '\f002';
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    position: absolute;
-    right: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #64748b;
-    pointer-events: none;
-}
+        .wrap-inputname.size12::after {
+            content: '\f002';
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            pointer-events: none;
+        }
 
-/* Category buttons */
-.pilihan-kategori-menu {
-    padding: 0.75rem 1.5rem;
-    margin: 0.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    background-color: white;
-    color: #475569;
-}
+        /* Category buttons */
+        .pilihan-kategori-menu {
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: #475569;
+        }
 
-.pilihan-kategori-menu:hover {
-    background-color: #f8fafc;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
+        .pilihan-kategori-menu:hover {
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
-.pilihan-kategori-menu.active {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
-}
+        .pilihan-kategori-menu.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
 
-/* Article cards */
-.blo4 {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-    height: 100%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
+        /* Article cards */
+        .blo4 {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            height: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
 
-.blo4:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
+        .blo4:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
 
-.pic-blo4 img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-}
+        .pic-blo4 img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
 
-.text-blo4 {
-    padding: 1.5rem;
-}
+        .text-blo4 {
+            padding: 1.5rem;
+        }
 
-.txt32 {
-    font-size: 0.875rem;
-    color: #64748b;
-}
+        .txt32 {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
 
-.berita-terkini-judul-romadan {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1a365d;
-    text-decoration: none;
-    line-height: 1.5;
-}
+        .berita-terkini-judul-romadan {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1a365d;
+            text-decoration: none;
+            line-height: 1.5;
+        }
 
-.berita-terkini-judul-romadan:hover {
-    color: #3b82f6;
-}
+        .berita-terkini-judul-romadan:hover {
+            color: #3b82f6;
+        }
 
-/* Headers */
-.publikasi-home {
-    font-size: 2.5rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 1rem;
-    color: #1a365d;
-}
+        /* Headers */
+        .publikasi-home {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #1a365d;
+        }
 
-.publikasi-home-sub {
-    text-align: center;
-    color: #64748b;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-}
+        .publikasi-home-sub {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
 
-/* Search result message */
-.search-result-message {
-    text-align: center;
-    color: #64748b;
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background-color: #f8fafc;
-    border-radius: 8px;
-}
-</style>
+        /* Search result message */
+        .search-result-message {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -149,19 +149,21 @@
                     <div class="publikasi-home-sub">The latest industry news, interviews, technologies, and resources.</div>
                 </div>
 
-                <form class="form-outline mt-5" action="{{ route('publikasi-index-artikel-fe') }}" method="POST" autocomplete="off">
+                <form class="form-outline mt-5" action="{{ route('publikasi-index-artikel-fe') }}" method="POST"
+                    autocomplete="off">
                     @csrf
                     <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
-                        <input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_artikel" placeholder="Cari Artikel" value="{{ $searchValue ?? '' }}">
+                        <input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_artikel"
+                            placeholder="Cari Artikel" value="{{ $searchValue ?? '' }}">
                     </div>
 
                     <div class="col-lg-12 text-center">
                         <a class="btn pilihan-kategori-menu {{ Request::routeIs('publikasi-index-artikel-fe') ? 'active' : '' }}"
-                           href="{{ route('publikasi-index-artikel-fe') }}">View All
+                            href="{{ route('publikasi-index-artikel-fe') }}">View All
                         </a>
                         @foreach ($kategori as $item)
                             <a class="btn pilihan-kategori-menu"
-                               href="{{ route('artikel-kategori-fe', strip_tags(strtolower($item->nama_kategori))) }}">
+                                href="{{ route('artikel-kategori-fe', strip_tags(strtolower($item->nama_kategori))) }}">
                                 {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
                             </a>
                         @endforeach
@@ -182,7 +184,7 @@
                             <div class="blo4">
                                 <div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
                                     <a href="{{ route('artikel-fe', $item->slug) }}">
-                                        <img src="{{ asset('storage/romadan_gambar_web/'.$item->image) }}" alt="IMG-BLOG">
+                                        <img src="{{ asset('storage/romadan_gambar_web/' . $item->image) }}" alt="IMG-BLOG">
                                     </a>
                                 </div>
                                 <div class="text-blo4">
@@ -198,7 +200,8 @@
                                             <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
                                         </span>
                                     </div>
-                                    <a href="{{ route('artikel-fe', $item->slug) }}" class="berita-terkini-judul-romadan">{{ $item->judul }}</a>
+                                    <a href="{{ route('artikel-fe', $item->slug) }}"
+                                        class="berita-terkini-judul-romadan">{{ $item->judul }}</a>
                                 </div>
                             </div>
                         </div>
@@ -222,32 +225,32 @@
 @endsection
 
 @section('script_fe')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('input[name="cari_artikel"]');
-    let typingTimer;
-    const doneTypingInterval = 500;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('input[name="cari_artikel"]');
+            let typingTimer;
+            const doneTypingInterval = 500;
 
-    if (searchInput) {
-        // Auto-submit search after typing stops
-        searchInput.addEventListener('keyup', function(e) {
-            clearTimeout(typingTimer);
-            if (this.value) {
-                typingTimer = setTimeout(() => {
-                    this.closest('form').submit();
-                }, doneTypingInterval);
+            if (searchInput) {
+                // Auto-submit search after typing stops
+                searchInput.addEventListener('keyup', function(e) {
+                    clearTimeout(typingTimer);
+                    if (this.value) {
+                        typingTimer = setTimeout(() => {
+                            this.closest('form').submit();
+                        }, doneTypingInterval);
+                    }
+                });
+
+                // Handle enter key
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        clearTimeout(typingTimer);
+                        this.closest('form').submit();
+                    }
+                });
             }
         });
-
-        // Handle enter key
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                clearTimeout(typingTimer);
-                this.closest('form').submit();
-            }
-        });
-    }
-});
-</script>
+    </script>
 @endsection
