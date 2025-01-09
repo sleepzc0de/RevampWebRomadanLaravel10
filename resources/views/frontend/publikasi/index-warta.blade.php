@@ -133,124 +133,207 @@
             background-color: #f8fafc;
             border-radius: 8px;
         }
+
+        .search-loading {
+            position: absolute;
+            right: 3.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+        }
+
+        .search-loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Update existing search input styles */
+        .wrap-inputname.size12 input {
+            padding-right: 4.5rem;
+            /* Increased to accommodate both icons */
+        }
+
+        /* Style for search icon */
+        .search-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            transition: opacity 0.2s ease;
+        }
+
+        .search-icon.hidden {
+            opacity: 0;
+        }
+
+        .search-result-container {
+            transition: opacity 0.3s ease;
+        }
+
+        .search-result-container.loading {
+            opacity: 0.5;
+        }
     </style>
 @endsection
 
 @section('content')
-    <section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
-        <div class="container">
-            <div class="col-lg-12">
-                <div class="wrap-pic-welcome size2 bo-rad-10 hov-img-zoom m-l-r-auto">
-                    <div class="publikasi-home">Warta</div>
-                </div>
-            </div>
-            <div class="col-lg-12">
-                <div class="wrap-pic-welcome size2 bo-rad-10 hov-img-zoom m-l-r-auto">
-                    <div class="publikasi-home-sub">The latest industry news, interviews, technologies, and resources.</div>
-                </div>
-
-                <form class="form-outline mt-5" action="{{ route('publikasi-index-warta-fe') }}" method="POST"
-                    autocomplete="off">
-                    @csrf
-                    <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
-                        <input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_warta"
-                            placeholder="Cari warta" value="{{ $searchValue ?? '' }}">
-                    </div>
-
-                    <div class="col-lg-12 text-center">
-                        <a class="btn pilihan-kategori-menu {{ Request::routeIs('publikasi-index-warta-fe') ? 'active' : '' }}"
-                            href="{{ route('publikasi-index-warta-fe') }}">View All
-                        </a>
-                        @foreach ($kategori as $item)
-                            <a class="btn pilihan-kategori-menu"
-                                href="{{ route('warta-kategori-fe', strip_tags(strtolower($item->nama_kategori))) }}">
-                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
-                            </a>
-                        @endforeach
-                    </div>
-                </form>
-            </div>
-
-            <div class="col-lg-12 mt-5">
-                @if ($isSearch ?? false)
-                    <div class="search-result-message">
-                        <h3 class="m-0">Anda sedang mencari: "{{ $searchValue }}"</h3>
-                    </div>
-                @endif
-
-                <div class="row">
-                    @forelse ($warta as $item)
-                        <div class="col-md-4 p-t-30">
-                            <div class="blo4">
-                                <div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-                                    <a href="{{ route('warta-fe', $item->slug) }}">
-                                        <img src="{{ asset('storage/romadan_gambar_web/' . $item->image) }}" alt="IMG-BLOG">
-                                    </a>
-                                </div>
-                                <div class="text-blo4">
-                                    <div class="txt32 flex-w p-b-24">
-                                        <span>
-                                            {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
-                                            <span class="m-r-6 m-l-4">|</span>
-                                        </span>
-                                        <span>
-                                            {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
-                                        </span>
-                                        <span class="m-l-4">
-                                            <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
-                                        </span>
-                                    </div>
-                                    <a href="{{ route('warta-fe', $item->slug) }}"
-                                        class="berita-terkini-judul-romadan">{{ $item->judul }}</a>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="col-12 text-center">
-                            <div class="title-section-ourmenu m-b-22">
-                                <h5 class="romadan-faq m-t-5">
-                                    Mohon maaf, data yang Bapak/Ibu cari belum tersedia :(
-                                </h5>
-                            </div>
-                        </div>
-                    @endforelse
-                </div>
-
-                <div class="d-flex justify-content-center mt-5">
-                    {!! $warta->appends(request()->input())->links() !!}
-                </div>
+<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
+    <div class="container">
+        <div class="col-lg-12">
+            <div class="wrap-pic-welcome size2 bo-rad-10 hov-img-zoom m-l-r-auto">
+                <div class="publikasi-home">Warta</div>
             </div>
         </div>
-    </section>
+        <div class="col-lg-12">
+            <div class="wrap-pic-welcome size2 bo-rad-10 hov-img-zoom m-l-r-auto">
+                <div class="publikasi-home-sub">The latest industry news, interviews, technologies, and resources.</div>
+            </div>
+
+            <form class="form-outline mt-5" id="searchForm" data-action="{{ route('publikasi-index-warta-fe') }}" method="POST" autocomplete="off">
+                @csrf
+                <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
+                    <input
+                        class="bo-rad-10 sizefull txt10 p-l-20"
+                        type="text"
+                        name="cari_warta"
+                        placeholder="Cari warta"
+                        value="{{ e($searchValue ?? '') }}"
+                        maxlength="255"
+                        pattern="[A-Za-z0-9\s]+"
+                    >
+                    <div class="search-loading">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <div class="search-icon">
+                        <i class="fa fa-search"></i>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 text-center">
+                    <a class="btn pilihan-kategori-menu {{ Request::routeIs('publikasi-index-warta-fe') ? 'active' : '' }}"
+                        href="{{ route('publikasi-index-warta-fe') }}">View All
+                    </a>
+                    @foreach ($kategori as $item)
+                        <a class="btn pilihan-kategori-menu"
+                            href="{{ route('warta-kategori-fe', e(strtolower($item->nama_kategori))) }}">
+                            {{ strlen($item->nama_kategori) <= 3 ? strtoupper(e($item->nama_kategori)) : ucfirst(strtolower(e($item->nama_kategori))) }}
+                        </a>
+                    @endforeach
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-12 mt-5" id="warta-container">
+            @include('frontend.publikasi.partials.warta-list', ['warta' => $warta, 'isSearch' => $isSearch, 'searchValue' => $searchValue])
+        </div>
+    </div>
+</section>
 @endsection
 
 @section('script_fe')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.querySelector('input[name="cari_warta"]');
-            let typingTimer;
-            const doneTypingInterval = 500;
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.querySelector('input[name="cari_warta"]');
+        const loadingSpinner = document.querySelector('.search-loading');
+        const searchIcon = document.querySelector('.search-icon');
+        const wartaContainer = document.getElementById('warta-container');
+        let typingTimer;
+        let lastSearchTime = 0;
+        const minSearchInterval = 500; // Minimum time between searches in ms
 
-            if (searchInput) {
-                // Auto-submit search after typing stops
-                searchInput.addEventListener('keyup', function(e) {
-                    clearTimeout(typingTimer);
-                    if (this.value) {
-                        typingTimer = setTimeout(() => {
-                            this.closest('form').submit();
-                        }, doneTypingInterval);
-                    }
-                });
+        if (searchForm && searchInput) {
+            // Input validation
+            searchInput.addEventListener('input', function(e) {
+                // Allow only alphanumeric characters and spaces
+                this.value = this.value.replace(/[^A-Za-z0-9\s]/g, '');
+            });
 
-                // Handle enter key
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        clearTimeout(typingTimer);
-                        this.closest('form').submit();
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const now = Date.now();
+                if (now - lastSearchTime >= minSearchInterval) {
+                    performSearch();
+                    lastSearchTime = now;
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                if (this.value.length >= 3) {
+                    typingTimer = setTimeout(() => {
+                        const now = Date.now();
+                        if (now - lastSearchTime >= minSearchInterval) {
+                            performSearch();
+                            lastSearchTime = now;
+                        }
+                    }, 500);
+                }
+            });
+
+            function performSearch() {
+                const formData = new FormData(searchForm);
+
+                // Show loading state
+                loadingSpinner.classList.add('active');
+                searchIcon.classList.add('hidden');
+                wartaContainer.style.opacity = '0.5';
+
+                fetch(searchForm.dataset.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    wartaContainer.innerHTML = data.html;
+
+                    // Update URL safely
+                    const url = new URL(window.location);
+                    url.searchParams.set('cari_warta', searchInput.value);
+                    window.history.pushState({}, '', url.toString());
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    wartaContainer.innerHTML = '<div class="alert alert-danger">An error occurred while searching. Please try again later.</div>';
+                })
+                .finally(() => {
+                    loadingSpinner.classList.remove('active');
+                    searchIcon.classList.remove('hidden');
+                    wartaContainer.style.opacity = '1';
                 });
             }
-        });
+        }
+    });
     </script>
 @endsection
