@@ -1,3 +1,5 @@
+{{-- kategori-berita.blade.php --}}
+
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
@@ -133,6 +135,176 @@
             background-color: #f8fafc;
             border-radius: 8px;
         }
+
+        .search-result-message-not-found {
+            text-align: center;
+            color: #fff;
+            font-size: 1.125rem;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-result-message-not-found:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(204, 0, 0, 0.25);
+        }
+
+        .search-result-message-not-found::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .search-result-message-not-found::before {
+            content: '🔍';
+            margin-right: 10px;
+            font-size: 1.2em;
+            vertical-align: middle;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -50%;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                left: 150%;
+                opacity: 0;
+            }
+        }
+
+
+        .search-loading {
+            position: absolute;
+            right: 3.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+        }
+
+        .search-loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Loading state */
+        .search-result-message-not-found.loading {
+            background: linear-gradient(135deg, #ff4d4d, #e60000);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(204, 0, 0, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 4px 25px rgba(204, 0, 0, 0.4);
+            }
+
+            100% {
+                box-shadow: 0 4px 15px rgba(204, 0, 0, 0.2);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-result-message-not-found {
+                margin: 1.5rem 1rem;
+                padding: 1.25rem 1rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Error state */
+        .search-result-message-not-found.error {
+            background: linear-gradient(135deg, #ff6666, #ff0000);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+
+        /* Update existing search input styles */
+        .wrap-inputname.size12 input {
+            padding-right: 4.5rem;
+            /* Increased to accommodate both icons */
+        }
+
+        /* Style for search icon */
+        .search-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            transition: opacity 0.2s ease;
+        }
+
+        .search-icon.hidden {
+            opacity: 0;
+        }
+
+        .search-result-container {
+            transition: opacity 0.3s ease;
+        }
+
+        .search-result-container.loading {
+            opacity: 0.5;
+        }
     </style>
 @endsection
 
@@ -149,152 +321,141 @@
                     <div class="publikasi-home-sub">The latest industry news, interviews, technologies, and resources.</div>
                 </div>
 
-                <form class="form-outline mt-5" action="{{ route('publikasi-index-berita-fe') }}" method="POST"
-                    autocomplete="off">
+                <form id="searchForm" action="{{ route('berita-kategori-fe', ['kategori' => request()->segment(2)]) }}"
+                    method="POST">
                     @csrf
+                    <input type="hidden" name="current_kategori" value="{{ request()->segment(2) }}">
                     <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
                         <input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_berita"
-                            placeholder="Cari berita">
+                            placeholder="Cari berita" value="{{ e($searchValue ?? '') }}" maxlength="255"
+                            pattern="[A-Za-z0-9\s]+">
+                        <div class="search-loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        <div class="search-icon">
+                            <i class="fa fa-search"></i>
+                        </div>
                     </div>
-                    {{-- <div class="wrap-btn-booking flex-c-m m-t-13">
-							<button type="reset" class="btn3-berita-2 flex-c-m size36 txt11 trans-0-4 mr-2">
-								Clear
-							</button>
-							<button type="submit" class="btn3-berita flex-c-m size36 txt11 trans-0-4">
-								Cari
-							</button>
-							<a class="btn3-berita-refresh flex-c-m size36 txt11 trans-0-4 ml-2" href="{{route('publikasi-index-berita-fe')}}">Refresh
-							</a>
-						</div> --}}
 
                     <div class="col-lg-12 text-center">
-                        <a class="btn btn-light pilihan-kategori-menu" href="{{ route('publikasi-index-berita-fe') }}">View
-                            All
+                        <a class="btn pilihan-kategori-menu {{ Request::routeIs('publikasi-index-berita-fe') ? 'active' : '' }}"
+                            href="{{ route('publikasi-index-berita-fe') }}">
+                            View All
                         </a>
 
                         @foreach ($kategori as $item)
-                        @php
-                            $currentURL = Request::url();
-                            $selectedCategory = strtolower($item->nama_kategori);
-                            $isActive = $currentURL === route('berita-kategori-fe', $selectedCategory);
-                        @endphp
+                            @php
+                                $currentURL = Request::url();
+                                $selectedCategory = strtolower($item->nama_kategori);
+                                $isActive = $currentURL === route('berita-kategori-fe', $selectedCategory);
+                            @endphp
 
-                        <a id="{{ $item->nama_kategori }}"
-                            class="btn {{ $isActive ? 'active' : 'btn-light' }} pilihan-kategori-menu"{{ $isActive ? 'active' : '' }}"
-                            href="{{ route('berita-kategori-fe', $selectedCategory) }}">
-                            {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
-                        </a>
-                    @endforeach
-
-
-
-
+                            <a class="btn pilihan-kategori-menu {{ $isActive ? 'active' : '' }}"
+                                href="{{ route('berita-kategori-fe', $selectedCategory) }}">
+                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+                            </a>
+                        @endforeach
                     </div>
                 </form>
             </div>
-            <div class="col-lg-12 mt-5">
-                <div class="row">
-                    @forelse ($berita as $item)
-                        <div class="col-md-4 p-t-30">
-                            <!-- Block1 -->
-                            <div class="blo4">
-                                <div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
-                                    <a href="{{ route('berita-fe', $item->slug) }}">
-                                        <img src="{{ asset('storage/romadan_gambar_web/' . $item->image) }}" height="250px"
-                                            alt="IMG-BLOG">
-                                    </a>
 
-                                    {{-- <div class="date-blo4-romadan flex-col-c-m">
-									<span class="txt30-romadan m-b-4">
-										{{date('d', strtotime($item->created_at))}}
-									</span>
-
-									<span class="txt31">
-										{{date('M, Y', strtotime($item->created_at))}}
-									</span>
-								</div> --}}
-                                </div>
-
-
-                                <div class="text-blo4 p-t-33">
-                                    <div class="txt32 flex-w p-b-24">
-                                        <span>
-                                            {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}
-                                            <span class="m-r-6 m-l-4">|</span>
-                                        </span>
-
-                                        <span>
-                                            {{ $item->nama_kategori }}
-                                            <span class="m-r-6 m-l-4"></span>
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <a href="{{ route('berita-fe', $item->slug) }}"
-                                            class="berita-terkini-judul-romadan">{{ $item->judul }}</a>
-                                    </div>
-
-
-
-
-                                </div>
-                            </div>
-
-
-
-                        </div>
-
-                    @empty
-                        <section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
-
-                            <div class="container">
-
-                                <div class="title-section-ourmenu m-b-22">
-                                    {{-- <h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3> --}}
-                                    <h5 class="romadan-faq m-t-5">
-                                        Mohon maaf, data yang Bapak/Ibu cari belum tersedia :(
-                                    </h5>
-                                </div>
-
-                            </div>
-
-                        </section>
-                    @endforelse
-
-
-                </div>
-
-                <div class="d-flex justify-content-center mt-5">
-                    {!! $berita->appends(request()->input())->links() !!}
-                </div>
+            <div class="col-lg-12 mt-5" id="berita-container">
+                @include('frontend.publikasi.partials.berita-list', [
+                    'berita' => $berita,
+                    'isSearch' => $isSearch,
+                    'searchValue' => $searchValue,
+                ])
             </div>
+        </div>
     </section>
 
     @section('script_fe')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const searchForm = document.getElementById('searchForm');
                 const searchInput = document.querySelector('input[name="cari_berita"]');
+                const loadingSpinner = document.querySelector('.search-loading');
+                const beritaContainer = document.getElementById('berita-container');
                 let typingTimer;
-                const doneTypingInterval = 500;
 
-                if (searchInput) {
-                    // Auto-submit search after typing stops
-                    searchInput.addEventListener('keyup', function(e) {
+                if (searchForm && searchInput) {
+                    console.log('Search form initialized');
+
+                    searchInput.addEventListener('input', function() {
                         clearTimeout(typingTimer);
-                        if (this.value) {
-                            typingTimer = setTimeout(() => {
-                                this.closest('form').submit();
-                            }, doneTypingInterval);
+                        if (this.value.length >= 1) {
+                            loadingSpinner.classList.add('active');
+                            typingTimer = setTimeout(performSearch, 500);
                         }
                     });
 
-                    // Handle enter key
-                    searchInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            clearTimeout(typingTimer);
-                            this.closest('form').submit();
-                        }
+                    searchForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        loadingSpinner.classList.add('active');
+                        performSearch();
                     });
+
+                    function performSearch() {
+                        // Get the original category from the URL path
+                        const pathSegments = window.location.pathname.split('/');
+                        const currentCategory = pathSegments[pathSegments.length - 1];
+
+                        const formData = new FormData();
+                        formData.append('cari_berita', searchInput.value);
+                        formData.append('current_kategori', currentCategory);
+                        formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+                        // Use the correct URL format
+                        const baseUrl = `${window.location.origin}/publikasi/berita/kategori/${currentCategory}`;
+
+                        console.log('Sending search request:');
+                        console.log('- Search term:', searchInput.value);
+                        console.log('- Category:', currentCategory);
+                        console.log('- URL:', baseUrl);
+
+                        fetch(baseUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'text/html, application/xhtml+xml',
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams(formData)
+                            })
+                            .then(async response => {
+                                console.log('Response status:', response.status);
+
+                                if (!response.ok) {
+                                    const errorText = await response.text();
+                                    console.error('Error response:', errorText);
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.text();
+                            })
+                            .then(html => {
+                                console.log('Received HTML response length:', html.length);
+
+                                // Update the container
+                                beritaContainer.innerHTML = html;
+
+                                // Update URL while maintaining category
+                                const url = new URL(window.location);
+                                url.searchParams.set('cari_berita', searchInput.value);
+                                window.history.pushState({}, '', url);
+                            })
+                            .catch(error => {
+                                console.error('Search error:', error);
+                                beritaContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            Terjadi kesalahan saat mencari data. Silakan coba lagi.
+                        </div>
+                    `;
+                            })
+                            .finally(() => {
+                                loadingSpinner.classList.remove('active');
+                            });
+                    }
                 }
             });
         </script>

@@ -37,13 +37,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/coba-login', function () {
-//     return view('cobalogin');
-// });
-
-
-// FRONT END
-
+// 1. FRONT END
 Route::group(
     ['prefix' => '/'],
     function () {
@@ -70,129 +64,76 @@ Route::group(
             Route::get('/', [HomeFeController::class, 'layanan_layanan'])->name('layanan-fe');
         });
 
-        // MENU KEGIATAN
-        // Route::prefix('/kegiatan')->group(function () {
-        //     // VISI DAN MISI
-        //     Route::get('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
-        //     Route::post('/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
-        //     // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
-        //     // VISI DAN MISI
-        //     Route::get('/detail/{kegiatan}/{ranstring}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
-        // });
-
         // MENU INFORMASI PUBLIK
         Route::prefix('/informasi-publik')->group(function () {
-            // VISI DAN MISI
+
             Route::get('/', [HomeFeController::class, 'infopublik_index'])->name('informasi-publik-index-fe');
 
-            // Route::get('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
-            // Route::post('/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
-
-            Route::match(['get','post'],'/peraturan',[HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
+            Route::match(['get', 'post'], '/peraturan', [HomeFeController::class, 'infopublik_peraturan_index'])->name('informasi-publik-peraturan-index-fe');
 
             Route::get('/detail/peraturan/{peraturan}', [HomeFeController::class, 'infopublik_peraturan_detail'])->name('informasi-publik-peraturan-detail-fe');
 
             Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
-            // Route::post('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
 
-            // Route::get('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
-            // Route::post('/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
-            // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
-
-            Route::match(['get','post'],'/aplikasi',[HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
+            Route::match(['get', 'post'], '/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
         });
 
         // MENU FAQ
         Route::prefix('/faq')->group(function () {
+
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'faq_index'])->name('faq-index-fe');
-            // Route::get('/search', [HomeFeController::class, 'kegiatan_search'])->name('kegiatan-search-fe');
         });
 
         // MENU PUBLIKASI
         Route::prefix('/publikasi')->group(function () {
+
             // INDEX
             Route::get('/', [HomeFeController::class, 'publikasi_index'])->name('publikasi-index-fe');
+
             // BERITA INDEX
-            // Route::get('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
-            // Route::post('/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
-
-            // Route::match(['get','post'],'/berita',[HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
-            Route::match(['get','post'],'/berita',[HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
-
+            Route::match(['get', 'post'], '/berita', [HomeFeController::class, 'publikasi_index_berita'])->name('publikasi-index-berita-fe');
 
             // WARTA INDEX
-            // Route::get('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
-            // Route::post('/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
+            Route::match(['get', 'post'], '/warta', [HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
 
-            Route::match(['get','post'],'/warta',[HomeFeController::class, 'publikasi_index_warta'])->name('publikasi-index-warta-fe');
             // ARTIKEL INDEX
-            // Route::get('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
-            // Route::post('/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
-
-            Route::match(['get','post'],'/artikel',[HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
+            Route::match(['get', 'post'], '/artikel', [HomeFeController::class, 'publikasi_index_artikel'])->name('publikasi-index-artikel-fe');
             // BERITA
             Route::get('/berita/{publikasi}', [HomeFeController::class, 'publikasi_berita'])->name('berita-fe');
             // WARTA
             Route::get('/warta/{publikasi}', [HomeFeController::class, 'publikasi_warta'])->name('warta-fe');
             // ARTIKEL
             Route::get('/artikel/{publikasi}', [HomeFeController::class, 'publikasi_artikel'])->name('artikel-fe');
+
             // FILTER KATEGORI BERITA TERKINI
-
-            Route::get('/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
-            // Route::match(['get', 'post'], '/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
-            // Route::match(['get', 'post'], '/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
-
-
-            // Route::get('/warta/kategori/{kategori}', [HomeFeController::class, 'publikasi_warta_kategori'])->name('warta-kategori-fe');
-
+            Route::match(['get', 'post'], '/berita/kategori/{kategori}', [HomeFeController::class, 'publikasi_berita_kategori'])->name('berita-kategori-fe');
             Route::match(['get', 'post'], '/warta/kategori/{kategori}', [HomeFeController::class, 'publikasi_warta_kategori'])->name('warta-kategori-fe');
-
-            // Route::get('/artikel/kategori/{kategori}', [HomeFeController::class, 'publikasi_artikel_kategori'])->name('artikel-kategori-fe');
             Route::match(['get', 'post'], '/artikel/kategori/{kategori}', [HomeFeController::class, 'publikasi_artikel_kategori'])->name('artikel-kategori-fe');
-
-
-
-            // COBA
-
-            // Route::get('beritacoba/{slug}', function ($slug) {
-            //     $result =   DB::table('campains')->where('slug', $slug)->get();
-            //     // .... call controller etc...
-            // });
         });
     }
 );
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
-// BACK END
-
+// 2. BACK END
 Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
-    // Route::get('/home', function () {
-    //     return view('backend.dashboard');
-    // })->name('home');
-
-    // INTERFACE BACKEND
+    // 2.1 INTERFACE BACKEND
     Route::prefix('/romadan-interface')->group(function () {
 
-        // PENGEMBANG
+        // 2.1.1 PENGEMBANG
 
         Route::prefix('/tim')->group(function () {
-            // TENTANG
             Route::resource('pengembang', PengembangController::class);
         });
 
-        // HOME
+        // 2.1.2 HOME
         Route::get('/dashboard', [HomeBeController::class, 'index'])->name('home');
 
-
-        // USERS
+        // 2.1.3 USERS
         Route::resource('users', UserController::class);
 
-        // PUBLIKASI
+        // 2.1.4 PUBLIKASI
         Route::resource('publikasi', PublikasiController::class);
 
         Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
@@ -200,7 +141,7 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
         Route::post('/restore-all-publikasi', [PublikasiController::class, 'restoreAllPublikasi'])->name('publikasi.restore-all');
 
-        // FILE
+        // 2.1.5 FILE
         Route::resource('file', FileController::class);
         Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
         Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
@@ -208,34 +149,29 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
 
 
-        // MENU PROFILE
+        // 2.1.6 MENU PROFILE
         Route::prefix('/profile')->group(function () {
-            // TENTANG
+            // 2.1.6.1 TENTANG
             Route::resource('tentang', TentangController::class);
-            // VISI DAN MISI
+            // 2.1.6.2 VISI DAN MISI
             Route::resource('visi-misi', VisiMisiController::class);
-            // SEJARAH
+            // 2.1.6.3 SEJARAH
             Route::resource('sejarah', SejarahController::class);
-            // STRUKTUR ORGANISASI
+            // 2.1.6.4 STRUKTUR ORGANISASI
             Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
         });
 
-        // MENU LAYANAN
+        // 2.1.7 MENU LAYANAN
         Route::prefix('/layanan')->group(function () {
-            // TENTANG
+            // 2.1.7.1LAYANAN
             Route::resource('layanan', LayananController::class);
         });
 
-        // MENU KEGIATAN
-        // Route::prefix('/kegiatan')->group(function () {
 
-        //     Route::resource('kegiatan', KegiatanController::class);
-        // });
-
-        // MENU INFORMASI PUBLIK
-
+        // 2.1.8 MENU INFORMASI PUBLIK
         Route::prefix('/informasi-publik')->group(function () {
 
+            //2.1.8.1 INFORMASI PUBLIK
             Route::resource('informasi-publik', InformasiPublikController::class);
             Route::get('/index-home', [InformasiPublikController::class, 'indexHome'])->name('informasi-publik.index-home');
             Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
@@ -244,62 +180,46 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::put('/{infopub}/edit-home', [InformasiPublikController::class, 'update_home'])->name('informasi-publik.update-home');
             Route::delete('/{infopub}/informasi-publik-home', [InformasiPublikController::class, 'delete_home'])->name('informasi-publik.delete-home');
 
-            // PERATURAN BACKEND
+            // 2.1.8.2 PERATURAN BACKEND
             Route::resource('peraturan', PeraturanController::class);
-            // PORTAL APLIKASI BACKEND
+
+            // 2.1.8.3 PORTAL APLIKASI BACKEND
             Route::resource('aplikasi', AplikasiController::class);
         });
 
 
-        // MENU FAQ
+        // 2.1.9 MENU FAQ
 
         Route::prefix('/faq')->group(function () {
-
+            // 2.1.9.1 FAQ
             Route::resource('faq', FAQController::class);
         });
 
-        // REFERENSI
-        Route::resource('kategori', RefKategoriController::class);
-        Route::resource('status', RefStatusController::class);
-        Route::resource('tipe', RefTipeController::class);
-        // MENU KEGIATAN
+        // 2.1.10 REFERENSI
         Route::prefix('/referensi')->group(function () {
+                // 2.1.10.1 REF KATEGORI
+            Route::resource('kategori', RefKategoriController::class);
 
+                // 2.1.10.2 REF STATUS
+            Route::resource('status', RefStatusController::class);
+
+                // 2.1.10.3 REF TIPE
+            Route::resource('tipe', RefTipeController::class);
+
+                // 2.1.10.4 REF JENIS PERATURAN
             Route::resource('jenis-peraturan', RefJenisPeraturanController::class);
+
+                // 2.1.10.5 REF STATUS PERATURAN
             Route::resource('status-peraturan', RefPeraturanStatusController::class);
         });
 
 
 
-        // MEDSOS
+        // 2.1.11 MEDSOS
         Route::resource('medsos', MedsosController::class);
 
-        // LOGIN GAMBAR
+        // 2.1.12 LOGIN GAMBAR
         Route::resource('loggambar', LoginController::class);
     });
-
-
-    // FILE
-    // Route::prefix('/file')->group(function () {
-    //     Route::resource('file', FileController::class);
-
-    //     Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
-    //     Route::post('/{file}/restore', [FileController::class, 'restore'])->name('file.restore');
-    //     Route::delete('/{file}/force-delete', [FileController::class, 'forceDelete'])->name('file.force-delete');
-    //     Route::post('/restore-all', [FileController::class, 'restoreAll'])->name('file.restore-all');
-    // });
-
-    // REFERENSI KATEGORI DAN STATUS
-    // Route::prefix('/referensi')->group(function () {
-    //     Route::resource('kategori', RefKategoriController::class);
-    //     Route::resource('status', RefStatusController::class);
-    // });
 });
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
-
 require __DIR__ . '/auth.php';

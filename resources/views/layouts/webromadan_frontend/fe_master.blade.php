@@ -3,7 +3,8 @@
 <head>
 	<title>Biro Manajemen BMN dan Pengadaan</title>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{{-- <meta name="viewport" content="width=device-width, initial-scale=1"> --}}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<meta content="Website Biro Manajemen BMN dan Pengadaan" name="description">
   	<meta content="Biro Manajemen BMN dan Pengadaan" name="keywords">
@@ -58,30 +59,30 @@
 	{{-- <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/vendor/lightbox2/css/lightbox.min.css')}}"> --}}
 	{{-- NEW LIGHTBOX --}}
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.0/css/animsition.min.css" integrity="sha512-PhW416ZWZBw30eOTHRTNX+Z/14dZVYx13glqBSSFeeLAQGZP7JUCzbWt//ZbB+iaGJ2ugphHN7fH+ybXtGPVVg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	
+
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/util.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/main.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan.css')}}">
-	
-	
+
+
 <!--===============================================================================================-->
 
-	
+
 	@yield('css_fe')
 </head>
 <body class="animsition">
 
 	<!-- Header -->
      @include('layouts.webromadan_frontend.fe_header')
-	 
+
 
 	 {{-- CONTENTS --}}
  	@include('layouts.webromadan_frontend.fe_sidebar')
 	 @yield('content')
 
 	{{-- END CONTENTS --}}
-	
+
 	<!-- Footer -->
     @include('layouts.webromadan_frontend.fe_footer')
 
@@ -99,7 +100,7 @@
 	{{-- <script type="text/javascript" src="{{asset('frontend_romadan_web/vendor/animsition/js/animsition.min.js')}}"></script> --}}
 	{{-- NEW ANIMSTITION --}}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.0/js/animsition.min.js" integrity="sha512-hPazG7s09qw5kT58cK6A0VOeXLyWG9snVMMWCXATNiqhOMlTiSGdLaF23nN5QisQF9nAq+z291SZJef+hhH8SQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	
+
 <!--===============================================================================================-->
 {{-- OLD BOOTSTRAP 4.00 --}}
 	{{-- <script type="text/javascript" src="{{asset('frontend_romadan_web/vendor/bootstrap/js/popper.js')}}"></script>
@@ -123,7 +124,7 @@
 	{{-- NEW SLICK --}}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script type="text/javascript" src="{{asset('frontend_romadan_web/js/slick-custom.js')}}"></script>
-	
+
 <!--===============================================================================================-->
 	<script type="text/javascript" src="{{asset('frontend_romadan_web/vendor/parallax100/parallax100.js')}}"></script>
 	<script type="text/javascript">
