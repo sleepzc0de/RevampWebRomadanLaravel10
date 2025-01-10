@@ -1,3 +1,4 @@
+{{-- index-artikel.blade.php --}}
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
@@ -93,7 +94,7 @@
             color: #64748b;
         }
 
-        .berita-terkini-judul-romadan {
+        .artikel-terkini-judul-romadan {
             display: block;
             margin-top: 0.5rem;
             font-size: 1.125rem;
@@ -103,7 +104,7 @@
             line-height: 1.5;
         }
 
-        .berita-terkini-judul-romadan:hover {
+        .artikel-terkini-judul-romadan:hover {
             color: #3b82f6;
         }
 
@@ -133,6 +134,66 @@
             background-color: #f8fafc;
             border-radius: 8px;
         }
+
+        .search-result-message-not-found {
+            text-align: center;
+            color: #fff;
+            font-size: 1.125rem;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-result-message-not-found:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(204, 0, 0, 0.25);
+        }
+
+        .search-result-message-not-found::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .search-result-message-not-found::before {
+            content: '🔍';
+            margin-right: 10px;
+            font-size: 1.2em;
+            vertical-align: middle;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -50%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                left: 150%;
+                opacity: 0;
+            }
+        }
+
 
         .search-loading {
             position: absolute;
@@ -164,6 +225,14 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Loading state */
+            .search-result-message-not-found.loading {
+                background: linear-gradient(135deg, #ff4d4d, #e60000);
+                animation: pulse 2s infinite;
+            }
+
+
 
         /* Update existing search input styles */
         .wrap-inputname.size12 input {

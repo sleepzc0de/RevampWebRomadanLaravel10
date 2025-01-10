@@ -240,17 +240,17 @@ class HomeFeController extends Controller
     public function publikasi_warta_kategori(Request $request, $kategori)
     {
         try {
-            // Enable query logging for debugging
             DB::enableQueryLog();
 
             $status_warta = 'Published';
-            $searchValue = strip_tags($request->input('cari_warta'));
-            $kategori_param = strip_tags($kategori);
+            // Menggunakan SecurityHelper untuk sanitasi input
+            $searchValue = SecurityHelper::sanitizeInput($request->input('cari_warta'));
+            $kategori_param = SecurityHelper::sanitizeInput($kategori);
             $isSearch = false;
 
             Log::info('Search request received', [
-                'search_value' => $searchValue,
-                'kategori' => $kategori_param,
+                'search_value' => SecurityHelper::escapeOutput($searchValue),
+                'kategori' => SecurityHelper::escapeOutput($kategori_param),
                 'is_ajax' => $request->ajax(),
                 'request_all' => $request->all()
             ]);
@@ -268,21 +268,21 @@ class HomeFeController extends Controller
                 ->where('nama_tipe', '=', 'warta')
                 ->where('ref_status.nama_status', '=', $status_warta);
 
-            // Add category filter if not "View All"
             if ($kategori_param !== 'all') {
+                // Menggunakan parameter binding untuk mencegah SQL injection
                 $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
             }
 
-            // Add search filter if search term exists
             if ($searchValue) {
                 $isSearch = true;
+                // Menggunakan parameter binding untuk pencarian
+                $searchValue = '%' . $searchValue . '%';
                 $query->where(function($q) use ($searchValue) {
-                    $q->where('judul', 'like', '%' . $searchValue . '%')
-                      ->orWhere('isi', 'like', '%' . $searchValue . '%');
+                    $q->where('judul', 'like', $searchValue)
+                      ->orWhere('isi', 'like', $searchValue);
                 });
             }
 
-            // Log the final SQL query
             Log::info('SQL Query:', [
                 'query' => $query->toSql(),
                 'bindings' => $query->getBindings()
@@ -296,25 +296,46 @@ class HomeFeController extends Controller
             ]);
 
             if ($request->ajax()) {
+                // Menggunakan SecurityHelper untuk escape output pada view
                 $view = view('frontend.publikasi.partials.warta-list',
-                    compact('warta', 'isSearch', 'searchValue')
+                    [
+                        'warta' => $warta->map(function($item) {
+                            // Escape semua output yang akan ditampilkan
+                            $item->judul = SecurityHelper::escapeOutput($item->judul);
+                            $item->isi = SecurityHelper::escapeOutput($item->isi);
+                            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
+                            return $item;
+                        }),
+                        'isSearch' => $isSearch,
+                        'searchValue' => SecurityHelper::escapeOutput($searchValue)
+                    ]
                 )->render();
 
                 return response($view)->header('Content-Type', 'text/html');
             }
 
-            $kategori_list = ref_kategori::all();
+            $kategori_list = ref_kategori::all()->map(function($item) {
+                // Escape output untuk daftar kategori
+                $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
+                return $item;
+            });
 
             return view('frontend.publikasi.kategori-warta', [
-                'warta' => $warta,
-                'searchValue' => $searchValue,
+                'warta' => $warta->map(function($item) {
+                    // Escape semua output yang akan ditampilkan
+                    $item->judul = SecurityHelper::escapeOutput($item->judul);
+                    $item->isi = SecurityHelper::escapeOutput($item->isi);
+                    $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
+                    return $item;
+                }),
+                'searchValue' => SecurityHelper::escapeOutput($searchValue),
                 'isSearch' => $isSearch,
                 'kategori' => $kategori_list,
             ]);
 
         } catch (\Exception $e) {
             Log::error('Category search error', [
-                'message' => $e->getMessage(),
+                'message' => SecurityHelper::escapeOutput($e->getMessage()),
                 'trace' => $e->getTraceAsString(),
                 'sql' => DB::getQueryLog()
             ]);
@@ -322,7 +343,7 @@ class HomeFeController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'error' => 'Terjadi kesalahan saat memproses pencarian.',
-                    'details' => $e->getMessage()
+                    'details' => SecurityHelper::escapeOutput($e->getMessage())
                 ], 500);
             }
 
@@ -330,21 +351,20 @@ class HomeFeController extends Controller
         }
     }
 
-
     public function publikasi_artikel_kategori(Request $request, $kategori)
     {
         try {
-            // Enable query logging for debugging
             DB::enableQueryLog();
 
             $status_artikel = 'Published';
-            $searchValue = strip_tags($request->input('cari_artikel'));
-            $kategori_param = strip_tags($kategori);
+            // Menggunakan SecurityHelper untuk sanitasi input
+            $searchValue = SecurityHelper::sanitizeInput($request->input('cari_artikel'));
+            $kategori_param = SecurityHelper::sanitizeInput($kategori);
             $isSearch = false;
 
             Log::info('Search request received', [
-                'search_value' => $searchValue,
-                'kategori' => $kategori_param,
+                'search_value' => SecurityHelper::escapeOutput($searchValue),
+                'kategori' => SecurityHelper::escapeOutput($kategori_param),
                 'is_ajax' => $request->ajax(),
                 'request_all' => $request->all()
             ]);
@@ -362,21 +382,21 @@ class HomeFeController extends Controller
                 ->where('nama_tipe', '=', 'artikel')
                 ->where('ref_status.nama_status', '=', $status_artikel);
 
-            // Add category filter if not "View All"
             if ($kategori_param !== 'all') {
+                // Menggunakan parameter binding untuk mencegah SQL injection
                 $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
             }
 
-            // Add search filter if search term exists
             if ($searchValue) {
                 $isSearch = true;
+                // Menggunakan parameter binding untuk pencarian
+                $searchValue = '%' . $searchValue . '%';
                 $query->where(function($q) use ($searchValue) {
-                    $q->where('judul', 'like', '%' . $searchValue . '%')
-                      ->orWhere('isi', 'like', '%' . $searchValue . '%');
+                    $q->where('judul', 'like', $searchValue)
+                      ->orWhere('isi', 'like', $searchValue);
                 });
             }
 
-            // Log the final SQL query
             Log::info('SQL Query:', [
                 'query' => $query->toSql(),
                 'bindings' => $query->getBindings()
@@ -390,25 +410,46 @@ class HomeFeController extends Controller
             ]);
 
             if ($request->ajax()) {
+                // Menggunakan SecurityHelper untuk escape output pada view
                 $view = view('frontend.publikasi.partials.artikel-list',
-                    compact('artikel', 'isSearch', 'searchValue')
+                    [
+                        'artikel' => $artikel->map(function($item) {
+                            // Escape semua output yang akan ditampilkan
+                            $item->judul = SecurityHelper::escapeOutput($item->judul);
+                            $item->isi = SecurityHelper::escapeOutput($item->isi);
+                            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
+                            return $item;
+                        }),
+                        'isSearch' => $isSearch,
+                        'searchValue' => SecurityHelper::escapeOutput($searchValue)
+                    ]
                 )->render();
 
                 return response($view)->header('Content-Type', 'text/html');
             }
 
-            $kategori_list = ref_kategori::all();
+            $kategori_list = ref_kategori::all()->map(function($item) {
+                // Escape output untuk daftar kategori
+                $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
+                return $item;
+            });
 
             return view('frontend.publikasi.kategori-artikel', [
-                'artikel' => $artikel,
-                'searchValue' => $searchValue,
+                'artikel' => $artikel->map(function($item) {
+                    // Escape semua output yang akan ditampilkan
+                    $item->judul = SecurityHelper::escapeOutput($item->judul);
+                    $item->isi = SecurityHelper::escapeOutput($item->isi);
+                    $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
+                    return $item;
+                }),
+                'searchValue' => SecurityHelper::escapeOutput($searchValue),
                 'isSearch' => $isSearch,
                 'kategori' => $kategori_list,
             ]);
 
         } catch (\Exception $e) {
             Log::error('Category search error', [
-                'message' => $e->getMessage(),
+                'message' => SecurityHelper::escapeOutput($e->getMessage()),
                 'trace' => $e->getTraceAsString(),
                 'sql' => DB::getQueryLog()
             ]);
@@ -416,7 +457,7 @@ class HomeFeController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'error' => 'Terjadi kesalahan saat memproses pencarian.',
-                    'details' => $e->getMessage()
+                    'details' => SecurityHelper::escapeOutput($e->getMessage())
                 ], 500);
             }
 
@@ -523,8 +564,6 @@ class HomeFeController extends Controller
         return view('frontend.publikasi.index-warta',
             compact('searchValue', 'isSearch', 'warta', 'kategori'));
     }
-
-
 
     public function publikasi_index_artikel(Request $request)
     {

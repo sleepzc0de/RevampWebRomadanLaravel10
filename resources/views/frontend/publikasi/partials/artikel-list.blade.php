@@ -1,6 +1,6 @@
 @if ($isSearch)
     <div class="search-result-message">
-        Anda sedang mencari: "{{ $searchValue }}"
+        Anda sedang mencari: "{{ e($searchValue) }}"
     </div>
 @endif
 
@@ -11,7 +11,10 @@
                 <div class="blo4">
                     <div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
                         <a href="{{ route('artikel-fe', $item->slug) }}">
-                            <img src="{{ asset('storage/romadan_gambar_web/' . $item->image) }}" alt="IMG-BLOG">
+                            <img loading="lazy"
+                                 src="{{ asset('storage/romadan_gambar_web/' . e($item->image)) }}"
+                                 alt="{{ e($item->judul) }}"
+                                 onerror="this.src='{{ asset('images/placeholder-image.jpg') }}'">
                         </a>
                     </div>
                     <div class="text-blo4">
@@ -21,14 +24,14 @@
                                 <span class="m-r-6 m-l-4">|</span>
                             </span>
                             <span>
-                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper(e($item->nama_kategori)) : ucfirst(strtolower(e($item->nama_kategori))) }}
                             </span>
                             <span class="m-l-4">
-                                <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
+                                <i class="fa-regular fa-eye"></i> {{ number_format($item->views) }} Views
                             </span>
                         </div>
                         <a href="{{ route('artikel-fe', $item->slug) }}"
-                            class="berita-terkini-judul-romadan">{{ $item->judul }}</a>
+                            class="artikel-terkini-judul-romadan">{{ e($item->judul) }}</a>
                     </div>
                 </div>
             </div>
@@ -41,7 +44,7 @@
         </div>
     @endif
 @else
-    <div class="search-result-message">
+    <div class="search-result-message-not-found">
         Mohon maaf, data yang Bapak/Ibu cari belum tersedia :(
     </div>
 @endif
