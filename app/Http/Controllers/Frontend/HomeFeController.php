@@ -20,6 +20,7 @@ use App\Models\backend\MenuReferensi\ref_jenis_peraturan;
 use App\Models\backend\ref_kategori;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
@@ -163,9 +164,9 @@ class HomeFeController extends Controller
                 $isSearch = true;
                 // Menggunakan parameter binding untuk pencarian
                 $searchValue = $searchValue;
-                $query->where(function($q) use ($searchValue) {
+                $query->where(function ($q) use ($searchValue) {
                     $q->where('judul', 'like', $searchValue)
-                      ->orWhere('isi', 'like', $searchValue);
+                        ->orWhere('isi', 'like', $searchValue);
                 });
             }
 
@@ -183,9 +184,10 @@ class HomeFeController extends Controller
 
             if ($request->ajax()) {
                 // Menggunakan SecurityHelper untuk escape output pada view
-                $view = view('frontend.publikasi.partials.berita-list',
+                $view = view(
+                    'frontend.publikasi.partials.berita-list',
                     [
-                        'berita' => $berita->map(function($item) {
+                        'berita' => $berita->map(function ($item) {
                             // Escape semua output yang akan ditampilkan
                             $item->judul = SecurityHelper::escapeOutput($item->judul);
                             $item->isi = SecurityHelper::escapeOutput($item->isi);
@@ -200,14 +202,14 @@ class HomeFeController extends Controller
                 return response($view)->header('Content-Type', 'text/html');
             }
 
-            $kategori_list = ref_kategori::all()->map(function($item) {
+            $kategori_list = ref_kategori::all()->map(function ($item) {
                 // Escape output untuk daftar kategori
                 $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
                 return $item;
             });
 
             return view('frontend.publikasi.kategori-berita', [
-                'berita' => $berita->map(function($item) {
+                'berita' => $berita->map(function ($item) {
                     // Escape semua output yang akan ditampilkan
                     $item->judul = SecurityHelper::escapeOutput($item->judul);
                     $item->isi = SecurityHelper::escapeOutput($item->isi);
@@ -218,7 +220,6 @@ class HomeFeController extends Controller
                 'isSearch' => $isSearch,
                 'kategori' => $kategori_list,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Category search error', [
                 'message' => SecurityHelper::escapeOutput($e->getMessage()),
@@ -276,10 +277,10 @@ class HomeFeController extends Controller
             if ($searchValue) {
                 $isSearch = true;
                 // Menggunakan parameter binding untuk pencarian
-                $searchValue =  $searchValue ;
-                $query->where(function($q) use ($searchValue) {
+                $searchValue =  $searchValue;
+                $query->where(function ($q) use ($searchValue) {
                     $q->where('judul', 'like', $searchValue)
-                      ->orWhere('isi', 'like', $searchValue);
+                        ->orWhere('isi', 'like', $searchValue);
                 });
             }
 
@@ -297,9 +298,10 @@ class HomeFeController extends Controller
 
             if ($request->ajax()) {
                 // Menggunakan SecurityHelper untuk escape output pada view
-                $view = view('frontend.publikasi.partials.warta-list',
+                $view = view(
+                    'frontend.publikasi.partials.warta-list',
                     [
-                        'warta' => $warta->map(function($item) {
+                        'warta' => $warta->map(function ($item) {
                             // Escape semua output yang akan ditampilkan
                             $item->judul = SecurityHelper::escapeOutput($item->judul);
                             $item->isi = SecurityHelper::escapeOutput($item->isi);
@@ -314,14 +316,14 @@ class HomeFeController extends Controller
                 return response($view)->header('Content-Type', 'text/html');
             }
 
-            $kategori_list = ref_kategori::all()->map(function($item) {
+            $kategori_list = ref_kategori::all()->map(function ($item) {
                 // Escape output untuk daftar kategori
                 $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
                 return $item;
             });
 
             return view('frontend.publikasi.kategori-warta', [
-                'warta' => $warta->map(function($item) {
+                'warta' => $warta->map(function ($item) {
                     // Escape semua output yang akan ditampilkan
                     $item->judul = SecurityHelper::escapeOutput($item->judul);
                     $item->isi = SecurityHelper::escapeOutput($item->isi);
@@ -332,7 +334,6 @@ class HomeFeController extends Controller
                 'isSearch' => $isSearch,
                 'kategori' => $kategori_list,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Category search error', [
                 'message' => SecurityHelper::escapeOutput($e->getMessage()),
@@ -391,9 +392,9 @@ class HomeFeController extends Controller
                 $isSearch = true;
                 // Menggunakan parameter binding untuk pencarian
                 $searchValue = $searchValue;
-                $query->where(function($q) use ($searchValue) {
+                $query->where(function ($q) use ($searchValue) {
                     $q->where('judul', 'like', $searchValue)
-                      ->orWhere('isi', 'like', $searchValue);
+                        ->orWhere('isi', 'like', $searchValue);
                 });
             }
 
@@ -411,9 +412,10 @@ class HomeFeController extends Controller
 
             if ($request->ajax()) {
                 // Menggunakan SecurityHelper untuk escape output pada view
-                $view = view('frontend.publikasi.partials.artikel-list',
+                $view = view(
+                    'frontend.publikasi.partials.artikel-list',
                     [
-                        'artikel' => $artikel->map(function($item) {
+                        'artikel' => $artikel->map(function ($item) {
                             // Escape semua output yang akan ditampilkan
                             $item->judul = SecurityHelper::escapeOutput($item->judul);
                             $item->isi = SecurityHelper::escapeOutput($item->isi);
@@ -428,14 +430,14 @@ class HomeFeController extends Controller
                 return response($view)->header('Content-Type', 'text/html');
             }
 
-            $kategori_list = ref_kategori::all()->map(function($item) {
+            $kategori_list = ref_kategori::all()->map(function ($item) {
                 // Escape output untuk daftar kategori
                 $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
                 return $item;
             });
 
             return view('frontend.publikasi.kategori-artikel', [
-                'artikel' => $artikel->map(function($item) {
+                'artikel' => $artikel->map(function ($item) {
                     // Escape semua output yang akan ditampilkan
                     $item->judul = SecurityHelper::escapeOutput($item->judul);
                     $item->isi = SecurityHelper::escapeOutput($item->isi);
@@ -446,7 +448,6 @@ class HomeFeController extends Controller
                 'isSearch' => $isSearch,
                 'kategori' => $kategori_list,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Category search error', [
                 'message' => SecurityHelper::escapeOutput($e->getMessage()),
@@ -496,24 +497,28 @@ class HomeFeController extends Controller
         }
 
         // Add rate limiting
-        if (RateLimiter::tooManyAttempts('search:'.$request->ip(), 60)) {
+        if (RateLimiter::tooManyAttempts('search:' . $request->ip(), 60)) {
             return response()->json(['error' => 'Too many search attempts'], 429);
         }
-        RateLimiter::hit('search:'.$request->ip());
+        RateLimiter::hit('search:' . $request->ip());
 
         $berita = $query->latest()->paginate(9);
         $kategori = ref_kategori::all();
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('frontend.publikasi.partials.berita-list',
-                    compact('berita', 'isSearch', 'searchValue'))->render(),
+                'html' => view(
+                    'frontend.publikasi.partials.berita-list',
+                    compact('berita', 'isSearch', 'searchValue')
+                )->render(),
                 'status' => 'success'
             ], 200);
         }
 
-        return view('frontend.publikasi.index-berita',
-            compact('searchValue', 'isSearch', 'berita', 'kategori'));
+        return view(
+            'frontend.publikasi.index-berita',
+            compact('searchValue', 'isSearch', 'berita', 'kategori')
+        );
     }
 
     public function publikasi_index_warta(Request $request)
@@ -545,24 +550,28 @@ class HomeFeController extends Controller
         }
 
         // Add rate limiting
-        if (RateLimiter::tooManyAttempts('search:'.$request->ip(), 60)) {
+        if (RateLimiter::tooManyAttempts('search:' . $request->ip(), 60)) {
             return response()->json(['error' => 'Too many search attempts'], 429);
         }
-        RateLimiter::hit('search:'.$request->ip());
+        RateLimiter::hit('search:' . $request->ip());
 
         $warta = $query->latest()->paginate(9);
         $kategori = ref_kategori::all();
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('frontend.publikasi.partials.warta-list',
-                    compact('warta', 'isSearch', 'searchValue'))->render(),
+                'html' => view(
+                    'frontend.publikasi.partials.warta-list',
+                    compact('warta', 'isSearch', 'searchValue')
+                )->render(),
                 'status' => 'success'
             ], 200);
         }
 
-        return view('frontend.publikasi.index-warta',
-            compact('searchValue', 'isSearch', 'warta', 'kategori'));
+        return view(
+            'frontend.publikasi.index-warta',
+            compact('searchValue', 'isSearch', 'warta', 'kategori')
+        );
     }
 
     public function publikasi_index_artikel(Request $request)
@@ -594,24 +603,28 @@ class HomeFeController extends Controller
         }
 
         // Add rate limiting
-        if (RateLimiter::tooManyAttempts('search:'.$request->ip(), 60)) {
+        if (RateLimiter::tooManyAttempts('search:' . $request->ip(), 60)) {
             return response()->json(['error' => 'Too many search attempts'], 429);
         }
-        RateLimiter::hit('search:'.$request->ip());
+        RateLimiter::hit('search:' . $request->ip());
 
         $artikel = $query->latest()->paginate(9);
         $kategori = ref_kategori::all();
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('frontend.publikasi.partials.artikel-list',
-                    compact('artikel', 'isSearch', 'searchValue'))->render(),
+                'html' => view(
+                    'frontend.publikasi.partials.artikel-list',
+                    compact('artikel', 'isSearch', 'searchValue')
+                )->render(),
                 'status' => 'success'
             ], 200);
         }
 
-        return view('frontend.publikasi.index-artikel',
-            compact('searchValue', 'isSearch', 'artikel', 'kategori'));
+        return view(
+            'frontend.publikasi.index-artikel',
+            compact('searchValue', 'isSearch', 'artikel', 'kategori')
+        );
     }
 
     public function publikasi_berita($publikasi)
@@ -640,8 +653,8 @@ class HomeFeController extends Controller
         $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe',  strtolower('Warta'))->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data);
 
-         // Menambah jumlah views
-         $data->increment('views');
+        // Menambah jumlah views
+        $data->increment('views');
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
@@ -656,8 +669,8 @@ class HomeFeController extends Controller
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
         // dd($data->isi);
 
-         // Menambah jumlah views
-         $data->increment('views');
+        // Menambah jumlah views
+        $data->increment('views');
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
@@ -770,23 +783,60 @@ class HomeFeController extends Controller
 
     public function infopublik_aplikasi_index(Request $request)
     {
-        $searchValue = strip_tags($request->input('cari_aplikasi'));
-        $data = null;
-        $isSearch = false;
+        // Validate input
+        $validated = $request->validate([
+            'cari_aplikasi' => 'nullable|string|max:100'
+        ]);
 
-        if ($request->cari_aplikasi) {
-            $isSearch = true; // Tandai bahwa pencarian dilakukan
-            $search = $request->cari_aplikasi;
-            $data = AplikasiModel::where('judul_aplikasi', 'like', "%" . $search . "%")
-                ->orWhere('sub_judul_aplikasi', 'like', "%" . $search . "%")
-                ->latest()->paginate(9);
-        } else {
-            $data = AplikasiModel::latest()->paginate(9);
+        // Sanitize search value
+        $searchValue = isset($validated['cari_aplikasi']) ?
+            strip_tags($validated['cari_aplikasi']) : null;
+
+        // Cache key based on search and page
+        $cacheKey = 'portal_apps_' . md5($searchValue . $request->get('page', 1));
+
+        // Get data with caching
+        $data = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($searchValue) {
+            $query = AplikasiModel::latest();
+
+            if ($searchValue) {
+                $query->where(function ($q) use ($searchValue) {
+                    $q->where('judul_aplikasi', 'like', "%{$searchValue}%")
+                        ->orWhere('sub_judul_aplikasi', 'like', "%{$searchValue}%");
+                });
+            }
+
+            return $query->paginate(9);
+        });
+
+        // Check if it's an AJAX request
+        if ($request->ajax()) {
+            $html = view('frontend.infopublik.partials.applications-grid', [
+                'data' => $data,
+                'isSearch' => !empty($searchValue)
+            ])->render();
+
+            $pagination = '';
+            if ($data->hasPages()) {
+                $pagination = $data->links()->toHtml();
+            }
+
+            return response()->json([
+                'html' => $html,
+                'pagination' => $pagination
+            ], 200, [
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ]);
         }
 
-        return view('frontend.infopublik.aplikasi-index', compact('data', 'isSearch'));
+        // Regular view response
+        return view('frontend.infopublik.aplikasi-index', [
+            'data' => $data,
+            'isSearch' => !empty($searchValue)
+        ]);
     }
-
 
     public function faq_index()
     {
