@@ -162,7 +162,7 @@ class HomeFeController extends Controller
             if ($searchValue) {
                 $isSearch = true;
                 // Menggunakan parameter binding untuk pencarian
-                $searchValue = '%' . $searchValue . '%';
+                $searchValue = $searchValue;
                 $query->where(function($q) use ($searchValue) {
                     $q->where('judul', 'like', $searchValue)
                       ->orWhere('isi', 'like', $searchValue);
@@ -276,7 +276,7 @@ class HomeFeController extends Controller
             if ($searchValue) {
                 $isSearch = true;
                 // Menggunakan parameter binding untuk pencarian
-                $searchValue = '%' . $searchValue . '%';
+                $searchValue =  $searchValue ;
                 $query->where(function($q) use ($searchValue) {
                     $q->where('judul', 'like', $searchValue)
                       ->orWhere('isi', 'like', $searchValue);
@@ -390,7 +390,7 @@ class HomeFeController extends Controller
             if ($searchValue) {
                 $isSearch = true;
                 // Menggunakan parameter binding untuk pencarian
-                $searchValue = '%' . $searchValue . '%';
+                $searchValue = $searchValue;
                 $query->where(function($q) use ($searchValue) {
                     $q->where('judul', 'like', $searchValue)
                       ->orWhere('isi', 'like', $searchValue);
