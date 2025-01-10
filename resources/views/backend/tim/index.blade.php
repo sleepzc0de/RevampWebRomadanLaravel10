@@ -3,68 +3,150 @@
 @section('css')
 @endsection
 
+
 @section('script_atas')
+<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
+<script src="{{asset('webromadan/be/js/vendor/tables/datatables/extensions/responsive.min.js')}}"></script>
 @endsection
 
 @section('script_bawah')
+{{-- <script src="{{asset('webromadan/be/demo/pages/datatables_extension_responsive.js')}}"></script> --}}
+
+<script>
+    /* ------------------------------------------------------------------------------
+ *
+ *  # Responsive extension for Datatables
+ *
+ *  Demo JS code for datatable_responsive.html page
+ *
+ * ---------------------------------------------------------------------------- */
+
+
+// Setup module
+// ------------------------------
+
+const DatatableResponsive = function() {
+
+
+    //
+    // Setup module components
+    //
+
+    // Basic Datatable examples
+    const _componentDatatableResponsive = function() {
+        if (!$().DataTable) {
+            console.warn('Warning - datatables.min.js is not loaded.');
+            return;
+        }
+
+        // Setting datatable defaults
+        $.extend( $.fn.dataTable.defaults, {
+            autoWidth: false,
+            responsive: true,
+            columnDefs: [{
+                orderable: false,
+                width: 200,
+                targets: [ 0 ]
+            }],
+            dom: '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+            language: {
+                search: '<span class="me-3">Filter:</span> <div class="form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span class="me-3">Show:</span> _MENU_',
+                paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' }
+            }
+        });
+
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+
+        // Basic responsive configuration
+        $('.datatable-responsive').DataTable({
+            autoWidth: true,
+            // scrollY: 200,
+            // scrollX: true,
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('pengembang.index') }}",
+            columns: [
+            { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
+            {
+        data: 'photo',
+        name: 'photo',
+        render: function(data) {
+            return data
+                ? `<img src="${data}" alt="Photo" style="width: 50px; height: auto;">`
+                : '<span>No Photo</span>';
+        }
+    },
+            { data: 'name', name: 'name' },
+            { data: 'skill', name: 'skill' },
+            {data: 'opsi',name:'opsi',orderable:false,searchable:false},
+            ],
+            order: [[0, 'asc']],
+        });
+
+
+    };
+
+
+    //
+    // Return objects assigned to module
+    //
+
+    return {
+        init: function() {
+            _componentDatatableResponsive();
+        }
+    }
+}();
+
+
+// Initialize module
+// ------------------------------
+
+document.addEventListener('DOMContentLoaded', function() {
+    DatatableResponsive.init();
+});
+</script>
 @endsection
 
 @section('content')
-<div class="container">
-    <div class="row mb-3">
-        <div class="col-lg-12">
-            <h2>Daftar Pengembang</h2>
-            <a href="{{ route('pengembang.create') }}" class="btn btn-primary">Tambah Pengembang</a>
-        </div>
-    </div>
+<!-- Basic responsive configuration -->
+					<div class="card">
+                        <div class="card-header text-center">
+                          <h1>TIM DEV WEBROMADAN</h1>
+                           @include('layouts.webromadan_backend.session_notif')
+						</div>
+						<div class="card-header">
 
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+                                    <a href="{{route('pengembang.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
+                                        <span class="btn-labeled-icon bg-purple text-white rounded-pill">
+                                            <i class="ph-check-square-offset"></i>
+                                        </span>
+                                        Tambah Data
+                                    </button></a>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Foto</th>
-                            <th>Nama</th>
-                            <th>Keahlian</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($developers as $key => $developer)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>
-                                    @if($developer->photo)
-                                        <img src="{{ asset('storage/'.$developer->photo) }}" alt="Photo" width="50">
-                                    @else
-                                        <span>No Photo</span>
-                                    @endif
-                                </td>
-                                <td>{{ $developer->name }}</td>
-                                <td>{{ str_replace('|', ' | ', $developer->skill) }}</td>
-                                <td>
-                                    <a href="{{ route('pengembang.show', $developer->id) }}" class="btn btn-info btn-sm">Detail</a>
-                                    <a href="{{ route('pengembang.edit', $developer->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    <form action="{{ route('pengembang.destroy', $developer->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+						</div>
+
+						<table class="table datatable-responsive">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Foto</th>
+									<th>Nama</th>
+                                    <th>Keahlian</th>
+									<th>Aksi</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+					<!-- /basic responsive configuration -->
 @endsection

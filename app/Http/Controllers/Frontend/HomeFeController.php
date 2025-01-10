@@ -284,43 +284,73 @@ class HomeFeController extends Controller
     }
 
 
-    public function publikasi_artikel_kategori(Request $request, $kategori) {
-        $status_artikel = 'Published';
-        $searchValue = strip_tags($request->input('cari_artikel'));
-        $kategori_param = strip_tags($kategori);
-        $isSearch = false;
-
+    public function publikasi_artikel_kategori(Request $request, $kategori)
+    {
         try {
-            $query = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            // Enable query logging for debugging
+            DB::enableQueryLog();
+
+            $status_artikel = 'Published';
+            $searchValue = strip_tags($request->input('cari_artikel'));
+            $kategori_param = strip_tags($kategori);
+            $isSearch = false;
+
+            Log::info('Search request received', [
+                'search_value' => $searchValue,
+                'kategori' => $kategori_param,
+                'is_ajax' => $request->ajax(),
+                'request_all' => $request->all()
+            ]);
+
+            $query = PublikasiModel::query()
+                ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
                 ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
                 ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-                ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+                ->select(
+                    'publikasi.*',
+                    'ref_kategori.nama_kategori',
+                    'ref_status.nama_status',
+                    'ref_tipe.nama_tipe'
+                )
                 ->where('nama_tipe', '=', 'artikel')
-                ->where('ref_status.nama_status', '=', $status_artikel)
-                ->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
+                ->where('ref_status.nama_status', '=', $status_artikel);
 
+            // Add category filter if not "View All"
+            if ($kategori_param !== 'all') {
+                $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
+            }
+
+            // Add search filter if search term exists
             if ($searchValue) {
                 $isSearch = true;
-                // Ubah pencarian untuk lebih fleksibel
                 $query->where(function($q) use ($searchValue) {
-                    $q->where('judul', 'LIKE', '%' . $searchValue . '%')
-                      ->orWhere('konten', 'LIKE', '%' . $searchValue . '%');
+                    $q->where('judul', 'like', '%' . $searchValue . '%')
+                      ->orWhere('isi', 'like', '%' . $searchValue . '%');
                 });
             }
 
-            $artikel = $query->latest()->paginate(9)->withQueryString();
-            $kategori_list = ref_kategori::all();
+            // Log the final SQL query
+            Log::info('SQL Query:', [
+                'query' => $query->toSql(),
+                'bindings' => $query->getBindings()
+            ]);
+
+            $artikel = $query->latest()->paginate(9);
+
+            Log::info('Query results:', [
+                'count' => $artikel->count(),
+                'total' => $artikel->total()
+            ]);
 
             if ($request->ajax()) {
                 $view = view('frontend.publikasi.partials.artikel-list',
                     compact('artikel', 'isSearch', 'searchValue')
                 )->render();
 
-                return response()->json([
-                    'html' => $view,
-                    'count' => $artikel->total()
-                ]);
+                return response($view)->header('Content-Type', 'text/html');
             }
+
+            $kategori_list = ref_kategori::all();
 
             return view('frontend.publikasi.kategori-artikel', [
                 'artikel' => $artikel,
@@ -330,11 +360,16 @@ class HomeFeController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Category search error: ' . $e->getMessage());
+            Log::error('Category search error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'sql' => DB::getQueryLog()
+            ]);
 
             if ($request->ajax()) {
                 return response()->json([
-                    'error' => 'Terjadi kesalahan saat memproses pencarian.'
+                    'error' => 'Terjadi kesalahan saat memproses pencarian.',
+                    'details' => $e->getMessage()
                 ], 500);
             }
 

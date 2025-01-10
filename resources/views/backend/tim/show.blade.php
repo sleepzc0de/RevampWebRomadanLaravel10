@@ -44,7 +44,7 @@
 
                     <div class="row mb-3">
                         <div class="col-lg-9 offset-lg-3">
-                            <a href="{{ route('pengembang.edit', $developer->id) }}" class="btn btn-warning">Edit</a>
+                            <a href="{{ route('pengembang.edit', $encryptedId) }}" class="btn btn-warning">Edit</a>
                             <a href="{{ route('pengembang.index') }}" class="btn btn-link">Kembali</a>
                         </div>
                     </div>

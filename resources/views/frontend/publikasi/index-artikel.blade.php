@@ -215,7 +215,7 @@
                         class="bo-rad-10 sizefull txt10 p-l-20"
                         type="text"
                         name="cari_artikel"
-                        placeholder="Cari Artikel"
+                        placeholder="Cari artikel"
                         value="{{ e($searchValue ?? '') }}"
                         maxlength="255"
                         pattern="[A-Za-z0-9\s]+"
