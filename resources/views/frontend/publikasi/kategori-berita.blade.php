@@ -321,14 +321,22 @@
                     <div class="publikasi-home-sub">The latest industry news, interviews, technologies, and resources.</div>
                 </div>
 
-                <form id="searchForm" action="{{ route('berita-kategori-fe', ['kategori' => request()->segment(2)]) }}"
-                    method="POST">
+                {{-- Improved search form with security features --}}
+                <form id="searchForm"
+                      data-action="{{ route('berita-kategori-fe', ['kategori' => request()->segment(2)]) }}"
+                      method="POST"
+                      autocomplete="off">
                     @csrf
-                    <input type="hidden" name="current_kategori" value="{{ request()->segment(2) }}">
+                    <input type="hidden" name="current_kategori" value="{{ e(request()->segment(2)) }}">
                     <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
-                        <input class="bo-rad-10 sizefull txt10 p-l-20" type="text" name="cari_berita"
-                            placeholder="Cari berita" value="{{ e($searchValue ?? '') }}" maxlength="255"
-                            pattern="[A-Za-z0-9\s]+">
+                        <input class="bo-rad-10 sizefull txt10 p-l-20"
+                               type="text"
+                               name="cari_berita"
+                               placeholder="Cari berita"
+                               value="{{ e($searchValue ?? '') }}"
+                               maxlength="255"
+                               pattern="[A-Za-z0-9\s]+"
+                               autocomplete="off">
                         <div class="search-loading">
                             <div class="loading-spinner"></div>
                         </div>
@@ -346,13 +354,13 @@
                         @foreach ($kategori as $item)
                             @php
                                 $currentURL = Request::url();
-                                $selectedCategory = strtolower($item->nama_kategori);
+                                $selectedCategory = e(strtolower($item->nama_kategori));
                                 $isActive = $currentURL === route('berita-kategori-fe', $selectedCategory);
                             @endphp
 
                             <a class="btn pilihan-kategori-menu {{ $isActive ? 'active' : '' }}"
                                 href="{{ route('berita-kategori-fe', $selectedCategory) }}">
-                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}
+                                {{ strlen($item->nama_kategori) <= 3 ? strtoupper(e($item->nama_kategori)) : ucfirst(strtolower(e($item->nama_kategori))) }}
                             </a>
                         @endforeach
                     </div>
@@ -363,7 +371,7 @@
                 @include('frontend.publikasi.partials.berita-list', [
                     'berita' => $berita,
                     'isSearch' => $isSearch,
-                    'searchValue' => $searchValue,
+                    'searchValue' => e($searchValue),
                 ])
             </div>
         </div>
@@ -375,24 +383,41 @@
                 const searchForm = document.getElementById('searchForm');
                 const searchInput = document.querySelector('input[name="cari_berita"]');
                 const loadingSpinner = document.querySelector('.search-loading');
+                const searchIcon = document.querySelector('.search-icon');
                 const beritaContainer = document.getElementById('berita-container');
                 let typingTimer;
+                let lastSearchTime = 0;
+                const minSearchInterval = 500; // Minimum time between searches in ms
 
                 if (searchForm && searchInput) {
-                    console.log('Search form initialized');
-
-                    searchInput.addEventListener('input', function() {
-                        clearTimeout(typingTimer);
-                        if (this.value.length >= 1) {
-                            loadingSpinner.classList.add('active');
-                            typingTimer = setTimeout(performSearch, 500);
-                        }
+                    // Input validation
+                    searchInput.addEventListener('input', function(e) {
+                        // Allow only alphanumeric characters and spaces
+                        this.value = this.value.replace(/[^A-Za-z0-9\s]/g, '');
                     });
 
                     searchForm.addEventListener('submit', function(e) {
                         e.preventDefault();
-                        loadingSpinner.classList.add('active');
-                        performSearch();
+                        const now = Date.now();
+                        if (now - lastSearchTime >= minSearchInterval) {
+                            performSearch();
+                            lastSearchTime = now;
+                        }
+                    });
+
+                    searchInput.addEventListener('input', function() {
+                        clearTimeout(typingTimer);
+                        if (this.value.length >= 3) {
+                            loadingSpinner.classList.add('active');
+                            searchIcon.classList.add('hidden');
+                            typingTimer = setTimeout(() => {
+                                const now = Date.now();
+                                if (now - lastSearchTime >= minSearchInterval) {
+                                    performSearch();
+                                    lastSearchTime = now;
+                                }
+                            }, 500);
+                        }
                     });
 
                     function performSearch() {
@@ -400,61 +425,51 @@
                         const pathSegments = window.location.pathname.split('/');
                         const currentCategory = pathSegments[pathSegments.length - 1];
 
-                        const formData = new FormData();
-                        formData.append('cari_berita', searchInput.value);
-                        formData.append('current_kategori', currentCategory);
-                        formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+                        const formData = new FormData(searchForm);
 
-                        // Use the correct URL format
-                        const baseUrl = `${window.location.origin}/publikasi/berita/kategori/${currentCategory}`;
+                        // Show loading state
+                        loadingSpinner.classList.add('active');
+                        searchIcon.classList.add('hidden');
+                        beritaContainer.style.opacity = '0.5';
 
-                        console.log('Sending search request:');
-                        console.log('- Search term:', searchInput.value);
-                        console.log('- Category:', currentCategory);
-                        console.log('- URL:', baseUrl);
+                        // Use the form's action URL
+                        const url = searchForm.dataset.action;
 
-                        fetch(baseUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'Accept': 'text/html, application/xhtml+xml',
-                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                },
-                                body: new URLSearchParams(formData)
-                            })
-                            .then(async response => {
-                                console.log('Response status:', response.status);
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'text/html, application/xhtml+xml'
+                            },
+                            body: formData
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            beritaContainer.innerHTML = html;
 
-                                if (!response.ok) {
-                                    const errorText = await response.text();
-                                    console.error('Error response:', errorText);
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                return response.text();
-                            })
-                            .then(html => {
-                                console.log('Received HTML response length:', html.length);
-
-                                // Update the container
-                                beritaContainer.innerHTML = html;
-
-                                // Update URL while maintaining category
-                                const url = new URL(window.location);
-                                url.searchParams.set('cari_berita', searchInput.value);
-                                window.history.pushState({}, '', url);
-                            })
-                            .catch(error => {
-                                console.error('Search error:', error);
-                                beritaContainer.innerHTML = `
-                        <div class="alert alert-danger">
-                            Terjadi kesalahan saat mencari data. Silakan coba lagi.
-                        </div>
-                    `;
-                            })
-                            .finally(() => {
-                                loadingSpinner.classList.remove('active');
-                            });
+                            // Update URL safely
+                            const url = new URL(window.location);
+                            url.searchParams.set('cari_berita', searchInput.value);
+                            window.history.pushState({}, '', url);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            beritaContainer.innerHTML = `
+                                <div class="alert alert-danger">
+                                    Terjadi kesalahan saat mencari data. Silakan coba lagi.
+                                </div>`;
+                        })
+                        .finally(() => {
+                            loadingSpinner.classList.remove('active');
+                            searchIcon.classList.remove('hidden');
+                            beritaContainer.style.opacity = '1';
+                        });
                     }
                 }
             });
