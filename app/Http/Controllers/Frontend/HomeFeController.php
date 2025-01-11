@@ -783,59 +783,61 @@ class HomeFeController extends Controller
 
     public function infopublik_aplikasi_index(Request $request)
     {
-        // Validate input
-        $validated = $request->validate([
-            'cari_aplikasi' => 'nullable|string|max:100'
-        ]);
-
-        // Sanitize search value
-        $searchValue = isset($validated['cari_aplikasi']) ?
-            strip_tags($validated['cari_aplikasi']) : null;
-
-        // Cache key based on search and page
-        $cacheKey = 'portal_apps_' . md5($searchValue . $request->get('page', 1));
-
-        // Get data with caching
-        $data = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($searchValue) {
-            $query = AplikasiModel::latest();
-
-            if ($searchValue) {
-                $query->where(function ($q) use ($searchValue) {
-                    $q->where('judul_aplikasi', 'like', "%{$searchValue}%")
-                        ->orWhere('sub_judul_aplikasi', 'like', "%{$searchValue}%");
-                });
-            }
-
-            return $query->paginate(9);
-        });
-
-        // Check if it's an AJAX request
-        if ($request->ajax()) {
-            $html = view('frontend.infopublik.partials.applications-grid', [
-                'data' => $data,
-                'isSearch' => !empty($searchValue)
-            ])->render();
-
-            $pagination = '';
-            if ($data->hasPages()) {
-                $pagination = $data->links()->toHtml();
-            }
-
-            return response()->json([
-                'html' => $html,
-                'pagination' => $pagination
-            ], 200, [
-                'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                'Pragma' => 'no-cache',
-                'Expires' => '0'
+        try {
+            // Validate input
+            $validated = $request->validate([
+                'cari_aplikasi' => 'nullable|string|max:100'
             ]);
-        }
 
-        // Regular view response
-        return view('frontend.infopublik.aplikasi-index', [
-            'data' => $data,
-            'isSearch' => !empty($searchValue)
-        ]);
+            // Sanitize search value
+            $searchValue = isset($validated['cari_aplikasi']) ?
+                strip_tags($validated['cari_aplikasi']) : null;
+
+            // Cache key
+            $cacheKey = 'portal_apps_' . md5($searchValue . $request->get('page', 1));
+
+            // Get data with caching
+            $data = Cache::remember($cacheKey, now()->addMinutes(1), function () use ($searchValue) {
+                $query = AplikasiModel::latest();
+
+                if ($searchValue) {
+                    $query->where(function ($q) use ($searchValue) {
+                        $q->where('judul_aplikasi', 'like', "%{$searchValue}%")
+                            ->orWhere('sub_judul_aplikasi', 'like', "%{$searchValue}%");
+                    });
+                }
+
+                return $query->paginate(9);
+            });
+
+            if ($request->ajax()) {
+                // Clear cache if refresh requested
+                if ($request->has('refresh')) {
+                    Cache::forget($cacheKey);
+                    $data = AplikasiModel::latest()->paginate(9);
+                }
+
+                return response()->json([
+                    'html' => view('frontend.infopublik.partials.applications-grid', compact('data'))->render(),
+                    'pagination' => $data->links()->toHtml(),
+                    'status' => 'success'
+                ]);
+            }
+
+            return view('frontend.infopublik.aplikasi-index', compact('data'));
+
+        } catch (\Exception $e) {
+            Log::error('Error in infopublik_aplikasi_index: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Terjadi kesalahan saat memuat data'
+                ], 500);
+            }
+
+            return back()->with('error', 'Terjadi kesalahan saat memuat data');
+        }
     }
 
     public function faq_index()
