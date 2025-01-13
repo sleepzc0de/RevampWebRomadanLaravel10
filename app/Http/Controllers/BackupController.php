@@ -33,15 +33,28 @@ class BackupController extends Controller
     public function create()
     {
         try {
+            // Add request validation
+            if (!request()->ajax()) {
+                throw new \Exception('Invalid request method');
+            }
+
             $backupFile = $this->backupService->createBackup();
-            return redirect()->route('backups.index')
-                ->with('success', "Backup {$backupFile} created successfully.");
+
+            return response()->json([
+                'success' => true,
+                'message' => "Backup {$backupFile} created successfully.",
+                'file' => $backupFile
+            ]);
         } catch (\Exception $e) {
             Log::error('Backup creation failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return back()->withErrors('Failed to create backup: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create backup: ' . $e->getMessage()
+            ], 500);
         }
     }
 

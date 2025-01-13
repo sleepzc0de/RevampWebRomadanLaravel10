@@ -15,12 +15,24 @@ class BackupService
     protected $backupPath;
 
     public function __construct()
-    {
-        $this->backupPath = storage_path('app/backups');
-        if (!file_exists($this->backupPath)) {
-            mkdir($this->backupPath, 0755, true);
+{
+    $this->backupPath = storage_path('app/backups');
+
+    // Check directory permissions
+    if (!file_exists($this->backupPath)) {
+        if (!mkdir($this->backupPath, 0755, true)) {
+            Log::error('Failed to create backup directory', ['path' => $this->backupPath]);
+            throw new \Exception('Failed to create backup directory');
         }
     }
+
+    // Verify directory is writable
+    if (!is_writable($this->backupPath)) {
+        Log::error('Backup directory is not writable', ['path' => $this->backupPath]);
+        throw new \Exception('Backup directory is not writable');
+    }
+}
+
 
     public function createBackup(): string
     {
@@ -81,58 +93,62 @@ class BackupService
     }
 
     private function backupDatabase(string $outputPath)
-    {
-        try {
-            // Check if sqlcmd exists
-            exec('where sqlcmd', $output, $returnVar);
-            if ($returnVar !== 0) {
-                throw new \Exception('sqlcmd is not installed or not in PATH');
-            }
-
-            $server = config('database.connections.sqlsrv.host');
-            $port = config('database.connections.sqlsrv.port', '1433');
-            $database = config('database.connections.sqlsrv.database');
-            $username = config('database.connections.sqlsrv.username');
-            $password = config('database.connections.sqlsrv.password');
-
-            // Convert path to Windows format
-            $outputPath = str_replace('/', '\\', $outputPath);
-
-            // If server contains instance name, don't append port
-            $serverAddress = str_contains($server, '\\') ? $server : "{$server},{$port}";
-
-            // Backup command
-            $command = sprintf(
-                'sqlcmd -S %s -U %s -P %s -Q "BACKUP DATABASE [%s] TO DISK = N\'%s\' WITH FORMAT"',
-                escapeshellarg($serverAddress),
-                escapeshellarg($username),
-                escapeshellarg($password),
-                $database,
-                $outputPath
-            );
-
-            exec($command, $output, $result);
-
-            if ($result !== 0) {
-                Log::error('Database backup failed', [
-                    'output' => $output,
-                    'command' => preg_replace('/(-P\s+)[^\s]+/', '$1*****', $command)
-                ]);
-                throw new \Exception('Database backup failed: ' . implode("\n", $output));
-            }
-
-            // Verify backup file exists and has size
-            if (!file_exists($outputPath) || filesize($outputPath) === 0) {
-                throw new \Exception('Backup file was not created or is empty');
-            }
-
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Database backup error: ' . $e->getMessage());
-            throw $e;
+{
+    try {
+        // Check if sqlcmd exists with full error logging
+        exec('where sqlcmd 2>&1', $output, $returnVar);
+        if ($returnVar !== 0) {
+            Log::error('sqlcmd check failed', ['output' => $output]);
+            throw new \Exception('sqlcmd is not installed or not in PATH: ' . implode("\n", $output));
         }
-    }
 
+        $server = config('database.connections.sqlsrv.host');
+        $port = config('database.connections.sqlsrv.port', '1433');
+        $database = config('database.connections.sqlsrv.database');
+        $username = config('database.connections.sqlsrv.username');
+        $password = config('database.connections.sqlsrv.password');
+
+        // Log connection details (excluding password)
+        Log::info('Attempting database backup', [
+            'server' => $server,
+            'port' => $port,
+            'database' => $database,
+            'outputPath' => $outputPath
+        ]);
+
+        $serverAddress = str_contains($server, '\\') ? $server : "{$server},{$port}";
+
+        // Add error output redirection to command
+        $command = sprintf(
+            'sqlcmd -S %s -U %s -P %s -Q "BACKUP DATABASE [%s] TO DISK = N\'%s\' WITH FORMAT" 2>&1',
+            escapeshellarg($serverAddress),
+            escapeshellarg($username),
+            escapeshellarg($password),
+            $database,
+            $outputPath
+        );
+
+        // Execute with output capture
+        exec($command, $output, $result);
+
+        if ($result !== 0) {
+            Log::error('Database backup command failed', [
+                'output' => $output,
+                'exitCode' => $result,
+                'command' => preg_replace('/(-P\s+)[^\s]+/', '$1*****', $command)
+            ]);
+            throw new \Exception('Database backup failed: ' . implode("\n", $output));
+        }
+
+        return true;
+    } catch (\Exception $e) {
+        Log::error('Database backup error', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        throw $e;
+    }
+}
 
     private function zipFiles(Finder $files, string $outputPath)
     {

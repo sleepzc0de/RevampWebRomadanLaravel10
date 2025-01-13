@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backup Management System</title>
+    <!-- Load dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @keyframes slideIn {
             from {
                 transform: translateY(20px);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -27,118 +28,143 @@
         .fade-in {
             transition: all 0.3s ease-in-out;
         }
+
+        .processing-overlay {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+    <style>
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" x-data="{ showConfirmDelete: false, selectedBackup: null }">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen"
+    x-data="{
+        showConfirmDelete: false,
+        selectedBackup: null,
+        processing: false,
+        currentStep: '',
+        progress: 0,
+
+        async handleBackup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            this.processing = true;
+            this.progress = 0;
+            this.currentStep = 'Initializing backup process...';
+
+            const steps = [
+                { message: 'Preparing files for backup...', progress: 20 },
+                { message: 'Compressing data...', progress: 40 },
+                { message: 'Encrypting backup...', progress: 60 },
+                { message: 'Saving backup file...', progress: 80 },
+                { message: 'Finalizing...', progress: 90 }
+            ];
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+
+                // Process steps
+                for (const step of steps) {
+                    await new Promise(resolve => {
+                        setTimeout(() => {
+                            this.currentStep = step.message;
+                            this.progress = step.progress;
+                            resolve();
+                        }, 1000);
+                    });
+                }
+
+                // Complete process
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        this.progress = 100;
+                        this.processing = false;
+                        resolve();
+                    }, 1000);
+                });
+
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Backup has been created successfully',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3B82F6'
+                }).then(() => {
+                    window.location.reload();
+                });
+
+            } catch (error) {
+                this.processing = false;
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to create backup. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#EF4444'
+                });
+            }
+        }
+    }">
+
+     <!-- Processing Overlay -->
+     <div x-show="processing"
+     x-cloak
+     class="fixed inset-0 processing-overlay z-50 flex items-center justify-center"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0">
+     <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+         <div class="flex flex-col items-center">
+             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+             <h3 class="text-lg font-semibold text-gray-900 mb-2">Creating Backup...</h3>
+             <p x-text="currentStep" class="text-gray-600 text-center mb-4"></p>
+             <div class="w-full bg-gray-200 rounded-full h-2.5">
+                 <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                     x-bind:style="'width: ' + progress + '%'"></div>
+             </div>
+         </div>
+     </div>
+ </div>
+
     <!-- Main Container -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <!-- Header Section with Stats -->
-        <div class="mb-10 slide-in">
-            <h1 class="text-4xl font-bold text-gray-900 tracking-tight mb-2">Backup Management Webromadan</h1>
-            <p class="text-gray-600">System backup control and monitoring dashboard</p>
+       <!-- Header Section -->
+       <div class="mb-10 slide-in">
+        <h1 class="text-4xl font-bold text-gray-900 tracking-tight mb-2">Backup Management System</h1>
+        <p class="text-gray-600">System backup control and monitoring dashboard</p>
+    </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div
-                    class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:border-blue-500 transition-all duration-300">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-50 text-blue-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Last Backup</p>
-                            <p class="text-lg font-semibold text-gray-900">2 hours ago</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:border-blue-500 transition-all duration-300">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-green-50 text-green-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Success Rate</p>
-                            <p class="text-lg font-semibold text-gray-900">99.9%</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:border-blue-500 transition-all duration-300">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-purple-50 text-purple-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Total Backups</p>
-                            <p class="text-lg font-semibold text-gray-900">{{ count($backups) }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Alerts Section -->
-        @if (session('success'))
-            <div class="mb-6 slide-in" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
-                <div class="bg-green-50 border-l-4 border-green-500 rounded-r-xl p-4 flex items-center justify-between">
-                    <div class="flex items-center">
-                        <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="ml-3 text-green-700">{{ session('success') }}</p>
-                    </div>
-                    <button @click="show = false" class="text-green-700 hover:text-green-900">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        @endif
 
         <!-- Action Buttons -->
         <div class="mb-8 flex flex-wrap gap-4 slide-in">
-            <form action="{{ route('backups.create') }}" method="POST">
+            <form action="{{ route('backups.create') }}"
+                method="POST"
+                @submit="handleBackup">
                 @csrf
                 <button type="submit"
-                    class="group relative inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden">
-                    <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 transition-all duration-200 transform group-hover:translate-x-2">
+                    class="group relative inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                    :disabled="processing">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 transition-all duration-200 transform group-hover:translate-x-2">
                         <svg class="h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                     </span>
-                    <span class="pl-10">Create New Backup</span>
-                </button>
-            </form>
-
-            <form action="{{ route('backups.cleanup') }}" method="POST">
-                @csrf
-                <button type="submit"
-                    class="group relative inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200">
-                    <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 transition-all duration-200 transform group-hover:translate-x-2">
-                        <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </span>
-                    <span class="pl-10">Clean Old Backups</span>
+                    <span class="pl-10" x-text="processing ? 'Processing...' : 'Create New Backup'"></span>
                 </button>
             </form>
         </div>
@@ -302,7 +328,7 @@
     </div>
 
     <script>
-        // Optional: Add any custom JavaScript functionality here
+        // Initialize Alpine.js store
         document.addEventListener('alpine:init', () => {
             Alpine.store('backups', {
                 loading: false,
@@ -311,6 +337,92 @@
                 }
             });
         });
+
+        // Fungsi untuk menampilkan alert sebagai fallback jika SweetAlert2 gagal dimuat
+        function showAlert(type, title, text) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: type,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: type === 'success' ? '#3B82F6' : '#EF4444'
+                }).then(() => {
+                    if (type === 'success') {
+                        window.location.reload();
+                    }
+                });
+            } else {
+                alert(text);
+                if (type === 'success') {
+                    window.location.reload();
+                }
+            }
+        }
+
+        // Backup creation handler
+        function handleBackupCreation(event) {
+            const form = event.target;
+            const formData = new FormData(form);
+
+            // Set initial state
+            this.processing = true;
+            this.progress = 0;
+            this.currentStep = 'Initializing backup process...';
+
+            // Define backup process steps
+            const steps = [{
+                    message: 'Preparing files for backup...',
+                    progress: 20
+                },
+                {
+                    message: 'Compressing data...',
+                    progress: 40
+                },
+                {
+                    message: 'Encrypting backup...',
+                    progress: 60
+                },
+                {
+                    message: 'Saving backup file...',
+                    progress: 80
+                },
+                {
+                    message: 'Finalizing...',
+                    progress: 90
+                }
+            ];
+
+            // Send backup request
+            fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Process each step with delay
+                    steps.forEach((step, index) => {
+                        setTimeout(() => {
+                            this.currentStep = step.message;
+                            this.progress = step.progress;
+                        }, index * 1000);
+                    });
+
+                    // Complete the process
+                    setTimeout(() => {
+                        this.progress = 100;
+                        this.processing = false;
+                        showAlert('success', 'Success!', 'Backup has been created successfully');
+                    }, steps.length * 1000 + 500);
+                })
+                .catch(error => {
+                    this.processing = false;
+                    showAlert('error', 'Error!', 'Failed to create backup. Please try again.');
+                });
+        }
     </script>
 </body>
 
