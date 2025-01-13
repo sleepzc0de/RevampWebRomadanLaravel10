@@ -181,6 +181,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        App\Providers\BackupServiceProvider::class,
+
 
         /*
          * Package Service Providers...
@@ -217,7 +219,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'OEmbed' => 'Cohensive\OEmbed\Facades\OEmbed'
-        
+
     ])->toArray(),
 
 ];

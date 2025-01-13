@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\HomeBeController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\Frontend\HomeFeController;
 use App\Http\Controllers\Login\LoginController;
@@ -221,5 +222,16 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         // 2.1.12 LOGIN GAMBAR
         Route::resource('loggambar', LoginController::class);
     });
+});
+
+
+// 3. BACKUP
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+    Route::post('backups', [BackupController::class, 'create'])->name('backups.create');
+    Route::delete('backups/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');
+    Route::get('backups/{filename}/download', [BackupController::class, 'download'])->name('backups.download');
+    Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
 });
 require __DIR__ . '/auth.php';
