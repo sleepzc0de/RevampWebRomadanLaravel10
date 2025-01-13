@@ -259,6 +259,7 @@
                 width: 100%;
             }
         }
+
     </style>
 @endsection
 

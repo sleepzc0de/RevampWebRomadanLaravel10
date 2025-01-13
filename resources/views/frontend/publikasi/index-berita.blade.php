@@ -277,7 +277,7 @@
                 <div class="publikasi-home-sub">The latest industry news, interviews, technologies, and resources.</div>
             </div>
 
-            <form data-action="{{ route('publikasi-index-berita-fe') }}" method="POST" autocomplete="off">
+            <form id="searchForm" data-action="{{ route('publikasi-index-berita-fe') }}" method="POST" autocomplete="off">
                 @csrf
                 <div class="wrap-inputname size12 bo2 bo-rad-10 m-t-3 m-b-23">
                     <input
