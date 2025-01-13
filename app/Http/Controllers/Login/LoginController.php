@@ -93,7 +93,7 @@ class LoginController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'nama_gambar' => 'required|unique:login_gambar',
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:1000',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:10000',
             ]);
 
             //UPLOAD IMAGE
@@ -157,7 +157,7 @@ class LoginController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'nama_gambar' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg|max:1000',
+                'image' => 'image|mimes:jpeg,png,jpg|max:10000',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -167,7 +167,7 @@ class LoginController extends Controller
             ];
             if ($request->hasFile('image')) {
                 $request->validate([
-                    'image' => 'image|mimes:jpeg,png,jpg|max:1000',
+                    'image' => 'image|mimes:jpeg,png,jpg|max:10000',
                 ], [
                     'image.mimes' => 'Gambar hanya diperbolehkaan berekstensi JPEG, JPG, PNG',
                 ]);
