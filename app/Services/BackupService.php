@@ -13,37 +13,32 @@ use ZipArchive;
 class BackupService
 {
     protected $backupPath;
+    protected $isWindows;
 
     public function __construct()
-{
-    $this->backupPath = storage_path('app/backups');
+    {
+        $this->backupPath = storage_path('app/backups');
+        $this->isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 
-    // Check directory permissions
-    if (!file_exists($this->backupPath)) {
-        if (!mkdir($this->backupPath, 0755, true)) {
-            Log::error('Failed to create backup directory', ['path' => $this->backupPath]);
-            throw new \Exception('Failed to create backup directory');
+        if (!file_exists($this->backupPath)) {
+            if (!mkdir($this->backupPath, 0755, true)) {
+                Log::error('Failed to create backup directory', ['path' => $this->backupPath]);
+                throw new \Exception('Failed to create backup directory');
+            }
+        }
+
+        if (!is_writable($this->backupPath)) {
+            Log::error('Backup directory is not writable', ['path' => $this->backupPath]);
+            throw new \Exception('Backup directory is not writable');
         }
     }
-
-    // Verify directory is writable
-    if (!is_writable($this->backupPath)) {
-        Log::error('Backup directory is not writable', ['path' => $this->backupPath]);
-        throw new \Exception('Backup directory is not writable');
-    }
-}
-
 
     public function createBackup(): string
     {
-        if (!$this->testSqlServerConnection()) {
-            throw new \Exception('Cannot establish connection to SQL Server');
-        }
-
         $timestamp = now()->format('Y-m-d_H-i-s');
         $backupFileName = "backup_{$timestamp}.zip";
         $backupFilePath = "{$this->backupPath}/{$backupFileName}";
-        $databaseFileName = "{$timestamp}_database.bak"; // Menggunakan ekstensi .bak untuk SQL Server
+        $databaseFileName = "{$timestamp}_database.sql";
         $databaseFilePath = "{$this->backupPath}/{$databaseFileName}";
 
         try {
@@ -70,7 +65,7 @@ class BackupService
 
             $zip->close();
 
-            // Delete temporary database file after successful zip creation
+            // Delete temporary database file
             if (file_exists($databaseFilePath)) {
                 unlink($databaseFilePath);
             }
@@ -92,82 +87,139 @@ class BackupService
         }
     }
 
-    private function backupDatabase(string $outputPath)
-{
-    try {
-        // Check if sqlcmd exists with full error logging
-        exec('where sqlcmd 2>&1', $output, $returnVar);
-        if ($returnVar !== 0) {
-            Log::error('sqlcmd check failed', ['output' => $output]);
-            throw new \Exception('sqlcmd is not installed or not in PATH: ' . implode("\n", $output));
-        }
+    protected function backupDatabase(string $outputPath)
+    {
+        $connection = config('database.default');
+        $driver = config("database.connections.{$connection}.driver");
 
+        switch ($driver) {
+            case 'sqlsrv':
+                return $this->backupSqlServer($outputPath);
+            case 'mysql':
+                return $this->backupMySql($outputPath);
+            case 'pgsql':
+                return $this->backupPostgres($outputPath);
+            default:
+                throw new \Exception("Database driver {$driver} is not supported for backup");
+        }
+    }
+
+    protected function backupSqlServer(string $outputPath)
+    {
         $server = config('database.connections.sqlsrv.host');
         $port = config('database.connections.sqlsrv.port', '1433');
         $database = config('database.connections.sqlsrv.database');
         $username = config('database.connections.sqlsrv.username');
         $password = config('database.connections.sqlsrv.password');
 
-        // Log connection details (excluding password)
-        Log::info('Attempting database backup', [
-            'server' => $server,
-            'port' => $port,
-            'database' => $database,
-            'outputPath' => $outputPath
-        ]);
+        if ($this->isWindows) {
+            // Windows backup using sqlcmd
+            $serverAddress = str_contains($server, '\\') ? $server : "{$server},{$port}";
+            $command = sprintf(
+                'sqlcmd -S %s -U %s -P %s -Q "BACKUP DATABASE [%s] TO DISK = N\'%s\' WITH FORMAT"',
+                escapeshellarg($serverAddress),
+                escapeshellarg($username),
+                escapeshellarg($password),
+                $database,
+                $outputPath
+            );
+        } else {
+            // Linux backup using PHP SQL queries
+            try {
+                $tables = DB::select("SELECT name FROM sys.tables WHERE type = 'U'");
+                $output = "-- SQL Server Backup Generated " . date('Y-m-d H:i:s') . "\n\n";
 
-        $serverAddress = str_contains($server, '\\') ? $server : "{$server},{$port}";
+                foreach ($tables as $table) {
+                    // Get table creation SQL
+                    $tableName = $table->name;
+                    $createTable = DB::select("SELECT OBJECT_DEFINITION (OBJECT_ID(N'$tableName')) AS CreateTable");
+                    $output .= $createTable[0]->CreateTable . ";\n\n";
 
-        // Add error output redirection to command
-        $command = sprintf(
-            'sqlcmd -S %s -U %s -P %s -Q "BACKUP DATABASE [%s] TO DISK = N\'%s\' WITH FORMAT" 2>&1',
-            escapeshellarg($serverAddress),
-            escapeshellarg($username),
-            escapeshellarg($password),
-            $database,
-            $outputPath
-        );
+                    // Get table data
+                    $rows = DB::table($tableName)->get();
+                    foreach ($rows as $row) {
+                        $columns = implode("','", array_map('addslashes', (array)$row));
+                        $output .= "INSERT INTO [$tableName] VALUES ('$columns');\n";
+                    }
+                    $output .= "\n";
+                }
 
-        // Execute with output capture
-        exec($command, $output, $result);
+                file_put_contents($outputPath, $output);
+                return true;
+            } catch (\Exception $e) {
+                Log::error('Database backup error', ['error' => $e->getMessage()]);
+                throw $e;
+            }
+        }
+    }
 
-        if ($result !== 0) {
-            Log::error('Database backup command failed', [
-                'output' => $output,
-                'exitCode' => $result,
-                'command' => preg_replace('/(-P\s+)[^\s]+/', '$1*****', $command)
-            ]);
-            throw new \Exception('Database backup failed: ' . implode("\n", $output));
+    protected function backupMySql(string $outputPath)
+    {
+        $host = config('database.connections.mysql.host');
+        $port = config('database.connections.mysql.port');
+        $database = config('database.connections.mysql.database');
+        $username = config('database.connections.mysql.username');
+        $password = config('database.connections.mysql.password');
+
+        if ($this->isWindows) {
+            $command = sprintf(
+                'mysqldump -h %s -P %s -u %s -p%s %s > %s',
+                escapeshellarg($host),
+                escapeshellarg($port),
+                escapeshellarg($username),
+                escapeshellarg($password),
+                escapeshellarg($database),
+                escapeshellarg($outputPath)
+            );
+        } else {
+            $command = sprintf(
+                'MYSQL_PWD=%s mysqldump -h %s -P %s -u %s %s > %s',
+                escapeshellarg($password),
+                escapeshellarg($host),
+                escapeshellarg($port),
+                escapeshellarg($username),
+                escapeshellarg($database),
+                escapeshellarg($outputPath)
+            );
+        }
+
+        exec($command, $output, $returnVar);
+        if ($returnVar !== 0) {
+            throw new \Exception('MySQL backup failed');
         }
 
         return true;
-    } catch (\Exception $e) {
-        Log::error('Database backup error', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        throw $e;
     }
-}
 
-    private function zipFiles(Finder $files, string $outputPath)
+    protected function backupPostgres(string $outputPath)
     {
-        $zip = new \ZipArchive();
+        $host = config('database.connections.pgsql.host');
+        $port = config('database.connections.pgsql.port');
+        $database = config('database.connections.pgsql.database');
+        $username = config('database.connections.pgsql.username');
+        $password = config('database.connections.pgsql.password');
 
-        if ($zip->open($outputPath, \ZipArchive::CREATE) === true) {
-            foreach ($files as $file) {
-                $zip->addFile($file->getRealPath(), $file->getRelativePathname());
-            }
-            $zip->close();
-        } else {
-            throw new \Exception('Failed to create ZIP archive.');
+        $command = sprintf(
+            'PGPASSWORD=%s pg_dump -h %s -p %s -U %s -F p %s > %s',
+            escapeshellarg($password),
+            escapeshellarg($host),
+            escapeshellarg($port),
+            escapeshellarg($username),
+            escapeshellarg($database),
+            escapeshellarg($outputPath)
+        );
+
+        exec($command, $output, $returnVar);
+        if ($returnVar !== 0) {
+            throw new \Exception('PostgreSQL backup failed');
         }
+
+        return true;
     }
 
     public function deleteOldBackups(int $days): void
     {
         $files = Storage::files('backups');
-
         foreach ($files as $file) {
             $lastModified = Storage::lastModified($file);
             if (Carbon::createFromTimestamp($lastModified)->diffInDays(now()) > $days) {
@@ -175,47 +227,9 @@ class BackupService
             }
         }
     }
+
     public function cleanOldBackups()
     {
-        $files = Storage::files($this->backupPath);
-        $now = Carbon::now();
-
-        foreach ($files as $file) {
-            $lastModified = Carbon::createFromTimestamp(Storage::lastModified($file));
-            if ($lastModified->diffInDays($now) > 7) {
-                Storage::delete($file);
-            }
-        }
+        $this->deleteOldBackups(7);
     }
-    private function testSqlServerConnection()
-{
-    try {
-        $server = config('database.connections.sqlsrv.host');
-        $port = config('database.connections.sqlsrv.port', '1433');
-        $username = config('database.connections.sqlsrv.username');
-        $password = config('database.connections.sqlsrv.password');
-
-        $serverAddress = str_contains($server, '\\') ? $server : "{$server},{$port}";
-
-        $command = sprintf(
-            'sqlcmd -S %s -U %s -P %s -Q "SELECT @@VERSION"',
-            escapeshellarg($serverAddress),
-            escapeshellarg($username),
-            escapeshellarg($password)
-        );
-
-        exec($command, $output, $result);
-
-        if ($result === 0) {
-            Log::info('SQL Server connection test successful', ['version' => $output[0] ?? 'Unknown']);
-            return true;
-        } else {
-            Log::error('SQL Server connection test failed', ['output' => $output]);
-            return false;
-        }
-    } catch (\Exception $e) {
-        Log::error('SQL Server connection test error', ['error' => $e->getMessage()]);
-        return false;
-    }
-}
 }
