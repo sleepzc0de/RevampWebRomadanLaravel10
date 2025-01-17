@@ -312,6 +312,38 @@
                     @enderror
                 </div>
 
+                <div class="input-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">CAPTCHA</label>
+                    <div class="flex items-center space-x-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+                        <div class="flex-1">
+                            <span class="text-lg font-semibold text-gray-700">
+                                {{ app(App\Services\CaptchaService::class)->createCaptcha() }}
+                            </span>
+                            <p class="text-sm text-gray-500 mt-1">Silakan selesaikan perhitungan di atas</p>
+                        </div>
+                        <button type="button"
+                                class="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                                onclick="window.location.reload()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="text"
+                           name="captcha"
+                           class="input-control @error('captcha') input-error @enderror mt-2"
+                           placeholder="Masukkan jawaban Anda"
+                           required>
+                    @error('captcha')
+                        <p class="error-message">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
                 <button type="submit" class="btn-login">
                     <span>Let's Go!</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

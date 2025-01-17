@@ -46,7 +46,7 @@
 					}
 				})
 			})
-			
+
 
 
 		});
@@ -105,47 +105,60 @@
 									</div>
 									<!-- /EMAIL INPUT -->
 
-									<!-- /ROLE INPUT -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-3">Role <span class="text-danger">*</span></label>
-										<div class="col-lg-9">
-											<select id="role" value="{{ old('role') }}" name="role" class="form-control form-control-select2 select" @error('role') is-invalid @enderror required>
-												<option>--Pilih Role--</option>
-												
-												@foreach ($data['role'] as $item)
-												<option value="{{ $item->id }}" {{ old('role') == $item->id ? 'selected' : null}}>{{$loop->iteration." - ".$item->name}}</option>
-												@endforeach
-												
+                                        <label class="col-form-label col-lg-3">Role <span class="text-danger">*</span></label>
+                                        <div class="col-lg-9">
+                                            <select id="role" name="role" class="form-control form-control-select2 select" required>
+                                                <option value="">--Pilih Role--</option>
+                                                @foreach ($roles as $role)
+                                                    <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
+                                                        {{$loop->iteration}} - {{$role->name}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
 
-											</select>
+                                            @error('role')
+                                                <div class="alert alert-danger mt-2">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
-											<!-- error message untuk judul -->
-											@error('kategori')
-											<div class="alert alert-danger mt-2">
-												{{ $message }}
-											</div>
-											@enderror
-										</div>
-									</div>
-									{{-- /ROLE INPUT --}}
+                                    <div class="row mb-3">
+                                        <label class="col-form-label col-lg-3">Password <span class="text-danger">*</span></label>
+                                        <div class="col-lg-9">
+                                            <input type="password" name="password" class="form-control" required placeholder="Password">
+                                            <small class="form-text text-muted">
+                                                Password harus memiliki minimal 8 karakter dan mengandung kombinasi huruf, angka, dan simbol.
+                                            </small>
+                                        </div>
+                                    </div>
 
-                                    <!-- PASSWORD INPUT -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-3">Password <span class="text-danger">*</span></label>
-										<div class="col-lg-9">
-											<input type="password" name="password" class="form-control" required placeholder="Password">
-										</div>
-									</div>
-									<!-- /PASSWORD INPUT -->
+                                    <div class="row mb-3">
+                                        <label class="col-form-label col-lg-3">Konfirmasi Password <span class="text-danger">*</span></label>
+                                        <div class="col-lg-9">
+                                            <input type="password" name="password_confirmation" class="form-control" required placeholder="Konfirmasi Password">
+                                        </div>
+                                    </div>
 
-                                    <!-- PASSWORD CONFIRM INPUT -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-3">Konfirmasi Password <span class="text-danger">*</span></label>
-										<div class="col-lg-9">
-											<input type="password" name="password_confirmation" class="form-control" required placeholder="Password Konfirmasi">
-										</div>
-									</div>
-									<!-- /PASSWORD CONFIRM INPUT -->
+                                    @error('name')
+                                        <div class="alert alert-danger mt-2">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+
+                                    @error('email')
+                                        <div class="alert alert-danger mt-2">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+
+                                    @error('password')
+                                        <div class="alert alert-danger mt-2">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
 
 								</div>
 						</div>

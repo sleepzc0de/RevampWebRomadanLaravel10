@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Backend\HomeBeController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\File\FileController;
@@ -38,6 +39,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::middleware(['throttle:6,1'])->group(function () {
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+        ->name('login');
+});
 // 1. FRONT END
 Route::group(
     ['prefix' => '/'],

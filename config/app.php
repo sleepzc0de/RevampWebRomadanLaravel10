@@ -182,6 +182,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         App\Providers\BackupServiceProvider::class,
+        App\Providers\CaptchaServiceProvider::class,
+
 
 
         /*

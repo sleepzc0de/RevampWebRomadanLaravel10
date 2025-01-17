@@ -4,222 +4,225 @@ namespace App\Http\Controllers\UserManajemen;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Http\Requests\UserCreateRequest;
+use App\Http\Requests\UserUpdateRequest;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
 
-        // $role_cek = User::role('HUMAS_PENATAUSAHAAN')->get();
-        // dd($role_cek);
-        $query = User::select('*');
-        if (request()->ajax()) {
-            return datatables()->of($query)
-                ->addColumn('role_name', function ($query) {
-                    return $query->roles->pluck('name')->implode(', ');
-                })
-                ->addColumn('action', 'kondisibaik.action')
-                ->addColumn('opsi', function ($query) {
-                    $encryptedId = Crypt::encrypt($query->id);
-                    $preview = route('users.show', $encryptedId);
-                    $edit = route('users.edit', $encryptedId);
-                    $hapus = route('users.destroy', $encryptedId);
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
+public function index()
+{
+    $query = User::select('*');
+    if (request()->ajax()) {
+        return datatables()->of($query)
+            ->addColumn('role_name', function ($query) {
+                return $query->roles->pluck('name')->implode(', ');
+            })
+            ->addColumn('opsi', function ($query) {
+                $encryptedId = Crypt::encrypt($query->id);
+                $preview = route('users.show', $encryptedId);
+                $edit = route('users.edit', $encryptedId);
+                $hapus = route('users.destroy', $encryptedId);
 
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $preview . '" class="dropdown-item">
-														<i class="ph-detective me-2"></i>
-														Preview
-													</a>
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
-                })
-                ->filterColumn('role_name', function ($query, $keyword) {
-                    $query->whereHas('roles', function ($q) use ($keyword) {
-                        $q->where('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->rawColumns(['action', 'opsi', 'role_name'])
-                ->addIndexColumn()
-                ->make(true);
-        }
-        return view('backend.users.index');
+                // Direct HTML rendering instead of using component
+                return '<div class="d-inline-flex">
+                    <div class="dropdown">
+                        <a href="#" class="text-body" data-bs-toggle="dropdown">
+                            <i class="ph-list"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a href="' . $preview . '" class="dropdown-item">
+                                <i class="ph-detective me-2"></i>
+                                Preview
+                            </a>
+                            <a href="' . $edit . '" class="dropdown-item">
+                                <i class="ph-note-pencil me-2"></i>
+                                Edit
+                            </a>
+                            <form action="' . $hapus . '" method="POST">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="dropdown-item">
+                                    <i class="ph-trash me-2"></i>
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>';
+            })
+            ->filterColumn('role_name', function ($query, $keyword) {
+                $query->whereHas('roles', function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%');
+                });
+            })
+            ->rawColumns(['opsi', 'role_name'])
+            ->addIndexColumn()
+            ->make(true);
     }
+    return view('backend.users.index');
+}
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // $user = User::find();
-        $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
-        $data = ['role' => $role];
-        return view('backend.users.tambah_user', compact('data'));
+public function create()
+{
+    $roles = Role::whereIn('name', [
+        'REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA',
+        'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN',
+        'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN',
+        'TAMU'
+    ])->get();
+
+    return view('backend.users.tambah_user', compact('roles'));
+}
+
+public function store(UserCreateRequest $request)
+{
+    try {
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'username' => Str::slug($request->name) . '-' . Str::random(6),
+            'password' => Hash::make($request->password, [
+                'rounds' => 12,  // Increased rounds for better security
+                'memory' => 1024,
+                'time' => 2,
+                'threads' => 2,
+            ]),
+        ]);
+
+        $user->assignRole($request->role);
+
+        return redirect()->back()->with(['success' => 'Data User Berhasil Ditambahkan']);
+    } catch (Exception $e) {
+        report($e);
+        return redirect()->back()->with([
+            'failed' => 'Terjadi kesalahan sistem. Silakan coba lagi nanti.'
+        ]);
     }
+}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function edit($id)
     {
-
-
         try {
-            //code...
-            $request->validate([
-                // 'username' => 'required|unique:users',
-                // 'nip' => 'required|unique:users|max:18',
-                'name' => 'required',
-                'email' => 'required|unique:users',
-                'password' => 'required|confirmed|min:10'
+            // Decrypt the ID
+            $decryptedId = Crypt::decrypt($id);
+            $user = User::findOrFail($decryptedId);
+
+            $roles = Role::whereIn('name', [
+                'REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA',
+                'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN',
+                'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN',
+                'TAMU'
+            ])->get();
+
+            $data = [
+                'user' => $user,
+                'role' => $roles,
+                'olduser' => $user->roles->first(),
+                'encrypted_id' => $id // Pass the encrypted ID back to view
+            ];
+
+            return view('backend.users.edit_user', compact('data'));
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            report($e);
+            return redirect()->route('users.index')->with([
+                'failed' => 'ID User tidak valid.'
             ]);
-
-            $user =  User::create([
-                // 'username' => $request->username,
-                // 'nip' => $request->nip,
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-
-            $user->assignRole($request->role);
-
-
-
-            // return redirect()->back()->with(['success' => true, 'message' => 'Data User Berhasil Ditambahkan']);
-
-            return redirect()->back()->with(['success' => 'Data User Berhasil Ditambahkan']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Ada Kesalahan Sistem! error :' . $e->getMessage()]);
-            //throw $th;
+            report($e);
+            return redirect()->route('users.index')->with([
+                'failed' => 'Terjadi kesalahan saat mengambil data user.'
+            ]);
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($encryptedId)
+    public function update(UserUpdateRequest $request, $id)
     {
-        $id = Crypt::decrypt($encryptedId);
-        $showdata = User::findOrFail($id);
-        // $showdata = User::findorFail($id);
-        // dd($userdata);
-        return view('backend.users.show_user', compact('showdata'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($encryptedId)
-    {
-        $id = Crypt::decrypt($encryptedId);
-        $userdata = User::findorFail($id);
-        // dd($userdata);
-        // $role = Role::whereIn('name', ['REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA', 'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN', 'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN', 'HUMAS_PENGADAAN', 'TAMU'])->get();
-        $role = Role::all();
-
-        $olduser = $userdata->roles->first();
-        $data = ['role' => $role, 'olduser' => $olduser];
-
-        return view('backend.users.edit_user', compact('userdata', 'data'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $encryptedId)
-    {
-        $id = Crypt::decrypt($encryptedId);
         try {
-            $request->validate([
-                'name' => 'required',
-                'email' => 'required|email',
-                'role' => 'required|exists:roles,id',
-            ]);
+            // Decrypt the ID
+            $decryptedId = Crypt::decrypt($id);
+            $user = User::findOrFail($decryptedId);
 
-            $user = User::findorFail($id);
-
-            // $user->name = $request->name;
-
-
-            // $user->username = $request->username;
-            // $user->nip = $request->nip;
+            // Update basic info
             $user->name = $request->name;
             $user->email = $request->email;
 
-            if ($request->password != "") {
+            // Update password if provided
+            if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
             }
 
+            $user->save();
+
+            // Update role if provided and ensure it's treated as integer
             if ($request->has('role')) {
-                $role = Role::findById($request->role); // Ambil role berdasarkan ID
-                $user->syncRoles($role); // Sinkronisasi role user
+                $roleId = (int) $request->role;
+                $user->syncRoles([$roleId]);
             }
 
-            $user->update();
-
-            return redirect()->route('users.index')->with(['success' => 'User Berhasil di Update !']);
+            return redirect()->route('users.index')->with([
+                'success' => 'User berhasil diperbarui!'
+            ]);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            report($e);
+            return redirect()->route('users.index')->with([
+                'failed' => 'ID User tidak valid.'
+            ]);
         } catch (Exception $e) {
-            return redirect()->route('users.index')->with(['failed' => 'User Gagal di Update. error :' . $e->getMessage()]);
+            report($e);
+            return redirect()->route('users.index')->with([
+                'failed' => 'Terjadi kesalahan sistem. Silahkan coba lagi nanti.'
+            ]);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($encryptedId)
-    {
-        $id = Crypt::decrypt($encryptedId);
-        $user = User::findorFail($id);
+    public function destroy($id)
+{
+    try {
+        // Decrypt the ID
+        $decryptedId = Crypt::decrypt($id);
+        $user = User::findOrFail($decryptedId);
 
-        if ($user) {
-            $user->delete();
-            return redirect()->back()->with(['success' => 'User Berhasil di Hapus !']);
-        } else {
-            return redirect()->back()->with(['failed' => 'User Tidak Ditemukan']);
+        // Prevent self-deletion
+        if (auth()->id() === $user->id) {
+            return redirect()->route('users.index')->with([
+                'failed' => 'Anda tidak dapat menghapus akun Anda sendiri.'
+            ]);
         }
+
+        // Remove role associations first
+        $user->roles()->detach();
+
+        // Delete the user
+        $user->delete();
+
+        return redirect()->route('users.index')->with([
+            'success' => 'User berhasil dihapus!'
+        ]);
+
+    } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+        report($e);
+        return redirect()->route('users.index')->with([
+            'failed' => 'ID User tidak valid.'
+        ]);
+    } catch (Exception $e) {
+        report($e);
+        return redirect()->route('users.index')->with([
+            'failed' => 'Terjadi kesalahan sistem. Silakan coba lagi nanti.'
+        ]);
+    }
+}
+    private function generateActionButtons($encryptedId): string
+    {
+        $preview = route('users.show', $encryptedId);
+        $edit = route('users.edit', $encryptedId);
+        $hapus = route('users.destroy', $encryptedId);
+
+        return view('components.action-buttons', compact('preview', 'edit', 'hapus'))->render();
     }
 }
