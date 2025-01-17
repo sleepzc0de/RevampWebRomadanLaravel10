@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware(['throttle:6,1'])->group(function () {
+Route::middleware(['web','throttle:6,1'])->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->name('login');
 });
