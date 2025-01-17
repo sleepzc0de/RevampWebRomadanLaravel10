@@ -72,7 +72,7 @@
                             <a href="{{route('peraturan.index')}}" class="nav-link {{ Request::routeIs('peraturan.*') ? 'active' : '' }}">Peraturan</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('kategori.index')}}" class="nav-link {{ Request::routeIs('kategori.*') ? 'active' : '' }}">Pedoman</a>
+                            <a href="{{route('kategori.index')}}" class="nav-link {{ Request::routeIs('kategori.*') ? 'active' : '' }}">Pedoman <i class="text-warning">(soon!)</i></a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('aplikasi.index')}}" class="nav-link {{ Request::routeIs('aplikasi.*') ? 'active' : '' }}">Link Aplikasi</a>

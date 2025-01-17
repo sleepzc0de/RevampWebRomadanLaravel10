@@ -128,112 +128,109 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
     // 2.1 INTERFACE BACKEND
     Route::prefix('/romadan-interface')->group(function () {
 
-        // 2.1.1 PENGEMBANG
+         // Routes untuk semua role (termasuk TAMU)
+         Route::get('/dashboard', [HomeBeController::class, 'index'])->name('home');
 
-        Route::prefix('/tim')->group(function () {
-            Route::resource('pengembang', PengembangController::class);
-        });
+         // ========== ROUTES UNTUK ADMINISTRATOR ==========
+         Route::middleware(['role:ADMINISTRATOR'])->group(function () {
+             // 2.1.1 PENGEMBANG
+             Route::prefix('/tim')->group(function () {
+                 Route::resource('pengembang', PengembangController::class);
+             });
 
-        // 2.1.2 HOME
-        Route::get('/dashboard', [HomeBeController::class, 'index'])->name('home');
+             // 2.1.3 USERS
+             Route::resource('users', UserController::class);
 
-        // 2.1.3 USERS
-        Route::resource('users', UserController::class);
+             // 2.1.5 FILE
+             Route::resource('file', FileController::class);
+             Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
+             Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
+             Route::delete('/{file}/force-delete', [FileController::class, 'forceDeleteSampah'])->name('file.force-delete-sampah');
+             Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
 
-        // 2.1.4 PUBLIKASI
-        Route::resource('publikasi', PublikasiController::class);
+             // 2.1.7 MENU LAYANAN
+             Route::prefix('/layanan')->group(function () {
+                 Route::resource('layanan', LayananController::class);
+             });
 
-        Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
-        Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
-        Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
-        Route::post('/restore-all-publikasi', [PublikasiController::class, 'restoreAllPublikasi'])->name('publikasi.restore-all');
+             // 2.1.8 MENU INFORMASI PUBLIK
+             Route::prefix('/informasi-publik')->group(function () {
+                 // 2.1.8.1 INFORMASI PUBLIK
+                 Route::resource('informasi-publik', InformasiPublikController::class);
+                 Route::get('/index-home', [InformasiPublikController::class, 'indexHome'])->name('informasi-publik.index-home');
+                 Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
+                 Route::get('/{infopub}/edit-home', [InformasiPublikController::class, 'edit_home'])->name('informasi-publik.edit-home');
+                 Route::post('/create-home', [InformasiPublikController::class, 'store_home'])->name('informasi-publik.store-home');
+                 Route::put('/{infopub}/edit-home', [InformasiPublikController::class, 'update_home'])->name('informasi-publik.update-home');
+                 Route::delete('/{infopub}/informasi-publik-home', [InformasiPublikController::class, 'delete_home'])->name('informasi-publik.delete-home');
 
-        // 2.1.5 FILE
-        Route::resource('file', FileController::class);
-        Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
-        Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
-        Route::delete('/{file}/force-delete', [FileController::class, 'forceDeleteSampah'])->name('file.force-delete-sampah');
-        Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
+                 // 2.1.8.2 PERATURAN
+                 Route::resource('peraturan', PeraturanController::class);
 
+                 // 2.1.8.3 PORTAL APLIKASI
+                 Route::resource('aplikasi', AplikasiController::class);
+             });
 
-        // 2.1.6 MENU PROFILE
-        Route::prefix('/profile')->group(function () {
-            // 2.1.6.1 TENTANG
-            Route::resource('tentang', TentangController::class);
-            // 2.1.6.2 VISI DAN MISI
-            Route::resource('visi-misi', VisiMisiController::class);
-            // 2.1.6.3 SEJARAH
-            Route::resource('sejarah', SejarahController::class);
-            // 2.1.6.4 STRUKTUR ORGANISASI
-            Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
-        });
+             // 2.1.11 MEDSOS
+             Route::resource('medsos', MedsosController::class);
 
-        // 2.1.7 MENU LAYANAN
-        Route::prefix('/layanan')->group(function () {
-            // 2.1.7.1LAYANAN
-            Route::resource('layanan', LayananController::class);
-        });
+             // 2.1.12 LOGIN GAMBAR
+             Route::resource('loggambar', LoginController::class);
+         });
 
+         // ========== ROUTES UNTUK REDAKTUR & EDITOR & ADMINISTRATOR ==========
+         Route::middleware(['role:ADMINISTRATOR|REDAKTUR|EDITOR'])->group(function () {
+             // 2.1.6 MENU PROFILE
+             Route::prefix('/profile')->group(function () {
+                 // 2.1.6.1 TENTANG
+                 Route::resource('tentang', TentangController::class);
+                 // 2.1.6.2 VISI DAN MISI
+                 Route::resource('visi-misi', VisiMisiController::class);
+                 // 2.1.6.3 SEJARAH
+                 Route::resource('sejarah', SejarahController::class);
+                 // 2.1.6.4 STRUKTUR ORGANISASI
+                 Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
+             });
 
-        // 2.1.8 MENU INFORMASI PUBLIK
-        Route::prefix('/informasi-publik')->group(function () {
+             // 2.1.9 MENU FAQ
+             Route::prefix('/faq')->group(function () {
+                 Route::resource('faq', FAQController::class);
+             });
+         });
 
-            //2.1.8.1 INFORMASI PUBLIK
-            Route::resource('informasi-publik', InformasiPublikController::class);
-            Route::get('/index-home', [InformasiPublikController::class, 'indexHome'])->name('informasi-publik.index-home');
-            Route::get('/create-home', [InformasiPublikController::class, 'create_home'])->name('informasi-publik.create-home');
-            Route::get('/{infopub}/edit-home', [InformasiPublikController::class, 'edit_home'])->name('informasi-publik.edit-home');
-            Route::post('/create-home', [InformasiPublikController::class, 'store_home'])->name('informasi-publik.store-home');
-            Route::put('/{infopub}/edit-home', [InformasiPublikController::class, 'update_home'])->name('informasi-publik.update-home');
-            Route::delete('/{infopub}/informasi-publik-home', [InformasiPublikController::class, 'delete_home'])->name('informasi-publik.delete-home');
+         // ========== ROUTES UNTUK REDAKTUR & ADMINISTRATOR ==========
+         Route::middleware(['role:ADMINISTRATOR|REDAKTUR'])->group(function () {
+             // 2.1.10 REFERENSI
+             Route::prefix('/referensi')->group(function () {
+                 // 2.1.10.1 REF KATEGORI
+                 Route::resource('kategori', RefKategoriController::class);
+                 // 2.1.10.2 REF STATUS
+                 Route::resource('status', RefStatusController::class);
+                 // 2.1.10.3 REF TIPE
+                 Route::resource('tipe', RefTipeController::class);
+                 // 2.1.10.4 REF JENIS PERATURAN
+                 Route::resource('jenis-peraturan', RefJenisPeraturanController::class);
+                 // 2.1.10.5 REF STATUS PERATURAN
+                 Route::resource('status-peraturan', RefPeraturanStatusController::class);
+             });
+         });
 
-            // 2.1.8.2 PERATURAN BACKEND
-            Route::resource('peraturan', PeraturanController::class);
-
-            // 2.1.8.3 PORTAL APLIKASI BACKEND
-            Route::resource('aplikasi', AplikasiController::class);
-        });
-
-
-        // 2.1.9 MENU FAQ
-
-        Route::prefix('/faq')->group(function () {
-            // 2.1.9.1 FAQ
-            Route::resource('faq', FAQController::class);
-        });
-
-        // 2.1.10 REFERENSI
-        Route::prefix('/referensi')->group(function () {
-                // 2.1.10.1 REF KATEGORI
-            Route::resource('kategori', RefKategoriController::class);
-
-                // 2.1.10.2 REF STATUS
-            Route::resource('status', RefStatusController::class);
-
-                // 2.1.10.3 REF TIPE
-            Route::resource('tipe', RefTipeController::class);
-
-                // 2.1.10.4 REF JENIS PERATURAN
-            Route::resource('jenis-peraturan', RefJenisPeraturanController::class);
-
-                // 2.1.10.5 REF STATUS PERATURAN
-            Route::resource('status-peraturan', RefPeraturanStatusController::class);
-        });
-
-
-
-        // 2.1.11 MEDSOS
-        Route::resource('medsos', MedsosController::class);
-
-        // 2.1.12 LOGIN GAMBAR
-        Route::resource('loggambar', LoginController::class);
+         // ========== ROUTES UNTUK REDAKTUR & EDITOR & ADMINISTRATOR & HUMAS_* ==========
+         Route::middleware(['role:ADMINISTRATOR|REDAKTUR|EDITOR|HUMAS_*'])->group(function () {
+             // 2.1.4 PUBLIKASI
+             Route::resource('publikasi', PublikasiController::class);
+             Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
+             Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
+             Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
+             Route::post('/restore-all-publikasi', [PublikasiController::class, 'restoreAllPublikasi'])->name('publikasi.restore-all');
+         });
     });
 });
 
 
 // 3. BACKUP
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
     Route::post('backups', [BackupController::class, 'create'])->name('backups.create');
     Route::delete('backups/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');

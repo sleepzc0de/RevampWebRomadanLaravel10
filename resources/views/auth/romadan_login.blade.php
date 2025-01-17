@@ -329,11 +329,25 @@
                             </svg>
                         </button>
                     </div>
-                    <input type="text"
-                           name="captcha"
-                           class="input-control @error('captcha') input-error @enderror mt-2"
-                           placeholder="Masukkan jawaban Anda"
-                           required>
+                    <div class="relative">
+                        <span class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </span>
+                        <input type="text"
+                               name="captcha"
+                               class="input-control @error('captcha') input-error @enderror mt-2"
+                               placeholder="Masukkan jawaban Anda"
+                               required>
+                        @error('captcha')
+                        <span class="input-icon-error">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        @enderror
+                    </div>
                     @error('captcha')
                         <p class="error-message">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
