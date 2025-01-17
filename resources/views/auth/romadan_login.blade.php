@@ -382,5 +382,15 @@
     }
 });
     </script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').content);
+            console.log('Form Token:', document.querySelector('input[name="_token"]').value);
+
+            this.submit();
+        });
+        </script>
 </body>
 </html>
