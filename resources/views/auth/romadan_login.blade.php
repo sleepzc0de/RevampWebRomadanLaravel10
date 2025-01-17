@@ -5,6 +5,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Kementerian Keuangan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
         .login-container {
@@ -250,6 +251,7 @@
 
             <form method="POST" action="{{ route('login') }}" class="space-y-6">
                 @csrf
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="input-group">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <div class="relative">
@@ -373,5 +375,12 @@
             </div>
         </div>
     </div>
+    <script>
+        $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+    </script>
 </body>
 </html>
