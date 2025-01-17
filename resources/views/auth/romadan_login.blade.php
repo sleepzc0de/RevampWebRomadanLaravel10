@@ -384,13 +384,18 @@
     </script>
     <script>
         document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
+    // Remove the e.preventDefault() since it's not needed
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').content);
-            console.log('Form Token:', document.querySelector('input[name="_token"]').value);
-
-            this.submit();
-        });
-        </script>
+    // Add the token to your form if it doesn't exist
+    if (!this.querySelector('input[name="_token"]')) {
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '_token';
+        tokenInput.value = token;
+        this.appendChild(tokenInput);
+    }
+});
+    </script>
 </body>
 </html>
