@@ -11,6 +11,9 @@ class EncryptCookies extends Middleware
      *
      * @var array<int, string>
      */
+
+    protected $httpOnly = true;
+
     protected $except = [
         //
     ];
