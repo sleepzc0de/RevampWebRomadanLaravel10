@@ -40,10 +40,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-// Route::middleware(['web','throttle:6,1'])->group(function () {
-//     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-//         ->name('login');
-// });
+Route::middleware(['web','throttle:6,1'])->group(function () {
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+        ->name('login');
+});
 
 // 1. FRONT END
 Route::group(
