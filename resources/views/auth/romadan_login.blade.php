@@ -243,7 +243,7 @@
 
         <div class="login-card p-8">
             <div class="title-section">
-                <img src="/webromadan/fe/images/romadan/logo_3.png" alt="Logo Kemenkeu" class="logo-kemenkeu mx-auto mb-4">
+                <img src="{{asset('webromadan/fe/images/romadan/logo_3.png')}}" alt="Logo Kemenkeu" class="logo-kemenkeu mx-auto mb-4">
             </div>
 
 
