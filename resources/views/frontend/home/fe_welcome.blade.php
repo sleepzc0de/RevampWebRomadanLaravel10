@@ -3,7 +3,7 @@
 		<div class="container">
 			<div class="row">
 				@forelse ($tentang as $item)
-				
+
 
 				<div class="col-md-6 p-b-30">
 					<div class="wrap-pic-welcome size2 bo-rad-10 hov-img-zoom m-l-r-auto">
@@ -25,25 +25,25 @@
 								aria-hidden="true"></i>
 							</a>
 						</div>
-						
-											
+
+
 					</div>
 				</div>
 
 				@empty
-				
-                  <div class="container">   
+
+                  <div class="container">
 					<div class="title-section-ourmenu t-center m-b-22">
 					<h5 class="romadan-berita m-t-2">
 						Tentang Kami
 					</h5>
-				</div>                      
+				</div>
 				<h5 class="romadan-faq m-t-2">
 					Tentang Kami Kosong !
 				</h5>
 				  </div>
-                                
-							
+
+
 				@endforelse
 			</div>
 		</div>

@@ -61,9 +61,9 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.0/css/animsition.min.css" integrity="sha512-PhW416ZWZBw30eOTHRTNX+Z/14dZVYx13glqBSSFeeLAQGZP7JUCzbWt//ZbB+iaGJ2ugphHN7fH+ybXtGPVVg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/util.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/main.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/util.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/main.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan.css')}}">
 
 
 <!--===============================================================================================-->
@@ -126,10 +126,12 @@
 	<script type="text/javascript" src="{{asset('frontend_romadan_web/js/slick-custom.js')}}"></script>
 
 <!--===============================================================================================-->
-	<script type="text/javascript" src="{{asset('frontend_romadan_web/vendor/parallax100/parallax100.js')}}"></script>
-	<script type="text/javascript">
+<script src="{{asset('frontend_romadan_web/vendor/parallax100/parallax100.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
         $('.parallax100').parallax100();
-	</script>
+    });
+</script>
 <!--===============================================================================================-->
 	<script type="text/javascript" src="{{asset('frontend_romadan_web/vendor/countdowntime/countdowntime.js')}}"></script>
 <!--===============================================================================================-->

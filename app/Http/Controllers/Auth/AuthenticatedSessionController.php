@@ -37,32 +37,30 @@ class AuthenticatedSessionController extends Controller
     //     return redirect()->intended(RouteServiceProvider::HOME);
     // }
     public function store(LoginRequest $request): RedirectResponse
-    {
-        try {
-            Log::info('Login attempt', ['email' => $request->email]);
+{
+    try {
+        Log::info('Login attempt start', ['email' => $request->email]);
 
-            $request->authenticate();
-
-            $request->session()->regenerate();
-
-            Log::info('Login successful', ['email' => $request->email]);
-
-            return redirect()->intended(RouteServiceProvider::HOME);
-
-        } catch (ValidationException $e) {
-            Log::error('Login validation failed', [
-                'email' => $request->email,
-                'errors' => $e->errors()
+        if (!Auth::attempt($this->only('email', 'password'))) {
+            Log::error('Authentication failed', ['email' => $request->email]);
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
             ]);
-            throw $e;
-        } catch (\Exception $e) {
-            Log::error('Login error', [
-                'email' => $request->email,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
         }
+
+        $request->session()->regenerate();
+        Log::info('Login successful', ['email' => $request->email, 'user_id' => Auth::id()]);
+
+        return redirect()->intended(RouteServiceProvider::HOME);
+    } catch (\Exception $e) {
+        Log::error('Login error', [
+            'email' => $request->email,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        throw $e;
     }
+}
 
 
     /**
