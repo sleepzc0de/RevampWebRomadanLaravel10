@@ -21,7 +21,7 @@
         <!-- Main navigation -->
         <div class="sidebar-section">
             <ul class="nav nav-sidebar" data-nav-type="accordion">
-                <!-- Main - Accessible by all roles -->
+                <!-- Main -->
                 <li class="nav-item-header">
                     <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Backend</div>
                     <i class="ph-dots-three sidebar-resize-show"></i>
@@ -33,8 +33,7 @@
                     </a>
                 </li>
 
-                <!-- Profile - For ADMINISTRATOR, REDAKTUR, EDITOR -->
-                @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR']))
+                <!-- Profile -->
                 <li class="nav-item nav-item-submenu {{ Request::is('backend/romadan-interface/profile/*') ? 'nav-item-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="ph-github-logo"></i>
@@ -53,17 +52,13 @@
                         <li class="nav-item">
                             <a href="{{route('struktur-organisasi.index')}}" class="nav-link {{ Request::routeIs('struktur-organisasi.*') ? 'active' : '' }}">Struktur Organisasi</a>
                         </li>
-                        @role('ADMINISTRATOR')
                         <li class="nav-item">
                             <a href="{{route('layanan.index')}}" class="nav-link {{ Request::routeIs('layanan.*') ? 'active' : '' }}">Layanan</a>
                         </li>
-                        @endrole
                     </ul>
                 </li>
-                @endif
 
-                <!-- Informasi Publik - For ADMINISTRATOR only -->
-                @role('ADMINISTRATOR')
+                <!-- Informasi Publik -->
                 <li class="nav-item nav-item-submenu {{ Request::is('backend/romadan-interface/informasi-publik/*') ? 'nav-item-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="ph-squares-four"></i>
@@ -77,14 +72,15 @@
                             <a href="{{route('peraturan.index')}}" class="nav-link {{ Request::routeIs('peraturan.*') ? 'active' : '' }}">Peraturan</a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{route('kategori.index')}}" class="nav-link {{ Request::routeIs('kategori.*') ? 'active' : '' }}">Pedoman <i class="text-warning">(soon!)</i></a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route('aplikasi.index')}}" class="nav-link {{ Request::routeIs('aplikasi.*') ? 'active' : '' }}">Link Aplikasi</a>
                         </li>
                     </ul>
                 </li>
-                @endrole
 
-                <!-- Publikasi - For ADMINISTRATOR, REDAKTUR, EDITOR, HUMAS_* -->
-                @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR']) || str_starts_with(auth()->user()->roles->first()->name, 'HUMAS_'))
+                <!-- Publikasi -->
                 <li class="nav-item nav-item-submenu {{ Request::is('backend/romadan-interface/publikasi*') ? 'nav-item-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="ph-mask-happy"></i>
@@ -102,20 +98,16 @@
                         </li>
                     </ul>
                 </li>
-                @endif
 
-                <!-- FAQ - For ADMINISTRATOR, REDAKTUR, EDITOR -->
-                @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR']))
+                <!-- FAQ -->
                 <li class="nav-item">
                     <a href="{{route('faq.index')}}" class="nav-link {{ Request::routeIs('faq.*') ? 'active' : '' }}">
                         <i class="ph-balloon"></i>
                         <span>FAQ</span>
                     </a>
                 </li>
-                @endif
 
-                <!-- Referensi - For ADMINISTRATOR, REDAKTUR -->
-                @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR']))
+                <!-- Referensi -->
                 <li class="nav-item nav-item-submenu {{ Request::is('backend/romadan-interface/referensi/*') ? 'nav-item-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="ph-slack-logo"></i>
@@ -139,10 +131,8 @@
                         </li>
                     </ul>
                 </li>
-                @endif
 
-                <!-- Interface section - For ADMINISTRATOR only -->
-                @role('ADMINISTRATOR')
+                <!-- Interface -->
                 <li class="nav-item-header">
                     <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">Frontend</div>
                     <i class="ph-dots-three sidebar-resize-show"></i>
@@ -162,7 +152,7 @@
                     </ul>
                 </li>
 
-                <!-- User Management section -->
+                <!-- User Management -->
                 <li class="nav-item-header">
                     <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">User Management</div>
                     <i class="ph-dots-three sidebar-resize-show"></i>
@@ -179,7 +169,7 @@
                     </ul>
                 </li>
 
-                <!-- Tim Pengembang section -->
+                <!-- Tim Pengembang -->
                 <li class="nav-item-header">
                     <div class="text-uppercase fs-sm lh-sm opacity-50 sidebar-resize-hide">EXTRAS</div>
                     <i class="ph-dots-three sidebar-resize-show"></i>
@@ -190,7 +180,6 @@
                         <span>Tim Pengembang</span>
                     </a>
                 </li>
-                @endrole
             </ul>
         </div>
         <!-- /main navigation -->
