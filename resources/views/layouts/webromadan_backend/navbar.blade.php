@@ -20,7 +20,7 @@
                      <i class="ph-magnifying-glass"></i>
                  </a>
              </li>
-         </ul> 
+         </ul>
 
 
          <ul class="nav flex-row justify-content-end order-1 order-lg-2">
@@ -34,16 +34,16 @@
                  </a>
 
                  <div class="dropdown-menu dropdown-menu-end">
-                     <a href="#" class="dropdown-item">
+                     {{-- <a href="#" class="dropdown-item">
                          <i class="ph-user-circle me-2"></i>
                          My profile
                      </a>
-                     <div class="dropdown-divider"></div>
+                     <div class="dropdown-divider"></div> --}}
                      <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="dropdown-item">  <i class="ph-sign-out me-2"></i> Logout</button>
                     </form>
-                    
+
                  </div>
              </li>
          </ul>

@@ -47,7 +47,7 @@ const DatatableBasic = function() {
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            columnDefs: [{ 
+            columnDefs: [{
                 orderable: false,
                 width: 100,
                 targets: [0]
@@ -58,7 +58,7 @@ const DatatableBasic = function() {
                 searchPlaceholder: 'Cari...',
                 lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
                 paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' },
-             
+
             },
         });
 
@@ -99,12 +99,12 @@ const DatatableBasic = function() {
             // {data: 'action', name: 'action', orderable: false, searchable:false},
             ],
             order: [[0, 'asc']],
-            buttons: {        
+            buttons: {
                 dom:{
                     button: {
                         className: ''
                     },
-                }, 
+                },
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -112,7 +112,7 @@ const DatatableBasic = function() {
                         text: '<i class="far fa-file-excel me-2"></i> Excel',
                         exportOptions: {
                             columns: ':visible',
-                            
+
                         }
                     },
                     // {
@@ -180,9 +180,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="card bg-white text-dark" style="background-image: url({{asset('webromadan/be/images/backgrounds/panel_bg.png')}}); background-size: contain;">
                                             <div class="card-body text-justify">
                                                 <div class="card-img-actions d-inline-block mb-3">
-                                                    
-                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i> 
-                                                    
+
+                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i>
+
                                                 </div>
 
                                                 <h2 class="mb-0">{{$data['jumlah_artikel']}}</h2>
@@ -195,9 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="card bg-white text-dark" style="background-image: url({{asset('webromadan/be/images/backgrounds/panel_bg.png')}}); background-size: contain;">
                                             <div class="card-body text-justify">
                                                 <div class="card-img-actions d-inline-block mb-3">
-                                                    
-                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i> 
-                                                    
+
+                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i>
+
                                                 </div>
 
                                                 <h2 class="mb-0">{{$data['jumlah_berita']}}</h2>
@@ -212,9 +212,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="card bg-white text-dark" style="background-image: url({{asset('webromadan/be/images/backgrounds/panel_bg.png')}}); background-size: contain;">
                                             <div class="card-body text-justify">
                                                 <div class="card-img-actions d-inline-block mb-3">
-                                                    
-                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i> 
-                                                    
+
+                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i>
+
                                                 </div>
 
                                                 <h2 class="mb-0">{{$data['jumlah_warta']}}</h2>
@@ -227,9 +227,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="card bg-white text-dark" style="background-image: url({{asset('webromadan/be/images/backgrounds/panel_bg.png')}}); background-size: contain;">
                                             <div class="card-body text-justify">
                                                 <div class="card-img-actions d-inline-block mb-3">
-                                                    
-                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i> 
-                                                    
+
+                                                    <i class="ph-bell-simple-slash ph-2x me-3"></i>
+
                                                 </div>
 
                                                 <h2 class="mb-0">{{$data['jumlah_peraturan']}}</h2>
@@ -248,11 +248,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="btn-group d-flex py-1">
                     {{-- <a href="{{route('kegiatan.create')}}" class="btn btn-secondary"></i>Kegiatan</a> --}}
                     <a href="{{route('faq.create')}}" class="btn btn-secondary"></i>FAQ</a>
+                    @role('ADMINISTRATOR')
                     <a href="{{route('users.create')}}" class="btn btn-secondary"></i>User</a>
+                    @endrole
                 </div>
 
             </div>
-            
+
     </div>
     <div class="col-lg-8">
         <!-- Basic datatable -->
@@ -271,13 +273,13 @@ document.addEventListener('DOMContentLoaded', function() {
 								</tr>
 							</thead>
 							<tbody>
-								
+
 							</tbody>
 						</table>
 					</div>
 					<!-- /basic datatable -->
     </div>
-   
+
 </div>
 
 
