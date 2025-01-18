@@ -1,14 +1,14 @@
 (function($){
 	"use strict";
-    $.fn.extend({ 
-         
+    $.fn.extend({
+
         parallax100: function(options) {
             var defaults = {
             	speedScroll: 3
             }
- 
+
             var options =  $.extend(defaults, options);
- 
+
             return this.each(function() {
 
             	var obj = $(this);
@@ -45,5 +45,5 @@
             });
         }
     });
-     
+
 })(jQuery);
