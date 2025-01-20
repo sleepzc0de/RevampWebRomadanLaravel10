@@ -57,11 +57,13 @@
         </div>
     </div>
 
+    @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR','HUMAS']))
     <div class="border-top text-center py-2 px-3">
         <a href="{{route('pengembang.index')}}" class="btn btn-yellow fw-semibold w-100 my-1" target="_blank">
             <i class="ph-terminal-window me-2"></i>
             Tim Pengembang
         </a>
     </div>
+    @endif
 </div>
 <!-- /demo config -->
