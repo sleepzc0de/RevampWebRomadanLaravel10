@@ -84,7 +84,7 @@
                 @endrole
 
                 <!-- Publikasi - For ADMINISTRATOR, REDAKTUR, EDITOR, HUMAS_* -->
-                @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR']) || str_starts_with(auth()->user()->roles->first()->name, 'HUMAS_'))
+                @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR','HUMAS']) || str_starts_with(auth()->user()->roles->first()->name, 'HUMAS'))
                 <li class="nav-item nav-item-submenu {{ Request::is('backend/romadan-interface/publikasi*') ? 'nav-item-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="ph-mask-happy"></i>

@@ -71,10 +71,7 @@ public function index()
 public function create()
 {
     $roles = Role::whereIn('name', [
-        'REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA',
-        'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN',
-        'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN',
-        'TAMU'
+        'REDAKTUR', 'EDITOR','HUMAS','TAMU'
     ])->get();
 
     return view('backend.users.tambah_user', compact('roles'));

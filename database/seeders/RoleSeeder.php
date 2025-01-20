@@ -18,11 +18,7 @@ class RoleSeeder extends Seeder
             'ADMINISTRATOR',
             'REDAKTUR',
             'EDITOR',
-            'HUMAS_PERSIJA',
-            'HUMAS_PENGELOLAAN',
-            'HUMAS_PERENCANAAN',
-            'HUMAS_PENATAUSAHAAN',
-            'HUMAS_PENGADAAN',
+            'HUMAS',
             'TAMU',
         ];
 

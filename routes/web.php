@@ -211,8 +211,8 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             });
         });
 
-        // ========== ROUTES UNTUK REDAKTUR & EDITOR & ADMINISTRATOR & HUMAS_* ==========
-        Route::middleware(['role:ADMINISTRATOR|REDAKTUR|EDITOR|HUMAS_*'])->group(function () {
+        // ========== ROUTES UNTUK REDAKTUR & EDITOR & ADMINISTRATOR & HUMAS ==========
+        Route::middleware(['role:ADMINISTRATOR|REDAKTUR|EDITOR|HUMAS'])->group(function () {
             // 2.1.4 PUBLIKASI
             Route::resource('publikasi', PublikasiController::class);
             Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
