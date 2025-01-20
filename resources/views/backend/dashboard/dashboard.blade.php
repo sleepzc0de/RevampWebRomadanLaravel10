@@ -239,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                 </div>
             </div>
+            @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR','HUMAS']))
             <div class="row">
                 <div class="btn-group d-flex py-1">
                     <a href="{{route('publikasi.create')}}" class="btn btn-secondary"></i>Berita</a>
@@ -254,6 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
 
             </div>
+            @endif
 
     </div>
     <div class="col-lg-8">
