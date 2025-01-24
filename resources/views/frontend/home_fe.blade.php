@@ -1,12 +1,50 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
+<style>
+    .custom-judul {
+    font-weight: bold;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 1.8rem;
+    line-height: 1.6;
+    max-width: 90%;
+    max-height: 6.5rem; /* Batas tinggi untuk mencegah judul terlalu panjang */
+    overflow: hidden; /* Mencegah teks keluar */
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Maksimum 4 baris */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    margin: 0 auto;
+}
 
+/* Untuk layar tablet */
+@media (max-width: 768px) {
+    .custom-judul {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        max-height: 5.5rem;
+        -webkit-line-clamp: 3;
+    }
+}
+
+/* Untuk layar ponsel kecil */
+@media (max-width: 480px) {
+    .custom-judul {
+        font-size: 1.2rem;
+        line-height: 1.3;
+        max-height: 4.5rem;
+        -webkit-line-clamp: 3;
+    }
+}
+
+</style>
 @endsection
 
 
 @section('content')
-{{-- 
+{{--
     <!-- Sidebar -->
     @include('frontend.home.fe_sidebar') --}}
 

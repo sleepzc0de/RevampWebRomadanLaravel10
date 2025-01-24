@@ -35,9 +35,13 @@
                                         <i class="fa-regular fa-eye"></i> {{ $item->views }} Views
                                     </span>
 								</div>
-								<div>
-									<a href="{{route('berita-fe', $item->slug)}}" class="berita-terkini-judul-romadan">{{$item->judul}}</a>
-								</div>
+                                <div>
+                                    <a href="{{ route('warta-fe', $item->slug) }}"
+                                       class="berita-terkini-judul-romadan"
+                                       title="{{ $item->judul }}">
+                                       {{ Str::limit($item->judul, 20, ' ...') }}
+                                    </a>
+                                </div>
 							</div>
 						</div>
 

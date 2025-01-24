@@ -4,21 +4,35 @@
 			<div class="slick1">
 
 				{{-- SLIDER --}}
-				
+
 
 				@forelse ($berita_terkini as $item)
 				<div class="item-slick1 item1-slick1" style="background-image: url({{asset('storage/romadan_gambar_web/'.$item->image)}});">
 					<div class="background-overlay"></div>
 
-					
+
 					<div class="wrap-content-slide1 sizefull flex-col-c-m p-l-15 p-r-15 p-t-150 p-b-170">
 						<span class="caption1-slide1 romadan-judul-terkini t-center animated visible-false m-b-35" data-appear="fadeInDown">
 							Berita Terkini
 						</span>
 
-						<h2 class="caption2-slide1 romadan-judul t-center animated visible-false m-b-50" data-appear="fadeInUp">
-							{{$item->judul}}
-						</h2>
+						@php
+                            $judulBersih = strip_tags($item->judul); // Bersihkan HTML
+                            $words = explode(' ', $judulBersih); // Ubah ke array kata
+                            $isLong = count($words) > 10; // Cek apakah lebih dari 20 kata
+                            $words = array_slice($words, 0, 10); // Batasi hanya 20 kata
+                            $formattedTitle = implode(' ', $words); // Gabungkan kembali ke string
+                            if ($isLong) {
+                                $formattedTitle .= '...'; // Tambahkan titik-titik jika lebih dari 20 kata
+                            }
+                            $formattedTitle = preg_replace('/((\S+\s+){10})/u', "$1<br>", $formattedTitle); // Tambah <br> tiap 10 kata
+                        @endphp
+
+                        <h2 class="caption2-slide1 romadan-judul t-center animated visible-false m-b-50 custom-judul"
+                            data-appear="fadeInUp" title="{{ $item->judul }}">
+                            {!! nl2br(e($formattedTitle)) !!}
+                        </h2>
+
 
 						<div class="wrap-btn-slide1 animated visible-false" data-appear="zoomIn">
 							<!-- Button1 -->
@@ -31,7 +45,7 @@
 				@empty
 
 				<div class="item-slick1 item1-slick1" style="background-color: black;">
-					
+
 					<div class="wrap-content-slide1 sizefull flex-col-c-m p-l-15 p-r-15 p-t-150 p-b-170">
 						<span class="caption1-slide1 romadan-judul-terkini t-center animated visible-false m-b-35" data-appear="fadeInDown">
 							Berita Terkini Belum Ada
@@ -49,7 +63,7 @@
 						</div>
 					</div>
 				</div>
-					
+
 				@endforelse
 
 				{{-- <div class="item-slick1 item2-slick1" style="background-image: url({{asset('frontend_romadan_web/images/master-slides-02.jpg')}});">
