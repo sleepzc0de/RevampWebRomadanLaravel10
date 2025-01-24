@@ -23,7 +23,8 @@
                         <div class="row mb-3">
                             <label class="col-form-label col-lg-3">Nama <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" required placeholder="Masukkan nama pengembang">
+                                <input maxlength="100"
+                                type="text" name="name" class="form-control @error('name') is-invalid @enderror" required placeholder="Masukkan nama pengembang">
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -35,7 +36,7 @@
                             <div class="col-lg-9">
                                 <div id="skill-container">
                                     <div class="input-group mb-2">
-                                        <input type="text" name="skill[]" class="form-control @error('skill.0') is-invalid @enderror" required placeholder="Masukkan keahlian">
+                                        <input maxlength="100" type="text" name="skill[]" class="form-control @error('skill.0') is-invalid @enderror" required placeholder="Masukkan keahlian">
                                         <button type="button" class="btn btn-success add-skill">+</button>
                                     </div>
                                 </div>
