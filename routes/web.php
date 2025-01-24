@@ -138,11 +138,11 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::resource('users', UserController::class);
 
             // 2.1.5 FILE
-            Route::resource('file', FileController::class);
-            Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
-            Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
-            Route::delete('/{file}/force-delete', [FileController::class, 'forceDeleteSampah'])->name('file.force-delete-sampah');
-            Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
+            // Route::resource('file', FileController::class);
+            // Route::get('/file-sampah', [FileController::class, 'fileSampah'])->name('file.sampah');
+            // Route::post('/{file}/restore-file', [FileController::class, 'restore'])->name('file.restore');
+            // Route::delete('/{file}/force-delete', [FileController::class, 'forceDeleteSampah'])->name('file.force-delete-sampah');
+            // Route::post('/restore-all-file', [FileController::class, 'restoreAll'])->name('file.restore-all');
 
             // 2.1.7 MENU LAYANAN
             Route::prefix('/layanan')->group(function () {
