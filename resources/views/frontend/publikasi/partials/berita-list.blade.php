@@ -31,7 +31,10 @@
                             </span>
                         </div>
                         <a href="{{ route('berita-fe', $item->slug) }}"
-                            class="berita-terkini-judul-romadan">{{ e($item->judul) }}</a>
+                            class="berita-terkini-judul-romadan"
+                            title="{{ e($item->judul) }}">
+                            {{ Str::limit($item->judul, 20, '...') }}
+                         </a>
                     </div>
                 </div>
             </div>

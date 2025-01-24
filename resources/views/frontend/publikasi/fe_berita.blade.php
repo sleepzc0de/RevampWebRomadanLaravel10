@@ -1,6 +1,62 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
+<style>
+    .custom-isi {
+    text-align: justify;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+/* Untuk layar kecil (ponsel) */
+@media (max-width: 768px) {
+    .custom-isi {
+        font-size: 1rem;
+        line-height: 1.6;
+        padding: 10px;
+    }
+}
+
+/* Untuk layar sangat kecil (HP kecil) */
+@media (max-width: 480px) {
+    .custom-isi {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        padding: 5px;
+    }
+}
+
+
+.custom-judul {
+    font-weight: bold;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 1.4rem;
+    line-height: 1.6;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+/* Untuk layar tablet */
+@media (max-width: 768px) {
+    .custom-judul {
+        font-size: 1.2rem;
+        line-height: 1.4;
+    }
+}
+
+/* Untuk layar ponsel kecil */
+@media (max-width: 480px) {
+    .custom-judul {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+}
+
+</style>
 @endsection
 
 @section('content')
@@ -13,9 +69,16 @@
                         <div class="text-center">{{$tb}}</div>
                     </div>
 
-                    <div class="t-center m-b-22" style="text-align: left;">
-                        <div class="txt-judul-berita-terkini-detail text-center">{{$data->judul}}</div>
-                    </div>
+                @php
+                    $words = explode(' ', strip_tags($data->judul)); // Menghapus tag HTML & mengubah menjadi array kata
+                    $words = array_slice($words, 0, 20); // Ambil hanya 30 kata pertama
+                    $formattedTitle = implode(' ', $words); // Gabungkan kembali ke string
+                    $formattedTitle = preg_replace('/((\S+\s+){10})/u', "$1<br>", $formattedTitle); // Tambahkan <br> tiap 10 kata
+                @endphp
+
+                <div class="txt-judul-berita-terkini-detail text-center custom-judul" title="{{ $data->judul }}">
+                    {!! nl2br(e($formattedTitle)) !!}
+                </div>
 
                     {{-- Tambahkan jumlah views di sini --}}
                     <div class="t-center m-b-22" style="text-align: center;">
@@ -31,9 +94,10 @@
                                     <img src="{{asset('storage/romadan_gambar_web/'.$data->image)}}" alt="IMG-BLOG">
                                 </a>
                             </div>
-                            <div class="txt-judul-kegiatan-detail t-center m-b-35 mt-5 px-4" style="text-align: justify;">
-                                {!!$data->isi!!}
+                            <div class="txt-judul-kegiatan-detail t-center m-b-35 mt-5 px-4 custom-isi">
+                                {!! nl2br(preg_replace('/((\S+\s+){50})/u', "$1<br><br>", strip_tags($data->isi))) !!}
                             </div>
+
                         </div>
                     </div>
                 </div>

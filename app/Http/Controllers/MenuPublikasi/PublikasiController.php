@@ -34,11 +34,14 @@ class PublikasiController extends Controller
                     return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
                 ->addColumn('file_publikasi', function ($query) {
+                    $judul = strlen($query->judul) > 10 ? substr($query->judul, 0, 10) . '...' : $query->judul;
+
                     if ($query->file) {
                         $url = asset('storage/romadan_file_web/' . $query->file);
-                        return '<a href="' . $url . '" target="_blank">' . $query->judul . '</a>';
+                        return '<a href="' . $url . '" target="_blank" title="' . e($query->judul) . '">' . $judul . '</a>';
                     }
-                    return $query->judul; // Tampilkan judul saja tanpa tautan jika tidak ada file
+
+                    return '<span title="' . e($query->judul) . '">' . $judul . '</span>'; // Tambahkan tooltip jika tidak ada file
                 })
                 ->addColumn('opsi', function ($query) {
                     $preview = route('publikasi.show', encrypt($query->id));
