@@ -57,7 +57,7 @@
 					],
 				},
 				toolbar: ['heading', '|', 'bold', 'italic','link', 'undo', 'redo']
-				
+
 			}).catch(error => {
 				console.error(error);
 			});
@@ -100,14 +100,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									 <!-- Judul Artikel input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Layanan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') ?? $layanan->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Artikel">
+											<input maxlength="255" value="{{ old('judul') ?? $layanan->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Artikel">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -117,12 +117,12 @@
 										</div>
 									</div>
 									<!-- /Judul Artikel input -->
-									
+
 									<!-- layanan -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Layanan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="layanan" class="form-control @error('layanan') is-invalid @enderror" required placeholder="layanan" id="ckeditor_classic_empty_layanan">{{ old('layanan') ?? $layanan->layanan }}</textarea>
+											<textarea maxlength="1000" name="layanan" class="form-control @error('layanan') is-invalid @enderror" required placeholder="layanan" id="ckeditor_classic_empty_layanan">{{ old('layanan') ?? $layanan->layanan }}</textarea>
 										</div>
 									</div>
 									<!-- /layanan -->

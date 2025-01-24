@@ -31,14 +31,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
                                 <!-- FAQ JUDUL -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Pertanyaan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('faq_judul') ?? $faq->faq_judul }}" type="text" name="faq_judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Pertanyaan FAQ">
+											<input maxlength="255" value="{{ old('faq_judul') ?? $faq->faq_judul }}" type="text" name="faq_judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Pertanyaan FAQ">
 											<!-- error message untuk judul -->
 											@error('faq_judul')
 											<div class="alert alert-danger mt-2">
@@ -53,7 +53,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Jawaban <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="faq_isi" class="form-control @error('faq_isi') is-invalid @enderror" required placeholder="Jawaban FAQ">{{ old('faq_isi') ?? $faq->faq_isi }}</textarea>
+											<textarea maxlength="1000" name="faq_isi" class="form-control @error('faq_isi') is-invalid @enderror" required placeholder="Jawaban FAQ">{{ old('faq_isi') ?? $faq->faq_isi }}</textarea>
 										</div>
 									</div>
 									<!-- /JAWABAN FAQ -->
@@ -67,8 +67,8 @@
 												@foreach ($kategori as $item)
 												<option value="{{ $item->id_kategori }}" {{ old('kategori',$faq->kategori) == $item->id_kategori ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->

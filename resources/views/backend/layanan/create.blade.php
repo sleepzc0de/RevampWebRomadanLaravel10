@@ -58,7 +58,7 @@
 					],
 				},
 				toolbar: ['heading', '|', 'bold', 'italic','link', 'undo', 'redo']
-				
+
 			}).catch(error => {
 				console.error(error);
 			});
@@ -100,14 +100,14 @@
 						<form class="form-validate-jquery" action="{{route('layanan.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul Artikel input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul layanan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul layanan">
+											<input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul layanan">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -122,7 +122,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Layanan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="layanan" class="form-control @error('layanan') is-invalid @enderror" required placeholder="Layanan" id="ckeditor_classic_empty_layanan">{{ old('layanan') }}</textarea>
+											<textarea maxlength="1000" name="layanan" class="form-control @error('layanan') is-invalid @enderror" required placeholder="Layanan" id="ckeditor_classic_empty_layanan">{{ old('layanan') }}</textarea>
 										</div>
 									</div>
 									<!-- /layanan -->
@@ -140,8 +140,8 @@
 										</div>
 									</div>
 									<!-- /image file uploader -->
-                                    
-									
+
+
 
 								</div>
 

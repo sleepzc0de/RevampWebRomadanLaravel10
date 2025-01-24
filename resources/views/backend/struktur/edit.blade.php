@@ -57,8 +57,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									 <!-- Judul Artikel input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Struktur <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') ?? $struktur->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Artikel">
+											<input maxlength="255" value="{{ old('judul') ?? $struktur->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Artikel">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -118,12 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /Judul Artikel input -->
-									
+
 									<!-- SEJARAH -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Struktur <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="struktur" class="form-control @error('struktur') is-invalid @enderror" required placeholder="struktur" id="ckeditor_classic_empty_struktur">{{ old('struktur') ?? $struktur->struktur }}</textarea>
+											<textarea maxlength="1000" name="struktur" class="form-control @error('struktur') is-invalid @enderror" required placeholder="struktur" id="ckeditor_classic_empty_struktur">{{ old('struktur') ?? $struktur->struktur }}</textarea>
 										</div>
 									</div>
 									<!-- /SEJARAH -->

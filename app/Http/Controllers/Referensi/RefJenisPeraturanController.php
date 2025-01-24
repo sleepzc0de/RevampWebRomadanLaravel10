@@ -29,7 +29,7 @@ class RefJenisPeraturanController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -67,7 +67,7 @@ class RefJenisPeraturanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_jenis_peraturan' => 'required|unique:ref_jenis_peraturan',
+                'nama_jenis_peraturan' => 'required|unique:ref_jenis_peraturan|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -97,7 +97,7 @@ class RefJenisPeraturanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_jenis_peraturan' => 'required',
+                'nama_jenis_peraturan' => 'required|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('faq.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- FAQ JUDUL -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Pertanyaan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('faq_judul') }}" type="text" name="faq_judul" class="form-control @error('faq_judul') is-invalid @enderror" required placeholder="Masukkan Pertanyaan FAQ">
+											<input maxlength="255" value="{{ old('faq_judul') }}" type="text" name="faq_judul" class="form-control @error('faq_judul') is-invalid @enderror" required placeholder="Masukkan Pertanyaan FAQ">
 											<!-- error message untuk judul -->
 											@error('faq_judul')
 											<div class="alert alert-danger mt-2">
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Jawaban <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="faq_isi" class="form-control @error('faq_isi') is-invalid @enderror" required placeholder="isi Jawaban FAQ">{{ old('faq_isi') }}</textarea>
+											<textarea  maxlength="1000" name="faq_isi" class="form-control @error('faq_isi') is-invalid @enderror" required placeholder="isi Jawaban FAQ">{{ old('faq_isi') }}</textarea>
 										</div>
 									</div>
 									<!-- /Jawaban FAQ -->
@@ -137,8 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
 												@foreach ($kategori as $item)
 												<option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -150,8 +150,8 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /Kategori Berita -->
-                                    
-									
+
+
 
 								</div>
 

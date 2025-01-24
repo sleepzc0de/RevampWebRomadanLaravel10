@@ -32,7 +32,7 @@ class MedsosController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -78,9 +78,9 @@ class MedsosController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_medsos' => 'required|unique:medsos',
-                'link_medsos' => 'required',
-                'logo_medsos' => 'required',
+                'nama_medsos' => 'required|unique:medsos|max:255',
+                'link_medsos' => 'required|max:1000',
+                'logo_medsos' => 'required|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -126,9 +126,9 @@ class MedsosController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_medsos' => 'required',
-                'link_medsos' => 'required',
-                'logo_medsos' => 'required',
+                'nama_medsos' => 'required|max:255',
+                'link_medsos' => 'required|max:1000',
+                'logo_medsos' => 'required|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

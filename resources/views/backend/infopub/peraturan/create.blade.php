@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	function handleTanggalMulaiChange() {
   var tanggalMulai = document.getElementById('tanggal_penetapan').value;
   var tanggalSelesai = document.getElementById('tanggal_berlaku');
-  
+
   if (tanggalMulai) {
     tanggalSelesai.disabled = false;
     tanggalSelesai.min = tanggalMulai;
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('file').addEventListener('change', function() {
         const file = this.files[0];
         const maxSize = 100 * 1024 * 1024; // 100 MB (dalam bytes)
-        
+
         if (file && file.size > maxSize) {
             alert('Ukuran file melebihi batas maksimum (100MB).');
             this.value = ''; // Membersihkan input file
@@ -127,14 +127,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('peraturan.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Nomor Peraturan input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nomor Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nomor_peraturan') }}" type="text" name="nomor_peraturan" class="form-control @error('nomor_peraturan') is-invalid @enderror" required placeholder="Masukkan Nomor Peraturan">
+											<input maxlength="255" value="{{ old('nomor_peraturan') }}" type="text" name="nomor_peraturan" class="form-control @error('nomor_peraturan') is-invalid @enderror" required placeholder="Masukkan Nomor Peraturan">
 											<!-- error message untuk nomor_peraturan -->
 											@error('nomor_peraturan')
 											<div class="alert alert-danger mt-2">
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul_peraturan') }}" type="text" name="judul_peraturan" class="form-control @error('judul_peraturan') is-invalid @enderror" required placeholder="Masukkan Judul Peraturan">
+											<input maxlength="255" value="{{ old('judul_peraturan') }}" type="text" name="judul_peraturan" class="form-control @error('judul_peraturan') is-invalid @enderror" required placeholder="Masukkan Judul Peraturan">
 											<!-- error message untuk judul -->
 												@error('judul_peraturan')
 												<div class="alert alert-danger mt-2">
@@ -184,8 +184,8 @@ document.addEventListener('DOMContentLoaded', function() {
 												@foreach ($kategori as $item)
 												<option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -207,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
 												@foreach ($data_jenis_peraturan as $item)
 												<option value="{{ $item->id_jenis_peraturan }}" {{ old('jenis_peraturan') == $item->id_jenis_peraturan ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_jenis_peraturan}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -255,14 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
 										<div class="col-lg-10">
 											@if (count($data_status_peraturan) <= 0)
 													<input value="{{ old('status_peraturan') }}" type="text" name="status_peraturan" class="form-control @error('status_peraturan') is-invalid @enderror" required placeholder="DATA KOSONG, HARAP HUBUNGI ADMINISTRATOR" @disabled(true)>
-											@else 
+											@else
 											<select value="{{ old('status_peraturan') }}" name="status_peraturan" class="form-control form-control-select2 select" @error('status_peraturan') is-invalid @enderror required>
 												<option>--PILIH--</option>
 												@foreach ($data_status_peraturan as $item)
 												<option value="{{ $item->id_ref_peraturan_status }}" {{ old('status_peraturan') == $item->id_ref_peraturan_status ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_peraturan_status}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
 											</div>
 											@enderror
 											@endif
-											
+
 										</div>
 									</div>
 									<!-- /Jenis Peraturan-->
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-	
+
 @endpush
 
 

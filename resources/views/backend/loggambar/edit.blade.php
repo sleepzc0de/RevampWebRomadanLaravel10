@@ -31,14 +31,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul loggambars input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Gambar <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_gambar') ?? $loggambars->nama_gambar }}" type="text" name="nama_gambar" class="form-control @error('nama_gambar') is-invalid @enderror" required placeholder="Masukkan nama_gambar loggambars">
+											<input maxlength="255" value="{{ old('nama_gambar') ?? $loggambars->nama_gambar }}" type="text" name="nama_gambar" class="form-control @error('nama_gambar') is-invalid @enderror" required placeholder="Masukkan nama_gambar loggambars">
 											<!-- error message untuk nama_gambar -->
 											@error('nama_gambar')
 											<div class="alert alert-danger mt-2">
@@ -57,8 +57,8 @@
 											<div class="mt-3">
 												<img src="{{asset('storage/romadan_gambar_web/'.$loggambars->image)}}" alt="" width="300px">
 											</div>
-											
-                                            
+
+
 											@error('image')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -67,8 +67,8 @@
 										</div>
 									</div>
 									<!-- /image file uploader -->
-                                    
-								
+
+
 
 								</div>
 

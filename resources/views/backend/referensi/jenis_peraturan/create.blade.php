@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -100,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('jenis-peraturan.store')}}" method="post" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- NAMA JENIS PERATURAN -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Jenis Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_jenis_peraturan') }}" type="text" name="nama_jenis_peraturan" class="form-control @error('nama_jenis_peraturan') is-invalid @enderror" required placeholder="Masukkan Nama Jenis Peraturan, contoh: (PMK/PP/KMK/SE/KEP)">
+											<input maxlength="255" value="{{ old('nama_jenis_peraturan') }}" type="text" name="nama_jenis_peraturan" class="form-control @error('nama_jenis_peraturan') is-invalid @enderror" required placeholder="Masukkan Nama Jenis Peraturan, contoh: (PMK/PP/KMK/SE/KEP)">
 											<!-- error message untuk nama_jenis_peraturan -->
 											@error('nama_jenis_peraturan')
 											<div class="alert alert-danger mt-2">

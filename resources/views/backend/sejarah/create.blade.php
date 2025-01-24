@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('sejarah.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul Artikel input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Sejarah <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Sejarah">
+											<input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul Sejarah">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Sejarah <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="sejarah" class="form-control @error('sejarah') is-invalid @enderror" required placeholder="Sejarah" id="ckeditor_classic_empty_sejarah">{{ old('sejarah') }}</textarea>
+											<textarea maxlength="1000" name="sejarah" class="form-control @error('sejarah') is-invalid @enderror" required placeholder="Sejarah" id="ckeditor_classic_empty_sejarah">{{ old('sejarah') }}</textarea>
 										</div>
 									</div>
 									<!-- /SEJARAH -->
@@ -141,8 +141,8 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /image file uploader -->
-                                    
-									
+
+
 
 								</div>
 

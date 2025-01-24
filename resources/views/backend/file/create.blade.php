@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -100,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('file.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Nama File Input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama File <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_file') }}" type="text" name="nama_file" class="form-control @error('nama_file') is-invalid @enderror" required placeholder="Masukkan Nama File">
+											<input maxlength="100" value="{{ old('nama_file') }}" type="text" name="nama_file" class="form-control @error('nama_file') is-invalid @enderror" required placeholder="Masukkan Nama File">
 											<!-- error message untuk nama_file -->
 											@error('nama_file')
 											<div class="alert alert-danger mt-2">
@@ -132,14 +132,14 @@ document.addEventListener('DOMContentLoaded', function() {
 									</div>
 									<!-- /File Berita -->
 
-                                   
-                                    
+
+
 									<!-- Deskripsi Isi File -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Deskripsi Isi File <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="isi_file" class="form-control @error('isi_file') is-invalid @enderror" required placeholder="Deskripsi File" id="ckeditor_classic_empty">{{ old('isi_file') }}</textarea>
-											
+											<textarea maxlength="1000" name="isi_file" class="form-control @error('isi_file') is-invalid @enderror" required placeholder="Deskripsi File" id="ckeditor_classic_empty">{{ old('isi_file') }}</textarea>
+
 										</div>
 									</div>
 									<!-- /Deskripsi Isi File -->

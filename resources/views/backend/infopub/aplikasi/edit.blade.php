@@ -31,14 +31,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
                                 <!-- Judul Aplikasi -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul_aplikasi') ?? $data->judul_aplikasi }}" type="text" name="judul_aplikasi" class="form-control @error('judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
+											<input maxlength="255" value="{{ old('judul_aplikasi') ?? $data->judul_aplikasi }}" type="text" name="judul_aplikasi" class="form-control @error('judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
 											<!-- error message untuk judul_aplikasi -->
 											@error('judul_aplikasi')
 											<div class="alert alert-danger mt-2">
@@ -52,7 +52,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('sub_judul_aplikasi') ?? $data->sub_judul_aplikasi }}" type="text" name="sub_judul_aplikasi" class="form-control @error('sub_judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
+											<input maxlength="255" value="{{ old('sub_judul_aplikasi') ?? $data->sub_judul_aplikasi }}" type="text" name="sub_judul_aplikasi" class="form-control @error('sub_judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
 											<!-- error message untuk sub_judul_aplikasi -->
 											@error('sub_judul_aplikasi')
 											<div class="alert alert-danger mt-2">
@@ -66,7 +66,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Link Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('link_aplikasi') ?? $data->link_aplikasi }}" type="text" name="link_aplikasi" class="form-control @error('link_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
+											<input maxlength="1000" value="{{ old('link_aplikasi') ?? $data->link_aplikasi }}" type="text" name="link_aplikasi" class="form-control @error('link_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
 											<!-- error message untuk link_aplikasi -->
 											@error('link_aplikasi')
 											<div class="alert alert-danger mt-2">

@@ -32,7 +32,7 @@ class RefStatusController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -76,7 +76,7 @@ class RefStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_status' => 'required|unique:ref_status',
+                'nama_status' => 'required|unique:ref_status|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -120,7 +120,7 @@ class RefStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_status' => 'required',
+                'nama_status' => 'required|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

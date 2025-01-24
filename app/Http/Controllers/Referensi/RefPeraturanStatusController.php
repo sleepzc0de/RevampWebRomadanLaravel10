@@ -29,7 +29,7 @@ class RefPeraturanStatusController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -67,7 +67,7 @@ class RefPeraturanStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_peraturan_status' => 'required|unique:ref_peraturan_status',
+                'nama_peraturan_status' => 'required|unique:ref_peraturan_status|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -97,7 +97,7 @@ class RefPeraturanStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_peraturan_status' => 'required',
+                'nama_peraturan_status' => 'required|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

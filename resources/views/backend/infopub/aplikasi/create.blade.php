@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('aplikasi.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul Aplikasi-->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul_aplikasi') }}" type="text" name="judul_aplikasi" class="form-control @error('judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi kegiatan">
+											<input maxlength="255" value="{{ old('judul_aplikasi') }}" type="text" name="judul_aplikasi" class="form-control @error('judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi kegiatan">
 											<!-- error message untuk judul_aplikasi -->
 											@error('judul_aplikasi')
 											<div class="alert alert-danger mt-2">
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2"> Sub Judul Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('sub_judul_aplikasi') }}" type="text" name="sub_judul_aplikasi" class="form-control @error('sub_judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Sub Judul Aplikasi">
+											<input maxlength="100" value="{{ old('sub_judul_aplikasi') }}" type="text" name="sub_judul_aplikasi" class="form-control @error('sub_judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Sub Judul Aplikasi">
 											<!-- error message untuk sub_judul_aplikasi -->
 											@error('sub_judul_aplikasi')
 											<div class="alert alert-danger mt-2">
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2"> <Link></Link> Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('link_aplikasi') }}" type="text" name="link_aplikasi" class="form-control @error('link_aplikasi') is-invalid @enderror" required placeholder="Masukkan Link Aplikasi">
+											<input maxlength="1000" value="{{ old('link_aplikasi') }}" type="text" name="link_aplikasi" class="form-control @error('link_aplikasi') is-invalid @enderror" required placeholder="Masukkan Link Aplikasi">
 											<!-- error message untuk link_aplikasi -->
 											@error('link_aplikasi')
 											<div class="alert alert-danger mt-2">
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									</div>
 									<!-- /Link Aplikasi input -->
 
-                                
+
 									<!-- Image file uploader -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Gambar Aplikasi <span class="text-danger">*</span></label>
@@ -163,8 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /image file uploader -->
-                                    
-									
+
+
 
 								</div>
 

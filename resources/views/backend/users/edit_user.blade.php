@@ -47,7 +47,7 @@
                 <div class="row mb-3">
                     <label class="col-form-label col-lg-3">Nama <span class="text-danger">*</span></label>
                     <div class="col-lg-9">
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                        <input maxlength="100" type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                                required placeholder="Nama" value="{{ old('name', $data['user']->name) }}">
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>

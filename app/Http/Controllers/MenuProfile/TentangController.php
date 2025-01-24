@@ -36,7 +36,7 @@ class TentangController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -80,8 +80,8 @@ class TentangController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'tentang' => 'required',
+                'judul' => 'required|max:255',
+                'tentang' => 'required|max:1000',
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg',
             ]);
 
@@ -140,8 +140,8 @@ class TentangController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'tentang' => 'required',
+                'judul' => 'required|max:255',
+                'tentang' => 'required|max:1000',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:2000',
             ]);
             // TAMPUNGAN REQUEST DATA DARI FORM

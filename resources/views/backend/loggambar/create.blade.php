@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -100,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('loggambar.store')}}" method="post" autocomplete="off" enctype="multipart/form-data">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul publikasi input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Gambar <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_gambar') }}" type="text" name="nama_gambar" class="form-control @error('nama_gambar') is-invalid @enderror" required placeholder="Masukkan Nama Gambar">
+											<input maxlength="255" value="{{ old('nama_gambar') }}" type="text" name="nama_gambar" class="form-control @error('nama_gambar') is-invalid @enderror" required placeholder="Masukkan Nama Gambar">
 											<!-- error message untuk nama_gambar -->
 											@error('nama_gambar')
 											<div class="alert alert-danger mt-2">

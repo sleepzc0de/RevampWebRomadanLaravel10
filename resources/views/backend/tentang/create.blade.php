@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -77,8 +77,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -120,14 +120,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('tentang.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul Artikel input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Tentang <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul tentang">
+											<input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul tentang">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Tentang <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="tentang" class="form-control @error('tentang') is-invalid @enderror" required placeholder="Tentang" id="ckeditor_classic_empty_tentang">{{ old('tentang') }}</textarea>
+											<textarea maxlength="1000" name="tentang" class="form-control @error('tentang') is-invalid @enderror" required placeholder="Tentang" id="ckeditor_classic_empty_tentang">{{ old('tentang') }}</textarea>
 										</div>
 									</div>
 									<!-- /tentang -->
@@ -169,8 +169,8 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /image file uploader -->
-                                    
-									
+
+
 
 								</div>
 

@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -100,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('status-peraturan.store')}}" method="post" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- NAMA JENIS PERATURAN -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Status Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_peraturan_status') }}" type="text" name="nama_peraturan_status" class="form-control @error('nama_peraturan_status') is-invalid @enderror" required placeholder="Masukkan Nama Status Peraturan">
+											<input maxlength="255" value="{{ old('nama_peraturan_status') }}" type="text" name="nama_peraturan_status" class="form-control @error('nama_peraturan_status') is-invalid @enderror" required placeholder="Masukkan Nama Status Peraturan">
 											<!-- error message untuk nama_peraturan_status -->
 											@error('nama_peraturan_status')
 											<div class="alert alert-danger mt-2">

@@ -78,9 +78,9 @@ class AplikasiController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul_aplikasi' => 'required|unique:aplikasi',
-                'sub_judul_aplikasi' => 'required',
-                'link_aplikasi' => 'required',
+                'judul_aplikasi' => 'required|unique:aplikasi|max:255',
+                'sub_judul_aplikasi' => 'required|max:255',
+                'link_aplikasi' => 'required|max:1000',
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg'
             ]);
 
@@ -132,9 +132,9 @@ class AplikasiController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul_aplikasi' => 'required',
-                'sub_judul_aplikasi' => 'required',
-                'link_aplikasi' => 'required',
+                'judul_aplikasi' => 'required|max:255',
+                'sub_judul_aplikasi' => 'required|max:255',
+                'link_aplikasi' => 'required|max:1000',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
             ]);
 

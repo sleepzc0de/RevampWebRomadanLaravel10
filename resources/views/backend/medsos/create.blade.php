@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -100,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('medsos.store')}}" method="post" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Nama Medsos -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_medsos') }}" type="text" name="nama_medsos" class="form-control @error('nama_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Medsos">
+											<input maxlength="255" value="{{ old('nama_medsos') }}" type="text" name="nama_medsos" class="form-control @error('nama_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Medsos">
 											<!-- error message untuk nama_medsos -->
 											@error('nama_medsos')
 											<div class="alert alert-danger mt-2">
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Link Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('link_medsos') }}" type="text" name="link_medsos" class="form-control @error('link_medsos') is-invalid @enderror" required placeholder="Masukkan Link Medsos">
+											<input maxlength="1000" value="{{ old('link_medsos') }}" type="text" name="link_medsos" class="form-control @error('link_medsos') is-invalid @enderror" required placeholder="Masukkan Link Medsos">
 											<!-- error message untuk link_medsos -->
 											@error('link_medsos')
 											<div class="alert alert-danger mt-2">
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Logo Medsos <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('logo_medsos') }}" type="text" name="logo_medsos" class="form-control @error('logo_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Logo Medsos dari Fontawesome, contoh:fa-brands fa-facebook	
+											<input maxlength="255" value="{{ old('logo_medsos') }}" type="text" name="logo_medsos" class="form-control @error('logo_medsos') is-invalid @enderror" required placeholder="Masukkan Nama Logo Medsos dari Fontawesome, contoh:fa-brands fa-facebook
 											">
 											<!-- error message untuk logo_medsos -->
 											@error('logo_medsos')

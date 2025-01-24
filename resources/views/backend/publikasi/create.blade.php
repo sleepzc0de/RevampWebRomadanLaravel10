@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul publikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul publikasi">
+											<input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul publikasi">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Sub Judul publikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('sub_judul') }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul publikasi">
+											<input maxlength="255" value="{{ old('sub_judul') }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul publikasi">
 											<!-- error message untuk judul -->
 												@error('sub_judul')
 												<div class="alert alert-danger mt-2">
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<div class="col-lg-10">
 											{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi">{{ old('isi') }}</textarea> --}}
 
-											<textarea name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
+											<textarea maxlength="1000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
 										</div>
 									</div>
 									<!-- /Isi publikasi Input -->

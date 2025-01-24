@@ -31,14 +31,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Nama File Inpu -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama File <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_file') ?? $file->nama_file }}" type="text" name="nama_file" class="form-control @error('nama_file') is-invalid @enderror" required placeholder="Masukkan Nama File">
+											<input maxlength="100" value="{{ old('nama_file') ?? $file->nama_file }}" type="text" name="nama_file" class="form-control @error('nama_file') is-invalid @enderror" required placeholder="Masukkan Nama File">
 											<!-- error message untuk nama_file -->
 											@error('nama_file')
 											<div class="alert alert-danger mt-2">
@@ -57,8 +57,8 @@
 											<div class="mt-3">
 												{{$file->image_file}}
 											</div>
-											
-                                            
+
+
 											@error('image')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -68,12 +68,12 @@
 									</div>
 									<!-- /image file uploader -->
 
-                                  
+
 									<!-- Isi Berita Input -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Deskripsi Isi File <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="isi_file" class="form-control @error('isi_file') is-invalid @enderror" placeholder="Deskripsi Isi File" id="ckeditor_classic_empty">{{ old('isi_file') ?? $file->isi_file }}</textarea>
+											<textarea maxlength="1000" name="isi_file" class="form-control @error('isi_file') is-invalid @enderror" placeholder="Deskripsi Isi File" id="ckeditor_classic_empty">{{ old('isi_file') ?? $file->isi_file }}</textarea>
 										</div>
 									</div>
 									<!-- /Isi Berita Input -->

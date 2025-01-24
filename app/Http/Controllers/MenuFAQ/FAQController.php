@@ -31,7 +31,7 @@ class FAQController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -73,8 +73,8 @@ class FAQController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'faq_judul' => 'required|unique:faq',
-                'faq_isi' => 'required',
+                'faq_judul' => 'required|unique:faq|max:255',
+                'faq_isi' => 'required|max:1000',
                 'kategori' => 'required',
             ]);
 
@@ -124,8 +124,8 @@ class FAQController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'faq_judul' => 'required',
-                'faq_isi' => 'required',
+                'faq_judul' => 'required|max:255',
+                'faq_isi' => 'required|max:1000',
                 'kategori' => 'required',
             ]);
 

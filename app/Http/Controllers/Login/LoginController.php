@@ -92,7 +92,7 @@ class LoginController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_gambar' => 'required|unique:login_gambar',
+                'nama_gambar' => 'required|unique:login_gambar|max:255',
                 'image' => 'required|image|mimes:jpeg,png,jpg|max:10000',
             ]);
 
@@ -156,7 +156,7 @@ class LoginController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_gambar' => 'required',
+                'nama_gambar' => 'required|max:255',
                 'image' => 'image|mimes:jpeg,png,jpg|max:10000',
             ]);
 

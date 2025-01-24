@@ -32,7 +32,7 @@ class RefTipeController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -76,7 +76,7 @@ class RefTipeController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_tipe' => 'required|unique:ref_tipe',
+                'nama_tipe' => 'required|unique:ref_tipe|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
@@ -120,7 +120,7 @@ class RefTipeController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_tipe' => 'required',
+                'nama_tipe' => 'required|max:255',
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

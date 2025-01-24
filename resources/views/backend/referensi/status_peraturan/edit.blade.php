@@ -31,14 +31,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Nama Kategori -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nama Status Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nama_peraturan_status') ?? $peraturan->nama_peraturan_status }}" type="text" name="nama_peraturan_status" class="form-control @error('nama_peraturan_status') is-invalid @enderror" required placeholder="Masukkan Nama Kategori">
+											<input maxlength="255" value="{{ old('nama_peraturan_status') ?? $peraturan->nama_peraturan_status }}" type="text" name="nama_peraturan_status" class="form-control @error('nama_peraturan_status') is-invalid @enderror" required placeholder="Masukkan Nama Kategori">
 											<!-- error message untuk nama_peraturan_status -->
 											@error('nama_peraturan_status')
 											<div class="alert alert-danger mt-2">

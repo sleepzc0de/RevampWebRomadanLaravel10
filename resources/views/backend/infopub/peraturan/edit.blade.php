@@ -22,7 +22,7 @@
 	function handleTanggalMulaiChange() {
   var tanggalMulai = document.getElementById('tanggal_penetapan').value;
   var tanggalSelesai = document.getElementById('tanggal_berlaku');
-  
+
   if (tanggalMulai) {
     tanggalSelesai.disabled = false;
     tanggalSelesai.min = tanggalMulai;
@@ -51,14 +51,14 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
                                 <!-- Nomor Peraturan-->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nomor Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('nomor_peraturan') ?? $peraturan->nomor_peraturan }}" type="text" name="nomor_peraturan" class="form-control @error('nomor_peraturan') is-invalid @enderror" required placeholder="Masukkan Nomor Peraturan">
+											<input maxlength="255" value="{{ old('nomor_peraturan') ?? $peraturan->nomor_peraturan }}" type="text" name="nomor_peraturan" class="form-control @error('nomor_peraturan') is-invalid @enderror" required placeholder="Masukkan Nomor Peraturan">
 											<!-- error message untuk nomor_peraturan -->
 											@error('nomor_peraturan')
 											<div class="alert alert-danger mt-2">
@@ -73,7 +73,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul_peraturan') ?? $peraturan->judul_peraturan }}" type="text" name="judul_peraturan" class="form-control @error('judul_peraturan') is-invalid @enderror" required placeholder="Masukkan Judul Peraturan">
+											<input maxlength="255" value="{{ old('judul_peraturan') ?? $peraturan->judul_peraturan }}" type="text" name="judul_peraturan" class="form-control @error('judul_peraturan') is-invalid @enderror" required placeholder="Masukkan Judul Peraturan">
 											<!-- error message untuk judul_peraturan -->
 											@error('judul_peraturan')
 											<div class="alert alert-danger mt-2">
@@ -83,7 +83,7 @@
 										</div>
 									</div>
 									<!-- /Judul Peraturan-->
-                                
+
 									 <!-- File Kegiatan -->
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">File Peraturan <span class="text-danger">*</span></label>
@@ -102,7 +102,7 @@
 									</div>
 									<!-- /File Kegiatan -->
 
-                                    
+
                                     <!-- /Kategori Peraturan-->
                                     <div class="row mb-3">
 										<label class="col-form-label col-lg-2">Kategori Peraturan <span class="text-danger">*</span></label>
@@ -112,8 +112,8 @@
 												@foreach ($kategori as $item)
 												<option value="{{ $item->id_kategori }}" {{ old('kategori',$peraturan->kategori) == $item->id_kategori ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -135,8 +135,8 @@
 												@foreach ($jenis_peraturan as $item)
 												<option value="{{ $item->id_jenis_peraturan }}" {{ old('jenis_peraturan',$peraturan->jenis_peraturan) == $item->id_jenis_peraturan ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_jenis_peraturan}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
@@ -186,8 +186,8 @@
 												@foreach ($status_peraturan as $item)
 												<option value="{{ $item->id_ref_peraturan_status }}" {{ old('status_peraturan',$peraturan->status_peraturan) == $item->id_ref_peraturan_status ? 'selected' : ''}}>{{$loop->iteration." - ".$item->nama_peraturan_status}}</option>
 												@endforeach
-													
-												
+
+
 											</select>
 
 											<!-- error message untuk judul -->
