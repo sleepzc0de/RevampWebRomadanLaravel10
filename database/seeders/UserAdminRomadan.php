@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserAdminRomadan extends Seeder
 {
@@ -22,7 +23,7 @@ class UserAdminRomadan extends Seeder
         $admin = User::create([
             'name' => 'Admin Romadan',
             'email' => 'admin@romadan.kemenkeu.go.id',
-            'password' => bcrypt('4dM!nR00M4D4N2O24!))(!((^!#!$!(')
+            'password' => Hash::make('4dM!nR00M4D4N2O24!))(!((^!#!$!('),
         ]);
 
         // Assign role ADMINISTRATOR ke user admin
