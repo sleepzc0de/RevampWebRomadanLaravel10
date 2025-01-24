@@ -36,10 +36,6 @@ public function index()
                             <i class="ph-list"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a href="' . $preview . '" class="dropdown-item">
-                                <i class="ph-detective me-2"></i>
-                                Preview
-                            </a>
                             <a href="' . $edit . '" class="dropdown-item">
                                 <i class="ph-note-pencil me-2"></i>
                                 Edit
@@ -66,6 +62,10 @@ public function index()
             ->make(true);
     }
     return view('backend.users.index');
+}
+
+public function show($id){
+    return redirect()->route('users.index');
 }
 
 public function create()
