@@ -135,9 +135,9 @@ class VisiMisiController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'visi' => 'required',
-                'misi' => 'required',
+                'judul' => 'required|max:255',
+                'visi' => 'required|max:1000',
+                'misi' => 'required|max:1000',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:10240',
             ]);
             // TAMPUNGAN REQUEST DATA DARI FORM

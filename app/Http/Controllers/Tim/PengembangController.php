@@ -73,7 +73,7 @@ class PengembangController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'skill' => 'required|array', // ubah validasi ke array
+            'skill' => 'required|max:100|array', // ubah validasi ke array
             'skill.*' => 'string|max:255', // validasi untuk setiap skill
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -128,7 +128,7 @@ class PengembangController extends Controller
         $id = Crypt::decrypt($encryptedId);
         $request->validate([
             'name' => 'required|string|max:255',
-            'skill' => 'required|array',
+            'skill' => 'required|max:100|array',
             'skill.*' => 'string|max:255',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
