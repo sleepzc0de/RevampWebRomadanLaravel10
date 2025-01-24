@@ -16,7 +16,7 @@ class FAQController extends Controller
      */
     public function index()
     {
-        $query = FAQModel::select('*');
+        $query = FAQModel::with(['kategori'])->select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 

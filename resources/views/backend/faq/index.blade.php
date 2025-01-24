@@ -45,7 +45,7 @@ const DatatableBasic = function() {
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            columnDefs: [{ 
+            columnDefs: [{
                 orderable: false,
                 width: 100,
                 targets: [0]
@@ -56,7 +56,7 @@ const DatatableBasic = function() {
                 searchPlaceholder: 'Cari...',
                 lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
                 paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' },
-             
+
             },
         });
 
@@ -78,19 +78,19 @@ const DatatableBasic = function() {
             { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
             {data: 'faq_judul',name:'faq_judul'},
             {data: 'faq_isi',name:'faq_isi'},
-            {data: 'kategori',name:'kategori'},
+            {data: 'kategori.nama_kategori',name:'kategori.nama_kategori',orderable:false,searchable:false},
              {data: 'penulis',name:'penulis'},
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
 
             // {data: 'action', name: 'action', orderable: false, searchable:false},
             ],
             order: [[0, 'asc']],
-            buttons: {        
+            buttons: {
                 dom:{
                     button: {
                         className: ''
                     },
-                }, 
+                },
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -98,7 +98,7 @@ const DatatableBasic = function() {
                         text: '<i class="far fa-file-excel me-2"></i> Excel',
                         exportOptions: {
                             columns: ':visible',
-                            
+
                         }
                     },
                     // {
@@ -164,16 +164,16 @@ document.addEventListener('DOMContentLoaded', function() {
                            @include('layouts.webromadan_backend.session_notif')
 						</div>
                         <div class="card-header">
-                          
+
                                     <a href="{{route('faq.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
                                         <span class="btn-labeled-icon bg-purple text-white rounded-pill">
                                             <i class="ph-check-square-offset"></i>
                                         </span>
                                         Tambah FAQ
                                     </button></a>
-                            
+
 						</div>
-                        
+
 						<table class="table datatable-basic table-hover table-striped">
 							<thead>
 								<tr>
