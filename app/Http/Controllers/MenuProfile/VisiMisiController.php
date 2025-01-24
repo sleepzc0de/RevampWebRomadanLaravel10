@@ -36,7 +36,7 @@ class VisiMisiController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -80,9 +80,9 @@ class VisiMisiController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'visi' => 'required',
-                'misi' => 'required',
+                'judul' => 'required|max:255',
+                'visi' => 'required|max:1000',
+                'misi' => 'required|max:1000',
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240',
             ]);
 
