@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -101,61 +102,71 @@ class PublikasiController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        try {
-            // VALIDASI DATA tetap sama seperti sebelumnya
 
-            //UPLOAD IMAGE
-            $image = $request->file('image');
-            $image->storeAs('public/romadan_gambar_web', $image->hashName());
+     public function store(Request $request)
+{
+    try {
+        $validated = $request->validate([
+            'judul' => 'required|max:255|unique:publikasi,judul',
+            'sub_judul' => 'nullable|max:255',
+            'kategori' => 'required|exists:ref_kategoris,id_kategori',
+            'tipe' => 'required|exists:ref_tipes,id_tipe',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'isi' => 'required|min:10',
+            'backdate' => 'nullable|date',
+            'file' => 'nullable|mimes:pdf,doc,docx|max:5120'
+        ]);
 
-            // UPLOAD FILE - Perbaikan disini
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                // Membuat nama file yang aman
-                $fileName = Str::slug($request->judul) . '-' . time() . '.' . $file->getClientOriginalExtension();
-                // Simpan file
-                $file->storeAs('public/romadan_file_web', $fileName);
-                $fileNameToStore = $fileName;
-            } else {
-                $fileNameToStore = null;
-            }
-
-            // SLUG
-            $slug = Str::slug($request->judul);
-
-            // TAMPUNGAN REQUEST DATA DARI FORM
-            $data = [
-                'judul' => $request->judul,
-                'sub_judul' => $request->sub_judul,
-                'kategori' => $request->kategori,
-                'tipe' => $request->tipe,
-                'image' => $image->hashName(),
-                'isi' => $request->isi,
-                'slug' => $slug,
-                'penulis' => Auth::user()->name,
-                'static_random_string' => Str::random(10) . uniqid() . Str::random(4),
-                'backdate' => Carbon::parse($request->backdate)->format('Y-m-d H:i'),
-                'file' => $fileNameToStore,  // Gunakan nama file yang sudah kita buat
-            ];
-
-            if ($request->has('backdate') && !empty($request->backdate)) {
-                $data['backdate'] = Carbon::parse($request->backdate)->format('Y-m-d H:i');
-                $data['status'] = 'published';
-            } else {
-                $data['status'] = 'draft';
-            }
-
-            PublikasiModel::create($data);
-
-            return redirect()->back()->with(['success' => 'Data Publikasi Berhasil Disimpan!']);
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Publikasi Gagal Disimpan! | Pesan Error: ' . $e->getMessage()])->withInput();
+        // Ensure image exists
+        if (!$request->hasFile('image')) {
+            throw new Exception('Gambar harus diunggah');
         }
+
+        // Image upload
+        $imagePath = $request->file('image')->store('public/romadan_gambar_web');
+
+        // File upload (optional)
+        $filePath = $request->hasFile('file')
+            ? $request->file('file')->store('public/romadan_file_web')
+            : null;
+
+        // Prepare data
+        $data = [
+            'judul' => $validated['judul'],
+            'sub_judul' => $validated['sub_judul'] ?? null,
+            'kategori' => $validated['kategori'],
+            'tipe' => $validated['tipe'],
+            'image' => basename($imagePath),
+            'isi' => $validated['isi'],
+            'slug' => Str::slug($validated['judul']),
+            'penulis' => Auth::user()->name,
+            'static_random_string' => Str::random(16),
+            'file' => $filePath ? basename($filePath) : null,
+            'views' => 0
+        ];
+
+        // Status and backdate handling
+        if ($request->filled('backdate')) {
+            $data['backdate'] = Carbon::parse($validated['backdate']);
+            $data['status'] = 'published';
+        } else {
+            $data['status'] = 'draft';
+        }
+
+        $publikasi = PublikasiModel::create($data);
+
+        return back()->with('success', 'Data Publikasi Berhasil Disimpan!');
+    } catch (ValidationException $e) {
+        return back()->withErrors($e->validator)->withInput();
+    } catch (Exception $e) {
+        // Log the full error for debugging
+        Log::error('Publikasi Creation Error: ' . $e->getMessage());
+
+        return back()
+            ->with('failed', 'Data Publikasi Gagal Disimpan: ' . $e->getMessage())
+            ->withInput();
     }
+}
 
     /**
      * Display the specified resource.
