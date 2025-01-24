@@ -40,6 +40,52 @@
 }
 
 </style>
+
+<style>
+    @media screen and (max-width: 769px) {
+    .wrap-content-slide1 {
+        padding-top: 80px !important;
+        padding-bottom: 80px !important;
+    }
+
+    .caption1-slide1 {
+        font-size: 16px;
+        margin-bottom: 15px !important;
+    }
+
+    .caption2-slide1 {
+        font-size: 18px;
+        margin-bottom: 25px !important;
+    }
+
+    .btn-romadan-title {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .wrap-content-slide1 {
+        padding-top: 50px !important;
+        padding-bottom: 50px !important;
+    }
+
+    .caption1-slide1 {
+        font-size: 14px;
+        margin-bottom: 10px !important;
+    }
+
+    .caption2-slide1 {
+        font-size: 16px;
+        margin-bottom: 15px !important;
+    }
+
+    .btn-romadan-title {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+</style>
 @endsection
 
 
