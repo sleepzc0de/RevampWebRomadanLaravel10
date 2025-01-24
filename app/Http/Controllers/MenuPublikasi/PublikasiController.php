@@ -109,10 +109,10 @@ class PublikasiController extends Controller
         $validated = $request->validate([
             'judul' => 'required|max:255|unique:publikasi,judul',
             'sub_judul' => 'nullable|max:255',
-            'kategori' => 'required|exists:ref_kategoris,id_kategori',
-            'tipe' => 'required|exists:ref_tipes,id_tipe',
+            'kategori' => 'required|exists:ref_kategori,id_kategori',
+            'tipe' => 'required|exists:ref_tipe,id_tipe',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'isi' => 'required|min:10',
+            'isi' => 'required|min:10|max:1000',
             'backdate' => 'nullable|date',
             'file' => 'nullable|mimes:pdf,doc,docx|max:5120'
         ]);
@@ -215,12 +215,12 @@ class PublikasiController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'sub_judul' => 'required',
+                'judul' => 'required|max:255',
+                'sub_judul' => 'required|max:255',
                 'kategori' => 'required',
                 'tipe' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
-                'isi' => 'required',
+                'isi' => 'required|max:1000',
                 'created_at' => 'required|date|before:now',
                 'file' => 'mimes:pdf|max:10240',
 
