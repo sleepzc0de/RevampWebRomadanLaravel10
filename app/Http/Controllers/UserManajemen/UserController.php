@@ -16,7 +16,7 @@ use Exception;
 
 class UserController extends Controller
 {
-    private const PEPPER = 'YOUR_SECURE_PEPPER_STRING_HERE';
+    private const PEPPER = 'mwdun-2937h-_(&)HG)*GOIUNJ)HG)*(&F*^D&^S%#$E^RGYOIBJNPOKMO}:}?}"?:>{K)OJ()*YT^&DRFYGUIHT&^R%E%EDYF2025';
     private const HASH_ALGO = 'sha256';
     private const HASH_ROUNDS = 12;
     private const ALLOWED_ROLES = [
@@ -69,28 +69,45 @@ class UserController extends Controller
     public function store(UserCreateRequest $request)
     {
         try {
-            DB::beginTransaction();
+            Log::info('Received request data:', $request->safe()->except(['password', 'password_confirmation']));
 
+            DB::beginTransaction();
             // Validate role
             $role = Role::findOrFail($request->role);
+            Log::info('Found role:', ['role' => $role->name]);
+
             if (!in_array($role->name, self::ALLOWED_ROLES)) {
+                Log::warning('Invalid role attempted:', ['role' => $role->name]);
                 throw new Exception('Role yang dipilih tidak valid.');
             }
 
             // Create user
             $salt = $this->generateSalt();
-            $user = User::create([
+            Log::info('Generated salt');
+
+            $userData = [
                 'name' => strip_tags($request->name),
                 'email' => $request->email,
                 'username' => $this->generateUniqueUsername($request->name),
                 'password' => $this->hashPassword($request->password, $salt),
                 'salt' => $salt,
+            ];
+
+            // Log user data tanpa password
+            Log::info('Attempting to create user with:', [
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'username' => $userData['username']
             ]);
+
+            $user = User::create($userData);
 
             // Assign role
             $user->assignRole($role->name);
 
             DB::commit();
+
+            Log::info('User created successfully:', ['user_id' => $user->id]);
 
             return redirect()->route('users.index')
                 ->with('success', 'User berhasil ditambahkan.');
