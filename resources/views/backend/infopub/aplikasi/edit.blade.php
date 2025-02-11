@@ -38,7 +38,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input maxlength="255" value="{{ old('judul_aplikasi') ?? $data->judul_aplikasi }}" type="text" name="judul_aplikasi" class="form-control @error('judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
+											<input maxlength="100" value="{{ old('judul_aplikasi') ?? $data->judul_aplikasi }}" type="text" name="judul_aplikasi" class="form-control @error('judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
 											<!-- error message untuk judul_aplikasi -->
 											@error('judul_aplikasi')
 											<div class="alert alert-danger mt-2">
@@ -52,7 +52,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Aplikasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input maxlength="255" value="{{ old('sub_judul_aplikasi') ?? $data->sub_judul_aplikasi }}" type="text" name="sub_judul_aplikasi" class="form-control @error('sub_judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
+											<input maxlength="100" value="{{ old('sub_judul_aplikasi') ?? $data->sub_judul_aplikasi }}" type="text" name="sub_judul_aplikasi" class="form-control @error('sub_judul_aplikasi') is-invalid @enderror" required placeholder="Masukkan Judul Aplikasi">
 											<!-- error message untuk sub_judul_aplikasi -->
 											@error('sub_judul_aplikasi')
 											<div class="alert alert-danger mt-2">
