@@ -80,9 +80,14 @@ class AplikasiController extends Controller
             $request->validate([
                 'judul_aplikasi' => 'required|unique:aplikasi|max:255',
                 'sub_judul_aplikasi' => 'required|max:255',
-                'link_aplikasi' => 'required|max:1000',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg'
+                'link_aplikasi' => 'required|max:1000|url',
+                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:1000'
             ]);
+
+             // Filter HTML tags from input
+             $filteredJudul = strip_tags($request->judul_aplikasi);
+             $filteredSubJudul = strip_tags($request->sub_judul_aplikasi);
+             $filteredLink = strip_tags($request->link_aplikasi);
 
             //UPLOAD IMAGE
             $image = $request->file('image');
@@ -90,11 +95,10 @@ class AplikasiController extends Controller
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul_aplikasi' => $request->judul_aplikasi,
-                'sub_judul_aplikasi' => $request->sub_judul_aplikasi,
-                'link_aplikasi' => $request->link_aplikasi,
+                'judul_aplikasi' => $filteredJudul,
+                'sub_judul_aplikasi' => $filteredSubJudul,
+                'link_aplikasi' => $filteredLink,
                 'image' => $image->hashName(),
-
             ];
 
 
@@ -134,17 +138,23 @@ class AplikasiController extends Controller
             $request->validate([
                 'judul_aplikasi' => 'required|max:255',
                 'sub_judul_aplikasi' => 'required|max:255',
-                'link_aplikasi' => 'required|max:1000',
+                'link_aplikasi' => 'required|max:1000|url',
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
             ]);
 
+
+            // Filter HTML tags from input
+            $filteredJudul = strip_tags($request->judul_aplikasi);
+            $filteredSubJudul = strip_tags($request->sub_judul_aplikasi);
+            $filteredLink = strip_tags($request->link_aplikasi);
+
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul_aplikasi' => $request->judul_aplikasi,
-                'sub_judul_aplikasi' => $request->sub_judul_aplikasi,
-                'link_aplikasi' => $request->sub_judul_aplikasi,
-
+                'judul_aplikasi' => $filteredJudul,
+                'sub_judul_aplikasi' => $filteredSubJudul,
+                'link_aplikasi' => $filteredLink,
             ];
+
             if ($request->hasFile('image')) {
                 $request->validate([
                     'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',

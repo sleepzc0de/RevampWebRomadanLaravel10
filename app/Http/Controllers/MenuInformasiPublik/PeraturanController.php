@@ -102,8 +102,8 @@ class PeraturanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nomor_peraturan' => 'required|unique:peraturan',
-                'judul_peraturan' => 'required',
+                'nomor_peraturan' => 'required|unique:peraturan|max:100',
+                'judul_peraturan' => 'required|max:255',
                 'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
@@ -127,19 +127,23 @@ class PeraturanController extends Controller
                 'tanggal_berlaku.date_format' => 'Format tanggal berlaku harus YYYY-MM-DD (contoh: 2024-05-16).',
             ]);
 
+              // Filter HTML tags from input
+              $filteredNomor = strip_tags($request->nomor_peraturan);
+              $filteredJudul = strip_tags($request->judul_peraturan);
+
             //UPLOAD FILE
             $file = $request->file('file');
             $file->storeAs('public/romadan_file_web', $file->hashName());
 
             // SLUG
 
-            $slug = Str::slug($request->judul_peraturan);
+            $slug = Str::slug($filteredJudul);
             // $slug = Str::of($request->judul_peraturan)->slug('?');
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'nomor_peraturan' => $request->nomor_peraturan,
-                'judul_peraturan' => $request->judul_peraturan,
+                'nomor_peraturan' => $filteredNomor,
+                'judul_peraturan' => $filteredJudul,
                 'file' => $file->hashName(),
                 'kategori' => $request->kategori,
                 'jenis_peraturan' => $request->jenis_peraturan,
@@ -191,8 +195,8 @@ class PeraturanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nomor_peraturan' => 'required',
-                'judul_peraturan' => 'required',
+                'nomor_peraturan' => 'required|max:100',
+                'judul_peraturan' => 'required|max:255',
                 'file' => 'mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
@@ -200,14 +204,18 @@ class PeraturanController extends Controller
                 'tanggal_berlaku' => 'required|date|after_or_equal:tanggal_penetapan|date_format:Y-m-d',
             ]);
 
+              // Filter HTML tags from input
+              $filteredNomor = strip_tags($request->nomor_peraturan);
+              $filteredJudul = strip_tags($request->judul_peraturan);
+
             // SLUG
 
-            $slug = Str::slug($request->judul_peraturan);
+            $slug = Str::slug($filteredJudul);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'nomor_peraturan' => $request->nomor_peraturan,
-                'judul_peraturan' => $request->judul_peraturan,
+                'nomor_peraturan' => $filteredNomor,
+                'judul_peraturan' => $filteredJudul,
                 'kategori' => $request->kategori,
                 'jenis_peraturan' => $request->jenis_peraturan,
                 'tanggal_penetapan' => Carbon::parse($request->tanggal_penetapan)->format('Y-m-d'),

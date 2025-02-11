@@ -58,7 +58,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Nomor Peraturan <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input maxlength="255" value="{{ old('nomor_peraturan') ?? $peraturan->nomor_peraturan }}" type="text" name="nomor_peraturan" class="form-control @error('nomor_peraturan') is-invalid @enderror" required placeholder="Masukkan Nomor Peraturan">
+											<input maxlength="100" value="{{ old('nomor_peraturan') ?? $peraturan->nomor_peraturan }}" type="text" name="nomor_peraturan" class="form-control @error('nomor_peraturan') is-invalid @enderror" required placeholder="Masukkan Nomor Peraturan">
 											<!-- error message untuk nomor_peraturan -->
 											@error('nomor_peraturan')
 											<div class="alert alert-danger mt-2">
