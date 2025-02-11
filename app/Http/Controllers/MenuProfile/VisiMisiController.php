@@ -79,12 +79,51 @@ class VisiMisiController extends Controller
     {
         try {
             // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required|max:255',
-                'visi' => 'required|max:1000',
-                'misi' => 'required|max:1000',
+           $validated =  $request->validate([
+            'judul' => [
+                'required',
+                'max:255',
+                'unique:visimisi,judul',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
+            'visi' => [
+                'required',
+                'max:1000',
+                'unique:visimisi,visi',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
+               'misi' => [
+                'required',
+                'max:1000',
+                'unique:visimisi,misi',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240',
+            ],
+            [
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+                'visi.regex' => 'Visi tidak boleh mengandung tag HTML',
+                'misi.regex' => 'Misi tidak boleh mengandung tag HTML',
             ]);
+
+            $validated['judul'] = strip_tags($validated['judul']);
+            $validated['visi'] = strip_tags($validated['visi']);
+            $validated['misi'] = strip_tags($validated['misi']);
 
             //UPLOAD IMAGE
             $image = $request->file('image');
@@ -92,9 +131,9 @@ class VisiMisiController extends Controller
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'visi' => $request->visi,
-                'misi' => $request->misi,
+                'judul' => $validated['judul'],
+                'visi' => $validated['visi'],
+                'misi' => $validated['misi'],
                 'image' => $image->hashName(),
 
             ];
@@ -134,17 +173,53 @@ class VisiMisiController extends Controller
     {
         try {
             // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required|max:255',
-                'visi' => 'required|max:1000',
-                'misi' => 'required|max:1000',
+          $validated =  $request->validate([
+            'judul' => [
+                'required',
+                'max:255',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
+            'visi' => [
+                'required',
+                'max:1000',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
+               'misi' => [
+                'required',
+                'max:1000',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:10240',
+            ], [
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+                'visi.regex' => 'Visi tidak boleh mengandung tag HTML',
+                'misi.regex' => 'Misi tidak boleh mengandung tag HTML',
             ]);
+
+            $validated['judul'] = strip_tags($validated['judul']);
+            $validated['visi'] = strip_tags($validated['visi']);
+            $validated['misi'] = strip_tags($validated['misi']);
+
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'visi' => $request->visi,
-                'misi' => $request->misi,
+                'judul' => $validated['judul'],
+                'visi' => $validated['visi'],
+                'misi' => $validated['misi'],
 
             ];
             if ($request->hasFile('image')) {

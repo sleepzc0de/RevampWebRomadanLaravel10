@@ -110,15 +110,45 @@ class PublikasiController extends Controller
 {
     try {
         $validated = $request->validate([
-            'judul' => 'required|max:255|unique:publikasi,judul',
-            'sub_judul' => 'nullable|max:255',
+            'judul' => [
+                'required',
+                'max:255',
+                'unique:publikasi,judul',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
+            'sub_judul' => [
+                'nullable',
+                'max:255',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if ($value && strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
             'kategori' => 'required|exists:ref_kategori,id_kategori',
             'tipe' => 'required|exists:ref_tipe,id_tipe',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'isi' => 'required|min:10|max:1000',
+            'isi' => [
+                'required',
+                'min:10',
+                'max:1000',
+            ],
             'backdate' => 'nullable|date',
             'file' => 'nullable|mimes:pdf,doc,docx|max:5120'
+        ], [
+            'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+            'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
         ]);
+
+        // Sanitize input before processing
+        $validated['judul'] = strip_tags($validated['judul']);
+        $validated['sub_judul'] = strip_tags($validated['sub_judul']);
 
         // Ensure image exists
         if (!$request->hasFile('image')) {
@@ -162,9 +192,7 @@ class PublikasiController extends Controller
     } catch (ValidationException $e) {
         return back()->withErrors($e->validator)->withInput();
     } catch (Exception $e) {
-        // Log the full error for debugging
         Log::error('Publikasi Creation Error: ' . $e->getMessage());
-
         return back()
             ->with('failed', 'Data Publikasi Gagal Disimpan: ' . $e->getMessage())
             ->withInput();
@@ -216,22 +244,45 @@ class PublikasiController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required|max:255',
-                'sub_judul' => 'required|max:255',
+            $validated = $request->validate([
+                'judul' => [
+                    'required',
+                    'max:255',
+                    'regex:/^[^<>]*$/', // Prevents HTML tags
+                    function ($attribute, $value, $fail) {
+                        if (strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
+                'sub_judul' => [
+                    'required',
+                    'max:255',
+                    'regex:/^[^<>]*$/', // Prevents HTML tags
+                    function ($attribute, $value, $fail) {
+                        if (strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
                 'kategori' => 'required',
                 'tipe' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
-                'isi' => 'required|max:1000',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
+                'isi' => [
+                    'required',
+                    'max:1000',
+                ],
                 'created_at' => 'required|date|before:now',
-                'file' => 'mimes:pdf|max:10240',
-
+                'file' => 'nullable|mimes:pdf|max:10240',
             ], [
-                'created_at.required' => 'Tanggal wajib diisi',
-                'created_at.date' => 'Format tanggal tidak valid',
-                'created_at.before' => 'Tanggal harus sebelum waktu sekarang',
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+                'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
             ]);
+
+            // Sanitize input before processing
+            $validated['judul'] = strip_tags($validated['judul']);
+            $validated['sub_judul'] = strip_tags($validated['sub_judul']);
+
 
             // SLUG
 
@@ -300,8 +351,11 @@ class PublikasiController extends Controller
             PublikasiModel::findOrFail(decrypt($id))->update($data);
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('publikasi.index')->with('success', "Publikasi $request->judul berhasil diupdate!");
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
-            return redirect()->route('publikasi.index')->with(['failed' => 'Data Publikasi Gagal Di Update! error :' . $e->getMessage()]);
+            return redirect()->route('publikasi.index')
+                ->with(['failed' => 'Data Publikasi Gagal Di Update! error :' . $e->getMessage()]);
         }
     }
 

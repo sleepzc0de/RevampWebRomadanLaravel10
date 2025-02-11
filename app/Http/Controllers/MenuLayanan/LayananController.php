@@ -33,7 +33,7 @@ class LayananController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -76,11 +76,29 @@ class LayananController extends Controller
     {
         try {
             // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required',
-                'layanan' => 'required',
+          $validated =   $request->validate([
+               'judul' => [
+                'required',
+                'max:255',
+                'unique:layanan,judul',
+                'regex:/^[^<>]*$/', // Prevents HTML tags
+                function ($attribute, $value, $fail) {
+                    if (strip_tags($value) !== $value) {
+                        $fail('The '.$attribute.' field cannot contain HTML tags.');
+                    }
+                },
+            ],
+            'layanan' => [
+                'required',
+                'min:10',
+                'max:1000',
+            ],
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240',
+            ],[
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
             ]);
+
+            $validated['judul'] = strip_tags($validated['judul']);
 
             //UPLOAD IMAGE
             $image = $request->file('image');
@@ -88,8 +106,8 @@ class LayananController extends Controller
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'layanan' => $request->layanan,
+                'judul' => $validated['judul'],
+                'layanan' => $validated['layanan'],
                 'image' => $image->hashName(),
 
             ];
@@ -129,15 +147,31 @@ class LayananController extends Controller
     {
         try {
             // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required',
-                'layanan' => 'required',
+            $validated = $request->validate([
+                'judul' => [
+                    'required',
+                    'max:255',
+                    'regex:/^[^<>]*$/', // Prevents HTML tags
+                    function ($attribute, $value, $fail) {
+                        if (strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
+               'layanan' => [
+                    'required',
+                    'max:1000',
+                ],
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+            ], [
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
             ]);
+
+            $validated['judul'] = strip_tags($validated['judul']);
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'layanan' => $request->layanan,
+                'judul' => $validated['judul'],
+                'layanan' => $validated['layanan'],
 
             ];
             if ($request->hasFile('image')) {

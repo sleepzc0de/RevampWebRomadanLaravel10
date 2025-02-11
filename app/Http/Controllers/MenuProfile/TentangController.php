@@ -79,11 +79,30 @@ class TentangController extends Controller
     {
         try {
             // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required|max:255',
-                'tentang' => 'required|max:1000',
+            $validated = $request->validate([
+                'judul' => [
+                    'required',
+                    'max:255',
+                    'unique:tentang,judul',
+                    'regex:/^[^<>]*$/', // Prevents HTML tags
+                    function ($attribute, $value, $fail) {
+                        if (strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
+               'tentang' => [
+                    'required',
+                    'min:10',
+                    'max:1000',
+                ],
                 'image' => 'required|image|mimes:jpeg,png,jpg,svg',
+            ],[
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
             ]);
+
+            $validated['judul'] = strip_tags($validated['judul']);
+
 
             //UPLOAD IMAGE
             $image = $request->file('image');
@@ -98,8 +117,8 @@ class TentangController extends Controller
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'tentang' => $request->tentang,
+                'judul' => $validated['judul'],
+                'tentang' => $validated['tentang'],
                 'excerpt' => $excerpt,
                 'image' => $image->hashName(),
             ];
@@ -139,15 +158,31 @@ class TentangController extends Controller
     {
         try {
             // VALIDASI DATA
-            $request->validate([
-                'judul' => 'required|max:255',
-                'tentang' => 'required|max:1000',
+            $validated= $request->validate([
+                'judul' => [
+                    'required',
+                    'max:255',
+                    'regex:/^[^<>]*$/', // Prevents HTML tags
+                    function ($attribute, $value, $fail) {
+                        if (strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
+               'tentang' => [
+                    'required',
+                    'max:1000',
+                ],
                 'image' => 'image|mimes:jpeg,png,jpg,svg|max:2000',
+            ], [
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
             ]);
+
+            $validated['judul'] = strip_tags($validated['judul']);
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'tentang' => $request->tentang,
+                'judul' => $validated['judul'],
+                'tentang' => $validated['tentang'],
 
             ];
             if ($request->hasFile('image')) {
