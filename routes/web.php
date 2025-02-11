@@ -137,6 +137,12 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             // 2.1.3 USERS
             Route::resource('users', UserController::class);
 
+            Route::group(['middleware' => ['prevent-admin-modification']], function () {
+                Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+                Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+            });
+
+
             // 2.1.7 MENU LAYANAN
             Route::prefix('/layanan')->group(function () {
                 Route::resource('layanan', LayananController::class);
@@ -226,4 +232,10 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::get('backups/{filename}/download', [BackupController::class, 'download'])->name('backups.download');
     Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
 });
-require __DIR__ . '/auth.php';
+// require __DIR__ . '/auth.php';
+
+use App\Http\Controllers\AuthController;
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

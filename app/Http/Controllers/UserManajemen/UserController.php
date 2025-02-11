@@ -3,223 +3,240 @@
 namespace App\Http\Controllers\UserManajemen;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
-use Exception;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class UserController extends Controller
 {
+    private const PEPPER = 'YOUR_SECURE_PEPPER_STRING_HERE';
+    private const HASH_ALGO = 'sha256';
+    private const HASH_ROUNDS = 12;
+    private const ALLOWED_ROLES = [
+        'REDAKTUR',
+        'EDITOR',
+        'HUMAS',
+        'TAMU'
+    ];
 
-public function index()
-{
-    $query = User::select('*');
-    if (request()->ajax()) {
+    public function index()
+    {
+        if (!request()->ajax()) {
+            return view('backend.users.index');
+        }
+
+        $query = User::with('roles')->select(['id', 'name', 'email', 'username']);
+
         return datatables()->of($query)
-            ->addColumn('role_name', function ($query) {
-                return $query->roles->pluck('name')->implode(', ');
+            ->addColumn('role_name', function ($user) {
+                return $user->roles->pluck('name')->implode(', ');
             })
-            ->addColumn('opsi', function ($query) {
-                $encryptedId = Crypt::encrypt($query->id);
-                $preview = route('users.show', $encryptedId);
-                $edit = route('users.edit', $encryptedId);
-                $hapus = route('users.destroy', $encryptedId);
+            ->addColumn('opsi', function ($user) {
+                if ($user->hasRole('ADMINISTRATOR')) {
+                    return '<span class="badge bg-info">Protected</span>';
+                }
 
-                // Direct HTML rendering instead of using component
-                return '<div class="d-inline-flex">
-                    <div class="dropdown">
-                        <a href="#" class="text-body" data-bs-toggle="dropdown">
-                            <i class="ph-list"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a href="' . $edit . '" class="dropdown-item">
-                                <i class="ph-note-pencil me-2"></i>
-                                Edit
-                            </a>
-                            <form action="' . $hapus . '" method="POST">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="dropdown-item">
-                                    <i class="ph-trash me-2"></i>
-                                    Hapus
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>';
+                $encryptedId = Crypt::encrypt($user->id);
+                return view('components.action-buttons', [
+                    'edit' => route('users.edit', $encryptedId),
+                    'hapus' => route('users.destroy', $encryptedId),
+                    'encrypted_id' => $encryptedId
+                ])->render();
             })
             ->filterColumn('role_name', function ($query, $keyword) {
                 $query->whereHas('roles', function ($q) use ($keyword) {
-                    $q->where('name', 'like', '%' . $keyword . '%');
+                    $q->where('name', 'like', "%{$keyword}%");
                 });
             })
-            ->rawColumns(['opsi', 'role_name'])
+            ->rawColumns(['opsi'])
             ->addIndexColumn()
             ->make(true);
     }
-    return view('backend.users.index');
-}
 
-public function show($id){
-    return redirect()->route('users.index');
-}
-
-public function create()
-{
-    $roles = Role::whereIn('name', [
-        'REDAKTUR', 'EDITOR','HUMAS','TAMU'
-    ])->get();
-
-    return view('backend.users.tambah_user', compact('roles'));
-}
-
-public function store(UserCreateRequest $request)
-{
-    try {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'username' => Str::slug($request->name) . '-' . Str::random(6),
-            'password' => Hash::make($request->password, [
-                'rounds' => 12,  // Increased rounds for better security
-                'memory' => 1024,
-                'time' => 2,
-                'threads' => 2,
-            ]),
-        ]);
-
-        $user->assignRole($request->role);
-
-        return redirect()->back()->with(['success' => 'Data User Berhasil Ditambahkan']);
-    } catch (Exception $e) {
-        report($e);
-        return redirect()->back()->with([
-            'failed' => 'Terjadi kesalahan sistem. Silakan coba lagi nanti.'
-        ]);
+    public function create()
+    {
+        $roles = Role::whereIn('name', self::ALLOWED_ROLES)->get();
+        return view('backend.users.tambah_user', compact('roles'));
     }
-}
+
+    public function store(UserCreateRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Validate role
+            $role = Role::findOrFail($request->role);
+            if (!in_array($role->name, self::ALLOWED_ROLES)) {
+                throw new Exception('Role yang dipilih tidak valid.');
+            }
+
+            // Create user
+            $salt = $this->generateSalt();
+            $user = User::create([
+                'name' => strip_tags($request->name),
+                'email' => $request->email,
+                'username' => $this->generateUniqueUsername($request->name),
+                'password' => $this->hashPassword($request->password, $salt),
+                'salt' => $salt,
+            ]);
+
+            // Assign role
+            $user->assignRole($role->name);
+
+            DB::commit();
+
+            return redirect()->route('users.index')
+                ->with('success', 'User berhasil ditambahkan.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            Log::error('Database error:', ['error' => $e->getMessage()]);
+
+            if ($e->getCode() == 23000) { // Duplicate entry
+                return redirect()->back()
+                    ->withInput()
+                    ->with('failed', 'Email atau username sudah digunakan.');
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('failed', 'Gagal menyimpan data user. Silakan coba lagi.');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error creating user:', ['error' => $e->getMessage()]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('failed', $e->getMessage());
+        }
+    }
+
+    private function generateSalt(): string
+    {
+        return bin2hex(random_bytes(32));
+    }
+
+    private function hashPassword(string $password, string $salt): string
+    {
+        $peppered = hash_hmac(self::HASH_ALGO, $password . $salt, self::PEPPER);
+        return Hash::make($peppered);
+    }
+
+    private function generateUniqueUsername(string $name): string
+    {
+        $baseUsername = Str::slug($name);
+        $username = $baseUsername;
+        $counter = 1;
+
+        while (User::where('username', $username)->exists()) {
+            $username = $baseUsername . '-' . $counter++;
+        }
+
+        return $username;
+    }
 
     public function edit($id)
     {
         try {
-            // Decrypt the ID
             $decryptedId = Crypt::decrypt($id);
             $user = User::findOrFail($decryptedId);
 
-            $roles = Role::whereIn('name', [
-                'REDAKTUR', 'EDITOR', 'HUMAS_PERSIJA',
-                'HUMAS_PENGELOLAAN', 'HUMAS_PERENCANAAN',
-                'HUMAS_PENATAUSAHAAN', 'HUMAS_PENGADAAN',
-                'TAMU'
-            ])->get();
+            if ($user->hasRole('ADMINISTRATOR')) {
+                return redirect()->route('users.index')
+                    ->with('failed', 'User dengan role ADMINISTRATOR tidak dapat diedit.');
+            }
 
-            $data = [
-                'user' => $user,
-                'role' => $roles,
-                'olduser' => $user->roles->first(),
-                'encrypted_id' => $id // Pass the encrypted ID back to view
-            ];
+            $roles = Role::whereIn('name', self::ALLOWED_ROLES)->get();
+            $userRole = $user->roles->first();
 
-            return view('backend.users.edit_user', compact('data'));
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            report($e);
-            return redirect()->route('users.index')->with([
-                'failed' => 'ID User tidak valid.'
-            ]);
+            return view('backend.users.edit_user', compact('user', 'roles', 'userRole'));
+
         } catch (Exception $e) {
-            report($e);
-            return redirect()->route('users.index')->with([
-                'failed' => 'Terjadi kesalahan saat mengambil data user.'
-            ]);
+            Log::error('Error editing user:', ['error' => $e->getMessage()]);
+            return redirect()->route('users.index')
+                ->with('failed', 'Terjadi kesalahan. Silakan coba lagi.');
         }
     }
 
     public function update(UserUpdateRequest $request, $id)
     {
         try {
-            // Decrypt the ID
+            DB::beginTransaction();
+
             $decryptedId = Crypt::decrypt($id);
             $user = User::findOrFail($decryptedId);
 
-            // Update basic info
-            $user->name = $request->name;
+            $user->name = strip_tags($request->name);
             $user->email = $request->email;
 
-            // Update password if provided
             if ($request->filled('password')) {
-                $user->password = Hash::make($request->password);
+                $salt = $this->generateSalt();
+                $user->password = $this->hashPassword($request->password, $salt);
+                $user->salt = $salt;
             }
 
             $user->save();
 
-            // Update role if provided and ensure it's treated as integer
             if ($request->has('role')) {
-                $roleId = (int) $request->role;
-                $user->syncRoles([$roleId]);
+                $role = Role::findOrFail($request->role);
+                if (!in_array($role->name, self::ALLOWED_ROLES)) {
+                    throw new Exception('Role yang dipilih tidak valid.');
+                }
+                $user->syncRoles([$role->name]);
             }
 
-            return redirect()->route('users.index')->with([
-                'success' => 'User berhasil diperbarui!'
-            ]);
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            report($e);
-            return redirect()->route('users.index')->with([
-                'failed' => 'ID User tidak valid.'
-            ]);
+            DB::commit();
+
+            return redirect()->route('users.index')
+                ->with('success', 'User berhasil diperbarui.');
+
         } catch (Exception $e) {
-            report($e);
-            return redirect()->route('users.index')->with([
-                'failed' => 'Terjadi kesalahan sistem. Silahkan coba lagi nanti.'
-            ]);
+            DB::rollBack();
+            Log::error('Error updating user:', ['error' => $e->getMessage()]);
+
+            return redirect()->route('users.index')
+                ->with('failed', 'Gagal memperbarui user. Silakan coba lagi.');
         }
     }
 
     public function destroy($id)
-{
-    try {
-        // Decrypt the ID
-        $decryptedId = Crypt::decrypt($id);
-        $user = User::findOrFail($decryptedId);
-
-        // Prevent self-deletion
-        if (auth()->id() === $user->id) {
-            return redirect()->route('users.index')->with([
-                'failed' => 'Anda tidak dapat menghapus akun Anda sendiri.'
-            ]);
-        }
-
-        // Remove role associations first
-        $user->roles()->detach();
-
-        // Delete the user
-        $user->delete();
-
-        return redirect()->route('users.index')->with([
-            'success' => 'User berhasil dihapus!'
-        ]);
-
-    } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-        report($e);
-        return redirect()->route('users.index')->with([
-            'failed' => 'ID User tidak valid.'
-        ]);
-    } catch (Exception $e) {
-        report($e);
-        return redirect()->route('users.index')->with([
-            'failed' => 'Terjadi kesalahan sistem. Silakan coba lagi nanti.'
-        ]);
-    }
-}
-    private function generateActionButtons($encryptedId): string
     {
-        $preview = route('users.show', $encryptedId);
-        $edit = route('users.edit', $encryptedId);
-        $hapus = route('users.destroy', $encryptedId);
+        try {
+            DB::beginTransaction();
 
-        return view('components.action-buttons', compact('preview', 'edit', 'hapus'))->render();
+            $decryptedId = Crypt::decrypt($id);
+            $user = User::findOrFail($decryptedId);
+
+            if ($user->hasRole('ADMINISTRATOR')) {
+                throw new Exception('User dengan role ADMINISTRATOR tidak dapat dihapus.');
+            }
+
+            if (auth()->id() === $user->id) {
+                throw new Exception('Anda tidak dapat menghapus akun Anda sendiri.');
+            }
+
+            $user->roles()->detach();
+            $user->delete();
+
+            DB::commit();
+
+            return redirect()->route('users.index')
+                ->with('success', 'User berhasil dihapus.');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting user:', ['error' => $e->getMessage()]);
+
+            return redirect()->route('users.index')
+                ->with('failed', $e->getMessage());
+        }
     }
 }

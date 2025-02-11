@@ -23,11 +23,10 @@ class UserCreateRequest extends FormRequest
                 'string',
                 'confirmed',
                 Password::min(8)
-                    ->mixedCase()        // Require both uppercase and lowercase letters
-                    ->letters()          // Require at least one letter
-                    ->numbers()          // Require at least one number
-                    ->symbols()          // Require at least one symbol
-                    ->uncompromised(),   // Check if password hasn't been compromised in data leaks
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
             ],
         ];
     }
@@ -36,6 +35,7 @@ class UserCreateRequest extends FormRequest
     {
         return [
             'name.required' => 'Nama harus diisi',
+            'name.max' => 'Nama maksimal 255 karakter',
             'email.required' => 'Email harus diisi',
             'email.email' => 'Format email tidak valid',
             'email.unique' => 'Email sudah digunakan',
@@ -47,7 +47,6 @@ class UserCreateRequest extends FormRequest
             'password.letters' => 'Password harus mengandung huruf',
             'password.numbers' => 'Password harus mengandung angka',
             'password.symbols' => 'Password harus mengandung simbol',
-            'password.uncompromised' => 'Password yang anda masukkan terlalu umum atau pernah diretas. Silakan pilih password lain',
             'password.confirmed' => 'Konfirmasi password tidak cocok',
         ];
     }
