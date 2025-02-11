@@ -45,7 +45,7 @@ const CKEditorClassic = function() {
             return;
         }
 
-        
+
 
          // Editor with placeholder
         ClassicEditor.create(document.querySelector('#ckeditor_classic_empty_infopub_list_info'), {
@@ -60,8 +60,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('informasi-publik.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
                                     <!-- Judul List Informasi Publik -->
@@ -126,11 +126,11 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Isi Infopub <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="isi_list_informasi" class="form-control @error('isi_list_informasi') is-invalid @enderror" required placeholder="Isi list informasi" id="ckeditor_classic_empty_infopub_list_info">{{ old('isi_list_informasi') }}</textarea>
+											<textarea maxlength="1000" name="isi_list_informasi" class="form-control @error('isi_list_informasi') is-invalid @enderror" required placeholder="Isi list informasi" id="ckeditor_classic_empty_infopub_list_info">{{ old('isi_list_informasi') }}</textarea>
 										</div>
 									</div>
-									
-				
+
+
 									<!-- /Isi List Informasi Publik -->
 
                                     <!-- Link List Informasi Publik -->
@@ -147,9 +147,9 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /Link   List Informasi Publik -->
-                                    
-                                    
-									
+
+
+
 
 								</div>
 

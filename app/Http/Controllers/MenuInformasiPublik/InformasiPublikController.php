@@ -13,6 +13,18 @@ use Illuminate\Support\Str;
 
 class InformasiPublikController extends Controller
 {
+
+    // Helper function to sanitize HTML input
+    private function sanitizeHtml($input) {
+        // Remove all HTML tags except allowed ones
+        $allowed_tags = '<p><br><strong><em><ul><li><ol><h1><h2><h3><h4><h5><h6>';
+        $cleaned = strip_tags($input, $allowed_tags);
+
+        // Convert special characters to HTML entities
+        return htmlspecialchars($cleaned, ENT_QUOTES, 'UTF-8');
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -33,7 +45,7 @@ class InformasiPublikController extends Controller
 												</a>
 
 												<div class="dropdown-menu dropdown-menu-end">
-													
+
 													<a href="' . $edit . '" class="dropdown-item">
 														<i class="ph-note-pencil me-2"></i>
 														Edit
@@ -119,25 +131,27 @@ class InformasiPublikController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'isi' => 'required',
+                'judul' => 'required|max:255',
+                'isi' => 'required|max:3000',
             ]);
 
+            // Sanitize HTML input
+            $judul = $this->sanitizeHtml($request->judul);
+            $isi = $this->sanitizeHtml($request->isi);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'isi' => $request->isi,
-
+                'judul' => $judul,
+                'isi' => $isi,
             ];
 
             InfopublikHomeModel::findOrFail(decrypt($id))->update($data);
-            // $berita = Berita::find($id)->update($data);
             return redirect()->route('informasi-publik.index')->with('success', "Data Home Informasi Publik berhasil diupdate!");
         } catch (Exception $e) {
             return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Home Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -147,24 +161,25 @@ class InformasiPublikController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul_list_informasi' => 'required',
-                'isi_list_informasi' => 'required',
-                'link_list_informasi' => 'required'
+                'judul_list_informasi' => 'required|max:255',
+                'isi_list_informasi' => 'required|max:1000',
+                'link_list_informasi' => 'required|max:255'
             ]);
 
+            // Sanitize HTML input
+            $judul = $this->sanitizeHtml($request->judul_list_informasi);
+            $isi = $this->sanitizeHtml($request->isi_list_informasi);
+            $link = filter_var($request->link_list_informasi, FILTER_SANITIZE_URL);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul_list_informasi' => $request->judul_list_informasi,
-                'isi_list_informasi' => $request->isi_list_informasi,
-                'link_list_informasi' => $request->link_list_informasi
-
+                'judul_list_informasi' => $judul,
+                'isi_list_informasi' => $isi,
+                'link_list_informasi' => $link
             ];
-
 
             InformasiPublikModel::create($data);
 
-            //redirect to index
             return redirect()->back()->with(['success' => 'Data Informasi Publik Berhasil Disimpan!']);
         } catch (Exception $e) {
             return redirect()->back()->with(['failed' => 'Data Informasi Publik Gagal Disimpan! error :' . $e->getMessage()]);
@@ -176,22 +191,22 @@ class InformasiPublikController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
-                'isi' => 'required',
+                'judul' => 'required|max:255',
+                'isi' => 'required|max:3000',
             ]);
 
+            // Sanitize HTML input
+            $judul = $this->sanitizeHtml($request->judul);
+            $isi = $this->sanitizeHtml($request->isi);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul' => $request->judul,
-                'isi' => $request->isi,
-
+                'judul' => $judul,
+                'isi' => $isi,
             ];
-
 
             InfopublikHomeModel::create($data);
 
-            //redirect to index
             return redirect()->back()->with(['success' => 'Data Informasi Publik Home Berhasil Disimpan!']);
         } catch (Exception $e) {
             return redirect()->back()->with(['failed' => 'Data Informasi Publik Home Gagal Disimpan! error :' . $e->getMessage()]);
@@ -224,22 +239,24 @@ class InformasiPublikController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul_list_informasi' => 'required',
-                'isi_list_informasi' => 'required',
-                'link_list_informasi' => 'required'
+                'judul_list_informasi' => 'required|max:255',
+                'isi_list_informasi' => 'required|max:1000',
+                'link_list_informasi' => 'required|max:255'
             ]);
 
+            // Sanitize HTML input
+            $judul = $this->sanitizeHtml($request->judul_list_informasi);
+            $isi = $this->sanitizeHtml($request->isi_list_informasi);
+            $link = filter_var($request->link_list_informasi, FILTER_SANITIZE_URL);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
-                'judul_list_informasi' => $request->judul_list_informasi,
-                'isi_list_informasi' => $request->isi_list_informasi,
-                'link_list_informasi' => $request->link_list_informasi
-
+                'judul_list_informasi' => $judul,
+                'isi_list_informasi' => $isi,
+                'link_list_informasi' => $link
             ];
 
             InformasiPublikModel::findOrFail(decrypt($id))->update($data);
-            // $berita = Berita::find($id)->update($data);
             return redirect()->route('informasi-publik.index')->with('success', "Data Informasi Publik berhasil diupdate!");
         } catch (Exception $e) {
             return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);

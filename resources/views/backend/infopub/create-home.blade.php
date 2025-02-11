@@ -58,8 +58,8 @@ const CKEditorClassic = function() {
                     { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ],
             },
-			
-            
+
+
         }).catch(error => {
             console.error(error);
         });
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						<form class="form-validate-jquery" action="{{route('informasi-publik.store-home')}}" method="post" enctype="multipart/form-data" autocomplete="off">
 							@csrf
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
 									<!-- Judul InfoPub -->
@@ -123,11 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Isi Infopub <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="isi kegiatan" id="ckeditor_classic_empty_kegiatan">{{ old('isi') }}</textarea>
+											<textarea maxlength="3000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="isi kegiatan" id="ckeditor_classic_empty_kegiatan">{{ old('isi') }}</textarea>
 										</div>
 									</div>
 									<!-- /Isi Informasi Publik -->
-                                                                        
+
 								</div>
 
 						</div>

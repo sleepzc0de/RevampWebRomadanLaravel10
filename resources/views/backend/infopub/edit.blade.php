@@ -31,7 +31,7 @@
 							@csrf
                             @method('PUT')
 							<div class="card-body">
-							
+
 								<div class="mb-4">
 
                                 <!-- Judul Artikel input -->
@@ -53,7 +53,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Isi Informasi Publik <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<textarea name="isi_list_informasi" class="form-control @error('isi_list_informasi') is-invalid @enderror" required placeholder="Isikan List Informasi" id="ckeditor_classic_empty">{{ old('isi_list_informasi') ?? $infopub->isi_list_informasi }}</textarea>
+											<textarea maxlength="1000" name="isi_list_informasi" class="form-control @error('isi_list_informasi') is-invalid @enderror" required placeholder="Isikan List Informasi" id="ckeditor_classic_empty">{{ old('isi_list_informasi') ?? $infopub->isi_list_informasi }}</textarea>
 										</div>
 									</div>
 									<!-- /kegiatan -->
