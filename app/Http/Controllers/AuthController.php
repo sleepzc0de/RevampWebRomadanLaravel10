@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -47,43 +48,97 @@ class AuthController extends Controller
     // }
 
     public function login(Request $request)
-    {
+{
+    try {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'captcha' => 'required',
+            '_token' => 'required'
         ]);
 
         $user = User::where('email', $request->email)->first();
+
         if (!$user) {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->withInput($request->except('password'));
+            return back()
+                ->withErrors(['email' => 'The provided credentials do not match our records.'])
+                ->withInput($request->except('password'));
         }
 
         $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
 
         if (Hash::check($peppered, $user->password)) {
+            // Regenerate session setelah login berhasil
+            $request->session()->regenerate();
+
             Auth::login($user);
 
-            // Tambahkan konfigurasi cookie
-            config(['session.http_only' => true]);
+            // Set secure session configuration
+            config([
+                'session.secure' => true,
+                'session.http_only' => true,
+                'session.same_site' => 'lax'
+            ]);
 
-            // Set cookie dengan atribut HttpOnly
-            $cookie = cookie()->forever('laravel_session', session()->getId(), null, null, null, true, true);
+            // Set cookie dengan parameter yang sesuai
+            $cookie = cookie(
+                'laravel_session',      // nama
+                session()->getId(),      // value
+                60 * 24 * 30,           // duration (30 hari dalam menit)
+                '/',                    // path
+                null,                   // domain
+                true,                   // secure
+                true                    // httpOnly
+            );
 
-            return redirect()->route('home')->withCookie($cookie);
+            Log::debug('Login successful', [
+                'user_id' => $user->id,
+                'new_session_id' => session()->getId()
+            ]);
+
+            return redirect()
+                ->route('home')
+                ->withCookie($cookie);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput($request->except('password'));
-    }
+        return back()
+            ->withErrors(['email' => 'The provided credentials do not match our records.'])
+            ->withInput($request->except('password'));
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+    } catch (\Exception $e) {
+        Log::error('Login error', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return back()
+            ->withErrors(['error' => 'An error occurred during login. Please try again.'])
+            ->withInput($request->except('password'));
     }
+}
+
+public function logout(Request $request)
+{
+    Auth::logout();
+
+    // Invalidate dan regenerate session
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Hapus cookie dengan parameter yang sesuai
+    $cookie = cookie(
+        'laravel_session',    // nama
+        '',                   // value (kosong untuk menghapus)
+        -1,                   // duration (negatif untuk expire)
+        '/',                  // path
+        null,                 // domain
+        true,                 // secure
+        true                  // httpOnly
+    );
+
+    return redirect('/')
+        ->withCookie($cookie);
+}
+
+
 }

@@ -359,11 +359,13 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             showLoading();
 
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const response = await fetch('{{ route("informasi-publik-aplikasi-index-fe") }}', {
                 method: 'POST',
+
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-CSRF-TOKEN': csrfToken,
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify(options)
