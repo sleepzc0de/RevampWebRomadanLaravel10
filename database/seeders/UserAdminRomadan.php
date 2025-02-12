@@ -17,7 +17,7 @@ class UserAdminRomadan extends Seeder
 
     private function generateSalt(): string
     {
-        return bin2hex(random_bytes(16));
+        return bin2hex(random_bytes(32));
     }
 
     private function hashPassword(string $password, string $salt): string

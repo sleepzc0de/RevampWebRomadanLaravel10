@@ -137,10 +137,10 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             // 2.1.3 USERS
             Route::resource('users', UserController::class);
 
-            Route::group(['middleware' => ['prevent-admin-modification']], function () {
-                Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-                Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-            });
+            // Route::group(['middleware' => ['prevent-admin-modification']], function () {
+            //     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+            //     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+            // });
 
 
             // 2.1.7 MENU LAYANAN

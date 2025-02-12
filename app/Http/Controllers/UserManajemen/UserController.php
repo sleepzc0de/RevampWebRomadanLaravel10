@@ -186,41 +186,67 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, $id)
     {
         try {
+            Log::info('Starting user update process');
             DB::beginTransaction();
 
             $decryptedId = Crypt::decrypt($id);
             $user = User::findOrFail($decryptedId);
 
+            // Check if user is administrator
+            if ($user->hasRole('ADMINISTRATOR')) {
+                throw new Exception('User dengan role ADMINISTRATOR tidak dapat diedit.');
+            }
+
+            // Validate if email is unique except for current user
+            if ($request->email !== $user->email) {
+                if (User::where('email', $request->email)->exists()) {
+                    throw new Exception('Email sudah digunakan oleh user lain.');
+                }
+            }
+
+            // Update basic info
             $user->name = strip_tags($request->name);
             $user->email = $request->email;
 
+
+            // Update password if provided
             if ($request->filled('password')) {
                 $salt = $this->generateSalt();
                 $user->password = $this->hashPassword($request->password, $salt);
                 $user->salt = $salt;
+                Log::info('Password updated for user', ['user_id' => $user->id]);
             }
 
-            $user->save();
-
+            // Update role if provided and valid
             if ($request->has('role')) {
                 $role = Role::findOrFail($request->role);
                 if (!in_array($role->name, self::ALLOWED_ROLES)) {
                     throw new Exception('Role yang dipilih tidak valid.');
                 }
                 $user->syncRoles([$role->name]);
+                Log::info('Role updated for user', ['user_id' => $user->id, 'new_role' => $role->name]);
             }
 
+            $user->save();
             DB::commit();
 
+            Log::info('User updated successfully', ['user_id' => $user->id]);
             return redirect()->route('users.index')
                 ->with('success', 'User berhasil diperbarui.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            Log::error('Database error during user update:', ['error' => $e->getMessage()]);
+            return redirect()->back()
+                ->withInput()
+                ->with('failed', 'Gagal memperbarui data. Silakan coba lagi.');
 
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error updating user:', ['error' => $e->getMessage()]);
-
-            return redirect()->route('users.index')
-                ->with('failed', 'Gagal memperbarui user. Silakan coba lagi.');
+            return redirect()->back()
+                ->withInput()
+                ->with('failed', $e->getMessage());
         }
     }
 

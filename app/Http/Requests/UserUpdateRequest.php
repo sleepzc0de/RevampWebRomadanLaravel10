@@ -1,21 +1,31 @@
 <?php
 namespace App\Http\Requests;
+
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use App\Models\User;
 
 class UserUpdateRequest extends FormRequest
 {
     protected $decryptedId;
+    protected $targetUser;
 
     public function authorize()
     {
         try {
             $this->decryptedId = Crypt::decrypt($this->route('user'));
-            // Tambahan validasi otorisasi jika diperlukan
+            $this->targetUser = User::findOrFail($this->decryptedId);
+
+            if ($this->targetUser->hasRole('ADMINISTRATOR')) {
+                return false;
+            }
+
             return true;
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return false;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return false;
         }
     }
@@ -23,16 +33,22 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'not_regex:/[<>]/'], // Tambahan validasi untuk mencegah XSS
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'not_regex:/[<>]/'
+            ],
             'email' => [
                 'required',
-                'email:rfc,dns', // Validasi format email yang lebih ketat
+                'email:rfc,dns',
+                'max:255',
                 Rule::unique('users', 'email')->ignore($this->decryptedId)
             ],
             'role' => [
                 'required',
                 'exists:roles,id',
-                Rule::notIn(['ADMINISTRATOR']) // Mencegah perubahan ke role ADMINISTRATOR
+                Rule::notIn(['ADMINISTRATOR'])
             ],
             'password' => $this->passwordRules(),
         ];
@@ -43,13 +59,25 @@ class UserUpdateRequest extends FormRequest
         if ($this->filled('password')) {
             return [
                 'string',
-                'confirmed',
                 Password::min(8)
                     ->mixedCase()
                     ->letters()
                     ->numbers()
                     ->symbols()
                     ->uncompromised(),
+                function ($attribute, $value, $fail) {
+                    $personalInfo = [
+                        $this->input('name'),
+                        $this->input('email'),
+                        $this->targetUser->username
+                    ];
+
+                    foreach ($personalInfo as $info) {
+                        if ($info && stripos($value, $info) !== false) {
+                            $fail('Password tidak boleh mengandung informasi personal.');
+                        }
+                    }
+                }
             ];
         }
         return ['nullable'];
@@ -60,9 +88,11 @@ class UserUpdateRequest extends FormRequest
         return [
             'name.required' => 'Nama harus diisi',
             'name.not_regex' => 'Nama tidak boleh mengandung karakter khusus',
+            'name.max' => 'Nama maksimal 255 karakter',
             'email.required' => 'Email harus diisi',
             'email.email' => 'Format email tidak valid',
             'email.unique' => 'Email sudah digunakan',
+            'email.max' => 'Email maksimal 255 karakter',
             'role.required' => 'Role harus dipilih',
             'role.exists' => 'Role tidak valid',
             'role.not_in' => 'Role yang dipilih tidak diizinkan',
@@ -72,7 +102,6 @@ class UserUpdateRequest extends FormRequest
             'password.numbers' => 'Password harus mengandung angka',
             'password.symbols' => 'Password harus mengandung simbol',
             'password.uncompromised' => 'Password yang anda masukkan terlalu umum atau pernah diretas. Silakan pilih password lain',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
         ];
     }
 
@@ -80,14 +109,21 @@ class UserUpdateRequest extends FormRequest
     {
         try {
             $this->decryptedId = Crypt::decrypt($this->route('user'));
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            $this->targetUser = User::findOrFail($this->decryptedId);
+        } catch (\Exception $e) {
             $this->decryptedId = null;
+            $this->targetUser = null;
         }
 
-        // Sanitasi input
         if ($this->has('name')) {
             $this->merge([
-                'name' => strip_tags($this->name)
+                'name' => trim(strip_tags($this->name))
+            ]);
+        }
+
+        if ($this->has('email')) {
+            $this->merge([
+                'email' => strtolower(trim($this->email))
             ]);
         }
     }
@@ -96,7 +132,6 @@ class UserUpdateRequest extends FormRequest
     {
         $validated = parent::validated($key, $default);
 
-        // Hapus password dari validated data jika kosong
         if (isset($validated['password']) && empty($validated['password'])) {
             unset($validated['password']);
         }
