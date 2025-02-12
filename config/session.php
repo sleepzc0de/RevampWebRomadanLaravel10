@@ -31,9 +31,11 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 20),
+    'lifetime' => env('SESSION_LIFETIME', 15),
 
-    'expire_on_close' => false,
+    'expire_on_close' => true,
+
+    'idle_timeout' => 15,
 
     /*
     |--------------------------------------------------------------------------

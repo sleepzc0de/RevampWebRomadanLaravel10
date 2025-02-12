@@ -25,6 +25,28 @@
     @yield('script_atas')
     <script src="{{ asset('webromadan/fe/js/app.js')}}"></script>
     @yield('script_bawah')
+    <script>
+        let idleTime = 0;
+        const idleInterval = setInterval(timerIncrement, 60000); // Check setiap 1 menit
+
+        function timerIncrement() {
+            idleTime = idleTime + 1;
+            if (idleTime >= {{ config('session.idle_timeout', 15) }}) {
+                window.location.href = '{{ route("login") }}';
+            }
+        }
+
+        // Reset timer pada aktivitas user
+        function resetTimer() {
+            idleTime = 0;
+        }
+
+        // Event listeners untuk reset timer
+        // document.addEventListener('mousemove', resetTimer);
+        // document.addEventListener('keypress', resetTimer);
+        // document.addEventListener('scroll', resetTimer);
+        document.addEventListener('click', resetTimer);
+        </script>
     @stack('scripts')
 
 

@@ -232,6 +232,8 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::get('backups/{filename}/download', [BackupController::class, 'download'])->name('backups.download');
     Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
 });
+
+
 // require __DIR__ . '/auth.php';
 
 use App\Http\Controllers\AuthController;

@@ -17,6 +17,35 @@ class AuthController extends Controller
         return view('auth.romadan_login');
     }
 
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required'
+    //     ]);
+
+    //     $user = User::where('email', $request->email)->first();
+
+    //     if (!$user) {
+    //         return back()->withErrors([
+    //             'email' => 'The provided credentials do not match our records.',
+    //         ])->withInput($request->except('password'));
+    //     }
+
+    //     // Recreate the password hash using stored salt
+    //     $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
+
+    //     // Verify using Laravel's built-in Hash check
+    //     if (Hash::check($peppered, $user->password)) {
+    //         Auth::login($user);
+    //         return redirect()->route('home');
+    //     }
+
+    //     return back()->withErrors([
+    //         'email' => 'The provided credentials do not match our records.',
+    //     ])->withInput($request->except('password'));
+    // }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -25,20 +54,24 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-
         if (!$user) {
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
             ])->withInput($request->except('password'));
         }
 
-        // Recreate the password hash using stored salt
         $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
 
-        // Verify using Laravel's built-in Hash check
         if (Hash::check($peppered, $user->password)) {
             Auth::login($user);
-            return redirect()->route('home');
+
+            // Tambahkan konfigurasi cookie
+            config(['session.http_only' => true]);
+
+            // Set cookie dengan atribut HttpOnly
+            $cookie = cookie()->forever('laravel_session', session()->getId(), null, null, null, true, true);
+
+            return redirect()->route('home')->withCookie($cookie);
         }
 
         return back()->withErrors([
