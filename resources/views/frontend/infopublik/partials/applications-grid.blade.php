@@ -11,8 +11,12 @@
                         loading="lazy"
                     >
                     <div class="app-info">
-                        <h3 class="app-title">{{ $item->judul_aplikasi }}</h3>
-                        <p class="app-subtitle">{{ $item->sub_judul_aplikasi }}</p>
+                        <h3 class="app-title" title="{{ $item->judul_aplikasi }}">
+                            {{ \Str::limit($item->judul_aplikasi, 40, '...') }}
+                        </h3>
+                        <p class="app-subtitle" title="{{ $item->sub_judul_aplikasi }}">
+                            {{ \Str::limit($item->sub_judul_aplikasi, 60, '...') }}
+                        </p>
                     </div>
                     <i class="fa-solid fa-arrow-right app-arrow"></i>
                 </div>

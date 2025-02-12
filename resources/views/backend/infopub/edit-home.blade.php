@@ -38,7 +38,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul Informasi Publik <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul') ?? $data->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul kegiatan">
+											<input maxlength="255" value="{{ old('judul') ?? $data->judul }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul kegiatan">
 											<!-- error message untuk judul -->
 											@error('judul')
 											<div class="alert alert-danger mt-2">

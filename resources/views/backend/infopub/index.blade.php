@@ -45,7 +45,7 @@ const DatatableBasic = function() {
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            columnDefs: [{ 
+            columnDefs: [{
                 orderable: false,
                 width: 100,
                 targets: [0]
@@ -56,7 +56,7 @@ const DatatableBasic = function() {
                 searchPlaceholder: 'Cari...',
                 lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
                 paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' },
-             
+
             },
         });
 
@@ -84,12 +84,12 @@ const DatatableBasic = function() {
             // {data: 'action', name: 'action', orderable: false, searchable:false},
             ],
             order: [[0, 'asc']],
-            buttons: {        
+            buttons: {
                 dom:{
                     button: {
                         className: ''
                     },
-                }, 
+                },
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -97,7 +97,7 @@ const DatatableBasic = function() {
                         text: '<i class="far fa-file-excel me-2"></i> Excel',
                         exportOptions: {
                             columns: ':visible',
-                            
+
                         }
                     },
                     // {
@@ -128,19 +128,37 @@ const DatatableBasic = function() {
             ajax: "{{ route('informasi-publik.index-home') }}",
             columns: [
             { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
-            {data: 'judul',name:'judul'},
-             {data: 'isi',name:'isi'},
+            {
+            data: 'judul',
+            name: 'judul',
+            render: function(data, type, row) {
+                if (data.length > 10) {
+                    return data.substr(0, 10) + '...';
+                }
+                return data;
+            }
+        },
+        {
+            data: 'isi',
+            name: 'isi',
+            render: function(data, type, row) {
+                if (data.length > 10) {
+                    return data.substr(0, 10) + '...';
+                }
+                return data;
+            }
+        },
             {data: 'opsi',name:'opsi',orderable:false,searchable:false},
 
             // {data: 'action', name: 'action', orderable: false, searchable:false},
             ],
             order: [[0, 'asc']],
-            buttons: {        
+            buttons: {
                 dom:{
                     button: {
                         className: ''
                     },
-                }, 
+                },
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -148,7 +166,7 @@ const DatatableBasic = function() {
                         text: '<i class="far fa-file-excel me-2"></i> Excel',
                         exportOptions: {
                             columns: ':visible',
-                            
+
                         }
                     },
                     // {
@@ -213,8 +231,8 @@ document.addEventListener('DOMContentLoaded', function() {
                           <h1>Informasi Publik Web Romadan</h1>
                            @include('layouts.webromadan_backend.session_notif')
 						</div>
-                        
-                        
+
+
                         <div class="card-header">
 
                             @if (count($data) < 3)
@@ -237,13 +255,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             </a>
                             @endif
 
-                           
- 
-                            
+
+
+
 						</div>
-                         
-                          
-                        
+
+
+
 						<table class="table datatable-basic table-hover table-striped">
 							<thead>
 								<tr>

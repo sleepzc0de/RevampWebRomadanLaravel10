@@ -38,7 +38,7 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Judul List Informasi Publik <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('judul_list_informasi') ?? $infopub->judul_list_informasi }}" type="text" name="judul_list_informasi" class="form-control @error('judul_list_informasi') is-invalid @enderror" required placeholder="Masukkan Judul kegiatan">
+											<input maxlength="255" value="{{ old('judul_list_informasi') ?? $infopub->judul_list_informasi }}" type="text" name="judul_list_informasi" class="form-control @error('judul_list_informasi') is-invalid @enderror" required placeholder="Masukkan Judul kegiatan">
 											<!-- error message untuk judul_list_informasi -->
 											@error('judul_list_informasi')
 											<div class="alert alert-danger mt-2">

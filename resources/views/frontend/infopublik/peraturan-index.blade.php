@@ -225,19 +225,19 @@
                                 <h5>Kategori</h5>
                                 <div class="checkbox-group">
                                     @forelse ($kategori as $item)
-                                        <label class="checkbox-wrapper">
-                                            <input name="kategori[]" type="checkbox" class="checkbox-input"
-                                                value="{{ $item->nama_kategori }}"
-                                                {{ is_array($selectedKategori) && in_array($item->nama_kategori, $selectedKategori) ? 'checked' : '' }}>
-                                            <span class="checkbox-label">
-                                                {{ collect(explode(' ', strtolower($item->nama_kategori)))->map(function ($word) {
-                                                        return strlen($word) <= 3 ? strtoupper($word) : ucfirst($word);
-                                                    })->join(' ') }}
-                                            </span>
-                                        </label>
-                                    @empty
-                                        <span class="checkbox-label">Tidak Ada Data</span>
-                                    @endforelse
+                                    <label class="checkbox-wrapper">
+                                        <input name="kategori[]" type="checkbox" class="checkbox-input"
+                                            value="{{ $item->nama_kategori }}"
+                                            {{ is_array($selectedKategori) && in_array($item->nama_kategori, $selectedKategori) ? 'checked' : '' }}>
+                                        <span class="checkbox-label">
+                                            {{ Str::limit(collect(explode(' ', strtolower($item->nama_kategori)))->map(function ($word) {
+                                                return strlen($word) <= 3 ? strtoupper($word) : ucfirst($word);
+                                            })->join(' '), 10) }}
+                                        </span>
+                                    </label>
+                                @empty
+                                    <span class="checkbox-label">Tidak Ada Data</span>
+                                @endforelse
                                 </div>
                             </div>
 
@@ -247,15 +247,17 @@
                                 <h5>Jenis Peraturan</h5>
                                 <div class="checkbox-group">
                                     @forelse ($jenis_peraturan as $item)
-                                        <label class="checkbox-wrapper">
-                                            <input name="jenis_peraturan[]" type="checkbox" class="checkbox-input"
-                                                value="{{ $item->nama_jenis_peraturan }}"
-                                                {{ is_array($selectedJenisPeraturan) && in_array($item->nama_jenis_peraturan, $selectedJenisPeraturan) ? 'checked' : '' }}>
-                                            <span class="checkbox-label">{{ $item->nama_jenis_peraturan }}</span>
-                                        </label>
-                                    @empty
-                                        <span class="checkbox-label">Tidak Ada Data</span>
-                                    @endforelse
+                                    <label class="checkbox-wrapper">
+                                        <input name="jenis_peraturan[]" type="checkbox" class="checkbox-input"
+                                            value="{{ $item->nama_jenis_peraturan }}"
+                                            {{ is_array($selectedJenisPeraturan) && in_array($item->nama_jenis_peraturan, $selectedJenisPeraturan) ? 'checked' : '' }}>
+                                        <span class="checkbox-label">
+                                            {{ Str::limit($item->nama_jenis_peraturan, 10) }}
+                                        </span>
+                                    </label>
+                                @empty
+                                    <span class="checkbox-label">Tidak Ada Data</span>
+                                @endforelse
                                 </div>
                             </div>
 
@@ -279,24 +281,18 @@
                     <h4 class="romadan-peraturan-utama">Daftar Peraturan Tentang Barang Milik Negara & Pengadaan</h4>
                     <div class="row p-t-30">
                         @forelse ($peraturan as $item)
-                            {{-- <div class="col-md-6">
-									<div class="card w-100" style="height: 170px; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);">
-										<div class="card-body">
-											<h5 class="card-title romadan-peraturan-judul">{{$item->nomor_peraturan}}</h5>
-											<p class="card-text romadan-peraturan-subjudul">{{$item->judul_peraturan}}</p>
-											<a href="{{route('informasi-publik-peraturan-detail-fe', $item->slug)}}" class="btn romadan-peraturan-link mt-2">Lihat Semuanya<i class="fa-solid fa-arrow-right ml-3"></i></a>
-										</div>
-									</div>
-					   		     </div> --}}
                             <div class="col-md-6">
                                 <a class="card3" style="height: 100%;"
                                     href="{{ route('informasi-publik-peraturan-detail-fe', $item->slug) }}">
-                                    <h5 class="card-title romadan-peraturan-judul">{{ $item->nomor_peraturan }}</h5>
-                                    <p class="small">{{ $item->judul_peraturan }}</p>
+                                    <h5 class="card-title romadan-peraturan-judul" data-toggle="tooltip" title="{{ $item->nomor_peraturan }}">
+                                        {{ Str::limit($item->nomor_peraturan, 20) }}
+                                    </h5>
+                                    <p class="small" data-toggle="tooltip" title="{{ $item->judul_peraturan }}">
+                                        {{ Str::limit($item->judul_peraturan, 30) }}
+                                    </p>
                                     <h6 class="mt-2">Lihat Detail<i class="fa-solid fa-arrow-right ml-3"></i></h6>
                                     <div class="dimmer"></div>
-                                    <div class="go-corner-card3"
-                                        href="{{ route('informasi-publik-peraturan-detail-fe', $item->slug) }}">
+                                    <div class="go-corner-card3">
                                         <div class="go-arrow-card3">
                                             →
                                         </div>
@@ -304,20 +300,14 @@
                                 </a>
                             </div>
                         @empty
-
                             <section class="section-welcome p-t-50 p-b-105" style="background-color: white;">
-
                                 <div class="container">
-
                                     <div class="title-section-ourmenu m-b-22">
-                                        {{-- <h3 class="m-b-2"> Anda sedang mencari : "{{$searchValue}}"</h3> --}}
                                         <h5 class="romadan-faq m-t-5">
                                             Mohon maaf, data yang anda cari tidak ada :(
                                         </h5>
                                     </div>
-
                                 </div>
-
                             </section>
                         @endforelse
 

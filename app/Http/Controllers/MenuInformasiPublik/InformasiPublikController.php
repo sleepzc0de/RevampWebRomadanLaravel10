@@ -20,8 +20,8 @@ class InformasiPublikController extends Controller
         $allowed_tags = '<p><br><strong><em><ul><li><ol><h1><h2><h3><h4><h5><h6>';
         $cleaned = strip_tags($input, $allowed_tags);
 
-        // Convert special characters to HTML entities
-        return htmlspecialchars($cleaned, ENT_QUOTES, 'UTF-8');
+        // Hapus htmlspecialchars karena ini mengkonversi tag HTML yang valid menjadi entitas
+        return $cleaned;
     }
 
 
@@ -195,7 +195,7 @@ class InformasiPublikController extends Controller
                 'isi' => 'required|max:3000',
             ]);
 
-            // Sanitize HTML input
+            // Sanitize HTML input dengan tag yang diizinkan
             $judul = $this->sanitizeHtml($request->judul);
             $isi = $this->sanitizeHtml($request->isi);
 
@@ -206,7 +206,6 @@ class InformasiPublikController extends Controller
             ];
 
             InfopublikHomeModel::create($data);
-
             return redirect()->back()->with(['success' => 'Data Informasi Publik Home Berhasil Disimpan!']);
         } catch (Exception $e) {
             return redirect()->back()->with(['failed' => 'Data Informasi Publik Home Gagal Disimpan! error :' . $e->getMessage()]);
