@@ -18,104 +18,36 @@ class AuthController extends Controller
         return view('auth.romadan_login');
     }
 
-    // public function login(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required'
-    //     ]);
-
-    //     $user = User::where('email', $request->email)->first();
-
-    //     if (!$user) {
-    //         return back()->withErrors([
-    //             'email' => 'The provided credentials do not match our records.',
-    //         ])->withInput($request->except('password'));
-    //     }
-
-    //     // Recreate the password hash using stored salt
-    //     $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
-
-    //     // Verify using Laravel's built-in Hash check
-    //     if (Hash::check($peppered, $user->password)) {
-    //         Auth::login($user);
-    //         return redirect()->route('home');
-    //     }
-
-    //     return back()->withErrors([
-    //         'email' => 'The provided credentials do not match our records.',
-    //     ])->withInput($request->except('password'));
-    // }
-
     public function login(Request $request)
-{
-    try {
+    {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
-            'captcha' => 'required',
-            '_token' => 'required'
+            'password' => 'required'
         ]);
 
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return back()
-                ->withErrors(['email' => 'The provided credentials do not match our records.'])
-                ->withInput($request->except('password'));
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->withInput($request->except('password'));
         }
 
+        // Recreate the password hash using stored salt
         $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
 
+        // Verify using Laravel's built-in Hash check
         if (Hash::check($peppered, $user->password)) {
-            // Regenerate session setelah login berhasil
-            $request->session()->regenerate();
-
             Auth::login($user);
-
-            // Set secure session configuration
-            config([
-                'session.secure' => true,
-                'session.http_only' => true,
-                'session.same_site' => 'lax'
-            ]);
-
-            // Set cookie dengan parameter yang sesuai
-            $cookie = cookie(
-                'laravel_session',      // nama
-                session()->getId(),      // value
-                60 * 24 * 30,           // duration (30 hari dalam menit)
-                '/',                    // path
-                null,                   // domain
-                true,                   // secure
-                true                    // httpOnly
-            );
-
-            Log::debug('Login successful', [
-                'user_id' => $user->id,
-                'new_session_id' => session()->getId()
-            ]);
-
-            return redirect()
-                ->route('home')
-                ->withCookie($cookie);
+            return redirect()->route('home');
         }
 
-        return back()
-            ->withErrors(['email' => 'The provided credentials do not match our records.'])
-            ->withInput($request->except('password'));
-
-    } catch (\Exception $e) {
-        Log::error('Login error', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        return back()
-            ->withErrors(['error' => 'An error occurred during login. Please try again.'])
-            ->withInput($request->except('password'));
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->withInput($request->except('password'));
     }
-}
+
+
 
 public function logout(Request $request)
 {
