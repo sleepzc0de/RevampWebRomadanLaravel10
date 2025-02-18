@@ -16,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        require_once app_path('Helpers/VersionHelper.php');
         Paginator::defaultView('pagination.bootstrap-5');
         View::composer('*', function ($view) {
             $view->with('medsos', medsos::orderBy("id", "ASC")->take(5)->get());
