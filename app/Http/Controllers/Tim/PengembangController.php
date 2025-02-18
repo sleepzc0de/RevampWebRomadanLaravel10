@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tim;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\Tim\DeveloperModel;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
@@ -115,9 +116,14 @@ class PengembangController extends Controller
      */
     public function edit($encryptedId)
     {
-        $id = Crypt::decrypt($encryptedId);
-        $developer = DeveloperModel::findOrFail($id);
-        return view('backend.tim.edit', compact('developer'));
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $developer = DeveloperModel::findOrFail($id);
+            return view('backend.tim.edit', compact('developer'));
+        } catch (DecryptException $e) {
+            return redirect()->route('pengembang.index')
+                ->with('error', 'Invalid request.');
+        }
     }
 
     /**
@@ -125,33 +131,37 @@ class PengembangController extends Controller
      */
     public function update(Request $request, $encryptedId)
     {
-        $id = Crypt::decrypt($encryptedId);
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'skill' => 'required|max:100|array',
-            'skill.*' => 'string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'skill' => 'required|max:100|array',
+                'skill.*' => 'string|max:255',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $developer = DeveloperModel::findOrFail($id);
+            $developer = DeveloperModel::findOrFail($id);
 
-        if ($request->hasFile('photo')) {
-            if ($developer->photo) {
-                Storage::delete('public/' . $developer->photo);
+            if ($request->hasFile('photo')) {
+                if ($developer->photo) {
+                    Storage::delete('public/' . $developer->photo);
+                }
+                $developer->photo = $request->file('photo')->store('photos', 'public');
             }
-            $developer->photo = $request->file('photo')->store('photos', 'public');
+
+            $skills = implode('|', $request->skill);
+            $developer->update([
+                'name' => $request->name,
+                'skill' => $skills,
+                'photo' => $developer->photo ?? $developer->getOriginal('photo'),
+            ]);
+
+            return redirect()->route('pengembang.index')
+                ->with('success', 'Developer updated successfully!');
+        } catch (DecryptException $e) {
+            return redirect()->route('pengembang.index')
+                ->with('error', 'Invalid request.');
         }
-
-        // Gabungkan array skill dengan separator "|"
-        $skills = implode('|', $request->skill);
-
-        $developer->update([
-            'name' => $request->name,
-            'skill' => $skills,
-            'photo' => $developer->photo,
-        ]);
-
-        return redirect()->route('pengembang.index')->with('success', 'Developer updated successfully!');
     }
 
     /**

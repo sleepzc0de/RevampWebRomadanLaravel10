@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\CaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +14,13 @@ class AuthController extends Controller
     private const PEPPER = 'mwdun-2937h-_(&)HG)*GOIUNJ)HG)*(&F*^D&^S%#$E^RGYOIBJNPOKMO}:}?}"?:>{K)OJ()*YT^&DRFYGUIHT&^R%E%EDYF2025';
     private const HASH_ALGO = 'sha256';
 
+    protected $captchaService;
+
+    public function __construct(CaptchaService $captchaService)
+    {
+        $this->captchaService = $captchaService;
+    }
+
     public function showLoginForm()
     {
         return view('auth.romadan_login');
@@ -22,8 +30,17 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'captcha' => 'required',
+            'captcha_token' => 'required'
         ]);
+
+          // Validasi CAPTCHA dulu
+        if (!$this->captchaService->validateCaptcha($request->captcha, $request->captcha_token)) {
+            return back()->withErrors([
+                'captcha' => 'CAPTCHA validation failed. Please try again.',
+            ])->withInput($request->except('password'));
+        }
 
         $user = User::where('email', $request->email)->first();
 
@@ -33,10 +50,8 @@ class AuthController extends Controller
             ])->withInput($request->except('password'));
         }
 
-        // Recreate the password hash using stored salt
         $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
 
-        // Verify using Laravel's built-in Hash check
         if (Hash::check($peppered, $user->password)) {
             Auth::login($user);
             return redirect()->route('home');
@@ -53,11 +68,11 @@ public function logout(Request $request)
 {
     Auth::logout();
 
-    // Invalidate dan regenerate session
+    // Invalidate dan regenerate session user yang login
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    // Hapus cookie dengan parameter yang sesuai
+    // Hapus cookie dengan parameter yang sesuai, info sesuai urutan
     $cookie = cookie(
         'laravel_session',    // nama
         '',                   // value (kosong untuk menghapus)

@@ -342,13 +342,17 @@
                     @enderror
                 </div>
 
+                @php
+                    $captcha = app(App\Services\CaptchaService::class)->createCaptcha();
+                @endphp
+
                 <div class="input-group">
                     <label class="block text-sm font-medium text-gray-700 mb-2">CAPTCHA</label>
                     <div
                         class="flex items-center space-x-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
                         <div class="flex-1">
                             <span class="text-lg font-semibold text-gray-700">
-                                {{ app(App\Services\CaptchaService::class)->createCaptcha() }}
+                                {{ $captcha['question'] }}
                             </span>
                             <p class="text-sm text-gray-500 mt-1">Silakan selesaikan perhitungan di atas</p>
                         </div>
@@ -373,6 +377,7 @@
                         <input type="text" name="captcha"
                             class="input-control @error('captcha') input-error @enderror mt-2"
                             placeholder="Masukkan jawaban Anda" required>
+                        <input type="hidden" name="captcha_token" value="{{ $captcha['token'] }}">
                         @error('captcha')
                             <span class="input-icon-error">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

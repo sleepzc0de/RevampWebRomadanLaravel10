@@ -17,7 +17,7 @@
                     <h4>Edit Pengembang</h4>
                 </div>
                 <div class="card-body">
-                    <form class="form-validate-jquery" action="{{ route('pengembang.update', $developer->id) }}" method="POST" enctype="multipart/form-data">
+                    <form class="form-validate-jquery" action="{{ route('pengembang.update', Crypt::encrypt($developer->id)) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

@@ -238,6 +238,9 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
 
 use App\Http\Controllers\AuthController;
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+
+// bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==
+// l0g1n_cm5_b1r0m4d4n_k3menk3u
+Route::get('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
