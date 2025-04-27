@@ -71,7 +71,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image preview functionality
+        const imageInput = document.getElementById('customFile');
+        const previewContainer = document.getElementById('preview-container');
 
+        imageInput.addEventListener('change', function() {
+            previewContainer.innerHTML = ''; // Clear previous previews
+
+            if (this.files) {
+                for (let i = 0; i < this.files.length; i++) {
+                    const file = this.files[i];
+                    if (file.type.match('image.*')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'position-relative';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'img-thumbnail';
+                            img.style.width = '150px';
+                            img.style.height = '150px';
+                            img.style.objectFit = 'cover';
+
+                            const isPrimaryBadge = document.createElement('span');
+                            if (i === 0) {
+                                isPrimaryBadge.className = 'position-absolute top-0 start-0 badge bg-primary';
+                                isPrimaryBadge.textContent = 'Utama';
+                            }
+
+                            previewDiv.appendChild(img);
+                            previewDiv.appendChild(isPrimaryBadge);
+                            previewContainer.appendChild(previewDiv);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+    });
+    </script>
 
 @endsection
 
@@ -165,19 +208,27 @@ document.addEventListener('DOMContentLoaded', function() {
 									</div>
 									<!-- /Kategori publikasi -->
 
-                                    <!-- Image file uploader -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											<input type="file" class="form-control @error('image') is-invalid @enderror required" id="customFile" name="image">
-											@error('image')
-											<div class="alert alert-danger mt-2">
-												{{ $message }}
-											</div>
-											@enderror
-										</div>
-									</div>
-									<!-- /image file uploader -->
+                                    <!-- Multiple Images file uploader -->
+<div class="row mb-3">
+    <label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
+    <div class="col-lg-10">
+        <input type="file" class="form-control @error('images') is-invalid @enderror required"
+               id="customFile" name="images[]" multiple accept="image/jpeg,image/png,image/jpg">
+        <small class="text-muted">Anda dapat memilih beberapa gambar sekaligus. Gambar pertama akan menjadi gambar utama.</small>
+        <div id="preview-container" class="d-flex flex-wrap gap-2 mt-2"></div>
+        @error('images')
+        <div class="alert alert-danger mt-2">
+            {{ $message }}
+        </div>
+        @enderror
+        @error('images.*')
+        <div class="alert alert-danger mt-2">
+            {{ $message }}
+        </div>
+        @enderror
+    </div>
+</div>
+<!-- /Multiple images file uploader -->
 
                                      <!-- File Publikasi -->
 									<div class="row mb-3">

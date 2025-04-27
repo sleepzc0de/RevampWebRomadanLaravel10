@@ -47,4 +47,14 @@ class PublikasiModel extends Model
             return $embed->html(['width'=>200]);
         }
     }
+
+    public function images()
+    {
+        return $this->hasMany(PublikasiImage::class, 'publikasi_id');
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(PublikasiImage::class, 'publikasi_id')->where('is_primary', true);
+    }
 }

@@ -629,9 +629,10 @@ class HomeFeController extends Controller
 
     public function publikasi_berita($publikasi)
     {
-        // Mengambil data berita berdasarkan slug
+        // Mengambil data berita berdasarkan slug dengan eager loading images
         $data = PublikasiModel::where('slug', $publikasi)
             ->where('nama_tipe', strtolower('Berita'))
+            ->with('images')  // Add this line to load all related images
             ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
@@ -650,8 +651,13 @@ class HomeFeController extends Controller
 
     public function publikasi_warta($publikasi)
     {
-        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe',  strtolower('Warta'))->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
-        // dd($data);
+        $data = PublikasiModel::where('slug', $publikasi)
+            ->where('nama_tipe',  strtolower('Warta'))
+            ->with('images')  // Add this line to load all related images
+            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
+            ->firstorFail();
 
         // Menambah jumlah views
         $data->increment('views');
@@ -661,21 +667,25 @@ class HomeFeController extends Controller
         return view('frontend.publikasi.fe_warta', compact(['data', 'tb']));
     }
 
+
     public function publikasi_artikel($publikasi)
-    {
-        $data = PublikasiModel::where('slug', $publikasi)->where('nama_tipe',  strtolower('Artikel'))
-            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')->firstorFail();
-        // dd($data->isi);
+{
+    $data = PublikasiModel::where('slug', $publikasi)
+        ->where('nama_tipe',  strtolower('Artikel'))
+        ->with('images')  // Add this line to load all related images
+        ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+        ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
+        ->firstorFail();
 
-        // Menambah jumlah views
-        $data->increment('views');
+    // Menambah jumlah views
+    $data->increment('views');
 
-        $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
+    $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
-        return view('frontend.publikasi.fe_artikel', compact(['data', 'tb']));
-    }
+    return view('frontend.publikasi.fe_artikel', compact(['data', 'tb']));
+}
+
 
     // LAYANAN
 

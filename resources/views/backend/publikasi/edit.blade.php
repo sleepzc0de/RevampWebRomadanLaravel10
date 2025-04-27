@@ -35,6 +35,59 @@
         inputTanggal.setAttribute('max', maxDateTime);
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // New images preview functionality
+        const newImagesInput = document.getElementById('new_images');
+        const previewContainer = document.getElementById('preview-container');
+
+        newImagesInput.addEventListener('change', function() {
+            previewContainer.innerHTML = ''; // Clear previous previews
+
+            if (this.files) {
+                for (let i = 0; i < this.files.length; i++) {
+                    const file = this.files[i];
+                    if (file.type.match('image.*')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'position-relative';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'img-thumbnail';
+                            img.style.width = '150px';
+                            img.style.height = '150px';
+                            img.style.objectFit = 'cover';
+
+                            previewDiv.appendChild(img);
+                            previewContainer.appendChild(previewDiv);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+
+        // Prevent deleting the primary image
+        const deleteCheckboxes = document.querySelectorAll('.delete-image-checkbox');
+        deleteCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const imageId = this.value;
+                const primaryRadio = document.getElementById(`primary_${imageId}`);
+
+                // If this is the primary image
+                if (!primaryRadio && this.checked) {
+                    alert('Anda tidak dapat menghapus gambar utama. Silakan pilih gambar lain sebagai utama terlebih dahulu.');
+                    this.checked = false;
+                }
+            });
+        });
+    });
+    </script>
 @endsection
 
 @section('content')
@@ -128,24 +181,75 @@
 				</div>
 				<!-- /Kategori publikasi -->
 
-				<!-- Image file uploader -->
-				<div class="row mb-3">
-					<label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
-					<div class="col-lg-10">
-						<input type="file" class="form-control @error('image') is-invalid @enderror" id="customFile" name="image">
-						<div class="mt-3">
-							<img src="{{asset('storage/romadan_gambar_web/'.$publikasi->image)}}" alt="" width="300px">
-						</div>
+			<!-- Image gallery and management -->
+<div class="row mb-3">
+    <label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
+    <div class="col-lg-10">
+        <!-- Current images gallery -->
+        <div class="mb-3">
+            <h6>Gambar saat ini:</h6>
+            <div class="d-flex flex-wrap gap-3 mb-3" id="current-images">
+                @foreach($publikasi->images as $image)
+                <div class="position-relative" id="image-container-{{ $image->id }}">
+                    <img src="{{ asset('storage/romadan_gambar_web/'.$image->image_path) }}"
+                         alt="" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
 
+                    <div class="position-absolute top-0 start-0 d-flex">
+                        @if($image->is_primary)
+                        <span class="badge bg-primary">Utama</span>
+                        @else
+                        <div class="form-check form-check-inline mt-1 ms-1">
+                            <input class="form-check-input" type="radio" name="primary_image"
+                                   id="primary_{{ $image->id }}" value="{{ $image->id }}">
+                            <label class="form-check-label text-white small" for="primary_{{ $image->id }}">
+                                Set Utama
+                            </label>
+                        </div>
+                        @endif
+                    </div>
 
-						@error('image')
-						<div class="alert alert-danger mt-2">
-							{{ $message }}
-						</div>
-						@enderror
-					</div>
-				</div>
-				<!-- /image file uploader -->
+                    <div class="position-absolute bottom-0 end-0">
+                        <div class="form-check form-check-inline mb-1 me-1">
+                            <input class="form-check-input delete-image-checkbox" type="checkbox"
+                                   name="delete_images[]" id="delete_{{ $image->id }}" value="{{ $image->id }}">
+                            <label class="form-check-label text-danger small" for="delete_{{ $image->id }}">
+                                Hapus
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            @if($publikasi->images->count() < 1)
+            <div class="alert alert-warning">
+                Tidak ada gambar tersedia. Silakan unggah minimal satu gambar.
+            </div>
+            @endif
+        </div>
+
+        <!-- Upload new images -->
+        <div>
+            <h6>Tambah gambar baru:</h6>
+            <input type="file" class="form-control @error('new_images') is-invalid @enderror"
+                   id="new_images" name="new_images[]" multiple accept="image/jpeg,image/png,image/jpg,image/svg">
+            <small class="text-muted">Anda dapat memilih beberapa gambar sekaligus.</small>
+            <div id="preview-container" class="d-flex flex-wrap gap-2 mt-2"></div>
+
+            @error('new_images')
+            <div class="alert alert-danger mt-2">
+                {{ $message }}
+            </div>
+            @enderror
+            @error('new_images.*')
+            <div class="alert alert-danger mt-2">
+                {{ $message }}
+            </div>
+            @enderror
+        </div>
+    </div>
+</div>
+<!-- /Image gallery and management -->
 
                  <!-- File publikasi -->
 									<div class="row mb-3">
