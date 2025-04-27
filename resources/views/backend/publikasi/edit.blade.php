@@ -170,7 +170,7 @@
 					<label class="col-form-label col-lg-2">Isi publikasi <span class="text-danger">*</span></label>
 					<div class="col-lg-10">
 						{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi">{{old('isi')?? $publikasi->isi}}</textarea> --}}
-						<textarea maxlength="1000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') ?? $publikasi->isi }}</textarea>
+						<textarea maxlength="25000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') ?? $publikasi->isi }}</textarea>
 					</div>
 				</div>
 				<!-- /Isi publikasi Input -->

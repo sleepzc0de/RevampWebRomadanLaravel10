@@ -137,7 +137,7 @@ class PublikasiController extends Controller
             'isi' => [
                 'required',
                 'min:10',
-                'max:1000',
+                'max:25000',
             ],
             'backdate' => 'nullable|date',
             'file' => 'nullable|mimes:pdf,doc,docx|max:5120'
@@ -270,7 +270,7 @@ class PublikasiController extends Controller
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
                 'isi' => [
                     'required',
-                    'max:1000',
+                    'max:25000',
                 ],
                 'created_at' => 'required|date|before:now',
                 'file' => 'nullable|mimes:pdf|max:10240',

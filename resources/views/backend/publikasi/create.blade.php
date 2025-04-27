@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             wordCount: {
                 onUpdate: stats => {
                     // Update character count display
-                    const charactersLimit = 1000;
+                    const charactersLimit = 25000;
                     const characters = stats.characters;
                     const counterElement = document.querySelector('#editor-counter');
                     if (counterElement) {
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<div class="col-lg-10">
 											{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi">{{ old('isi') }}</textarea> --}}
 
-											<textarea maxlength="1000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
+											<textarea maxlength="25000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
 										</div>
 									</div>
 									<!-- /Isi publikasi Input -->

@@ -3,59 +3,63 @@
 @section('css_fe')
 <style>
     .custom-isi {
-    text-align: justify;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.8;
-    font-size: 1.1rem;
-}
+        text-align: justify;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
 
-/* Untuk layar kecil (ponsel) */
-@media (max-width: 768px) {
-    .custom-isi {
-        font-size: 1rem;
+    /* Penting: Menambahkan style untuk paragraf */
+    .custom-isi p {
+        margin-bottom: 1rem;
+        text-align: justify;
+    }
+
+    /* Untuk layar kecil (ponsel) */
+    @media (max-width: 768px) {
+        .custom-isi {
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 10px;
+        }
+    }
+
+    /* Untuk layar sangat kecil (HP kecil) */
+    @media (max-width: 480px) {
+        .custom-isi {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            padding: 5px;
+        }
+    }
+
+    .custom-judul {
+        font-weight: bold;
+        text-align: center;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        font-size: 1.4rem;
         line-height: 1.6;
-        padding: 10px;
+        max-width: 90%;
+        margin: 0 auto;
     }
-}
 
-/* Untuk layar sangat kecil (HP kecil) */
-@media (max-width: 480px) {
-    .custom-isi {
-        font-size: 0.95rem;
-        line-height: 1.5;
-        padding: 5px;
+    /* Untuk layar tablet */
+    @media (max-width: 768px) {
+        .custom-judul {
+            font-size: 1.2rem;
+            line-height: 1.4;
+        }
     }
-}
 
-
-.custom-judul {
-    font-weight: bold;
-    text-align: center;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    font-size: 1.4rem;
-    line-height: 1.6;
-    max-width: 90%;
-    margin: 0 auto;
-}
-
-/* Untuk layar tablet */
-@media (max-width: 768px) {
-    .custom-judul {
-        font-size: 1.2rem;
-        line-height: 1.4;
+    /* Untuk layar ponsel kecil */
+    @media (max-width: 480px) {
+        .custom-judul {
+            font-size: 1rem;
+            line-height: 1.3;
+        }
     }
-}
-
-/* Untuk layar ponsel kecil */
-@media (max-width: 480px) {
-    .custom-judul {
-        font-size: 1rem;
-        line-height: 1.3;
-    }
-}
-
 </style>
 @endsection
 
@@ -71,7 +75,7 @@
 
                 @php
                     $words = explode(' ', strip_tags($data->judul)); // Menghapus tag HTML & mengubah menjadi array kata
-                    $words = array_slice($words, 0, 20); // Ambil hanya 30 kata pertama
+                    $words = array_slice($words, 0, 20); // Ambil hanya 20 kata pertama
                     $formattedTitle = implode(' ', $words); // Gabungkan kembali ke string
                     $formattedTitle = preg_replace('/((\S+\s+){10})/u', "$1<br>", $formattedTitle); // Tambahkan <br> tiap 10 kata
                 @endphp
@@ -95,9 +99,8 @@
                                 </a>
                             </div>
                             <div class="txt-judul-kegiatan-detail t-center m-b-35 mt-5 px-4 custom-isi">
-                                {!! nl2br(preg_replace('/((\S+\s+){50})/u', "$1<br><br>", strip_tags($data->isi))) !!}
+                                {!! $data->isi !!}
                             </div>
-
                         </div>
                     </div>
                 </div>
