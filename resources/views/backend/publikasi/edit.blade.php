@@ -279,6 +279,32 @@
 				</div>
 				<!-- /Isi publikasi Input -->
 
+                <!-- Embedded Media URL Input -->
+<div class="row mb-3">
+    <label class="col-form-label col-lg-2">URL Media (Video/Image) <span class="text-danger"></span></label>
+    <div class="col-lg-10">
+        <input type="url" name="embedded_media" value="{{ old('embedded_media') ?? $publikasi->embedded_media }}" class="form-control @error('embedded_media') is-invalid @enderror" placeholder="https://youtube.com/watch?v=example or image URL">
+        <small class="text-muted">Masukkan URL YouTube, Vimeo, atau gambar yang ingin ditampilkan</small>
+
+        @if($publikasi->embedded_media)
+        <div class="mt-3">
+            <h6>Preview Media:</h6>
+            <div class="mb-2">
+                {!! $publikasi->getEmbeddedMediaHtml() !!}
+            </div>
+            <p class="text-muted">URL saat ini: {{ $publikasi->embedded_media }}</p>
+        </div>
+        @endif
+
+        @error('embedded_media')
+        <div class="alert alert-danger mt-2">
+            {{ $message }}
+        </div>
+        @enderror
+    </div>
+</div>
+<!-- /Embedded Media URL Input -->
+
 				<!-- Status Warta -->
 				<div class="row mb-3">
 					<label class="col-form-label col-lg-2">Status publikasi <span class="text-danger">*</span></label>

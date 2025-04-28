@@ -139,21 +139,22 @@ class PublikasiController extends Controller
                  'kategori' => 'required|exists:ref_kategori,id_kategori',
                  'tipe' => 'required|exists:ref_tipe,id_tipe',
                  'images' => 'required|array|min:1',
-                 'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                 'images.*' => 'required|image|mimes:jpeg,png,jpg|max:20480',
                  'isi' => [
                      'required',
                      'min:10',
                      'max:25000',
                  ],
                  'backdate' => 'nullable|date',
-                 'file' => 'nullable|mimes:pdf,doc,docx|max:5120'
+                 'file' => 'nullable|mimes:pdf,doc,docx|max:5120',
+                 'embedded_media' => 'nullable|url|max:2000',
              ], [
                  'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
                  'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
                  'images.required' => 'Minimal satu gambar harus diunggah',
                  'images.*.image' => 'File yang diunggah harus berupa gambar',
                  'images.*.mimes' => 'Gambar harus berformat jpeg, png, atau jpg',
-                 'images.*.max' => 'Ukuran gambar tidak boleh melebihi 2MB',
+                 'images.*.max' => 'Ukuran gambar tidak boleh melebihi 20MB',
              ]);
 
              // Sanitize input before processing
@@ -178,6 +179,7 @@ class PublikasiController extends Controller
                  'tipe' => $validated['tipe'],
                  'image' => null, // We'll update this with the primary image path
                  'isi' => $validated['isi'],
+                 'embedded_media' => $validated['embedded_media'] ?? null,
                  'slug' => Str::slug($validated['judul']),
                  'penulis' => Auth::user()->name,
                  'static_random_string' => Str::random(16),
@@ -301,22 +303,24 @@ class PublikasiController extends Controller
                 'kategori' => 'required',
                 'tipe' => 'required',
                 'new_images' => 'nullable|array',
-                'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:4096|dimensions:min_width=1024,min_height=600',
+                'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480|dimensions:min_width=1024,min_height=600',
                 'primary_image' => 'nullable|exists:publikasi_images,id',
                 'delete_images' => 'nullable|array',
                 'delete_images.*' => 'nullable|exists:publikasi_images,id',
                 'isi' => [
                     'required',
+                    'min:10',
                     'max:25000',
                 ],
                 'created_at' => 'required|date|before:now',
                 'file' => 'nullable|mimes:pdf|max:10240',
+                'embedded_media' => 'nullable|url|max:2000',
             ], [
                 'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
                 'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
                 'new_images.*.image' => 'File yang diunggah harus berupa gambar',
                 'new_images.*.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau svg',
-                'new_images.*.max' => 'Ukuran gambar tidak boleh melebihi 4MB',
+                'new_images.*.max' => 'Ukuran gambar tidak boleh melebihi 20MB',
                 'new_images.*.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel',
             ]);
 
@@ -334,6 +338,7 @@ class PublikasiController extends Controller
                 'kategori' => $request->kategori,
                 'tipe' => $request->tipe,
                 'isi' => $request->isi,
+                'embedded_media' => $request->embedded_media,
                 'status' => $request->status,
                 'pengedit' => Auth::user()->name,
                 'created_at' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),

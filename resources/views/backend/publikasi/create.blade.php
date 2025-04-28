@@ -48,6 +48,67 @@ document.addEventListener('DOMContentLoaded', function() {
     // CKEditor character limit
     if (typeof ClassicEditor !== 'undefined') {
         ClassicEditor.create(document.querySelector('#ckeditor_classic_empty'), {
+            // Enable image and media embed plugins
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'strikethrough', 'underline', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'alignment', '|',
+                    'link', 'insertImage', 'mediaEmbed', '|',
+                    'blockQuote', 'insertTable', '|',
+                    'undo', 'redo'
+                ]
+            },
+            // Allow for specific media providers
+            mediaEmbed: {
+                previewsInData: true,
+                providers: [
+                    {
+                        name: 'youtube',
+                        url: /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)$/,
+                        html: match => {
+                            const id = match[1];
+                            return (
+                                '<div class="video-embed">' +
+                                '<iframe width="560" height="315" ' +
+                                `src="https://www.youtube.com/embed/${id}" ` +
+                                'frameborder="0" allow="accelerometer; autoplay; encrypted-media; ' +
+                                'gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+                                '</div>'
+                            );
+                        }
+                    },
+                    {
+                        name: 'vimeo',
+                        url: /^(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/(.+)$/,
+                        html: match => {
+                            const id = match[1];
+                            return (
+                                '<div class="video-embed">' +
+                                '<iframe width="560" height="315" ' +
+                                `src="https://player.vimeo.com/video/${id}" ` +
+                                'frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>' +
+                                '</div>'
+                            );
+                        }
+                    }
+                    // Add more providers as needed
+                ]
+            },
+            // Enable image upload via URL
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:full',
+                    'imageStyle:side'
+                ],
+                styles: [
+                    'full',
+                    'side'
+                ]
+            },
             wordCount: {
                 onUpdate: stats => {
                     // Update character count display
@@ -64,6 +125,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             }
+        })
+        .then(editor => {
+            console.log('Editor initialized successfully');
+        })
+        .catch(error => {
+            console.error('Editor initialization failed:', error);
         });
     }
 });
@@ -254,6 +321,22 @@ document.addEventListener('DOMContentLoaded', function() {
 										</div>
 									</div>
 									<!-- /Isi publikasi Input -->
+
+                                    <!-- Embedded Media URL Input -->
+<div class="row mb-3">
+    <label class="col-form-label col-lg-2">URL Media (Video/Image) <span class="text-danger"></span></label>
+    <div class="col-lg-10">
+        <input type="url" name="embedded_media" value="{{ old('embedded_media') }}" class="form-control @error('embedded_media') is-invalid @enderror" placeholder="https://youtube.com/watch?v=example or image URL">
+        <small class="text-muted">Masukkan URL YouTube, Vimeo, atau gambar yang ingin ditampilkan</small>
+
+        @error('embedded_media')
+        <div class="alert alert-danger mt-2">
+            {{ $message }}
+        </div>
+        @enderror
+    </div>
+</div>
+<!-- /Embedded Media URL Input --
 
 								</div>
 

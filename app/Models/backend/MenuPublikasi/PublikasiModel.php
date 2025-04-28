@@ -15,8 +15,11 @@ class PublikasiModel extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'publikasi';
     protected $guarded = [];
-    protected $fillable = ['judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi', 'penulis', 'pengedit', 'status','static_random_string','backdate','created_at',
-    'updated_at','file','views'];
+    protected $fillable = [
+        'judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi',
+        'penulis', 'pengedit', 'status', 'static_random_string', 'backdate',
+        'created_at', 'updated_at', 'file', 'views', 'embedded_media'
+    ];
     protected $dates = ['deleted_at'];
 
     protected $hidden = [
@@ -41,11 +44,40 @@ class PublikasiModel extends Model
         return $this->belongsTo(ref_tipe::class, 'tipe', 'id_tipe');
     }
 
-    public function getVideoAtrribute($value){
-        $embed = OEmbed::get($value);
-        if ($embed) {
-            return $embed->html(['width'=>200]);
+    /**
+     * Get embedded media content as HTML
+     *
+     * @param string $url
+     * @return string|null
+     */
+    public function getEmbeddedMediaHtml($url = null)
+    {
+        $mediaUrl = $url ?: $this->embedded_media;
+
+        if (empty($mediaUrl)) {
+            return null;
         }
+
+        try {
+            $embed = OEmbed::get($mediaUrl);
+            if ($embed) {
+                return $embed->html(['width' => 560, 'height' => 315]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error embedding media: ' . $e->getMessage());
+        }
+
+        // If OEmbed fails or URL is not supported, try to determine if it's an image
+        if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $mediaUrl)) {
+            return '<img src="' . e($mediaUrl) . '" alt="Embedded image" class="img-fluid">';
+        }
+
+        return null;
+    }
+
+    public function getVideoAttribute()
+    {
+        return $this->getEmbeddedMediaHtml($this->embedded_media);
     }
 
     public function images()
