@@ -10,11 +10,15 @@ class SejarahModel extends Model
     use HasFactory;
     protected $table = 'sejarah';
     protected $guarded = [];
-    protected $fillable = ['sejarah', 'image', 'judul'];
+    protected $fillable = ['sejarah', 'image', 'judul', 'media'];
 
     protected $hidden = [
         'created_at',
         'updated_at',
         'id',
+    ];
+
+    protected $casts = [
+        'media' => 'json',
     ];
 }
