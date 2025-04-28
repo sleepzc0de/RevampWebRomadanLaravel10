@@ -3,6 +3,24 @@
 @section('css')
     <script src="{{ asset('webromadan/be/js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('webromadan/be/css/vendor/file-uploaders/dropzone.min.css') }}">
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+        }
+        .delete-checkbox {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 10;
+        }
+        .sort-input {
+            width: 60px;
+            margin-top: 5px;
+        }
+    </style>
 @endsection
 
 
@@ -16,7 +34,7 @@
 @section('script_bawah')
     <script src="{{ asset('webromadan/be/demo/pages/form_validation_library.js') }}"></script>
     <script src="{{ asset('webromadan/be/demo/pages/form_select2.js') }}"></script>
-    {{-- <script src="{{asset('webromadan/be/demo/pages/editor_ckeditor_classic.js')}}"></script> --}}
+    <script src="{{ asset('webromadan/be/js/vendor/file-uploaders/dropzone.min.js') }}"></script>
     <script>
         /* ------------------------------------------------------------------------------
          *
@@ -90,8 +108,6 @@
                             }
                         ],
                     },
-
-
                 }).catch(error => {
                     console.error(error);
                 });
@@ -142,14 +158,9 @@
                             }
                         ],
                     },
-
-
                 }).catch(error => {
                     console.error(error);
                 });
-
-
-
             };
 
 
@@ -170,6 +181,99 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             CKEditorClassic.init();
+
+            // Preview image before upload for main image
+            document.getElementById('image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('mainImagePreview');
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        document.getElementById('currentMainImage').style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // For additional images preview
+            document.getElementById('additionalImages').addEventListener('change', function(e) {
+                const previewContainer = document.getElementById('additionalImagesPreview');
+                previewContainer.innerHTML = '';
+
+                Array.from(e.target.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgContainer = document.createElement('div');
+                        imgContainer.className = 'image-container';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-thumbnail';
+                        img.style.maxHeight = '150px';
+
+                        imgContainer.appendChild(img);
+                        previewContainer.appendChild(imgContainer);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Video URL preview
+            const videoUrlInput = document.getElementById('videoUrl');
+            const updateVideoPreview = function() {
+                const url = videoUrlInput.value;
+                const previewContainer = document.getElementById('videoPreview');
+
+                if (url) {
+                    let embedCode = '';
+
+                    // YouTube URL handling
+                    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                        const videoId = getYoutubeId(url);
+                        if (videoId) {
+                            embedCode = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                        }
+                    }
+                    // Vimeo URL handling
+                    else if (url.includes('vimeo.com')) {
+                        const videoId = getVimeoId(url);
+                        if (videoId) {
+                            embedCode = `<iframe src="https://player.vimeo.com/video/${videoId}" width="100%" height="315" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+                        }
+                    }
+
+                    if (embedCode) {
+                        previewContainer.innerHTML = embedCode;
+                    } else {
+                        previewContainer.innerHTML = '<div class="alert alert-warning">URL video tidak valid atau tidak didukung.</div>';
+                    }
+                } else {
+                    previewContainer.innerHTML = '';
+                }
+            };
+
+            videoUrlInput.addEventListener('blur', updateVideoPreview);
+
+            // Update video preview on page load if URL exists
+            if (videoUrlInput.value) {
+                updateVideoPreview();
+            }
+
+            // Helper function to extract YouTube video ID
+            function getYoutubeId(url) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+
+            // Helper function to extract Vimeo video ID
+            function getVimeoId(url) {
+                const regExp = /vimeo\.com\/([0-9]+)/;
+                const match = url.match(regExp);
+                return match ? match[1] : null;
+            }
         });
     </script>
 @endsection
@@ -179,6 +283,7 @@
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">Edit Visi Misi</h5>
+            @include('layouts.webromadan_backend.session_notif')
         </div>
 
         <form class="form-validate-jquery" action="{{ route('visi-misi.update', encrypt($visimisi->id)) }}" method="post"
@@ -210,8 +315,13 @@
                     <div class="row mb-3">
                         <label class="col-form-label col-lg-2">Visi <span class="text-danger">*</span></label>
                         <div class="col-lg-10">
-                            <textarea maxlength="1000" name="visi" class="form-control @error('visi') is-invalid @enderror" required placeholder="Visi"
+                            <textarea name="visi" class="form-control @error('visi') is-invalid @enderror" required placeholder="Visi"
                                 id="ckeditor_classic_empty_visi">{{ old('visi') ?? $visimisi->visi }}</textarea>
+                            @error('visi')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
                     <!-- /VISI -->
@@ -220,22 +330,28 @@
                     <div class="row mb-3">
                         <label class="col-form-label col-lg-2">Misi <span class="text-danger">*</span></label>
                         <div class="col-lg-10">
-                            <textarea maxlength="1000"
-                            name="misi" class="form-control @error('misi') is-invalid @enderror" required placeholder="Misi"
+                            <textarea name="misi" class="form-control @error('misi') is-invalid @enderror" required placeholder="Misi"
                                 id="ckeditor_classic_empty_misi">{{ old('misi') ?? $visimisi->misi }}</textarea>
+                            @error('misi')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
                     <!-- /MISI -->
 
                     <!-- Image file uploader -->
                     <div class="row mb-3">
-                        <label class="col-form-label col-lg-2">Gambar <span class="text-danger">*</span></label>
+                        <label class="col-form-label col-lg-2">Gambar Utama</label>
                         <div class="col-lg-10">
                             <input type="file" class="form-control @error('image') is-invalid @enderror" id="image"
                                 name="image">
+                            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar utama</small>
                             <div class="mt-3">
-                                <img src="{{ asset('storage/romadan_gambar_web/' . $visimisi->image) }}" alt=""
-                                    width="300px">
+                                <img id="currentMainImage" src="{{ asset('storage/romadan_gambar_web/' . $visimisi->image) }}" alt="Gambar Utama"
+                                    width="300px" class="img-thumbnail">
+                                <img id="mainImagePreview" style="display: none; max-height: 300px;" class="img-thumbnail">
                             </div>
                             @error('image')
                                 <div class="alert alert-danger mt-2">
@@ -245,6 +361,77 @@
                         </div>
                     </div>
                     <!-- /image file uploader -->
+
+                    <!-- Additional Images display and management -->
+                    <div class="row mb-3">
+                        <label class="col-form-label col-lg-2">Gambar Tambahan</label>
+                        <div class="col-lg-10">
+                            <div class="mb-3">
+                                <input type="file" class="form-control @error('additional_images') is-invalid @enderror"
+                                    id="additionalImages" name="additional_images[]" multiple>
+                                <small class="form-text text-muted">Anda dapat menambahkan gambar-gambar baru</small>
+                                @error('additional_images')
+                                    <div class="alert alert-danger mt-2">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                                @error('additional_images.*')
+                                    <div class="alert alert-danger mt-2">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                                <div id="additionalImagesPreview" class="mt-3 d-flex flex-wrap">
+                                    <!-- Preview images will appear here -->
+                                </div>
+                            </div>
+
+                            @if($visimisi->images && $visimisi->images->count() > 0)
+                                <div class="mt-4">
+                                    <h6>Gambar Tambahan Saat Ini</h6>
+                                    <div class="alert alert-info">
+                                        <small>
+                                            Anda dapat mengurutkan gambar dengan nomor urut atau menghapus gambar dengan mencentang checkbox hapus.
+                                        </small>
+                                    </div>
+                                    <div class="d-flex flex-wrap">
+                                        @foreach($visimisi->images as $image)
+                                            <div class="image-container">
+                                                <div class="form-check delete-checkbox">
+                                                    <input type="checkbox" class="form-check-input" name="delete_image[{{ $image->id }}]" value="1" id="delete_{{ $image->id }}">
+                                                    <label class="form-check-label" for="delete_{{ $image->id }}">Hapus</label>
+                                                </div>
+                                                <img src="{{ asset('storage/romadan_gambar_web/' . $image->image) }}" alt="Gambar Tambahan" class="img-thumbnail" style="max-height: 150px;">
+                                                <div class="mt-1">
+                                                    <label for="sort_{{ $image->id }}" class="form-label small">Urutan:</label>
+                                                    <input type="number" class="form-control form-control-sm sort-input" id="sort_{{ $image->id }}" name="sort_order[{{ $image->id }}]" value="{{ $image->sort_order }}" min="0">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- /Additional Images management -->
+
+                   <!-- Video URL input -->
+<div class="row mb-3">
+    <label class="col-form-label col-lg-2">URL Video (Opsional)</label>
+    <div class="col-lg-10">
+        <input type="url" class="form-control @error('video_url') is-invalid @enderror"
+            id="videoUrl" name="video_url" value="{{ old('video_url') ?? $visimisi->video_url }}"
+            placeholder="Masukkan URL video YouTube atau Vimeo">
+        <small class="form-text text-muted">Video ini akan muncul di slider bersama dengan gambar-gambar</small>
+        @error('video_url')
+            <div class="alert alert-danger mt-2">
+                {{ $message }}
+            </div>
+        @enderror
+        <div id="videoPreview" class="mt-3">
+            <!-- Video preview will appear here -->
+        </div>
+    </div>
+</div>
 
                 </div>
 
