@@ -722,12 +722,10 @@ class HomeFeController extends Controller
 
     public function layanan_layanan()
     {
-
-        // $tentang = TentangModel::first()->get();
-        $layanan = LayananModel::latest()->take(1)->get();
+        // Get the latest layanan with its related additional images
+        $layanan = LayananModel::with('additionalImages')->latest()->take(1)->get();
         return view('frontend.layanan.layanan', compact(['layanan']));
     }
-
 
     public function kegiatan_index(Request $request)
     {
