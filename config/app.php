@@ -140,8 +140,8 @@ return [
 
     // Versioning Aplikasi
     'version' => [
-        'major' => env('APP_VERSION_MAJOR', '1'),
-        'minor' => env('APP_VERSION_MINOR', '5'),
+        'major' => env('APP_VERSION_MAJOR', '2'),
+        'minor' => env('APP_VERSION_MINOR', '1'),
         'patch' => env('APP_VERSION_PATCH', '0'),
         'release' => env('APP_VERSION_RELEASE', 'stable'), // alpha, beta, rc, stable
         'build' => env('APP_VERSION_BUILD', '001'),
