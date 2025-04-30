@@ -67,10 +67,41 @@ class HomeFeController extends Controller
 
     public function profile_organisasi()
     {
+        try {
+            Log::info('Fetching struktur organisasi data');
+            $tentang = TentangModel::first();
 
-        $tentang = TentangModel::first();
-        $organisasi = StrukturOrganisasiModel::latest()->take(1)->get();
-        return view('frontend.profile.fe_organisasi', compact(['tentang', 'organisasi']));
+            // Explicitly select columns to avoid duplicate column names
+            // Don't use additionalImages relationship ordering - will do in PHP
+            $organisasi = StrukturOrganisasiModel::select('struktur_organisasi.*')
+                ->with(['additionalImages' => function($query) {
+                    // Select specific columns but NO ordering in the SQL
+                    $query->select(
+                        'id',
+                        'struktur_organisasi_id',
+                        'image_path',
+                        'sort_order',
+                        'created_at',
+                        'updated_at'
+                    );
+                }])
+                ->orderBy('id', 'desc')
+                ->get();
+
+            Log::info('Successfully fetched struktur organisasi data', ['count' => count($organisasi)]);
+
+            return view('frontend.profile.fe_organisasi', compact(['tentang', 'organisasi']));
+        } catch (\Exception $e) {
+            Log::error('Error in profile_organisasi', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return view('frontend.profile.fe_organisasi', [
+                'tentang' => TentangModel::first(),
+                'organisasi' => collect() // Empty collection if error
+            ])->with('error', 'Terjadi kesalahan saat memuat data struktur organisasi.');
+        }
     }
 
     public function profile_tentang()

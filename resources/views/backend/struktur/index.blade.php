@@ -1,18 +1,21 @@
 @extends('layouts.webromadan_backend.master_layout')
 
 @section('css')
-@endsection
-
-
-@section('script_atas')
 <script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
 <script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
 <script src="{{asset('webromadan/be/js/vendor/tables/datatables/extensions/responsive.min.js')}}"></script>
 @endsection
 
+@section('script_atas')
+<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
+<script src="{{asset('webromadan/be/js/vendor/forms/selects/select2.min.js')}}"></script>
+@endsection
+
 @section('script_bawah')
 <script>
-    /* ------------------------------------------------------------------------------
+
+	/* ------------------------------------------------------------------------------
  *
  *  # Basic datatables
  *
@@ -45,85 +48,64 @@ const DatatableBasic = function() {
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            columnDefs: [{ 
+            columnDefs: [{
                 orderable: false,
                 width: 100,
-                targets: [0]
+                targets: [5]
             }],
-            dom: '<"datatable-header"f<"ms-sm-auto"B><"ms-sm-auto"l>><"datatable-scroll"t><"datatable-footer"ip>',
+			dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
             language: {
-                search: '<span class="me-3">Cari Data:</span> <div class=" form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
+                search: '<span class="me-3">Cari :</span> <div class="form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
                 searchPlaceholder: 'Cari...',
-                lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
-                paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' },
-             
-            },
-        });
-
-        $.ajaxSetup({
-            headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                lengthMenu: '<span class="me-3">Menampilkan :</span> _MENU_',
+                paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' }
             }
         });
 
         // Basic datatable
         $('.datatable-basic').DataTable({
-            autoWidth: true,
-            scrollY: 200,
-            scrollX: true,
+
+			columnDefs: [
+				{
+                    orderable: false,
+                    targets: [1, 2, 3, 4, 5]
+                }
+			],
             processing: true,
             serverSide: true,
             ajax: "{{ route('struktur-organisasi.index') }}",
             columns: [
-            { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
-             {data: 'judul',name:'judul'},
-            {data: 'struktur',name:'struktur'},
-            {data: 'image_struktur',name:'image_struktur',orderable:false, searchable:false},
-            {data: 'opsi',name:'opsi',orderable:false,searchable:false},
-
-            // {data: 'action', name: 'action', orderable: false, searchable:false},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                {data: 'judul', name: 'judul'},
+                {data: 'image_struktur', name: 'image_struktur', orderable: false, searchable: false},
+                {data: 'additional_images_count', name: 'additional_images_count', orderable: false, searchable: false},
+                {data: 'has_video', name: 'has_video', orderable: false, searchable: false},
+                {data: 'layout_type', name: 'layout_type', orderable: false, searchable: false},
+                {data: 'opsi', name: 'opsi', orderable: false, searchable: false},
             ],
-            order: [[0, 'asc']],
-            buttons: {        
-                dom:{
-                    button: {
-                        className: ''
-                    },
-                }, 
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        className: 'btn btn-outline-success',
-                        text: '<i class="far fa-file-excel me-2"></i> Excel',
-                        exportOptions: {
-                            columns: ':visible',
-                            
-                        }
-                    },
-                    // {
-                    //     extend: 'pdfHtml5',
-                    //     className: 'btn btn-outline-danger',
-                    //     text: '<i class="far fa-file-pdf me-2"></i> Pdf',
-                    //     exportOptions: {
-                    //         columns: [0, 1, 2, 5]
-                    //     }
-                    // },
-                    {
-                        extend: 'colvis',
-                        text: '<i class="ph-squares-four"></i>',
-                        className: 'btn btn-outline-info dropdown-toggle',
-                        collectionLayout: 'fixed four-column'
-                    }
-                ]
-            },
+            order: [[0, 'asc']]
+
         });
 
 
+        // Alternative pagination
+        $('.datatable-pagination').DataTable({
+            pagingType: "simple",
+            language: {
+                paginate: {'next': document.dir == "rtl" ? 'Next &larr;' : 'Next &rarr;', 'previous': document.dir == "rtl" ? '&rarr; Prev' : '&larr; Prev'}
+            }
+        });
+
+        // Datatable with saving state
+        $('.datatable-save-state').DataTable({
+            stateSave: true
+        });
+
         // Scrollable datatable
-        // const table = $('.datatable-scroll-y').DataTable({
-        //     autoWidth: true,
-        //     scrollY: 300
-        // });
+        const table = $('.datatable-scroll-y').DataTable({
+            autoWidth: true,
+            scrollY: 300
+        });
 
         // Resize scrollable table when sidebar width changes
         $('.sidebar-control').on('click', function() {
@@ -150,48 +132,46 @@ const DatatableBasic = function() {
 document.addEventListener('DOMContentLoaded', function() {
     DatatableBasic.init();
 });
+
 </script>
+
 @endsection
 
-
 @section('content')
+
 <!-- Basic datatable -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Struktur Organisasi</h5>
+        @include('layouts.webromadan_backend.session_notif')
+    </div>
 
-					<div class="card">
-                        <div class="card-header text-center">
-                          <h1>Struktur Organisasi Romadan</h1>
-                           @include('layouts.webromadan_backend.session_notif')
-						</div>
-                        @if (count($data) < 1)
-                             <div class="card-header">
-                          
-                                    <a href="{{route('struktur-organisasi.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
-                                        <span class="btn-labeled-icon bg-purple text-white rounded-pill">
-                                            <i class="ph-check-square-offset"></i>
-                                        </span>
-                                        Tambah Struktur
-                                    </button></a>
-                            
-						</div>
-                        @endif
-                       
-                        
-						<table class="table datatable-basic table-hover table-striped">
-							<thead>
-								<tr>
-									<th>#</th>
-                                    <th>Judul</th>
-                                    <th>Struktur</th>
-									<th>Gambar</th>
-                                    <th>Aksi</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-					<!-- /basic datatable -->
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div></div>
+            <a href="{{ route('struktur-organisasi.create') }}" class="btn btn-primary">
+                <i class="ph-plus me-1"></i>
+                Tambah Struktur Organisasi
+            </a>
+        </div>
 
-
-
+        <table class="table datatable-basic">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th width="20%">Judul</th>
+                    <th width="15%">Gambar Utama</th>
+                    <th width="10%">Gambar Tambahan</th>
+                    <th width="10%">Video</th>
+                    <th width="10%">Tata Letak</th>
+                    <th width="15%" class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be loaded via AJAX -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- /basic datatable -->
 @endsection
