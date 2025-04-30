@@ -17,7 +17,6 @@
 @section('script_bawah')
 <script src="{{asset('webromadan/be/demo/pages/form_validation_library.js')}}"></script>
 <script src="{{asset('webromadan/be/demo/pages/form_select2.js')}}"></script>
-{{-- <script src="{{asset('webromadan/be/demo/pages/editor_ckeditor_classic.js')}}"></script> --}}
 <script>
 	/* ------------------------------------------------------------------------------
  *
@@ -59,32 +58,30 @@ const CKEditorClassic = function() {
                 ],
             },
 
-
-        }).catch(error => {
-            console.error(error);
-        });
-
-		// Editor with placeholder
-        ClassicEditor.create(document.querySelector('#ckeditor_classic_empty_excerpt'), {
-            heading: {
-                options: [
-                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                    { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
-                    { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
-                    { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
-                ],
+            // Enable number list and numbered headings
+            list: {
+                properties: {
+                    styles: true,
+                    startIndex: true,
+                    reversed: true
+                }
             },
 
+            // Preserve number formatting
+            htmlSupport: {
+                allow: [
+                    {
+                        name: /^(ol|li|ul)$/,
+                        attributes: true,
+                        classes: true,
+                        styles: true
+                    }
+                ]
+            }
 
         }).catch(error => {
             console.error(error);
         });
-
-
-
     };
 
 
@@ -105,6 +102,49 @@ const CKEditorClassic = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     CKEditorClassic.init();
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Preview images before upload
+    function previewImages(input, previewContainer) {
+        const container = document.getElementById(previewContainer);
+        container.innerHTML = '';
+
+        if (input.files) {
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'mt-2 mr-2 d-inline-block position-relative';
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" style="max-width: 150px; max-height: 150px; margin: 5px;" class="border rounded">
+                    `;
+                    container.appendChild(preview);
+                }
+
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    // Set up image preview for main image
+    const mainImageInput = document.getElementById('customFile');
+    if (mainImageInput) {
+        mainImageInput.addEventListener('change', function() {
+            previewImages(this, 'main-image-preview');
+        });
+    }
+
+    // Set up image preview for additional images
+    const additionalImagesInput = document.getElementById('additionalImages');
+    if (additionalImagesInput) {
+        additionalImagesInput.addEventListener('change', function() {
+            previewImages(this, 'additional-images-preview');
+        });
+    }
 });
 </script>
 @endsection
@@ -143,24 +183,22 @@ document.addEventListener('DOMContentLoaded', function() {
 										<label class="col-form-label col-lg-2">Tentang <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<textarea maxlength="1000" name="tentang" class="form-control @error('tentang') is-invalid @enderror" required placeholder="Tentang" id="ckeditor_classic_empty_tentang">{{ old('tentang') }}</textarea>
+                                            @error('tentang')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
 										</div>
 									</div>
 									<!-- /tentang -->
 
-									<!-- excerpt -->
-									{{-- <div class="row mb-3">
-										<label class="col-form-label col-lg-2">Excerpt <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											<textarea name="excerpt" class="form-control @error('excerpt') is-invalid @enderror" required placeholder="Excerpt" id="ckeditor_classic_empty_excerpt">{{ old('excerpt') }}</textarea>
-										</div>
-									</div> --}}
-									<!-- /excerpt -->
-
-                                    <!-- Image file uploader -->
+                                    <!-- Main Image file uploader -->
 									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Gambar <span class="text-danger">*</span></label>
+										<label class="col-form-label col-lg-2">Gambar Utama <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
 											<input type="file" class="form-control @error('image') is-invalid @enderror required" id="customFile" name="image">
+											<small class="form-text text-muted">Format: JPG, JPEG, PNG, SVG. Maksimal: 20MB</small>
+                                            <div id="main-image-preview" class="mt-2"></div>
 											@error('image')
 											<div class="alert alert-danger mt-2">
 												{{ $message }}
@@ -168,9 +206,38 @@ document.addEventListener('DOMContentLoaded', function() {
 											@enderror
 										</div>
 									</div>
-									<!-- /image file uploader -->
+									<!-- /main image file uploader -->
 
+                                    <!-- Additional Images file uploader -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">Gambar Tambahan</label>
+										<div class="col-lg-10">
+											<input type="file" class="form-control @error('additional_images.*') is-invalid @enderror" id="additionalImages" name="additional_images[]" multiple>
+											<small class="form-text text-muted">Format: JPG, JPEG, PNG, SVG. Maksimal: 20MB per file. Anda dapat memilih beberapa file.</small>
+                                            <div id="additional-images-preview" class="mt-2"></div>
+											@error('additional_images.*')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /additional image file uploader -->
 
+                                    <!-- Video URL input -->
+									<div class="row mb-3">
+										<label class="col-form-label col-lg-2">URL Video</label>
+										<div class="col-lg-10">
+											<input value="{{ old('video_url') }}" type="url" name="video_url" class="form-control @error('video_url') is-invalid @enderror" placeholder="Contoh: https://www.youtube.com/watch?v=example">
+											<small class="form-text text-muted">Masukkan URL video dari platform seperti YouTube atau Vimeo.</small>
+											@error('video_url')
+											<div class="alert alert-danger mt-2">
+												{{ $message }}
+											</div>
+											@enderror
+										</div>
+									</div>
+									<!-- /Video URL input -->
 
 								</div>
 
@@ -185,7 +252,3 @@ document.addEventListener('DOMContentLoaded', function() {
 					</div>
 <!-- /form validation -->
 @endsection
-
-
-
-
