@@ -691,12 +691,12 @@
 
                     <div class="row">
                         @forelse ($peraturan as $index => $item)
-                        <div class="col-md-6 animate-fade-in" style="animation-delay: {{ 0.3 + ($index * 0.1) }}s;">
+                        <div class="col-md-6 animate-fade-in mt-2" style="animation-delay: {{ 0.3 + ($index * 0.1) }}s;">
                             <div class="peraturan-card">
                                 <div class="peraturan-card-body">
-                                    @if(isset($item->kategori))
+                                    {{-- @if(isset($item->kategori))
                                     <span class="peraturan-card-category">{{ $item->kategori }}</span>
-                                    @endif
+                                    @endif --}}
 
                                     <h3 class="peraturan-card-number" data-toggle="tooltip" title="{{ $item->nomor_peraturan }}">
                                         {{ Str::limit($item->nomor_peraturan, 30) }}
@@ -708,10 +708,10 @@
                                 </div>
 
                                 <div class="peraturan-card-footer">
-                                    @if(isset($item->tanggal_peraturan))
+                                    @if(isset($item->tanggal_penetapan))
                                     <div class="peraturan-card-date">
                                         <i class="fa-regular fa-calendar"></i>
-                                        {{ \Carbon\Carbon::parse($item->tanggal_peraturan)->format('d M Y') }}
+                                        {{ \Carbon\Carbon::parse($item->tanggal_penetapan)->format('d M Y') }}
                                     </div>
                                     @endif
 
