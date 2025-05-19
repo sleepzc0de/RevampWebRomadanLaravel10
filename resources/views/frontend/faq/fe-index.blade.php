@@ -1,115 +1,161 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
 @section('css_fe')
-@endsection
+<style>
+    .faq-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
 
+    .faq-item {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .faq-question {
+        padding: 1.5rem;
+        background-color: #f9f9f9;
+        color: #333;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .faq-question:after {
+        content: '\f078';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        transition: all 0.3s ease;
+    }
+
+    .faq-question.active {
+        background-color: #0b5dba;
+        color: white;
+    }
+
+    .faq-question.active:after {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        padding: 0 1.5rem;
+        background-color: white;
+    }
+
+    .faq-answer.show {
+        max-height: 1000px;
+        padding: 1.5rem;
+    }
+
+    .empty-faq {
+        text-align: center;
+        padding: 2rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .txt-judul-faq {
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #0b5dba;
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .faq-question {
+            padding: 1.2rem;
+            font-size: 0.95rem;
+        }
+
+        .txt-judul-faq {
+            font-size: 2rem;
+        }
+    }
+</style>
+@endsection
 
 @section('content')
-
-
-
-{{-- @if ($faq->count() <= 0)
-
 <section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
-		<div class="container">
-            <div class="title-section-ourmenu m-b-22">
-					<h5 class="romadan-faq m-t-2">
-						Data Frequently Asked Question Kosong, Harap hubungi Administrator !
-					</h5>
-			</div>
-			
-		</div>
-	
-	</section>
-    
+    <div class="container">
+        <div class="title-section-ourmenu m-b-2">
+            <h5 class="txt-judul-faq m-t-2">
+                Frequently Asked Questions
+            </h5>
+        </div>
 
-@else
-
-<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
-		<div class="container">
-            <div class="title-section-ourmenu m-b-22">
-					<h5 class="romadan-berita m-t-2">
-						Frequently Asked Question
-					</h5>
-			</div>
-
-            <div class="row p-t-10">
-				@forelse ($layanan as $item)
-				<div class="col-md-6 ">
-					<div class="wrap-text-welcome">
-						<div class="txt-judul-layanan t-center m-b-35 m-t-5" style="text-align: justify;">
-							{{$item->judul}}
+        <div class="faq-container mt-5">
+            @if ($faq->count() > 0)
+                @foreach ($faq as $item)
+                <div class="faq-item wow fadeInUp" data-wow-delay="{{ $loop->iteration * 0.1 }}s">
+                    <div class="faq-question">
+                        {{ $item->faq_judul }}
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-content">
+                            {!! $item->faq_isi !!}
                         </div>
-
-						<div class="t-center m-b-22 size3 " style="text-align: justify;">
-							<div class="txt-layanan">{!!$item->layanan!!}</div>
-						</div>
-						
-											
-					</div>
-				</div>
-
-				<div class="col-md-6 p-t-90">
-					<div class="wrap-pic-welcome size2-visi-misi bo-rad-10 hov-img-zoom m-l-r-auto">
-						<a href="{{asset('storage/romadan_gambar_web/' . $item->image)}}"><img src="{{asset('storage/romadan_gambar_web/' . $item->image)}}" alt="IMG-OUR"></a>
-					</div>
-				</div>
-
-				@empty
-							KOSONG
-				@endforelse
-			</div>
-			
-		</div>
-	</section>
-
-
-@endif --}}
-
-
-<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
-		<div class="container">
-
-            <div class="title-section-ourmenu m-b-2">
-					<h5 class="txt-judul-faq  m-t-2">
-						Frequently Asked Questions
-					</h5>
-			</div>
-            
-			<div class="row p-t-10 mt-5">
-				@forelse ($faq as $item)
-				<div class="col-md-6 ">
-					<div class="wrap-text-welcome">
-						<div class="txt-judul-faq-pertanyaan t-center m-b-35 m-t-5" style="text-align: justify;">
-							{{$item->faq_judul}}
-                        </div>
-
-						<div class="t-center m-b-22 size3 " style="text-align: justify;">
-							<div class="txt-layanan">{!!$item->faq_isi!!}</div>
-						</div>
-						
-											
-					</div>
-				</div>
-				@empty
-							<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
-                                <div class="container">
-                                    <div class="title-section-ourmenu m-b-22">
-                                            <h5 class="romadan-faq m-t-2">
-                                                Tidak ada Data, Harap hubungi Administrator !
-                                            </h5>
-                                    </div>
-                                    
-                                </div>
-                            
-                            </section>
-				@endforelse
-			</div>
-		</div>
-	</section>
-	
-
-@section('script_fe')
+                    </div>
+                </div>
+                @endforeach
+            @else
+                <div class="empty-faq wow fadeIn">
+                    <h5 class="romadan-faq m-t-2">
+                        Tidak ada Data, Harap hubungi Administrator!
+                    </h5>
+                </div>
+            @endif
+        </div>
+    </div>
+</section>
 @endsection
 
+@section('script_fe')
+<script>
+    $(document).ready(function() {
+        // Add animation class for better entry animations
+        if (typeof WOW === 'function') {
+            new WOW().init();
+        }
+
+        // FAQ toggle functionality
+        $('.faq-question').click(function() {
+            // Toggle active class on the question
+            $(this).toggleClass('active');
+
+            // Toggle the visibility of the answer
+            const answer = $(this).next('.faq-answer');
+
+            // Close all other open answers
+            $('.faq-answer').not(answer).removeClass('show');
+            $('.faq-question').not($(this)).removeClass('active');
+
+            // Toggle the current answer
+            answer.toggleClass('show');
+
+            // Scroll to the question if it's not in view (mobile friendly)
+            if($(this).hasClass('active') && $(window).width() < 768) {
+                $('html, body').animate({
+                    scrollTop: $(this).offset().top - 100
+                }, 300);
+            }
+        });
+    });
+</script>
 @endsection
