@@ -11,15 +11,15 @@
 					@forelse ($medsos as $item)
 
 					<i class="{{$item->logo_medsos}} mr-2 ml-2" aria-hidden="true"></i><a href="{{$item->link_medsos}}">{{$item->nama_medsos}}</a>
-						
+
 					@empty
 
 					<div class="col-lg-6 footer1-medsos">
 					Data Medsos Belum Ada !
 					</div>
-						
+
 					@endforelse
-					
+
 					{{-- END MEDSOS --}}
 				</div>
 			</div>
@@ -27,7 +27,7 @@
 
 		<div class="end-footer footer2-romadan-bg">
 			<div class="container">
-				
+
 					<div class="row p-b-40" style="text-align: center;">
 						<div class="col-lg-6">
 									<div class="mt-5">
@@ -42,19 +42,19 @@
 										<br>
 										<h10><i class="fa fa-phone mr-2 mt-3" aria-hidden="true"></i>081-2311-2345-678</h10>
 										<br>
-										<h10><i class="fa-regular fa-building mr-2 mt-3"></i>Gedung Djuanda 2 Lt. 15-17,</h10><br>
+										<h10><i class="fa-regular fa-building mr-2 mt-3"></i>Gedung Djuanda 2 Lt. 16-17,</h10><br>
 										<h10 class="ml-3">&nbsp;Jl. Dr. Wahidin Raya No. 1</h10>
 
 										{{-- <h10>Gedung Djuanda 2 Lt. 15-17
 										<br><h10 class="ml-3">&nbsp;Jl. Dr. Wahidin Raya No. 1</h10></h10> --}}
-										
+
 									</div>
 						</div>
 					</div>
 					<div class="row">
 							<br>
 					</div>
-					
+
 			</div>
 		</div>
 	</footer>

@@ -78,6 +78,32 @@
         font-weight: 700;
     }
 
+    .faq-number {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        background-color: #0b5dba;
+        color: white;
+        border-radius: 50%;
+        margin-right: 12px;
+        flex-shrink: 0;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    .faq-question.active .faq-number {
+        background-color: white;
+        color: #0b5dba;
+    }
+
+    .question-content {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+    }
+
     @media (max-width: 768px) {
         .faq-question {
             padding: 1.2rem;
@@ -86,6 +112,13 @@
 
         .txt-judul-faq {
             font-size: 2rem;
+        }
+
+        .faq-number {
+            width: 25px;
+            height: 25px;
+            font-size: 0.85rem;
+            margin-right: 8px;
         }
     }
 </style>
@@ -105,7 +138,10 @@
                 @foreach ($faq as $item)
                 <div class="faq-item wow fadeInUp" data-wow-delay="{{ $loop->iteration * 0.1 }}s">
                     <div class="faq-question">
-                        {{ $item->faq_judul }}
+                        <div class="question-content">
+                            <span class="faq-number">{{ $loop->iteration }}</span>
+                            <span>{{ $item->faq_judul }}</span>
+                        </div>
                     </div>
                     <div class="faq-answer">
                         <div class="faq-content">
