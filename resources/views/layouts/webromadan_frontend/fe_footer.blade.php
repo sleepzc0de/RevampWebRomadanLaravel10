@@ -40,7 +40,7 @@
 										<br>
 										<h10><i class="fa-regular fa-envelope mr-2 mt-4"aria-hidden="true"></i></i><a href="mailto:kemenkeu.prime@kemenkeu.go.id">kemenkeu.prime@kemenkeu.go.id</a></h10>
 										<br>
-										<h10><i class="fa fa-phone mr-2 mt-3" aria-hidden="true"></i>081-2311-2345-678</h10>
+										<h10><i class="fa-brands fa-whatsapp mr-2 mt-3" aria-hidden="true"></i>0813-1000-4134</h10>
 										<br>
 										<h10><i class="fa-regular fa-building mr-2 mt-3"></i>Gedung Djuanda 2 Lt. 16-17,</h10><br>
 										<h10 class="ml-3">&nbsp;Jl. Dr. Wahidin Raya No. 1</h10>
