@@ -187,171 +187,163 @@ document.addEventListener('DOMContentLoaded', function() {
 
 @section('content')
 <!-- Form validation -->
-					<div class="card">
-						<div class="card-header">
-							<h5 class="mb-0">Tambah Publikasi</h5>
-                            @include('layouts.webromadan_backend.session_notif')
-						</div>
-
-						<form class="form-validate-jquery" action="{{route('publikasi.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
-							@csrf
-							<div class="card-body">
-
-								<div class="mb-4">
-
-									<!-- Judul publikasi input -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Judul publikasi <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											<input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul publikasi">
-											<!-- error message untuk judul -->
-											@error('judul')
-											<div class="alert alert-danger mt-2">
-												{{ $message }}
-											</div>
-											@enderror
-										</div>
-									</div>
-									<!-- /Judul publikasi input -->
-
-                                    <!-- Sub Judul publikasi input -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Sub Judul publikasi <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											<input maxlength="255" value="{{ old('sub_judul') }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul publikasi">
-											<!-- error message untuk judul -->
-												@error('sub_judul')
-												<div class="alert alert-danger mt-2">
-													{{ $message }}
-												</div>
-												@enderror
-										</div>
-									</div>
-									<!-- /Sub Judul publikasi input -->
-
-									<!-- Tipe Publikasi -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Tipe Publikasi <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											<select value="{{ old('tipe') }}" name="tipe" class="form-control form-control-select2 select" @error('tipe') is-invalid @enderror required>
-												<option>--PILIH--</option>
-												@foreach ($tipe as $item)
-												<option value="{{ $item->id_tipe }}" {{ old('tipe') == $item->id_tipe ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_tipe}}</option>
-												@endforeach
-
-
-											</select>
-
-											<!-- error message untuk judul -->
-											@error('tipe')
-											<div class="alert alert-danger mt-2">
-												{{ $message }}
-											</div>
-											@enderror
-										</div>
-									</div>
-									<!-- /Tipe Publikasi -->
-
-                                    <!-- Kategori publikasi -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Kategori publikasi <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											<select value="{{ old('kategori') }}" name="kategori" class="form-control form-control-select2 select" @error('kategori') is-invalid @enderror required>
-												<option>--PILIH--</option>
-												@foreach ($kategori as $item)
-												<option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
-												@endforeach
-
-
-											</select>
-
-											<!-- error message untuk judul -->
-											@error('kategori')
-											<div class="alert alert-danger mt-2">
-												{{ $message }}
-											</div>
-											@enderror
-										</div>
-									</div>
-									<!-- /Kategori publikasi -->
-
-                                    <!-- Multiple Images file uploader -->
-<div class="row mb-3">
-    <label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
-    <div class="col-lg-10">
-        <input type="file" class="form-control @error('images') is-invalid @enderror required"
-               id="customFile" name="images[]" multiple accept="image/jpeg,image/png,image/jpg">
-        <small class="text-muted">Anda dapat memilih beberapa gambar sekaligus. Gambar pertama akan menjadi gambar utama.</small>
-        <div id="preview-container" class="d-flex flex-wrap gap-2 mt-2"></div>
-        @error('images')
-        <div class="alert alert-danger mt-2">
-            {{ $message }}
-        </div>
-        @enderror
-        @error('images.*')
-        <div class="alert alert-danger mt-2">
-            {{ $message }}
-        </div>
-        @enderror
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Tambah Publikasi</h5>
+        @include('layouts.webromadan_backend.session_notif')
     </div>
-</div>
-<!-- /Multiple images file uploader -->
 
-                                     <!-- File Publikasi -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">File Publikasi<span class="text-danger"></span></label>
-										<div class="col-lg-10">
-											<input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
-											@error('file')
-											<div class="alert alert-danger mt-2">
-												{{ $message }}
-											</div>
-											@enderror
-										</div>
-									</div>
-									<!-- /File Kegiatan -->
+    <form class="form-validate-jquery" action="{{route('publikasi.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
+        @csrf
+        <div class="card-body">
 
-									<!-- Isi publikasi Input -->
-									<div class="row mb-3">
-										<label class="col-form-label col-lg-2">Isi publikasi <span class="text-danger">*</span></label>
-										<div class="col-lg-10">
-											{{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi">{{ old('isi') }}</textarea> --}}
+            <div class="mb-4">
 
-											<textarea maxlength="25000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
-										</div>
-									</div>
-									<!-- /Isi publikasi Input -->
+                <!-- Judul publikasi input -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Judul publikasi <span class="text-danger">*</span></label>
+                    <div class="col-lg-10">
+                        <input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul publikasi">
+                        <!-- error message untuk judul -->
+                        @error('judul')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /Judul publikasi input -->
 
-                                    <!-- Embedded Media URL Input -->
-<div class="row mb-3">
-    <label class="col-form-label col-lg-2">URL Media (Video/Image) <span class="text-danger"></span></label>
-    <div class="col-lg-10">
-        <input type="url" name="embedded_media" value="{{ old('embedded_media') }}" class="form-control @error('embedded_media') is-invalid @enderror" placeholder="https://youtube.com/watch?v=example or image URL">
-        <small class="text-muted">Masukkan URL YouTube, Vimeo, atau gambar yang ingin ditampilkan</small>
+                <!-- Sub Judul publikasi input -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Sub Judul publikasi <span class="text-danger">*</span></label>
+                    <div class="col-lg-10">
+                        <input maxlength="255" value="{{ old('sub_judul') }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul publikasi">
+                        <!-- error message untuk judul -->
+                            @error('sub_judul')
+                            <div class="alert alert-danger mt-2">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                    </div>
+                </div>
+                <!-- /Sub Judul publikasi input -->
 
-        @error('embedded_media')
-        <div class="alert alert-danger mt-2">
-            {{ $message }}
+                <!-- Tipe Publikasi -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Tipe Publikasi <span class="text-danger">*</span></label>
+                    <div class="col-lg-10">
+                        <select value="{{ old('tipe') }}" name="tipe" class="form-control form-control-select2 select" @error('tipe') is-invalid @enderror required>
+                            <option>--PILIH--</option>
+                            @foreach ($tipe as $item)
+                            <option value="{{ $item->id_tipe }}" {{ old('tipe') == $item->id_tipe ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_tipe}}</option>
+                            @endforeach
+                        </select>
+
+                        <!-- error message untuk judul -->
+                        @error('tipe')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /Tipe Publikasi -->
+
+                <!-- Kategori publikasi -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Kategori publikasi <span class="text-danger">*</span></label>
+                    <div class="col-lg-10">
+                        <select value="{{ old('kategori') }}" name="kategori" class="form-control form-control-select2 select" @error('kategori') is-invalid @enderror required>
+                            <option>--PILIH--</option>
+                            @foreach ($kategori as $item)
+                            <option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
+                            @endforeach
+                        </select>
+
+                        <!-- error message untuk judul -->
+                        @error('kategori')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /Kategori publikasi -->
+
+                <!-- Multiple Images file uploader -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
+                    <div class="col-lg-10">
+                        <input type="file" class="form-control @error('images') is-invalid @enderror required"
+                            id="customFile" name="images[]" multiple accept="image/jpeg,image/png,image/jpg">
+                        <small class="text-muted">Anda dapat memilih beberapa gambar sekaligus. Gambar pertama akan menjadi gambar utama.</small>
+                        <div id="preview-container" class="d-flex flex-wrap gap-2 mt-2"></div>
+                        @error('images')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                        @error('images.*')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /Multiple images file uploader -->
+
+                <!-- File Publikasi -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">File Publikasi<span class="text-danger"></span></label>
+                    <div class="col-lg-10">
+                        <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
+                        @error('file')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /File Kegiatan -->
+
+                <!-- Isi publikasi Input -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Isi publikasi <span class="text-danger">*</span></label>
+                    <div class="col-lg-10">
+                        {{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi">{{ old('isi') }}</textarea> --}}
+
+                        <textarea maxlength="25000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
+                    </div>
+                </div>
+                <!-- /Isi publikasi Input -->
+
+                <!-- Embedded Media URL Input -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">URL Media (Video/Image) <span class="text-danger"></span></label>
+                    <div class="col-lg-10">
+                        <input type="url" name="embedded_media" value="{{ old('embedded_media') }}" class="form-control @error('embedded_media') is-invalid @enderror" placeholder="https://youtube.com/watch?v=example or image URL">
+                        <small class="text-muted">Masukkan URL YouTube, Vimeo, atau gambar yang ingin ditampilkan</small>
+
+                        @error('embedded_media')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /Embedded Media URL Input -->
+
+            </div>
+
         </div>
-        @enderror
-    </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <a href="{{route('publikasi.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
+            <button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
+            <button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
+        </div>
+    </form>
 </div>
-<!-- /Embedded Media URL Input --
-
-								</div>
-
-						</div>
-
-						<div class="card-footer d-flex justify-content-end">
-							<a href="{{route('publikasi.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
-							<button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
-							<button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
-						</div>
-							</form>
-					</div>
 <!-- /form validation -->
 @endsection
-
-
-
-
