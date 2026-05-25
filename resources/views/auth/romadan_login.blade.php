@@ -410,7 +410,7 @@
             </form>
 
             <div class="footer-text">
-                <p>&copy; 2025 <a href="http://www.romadan.kemenkeu.go.id/" class="footer-link">Biro Manajemen BMN dan
+                <p>&copy; 2026 <a href="http://www.romadan.kemenkeu.go.id/" class="footer-link">Biro Manajemen BMN dan
                         Pengadaan</a></p>
                         <p>Powered by Romadan {{ App\Helpers\VersionHelper::getShortVersion() }}</p>
             </div>

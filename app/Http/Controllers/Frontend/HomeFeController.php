@@ -41,6 +41,7 @@ class HomeFeController extends Controller
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
             ->where('nama_tipe', strtolower('Berita'))
             ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_berita) . "%"])
+            ->orderBy('publikasi.updated_at', 'desc')
             ->take(3)
             ->get();
 
