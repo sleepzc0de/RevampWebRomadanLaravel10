@@ -27,55 +27,38 @@ class SejarahController extends Controller
                         $mediaItems = json_decode($query->media, true);
                         foreach ($mediaItems as $item) {
                             if ($item['type'] === 'image') {
-                                $url = asset('storage/romadan_gambar_web/' . $item['path']);
-                                return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center"/></a>';
+                                $url = asset('storage/romadan_gambar_web/'.$item['path']);
+
+                                return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center"/></a>';
                             }
                         }
                     }
 
                     // Fallback to old image display method
                     if ($query->image) {
-                        $url = asset('storage/romadan_gambar_web/' . $query->image);
-                        return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center"/></a>';
+                        $url = asset('storage/romadan_gambar_web/'.$query->image);
+
+                        return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center"/></a>';
                     }
 
                     return 'No image';
                 })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('sejarah.edit', encrypt($query->id));
-                    $hapus = route('sejarah.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'edit' => route('sejarah.edit', encrypt($query->id)),
+                        'destroy' => route('sejarah.destroy', encrypt($query->id)),
+                    ])->render();
                 })
 
                 ->editColumn('created_at', function ($query) {
                     return date('d-M-Y H:i:s', strtotime($query->created_at));
                 })
 
-
                 ->rawColumns(['opsi', 'image_sejarah'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.sejarah.index', compact('data'));
     }
 
@@ -94,7 +77,7 @@ class SejarahController extends Controller
     {
         try {
             // VALIDASI DATA
-           $validated = $request->validate([
+            $validated = $request->validate([
                 'judul' => [
                     'required',
                     'max:255',
@@ -110,16 +93,16 @@ class SejarahController extends Controller
                     'required',
                     'min:10',
                     'max:10000', // Increased from 1000 to handle more content with images
-                ],
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // Diubah dari 2000 menjadi 20480
-                'images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // Diubah dari 2000 menjadi 20480
+               ],
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // Diubah dari 2000 menjadi 20480
+                'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // Diubah dari 2000 menjadi 20480
                 'video_urls' => 'nullable|array',
                 'video_urls.*' => 'nullable|url',
-            ],[
-                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
-                'image.max' => 'Ukuran gambar utama tidak boleh lebih dari 20MB.',
-                'images.*.max' => 'Ukuran gambar tambahan tidak boleh lebih dari 20MB.'
-            ]);
+            ], [
+               'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+               'image.max' => 'Ukuran gambar utama tidak boleh lebih dari 20MB.',
+               'images.*.max' => 'Ukuran gambar tambahan tidak boleh lebih dari 20MB.',
+           ]);
 
             $validated['judul'] = strip_tags($validated['judul']);
             // JANGAN strip_tags pada konten sejarah untuk mempertahankan formatting HTML
@@ -135,7 +118,7 @@ class SejarahController extends Controller
                 $mediaItems[] = [
                     'type' => 'image',
                     'path' => $image->hashName(),
-                    'original_name' => $image->getClientOriginalName()
+                    'original_name' => $image->getClientOriginalName(),
                 ];
             }
 
@@ -146,7 +129,7 @@ class SejarahController extends Controller
                     $mediaItems[] = [
                         'type' => 'image',
                         'path' => $image->hashName(),
-                        'original_name' => $image->getClientOriginalName()
+                        'original_name' => $image->getClientOriginalName(),
                     ];
                 }
             }
@@ -154,7 +137,7 @@ class SejarahController extends Controller
             // Process video URLs
             if ($request->filled('video_urls')) {
                 foreach ($request->input('video_urls') as $videoUrl) {
-                    if (!empty($videoUrl)) {
+                    if (! empty($videoUrl)) {
                         $mediaItems[] = [
                             'type' => 'video',
                             'url' => $videoUrl,
@@ -178,12 +161,13 @@ class SejarahController extends Controller
 
             SejarahModel::create($data);
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Sejarah Berhasil Ditambahkan!']);
         } catch (Exception $e) {
             // Log error untuk debugging
-            Log::error('Error saat menyimpan sejarah: ' . $e->getMessage());
-            return redirect()->back()->with(['failed' => 'Sejarah Gagal Ditambahkan! error :' . $e->getMessage()]);
+            Log::error('Error saat menyimpan sejarah: '.$e->getMessage());
+
+            return redirect()->back()->with(['failed' => 'Sejarah Gagal Ditambahkan!']);
         }
     }
 
@@ -202,6 +186,7 @@ class SejarahController extends Controller
     {
         // $kategori = ref_kategori::findOrFail(decrypt($id));
         $sejarah = SejarahModel::findOrFail(decrypt($id));
+
         return view('backend.sejarah.edit', compact('sejarah'));
     }
 
@@ -212,7 +197,7 @@ class SejarahController extends Controller
     {
         try {
             // VALIDASI DATA
-            $validated= $request->validate([
+            $validated = $request->validate([
                 'judul' => [
                     'required',
                     'max:255',
@@ -223,21 +208,21 @@ class SejarahController extends Controller
                         }
                     },
                 ],
-               'sejarah' => [
+                'sejarah' => [
                     'required',
                     'max:10000',
                 ],
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // Diubah dari 2000 menjadi 20480
-                'images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // Diubah dari 2000 menjadi 20480
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // Diubah dari 2000 menjadi 20480
+                'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // Diubah dari 2000 menjadi 20480
                 'video_urls' => 'nullable|array',
                 'video_urls.*' => 'nullable|url',
                 'keep_media' => 'nullable|array',
             ],
-            [
-                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
-                'image.max' => 'Ukuran gambar utama tidak boleh lebih dari 20MB.',
-                'images.*.max' => 'Ukuran gambar tambahan tidak boleh lebih dari 20MB.'
-            ]);
+                [
+                    'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+                    'image.max' => 'Ukuran gambar utama tidak boleh lebih dari 20MB.',
+                    'images.*.max' => 'Ukuran gambar tambahan tidak boleh lebih dari 20MB.',
+                ]);
 
             $validated['judul'] = strip_tags($validated['judul']);
             // JANGAN strip_tags pada konten sejarah untuk mempertahankan formatting HTML
@@ -263,7 +248,7 @@ class SejarahController extends Controller
                         $newMediaItems[] = $existingMedia[$index];
                     }
                 }
-            } else if ($sejarah->media && !$request->has('keep_media')) {
+            } elseif ($sejarah->media && ! $request->has('keep_media')) {
                 // If keep_media is not provided but we have existing media,
                 // assume we're keeping all existing media
                 $newMediaItems = json_decode($sejarah->media, true);
@@ -273,7 +258,7 @@ class SejarahController extends Controller
             if ($request->hasFile('image')) {
                 // Delete old image if it exists
                 if ($sejarah->image) {
-                    File::delete(public_path('storage/romadan_gambar_web/') . $sejarah->image);
+                    File::delete(public_path('storage/romadan_gambar_web/').$sejarah->image);
                 }
 
                 $image = $request->file('image');
@@ -286,7 +271,7 @@ class SejarahController extends Controller
                 $newMediaItems[] = [
                     'type' => 'image',
                     'path' => $image->hashName(),
-                    'original_name' => $image->getClientOriginalName()
+                    'original_name' => $image->getClientOriginalName(),
                 ];
             }
 
@@ -297,7 +282,7 @@ class SejarahController extends Controller
                     $newMediaItems[] = [
                         'type' => 'image',
                         'path' => $image->hashName(),
-                        'original_name' => $image->getClientOriginalName()
+                        'original_name' => $image->getClientOriginalName(),
                     ];
                 }
             }
@@ -305,7 +290,7 @@ class SejarahController extends Controller
             // Add video URLs
             if ($request->filled('video_urls')) {
                 foreach ($request->input('video_urls') as $videoUrl) {
-                    if (!empty($videoUrl)) {
+                    if (! empty($videoUrl)) {
                         $newMediaItems[] = [
                             'type' => 'video',
                             'url' => $videoUrl,
@@ -318,11 +303,13 @@ class SejarahController extends Controller
             $data['media'] = json_encode($newMediaItems);
 
             SejarahModel::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('sejarah.index')->with('success', "Sejarah berhasil diupdate!");
+
+            return redirect()->route('sejarah.index')->with('success', 'Sejarah berhasil diupdate!');
         } catch (Exception $e) {
             // Log error untuk debugging
-            Log::error('Error saat mengupdate sejarah: ' . $e->getMessage());
-            return redirect()->route('sejarah.index')->with(['failed' => 'Sejarah Gagal Di Update! error :' . $e->getMessage()]);
+            Log::error('Error saat mengupdate sejarah: '.$e->getMessage());
+
+            return redirect()->route('sejarah.index')->with(['failed' => 'Sejarah Gagal Di Update!']);
         }
     }
 
@@ -336,7 +323,7 @@ class SejarahController extends Controller
 
             // Delete the single image (backwards compatibility)
             if ($data_gambar->image) {
-                File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+                File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
             }
 
             // Delete all media images
@@ -344,17 +331,19 @@ class SejarahController extends Controller
                 $mediaItems = json_decode($data_gambar->media, true);
                 foreach ($mediaItems as $item) {
                     if ($item['type'] === 'image' && isset($item['path'])) {
-                        File::delete(public_path('storage/romadan_gambar_web/') . $item['path']);
+                        File::delete(public_path('storage/romadan_gambar_web/').$item['path']);
                     }
                 }
             }
 
             $data_gambar->delete();
-            return redirect()->route('sejarah.index')->with('success', "Sejarah berhasil dihapus!");
+
+            return redirect()->route('sejarah.index')->with('success', 'Sejarah berhasil dihapus!');
         } catch (Exception $e) {
             // Log error untuk debugging
-            Log::error('Error saat menghapus sejarah: ' . $e->getMessage());
-            return redirect()->route('sejarah.index')->with(['failed' => 'Sejarah Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            Log::error('Error saat menghapus sejarah: '.$e->getMessage());
+
+            return redirect()->route('sejarah.index')->with(['failed' => 'Sejarah Yang Dihapus Tidak Ada !']);
         }
     }
 }

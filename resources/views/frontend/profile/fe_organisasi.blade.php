@@ -439,7 +439,7 @@
                 <div class="row {{ $item->layout_type }}-layout">
                     <div class="{{ $item->getResponsiveClassesAttribute()['content'] }} d-flex flex-column justify-content-center">
                         <div class="struktur-content">
-                            <div class="txt-sejarah ck-content">{!! $item->struktur !!}</div>
+                            <div class="txt-sejarah ck-content">{!! clean($item->struktur) !!}</div>
                         </div>
                     </div>
 

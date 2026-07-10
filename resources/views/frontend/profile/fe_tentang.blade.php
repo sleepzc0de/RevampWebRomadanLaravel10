@@ -231,7 +231,7 @@
 
                         <!-- Konten tentang -->
                         <div class="txt-sejarah">
-                            {!! $item->tentang !!}
+                            {!! clean($item->tentang) !!}
                         </div>
                     </div>
                 </div>

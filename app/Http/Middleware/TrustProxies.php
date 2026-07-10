@@ -10,9 +10,27 @@ class TrustProxies extends Middleware
     /**
      * The trusted proxies for this application.
      *
+     * Dibaca dari config app.trusted_proxies (env TRUSTED_PROXIES,
+     * dipisah koma). Kosong berarti tidak ada proxy yang dipercaya.
+     *
      * @var array<int, string>|string|null
      */
-    protected $proxies = '*';
+    protected $proxies;
+
+    protected function proxies()
+    {
+        $proxies = config('app.trusted_proxies');
+
+        if (blank($proxies)) {
+            return null;
+        }
+
+        if ($proxies === '*' || $proxies === '**') {
+            return $proxies;
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $proxies))));
+    }
 
     /**
      * The headers that should be used to detect proxies.

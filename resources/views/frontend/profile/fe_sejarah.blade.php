@@ -233,7 +233,7 @@
 
                         <!-- Konten sejarah -->
                         <div class="txt-sejarah">
-                            {!! $item->sejarah !!}
+                            {!! clean($item->sejarah) !!}
                         </div>
                     </div>
                 </div>

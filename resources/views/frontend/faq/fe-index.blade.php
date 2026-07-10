@@ -145,7 +145,7 @@
                     </div>
                     <div class="faq-answer">
                         <div class="faq-content">
-                            {!! $item->faq_isi !!}
+                            {!! clean($item->faq_isi) !!}
                         </div>
                     </div>
                 </div>

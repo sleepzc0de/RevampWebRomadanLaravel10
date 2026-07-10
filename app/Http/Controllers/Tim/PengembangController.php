@@ -17,45 +17,26 @@ class PengembangController extends Controller
     public function index()
     {
         $query = DeveloperModel::select('*')->get()->map(function ($item) {
-            $item->photo = $item->photo ? asset('storage/' . $item->photo) : asset('default-photo.jpg');
+            $item->photo = $item->photo ? asset('storage/'.$item->photo) : asset('default-photo.jpg');
+
             return $item;
         });
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('opsi', function ($query) {
                     $encryptedId = Crypt::encrypt($query->id);
-                    $preview = route('pengembang.show', $encryptedId);
-                    $edit = route('pengembang.edit', $encryptedId);
-                    $hapus = route('pengembang.destroy', $encryptedId);
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
 
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $preview . '" class="dropdown-item">
-														<i class="ph-detective me-2"></i>
-														Preview
-													</a>
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'preview' => route('pengembang.show', $encryptedId),
+                        'edit' => route('pengembang.edit', $encryptedId),
+                        'destroy' => route('pengembang.destroy', $encryptedId),
+                    ])->render();
                 })
                 ->rawColumns(['opsi'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.tim.index');
     }
 
@@ -96,7 +77,6 @@ class PengembangController extends Controller
         return redirect()->route('pengembang.index')->with('success', 'Developer added successfully!');
     }
 
-
     /**
      * Display the specified resource.
      */
@@ -119,6 +99,7 @@ class PengembangController extends Controller
         try {
             $id = Crypt::decrypt($encryptedId);
             $developer = DeveloperModel::findOrFail($id);
+
             return view('backend.tim.edit', compact('developer'));
         } catch (DecryptException $e) {
             return redirect()->route('pengembang.index')
@@ -144,7 +125,7 @@ class PengembangController extends Controller
 
             if ($request->hasFile('photo')) {
                 if ($developer->photo) {
-                    Storage::delete('public/' . $developer->photo);
+                    Storage::delete('public/'.$developer->photo);
                 }
                 $developer->photo = $request->file('photo')->store('photos', 'public');
             }
@@ -172,7 +153,7 @@ class PengembangController extends Controller
         $id = Crypt::decrypt($encryptedId);
         $developer = DeveloperModel::findOrFail($id);
         if ($developer->photo) {
-            Storage::delete('public/' . $developer->photo);
+            Storage::delete('public/'.$developer->photo);
         }
         $developer->delete();
 

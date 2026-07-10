@@ -23,35 +23,15 @@ class MedsosController extends Controller
                 //     return '<a href="' . $url . '">' . $query->nama_file . '</a>';
                 // })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('medsos.edit', encrypt($query->id));
-                    $hapus = route('medsos.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'edit' => route('medsos.edit', encrypt($query->id)),
+                        'destroy' => route('medsos.destroy', encrypt($query->id)),
+                    ])->render();
                 })
 
                 ->editColumn('created_at', function ($query) {
                     return date('d-M-Y H:i:s', strtotime($query->created_at));
                 })
-
 
                 ->rawColumns(['opsi'])
                 ->addIndexColumn()
@@ -59,7 +39,8 @@ class MedsosController extends Controller
         }
 
         $data = medsos::all();
-        return view('backend.medsos.index',compact(['data']));
+
+        return view('backend.medsos.index', compact(['data']));
     }
 
     /**
@@ -91,13 +72,14 @@ class MedsosController extends Controller
 
             ];
 
-
             medsos::create($data);
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Medsos Berhasil Ditambahkan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Medsos Gagal Ditambahkan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Medsos Gagal Ditambahkan!']);
         }
     }
 
@@ -115,6 +97,7 @@ class MedsosController extends Controller
     public function edit(string $id)
     {
         $medsos2 = medsos::findOrFail(decrypt($id));
+
         return view('backend.medsos.edit', compact(['medsos2']));
     }
 
@@ -139,9 +122,12 @@ class MedsosController extends Controller
 
             ];
             medsos::findOrFail(decrypt($id))->update($data);
+
             return redirect()->route('medsos.index')->with('success', "medsos $request->nama_medsos berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('medsos.index')->with(['failed' => 'medsos Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('medsos.index')->with(['failed' => 'medsos Gagal Di Update!']);
             // return redirect()->back()->with(['failed' => 'Data File Gagal Disimpan! error :' . $e->getMessage()]);
         }
     }
@@ -153,9 +139,12 @@ class MedsosController extends Controller
     {
         try {
             medsos::findOrFail(decrypt($id))->delete();
-            return redirect()->route('medsos.index')->with('success', "medsos berhasil dihapus!");
+
+            return redirect()->route('medsos.index')->with('success', 'medsos berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('medsos.index')->with(['failed' => 'medsos Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('medsos.index')->with(['failed' => 'medsos Yang Dihapus Tidak Ada !']);
         }
     }
 }

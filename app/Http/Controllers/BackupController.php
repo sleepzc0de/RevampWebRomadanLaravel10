@@ -19,7 +19,7 @@ class BackupController extends Controller
     public function index()
     {
         $backups = collect(Storage::files('backups'))
-            ->map(fn($file) => [
+            ->map(fn ($file) => [
                 'name' => basename($file),
                 'size' => Storage::size($file),
                 'date' => Storage::lastModified($file),
@@ -34,7 +34,7 @@ class BackupController extends Controller
     {
         try {
             // Add request validation
-            if (!request()->ajax()) {
+            if (! request()->ajax()) {
                 throw new \Exception('Invalid request method');
             }
 
@@ -43,63 +43,86 @@ class BackupController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => "Backup {$backupFile} created successfully.",
-                'file' => $backupFile
+                'file' => $backupFile,
             ]);
         } catch (\Exception $e) {
             Log::error('Backup creation failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create backup: ' . $e->getMessage()
+                'message' => 'Failed to create backup',
             ], 500);
         }
     }
 
     public function destroy(string $fileName)
     {
+        $fileName = $this->validateBackupFileName($fileName);
+
         try {
             Storage::delete("backups/{$fileName}");
+
             return redirect()->route('backups.index')
                 ->with('success', "Backup {$fileName} deleted successfully.");
         } catch (\Exception $e) {
             Log::error('Backup deletion failed', [
                 'file' => $fileName,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return back()->withErrors('Failed to delete backup.');
         }
     }
 
     public function download(string $fileName)
     {
+        $fileName = $this->validateBackupFileName($fileName);
+
         try {
             $path = Storage::path("backups/{$fileName}");
-            if (!Storage::exists("backups/{$fileName}")) {
+            if (! Storage::exists("backups/{$fileName}")) {
                 throw new \Exception('Backup file not found.');
             }
+
             return response()->download($path);
         } catch (\Exception $e) {
             Log::error('Backup download failed', [
                 'file' => $fileName,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return back()->withErrors('Failed to download backup.');
         }
+    }
+
+    /**
+     * Hanya izinkan nama file persis berformat backup_YYYY-MM-DD_HH-ii-ss.zip
+     * (format yang dihasilkan BackupService) untuk mencegah path traversal.
+     */
+    private function validateBackupFileName(string $fileName): string
+    {
+        if (! preg_match('/^backup_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.zip$/', $fileName)) {
+            abort(404, 'Backup file not found.');
+        }
+
+        return $fileName;
     }
 
     public function cleanup()
     {
         try {
             $this->backupService->deleteOldBackups(7); // Keep backups for 7 days
+
             return redirect()->route('backups.index')
                 ->with('success', 'Old backups cleaned up successfully.');
         } catch (\Exception $e) {
             Log::error('Backup cleanup failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return back()->withErrors('Failed to clean up old backups.');
         }
     }

@@ -19,7 +19,7 @@
                         </div>
 
 						<div class="t-center m-b-22 size3 " style="text-align: justify;">
-							<div class="txt-layanan">{!!$item->layanan!!}</div>
+							<div class="txt-layanan">{!! clean($item->layanan) !!}</div>
 						</div>
 						
 											

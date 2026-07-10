@@ -3,16 +3,17 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Finder\Finder;
 use ZipArchive;
 
 class BackupService
 {
     protected $backupPath;
+
     protected $isWindows;
 
     public function __construct()
@@ -20,14 +21,14 @@ class BackupService
         $this->backupPath = storage_path('app/backups');
         $this->isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 
-        if (!file_exists($this->backupPath)) {
-            if (!mkdir($this->backupPath, 0755, true)) {
+        if (! file_exists($this->backupPath)) {
+            if (! mkdir($this->backupPath, 0755, true)) {
                 Log::error('Failed to create backup directory', ['path' => $this->backupPath]);
                 throw new \Exception('Failed to create backup directory');
             }
         }
 
-        if (!is_writable($this->backupPath)) {
+        if (! is_writable($this->backupPath)) {
             Log::error('Backup directory is not writable', ['path' => $this->backupPath]);
             throw new \Exception('Backup directory is not writable');
         }
@@ -46,7 +47,7 @@ class BackupService
             $this->backupDatabase($databaseFilePath);
 
             // Create ZIP archive
-            $zip = new ZipArchive();
+            $zip = new ZipArchive;
             if ($zip->open($backupFilePath, ZipArchive::CREATE) !== true) {
                 throw new \Exception('Cannot create zip file');
             }
@@ -57,7 +58,7 @@ class BackupService
             }
 
             // Add application files
-            $finder = new Finder();
+            $finder = new Finder;
             $finder->files()->in(base_path())->exclude(['vendor', 'node_modules', 'storage']);
             foreach ($finder as $file) {
                 $zip->addFile($file->getRealPath(), $file->getRelativePathname());
@@ -113,108 +114,138 @@ class BackupService
         $password = config('database.connections.sqlsrv.password');
 
         if ($this->isWindows) {
-            // Windows backup using sqlcmd
+            // Windows backup using sqlcmd.
+            // Password lewat env SQLCMDPASSWORD agar tidak terlihat di process list.
             $serverAddress = str_contains($server, '\\') ? $server : "{$server},{$port}";
-            $command = sprintf(
-                'sqlcmd -S %s -U %s -P %s -Q "BACKUP DATABASE [%s] TO DISK = N\'%s\' WITH FORMAT"',
-                escapeshellarg($serverAddress),
-                escapeshellarg($username),
-                escapeshellarg($password),
-                $database,
-                $outputPath
+            $escapedDb = str_replace(']', ']]', $database);
+            $escapedPath = str_replace("'", "''", $outputPath);
+
+            $this->runCommand(
+                [
+                    'sqlcmd',
+                    '-S', $serverAddress,
+                    '-U', $username,
+                    '-b', // exit code != 0 jika T-SQL error, agar kegagalan tidak silent
+                    '-Q', "BACKUP DATABASE [{$escapedDb}] TO DISK = N'{$escapedPath}' WITH FORMAT",
+                ],
+                ['SQLCMDPASSWORD' => (string) $password]
             );
-        } else {
-            // Linux backup using PHP SQL queries
-            try {
-                $tables = DB::select("SELECT name FROM sys.tables WHERE type = 'U'");
-                $output = "-- SQL Server Backup Generated " . date('Y-m-d H:i:s') . "\n\n";
 
-                foreach ($tables as $table) {
-                    // Get table creation SQL
-                    $tableName = $table->name;
-                    $createTable = DB::select("SELECT OBJECT_DEFINITION (OBJECT_ID(N'$tableName')) AS CreateTable");
-                    $output .= $createTable[0]->CreateTable . ";\n\n";
+            return true;
+        }
 
-                    // Get table data
-                    $rows = DB::table($tableName)->get();
-                    foreach ($rows as $row) {
-                        $columns = implode("','", array_map('addslashes', (array)$row));
-                        $output .= "INSERT INTO [$tableName] VALUES ('$columns');\n";
-                    }
-                    $output .= "\n";
+        // Linux backup using PHP SQL queries
+        try {
+            $tables = DB::select("SELECT name FROM sys.tables WHERE type = 'U'");
+            $output = '-- SQL Server Backup Generated '.date('Y-m-d H:i:s')."\n\n";
+
+            foreach ($tables as $table) {
+                // Get table creation SQL
+                $tableName = $table->name;
+                $createTable = DB::select("SELECT OBJECT_DEFINITION (OBJECT_ID(N'$tableName')) AS CreateTable");
+                $output .= $createTable[0]->CreateTable.";\n\n";
+
+                // Get table data (escaping T-SQL: gandakan tanda kutip tunggal)
+                $rows = DB::table($tableName)->get();
+                foreach ($rows as $row) {
+                    $values = implode(', ', array_map(function ($value) {
+                        if ($value === null) {
+                            return 'NULL';
+                        }
+
+                        return "N'".str_replace("'", "''", (string) $value)."'";
+                    }, (array) $row));
+                    $output .= "INSERT INTO [$tableName] VALUES ($values);\n";
                 }
-
-                file_put_contents($outputPath, $output);
-                return true;
-            } catch (\Exception $e) {
-                Log::error('Database backup error', ['error' => $e->getMessage()]);
-                throw $e;
+                $output .= "\n";
             }
+
+            file_put_contents($outputPath, $output);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Database backup error', ['error' => $e->getMessage()]);
+            throw $e;
         }
     }
 
     protected function backupMySql(string $outputPath)
     {
-        $host = config('database.connections.mysql.host');
-        $port = config('database.connections.mysql.port');
-        $database = config('database.connections.mysql.database');
-        $username = config('database.connections.mysql.username');
-        $password = config('database.connections.mysql.password');
-
-        if ($this->isWindows) {
-            $command = sprintf(
-                'mysqldump -h %s -P %s -u %s -p%s %s > %s',
-                escapeshellarg($host),
-                escapeshellarg($port),
-                escapeshellarg($username),
-                escapeshellarg($password),
-                escapeshellarg($database),
-                escapeshellarg($outputPath)
-            );
-        } else {
-            $command = sprintf(
-                'MYSQL_PWD=%s mysqldump -h %s -P %s -u %s %s > %s',
-                escapeshellarg($password),
-                escapeshellarg($host),
-                escapeshellarg($port),
-                escapeshellarg($username),
-                escapeshellarg($database),
-                escapeshellarg($outputPath)
-            );
-        }
-
-        exec($command, $output, $returnVar);
-        if ($returnVar !== 0) {
-            throw new \Exception('MySQL backup failed');
-        }
+        // Password lewat env MYSQL_PWD agar tidak terlihat di process list
+        $this->runCommand(
+            [
+                'mysqldump',
+                '--host='.config('database.connections.mysql.host'),
+                '--port='.config('database.connections.mysql.port'),
+                '--user='.config('database.connections.mysql.username'),
+                config('database.connections.mysql.database'),
+            ],
+            ['MYSQL_PWD' => (string) config('database.connections.mysql.password')],
+            $outputPath
+        );
 
         return true;
     }
 
     protected function backupPostgres(string $outputPath)
     {
-        $host = config('database.connections.pgsql.host');
-        $port = config('database.connections.pgsql.port');
-        $database = config('database.connections.pgsql.database');
-        $username = config('database.connections.pgsql.username');
-        $password = config('database.connections.pgsql.password');
-
-        $command = sprintf(
-            'PGPASSWORD=%s pg_dump -h %s -p %s -U %s -F p %s > %s',
-            escapeshellarg($password),
-            escapeshellarg($host),
-            escapeshellarg($port),
-            escapeshellarg($username),
-            escapeshellarg($database),
-            escapeshellarg($outputPath)
+        // Password lewat env PGPASSWORD agar tidak terlihat di process list
+        $this->runCommand(
+            [
+                'pg_dump',
+                '-h', config('database.connections.pgsql.host'),
+                '-p', (string) config('database.connections.pgsql.port'),
+                '-U', config('database.connections.pgsql.username'),
+                '-F', 'p',
+                config('database.connections.pgsql.database'),
+            ],
+            ['PGPASSWORD' => (string) config('database.connections.pgsql.password')],
+            $outputPath
         );
 
-        exec($command, $output, $returnVar);
-        if ($returnVar !== 0) {
-            throw new \Exception('PostgreSQL backup failed');
+        return true;
+    }
+
+    /**
+     * Jalankan perintah eksternal TANPA shell (argv array) sehingga bebas
+     * masalah quoting Windows/Linux, dengan kredensial via environment
+     * variable dan pengecekan exit code (kegagalan tidak pernah silent).
+     */
+    protected function runCommand(array $command, array $env = [], ?string $stdoutFile = null): void
+    {
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => $stdoutFile ? ['file', $stdoutFile, 'w'] : ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($command, $descriptors, $pipes, null, array_merge(getenv(), $env));
+
+        if (! is_resource($process)) {
+            throw new \Exception("Failed to start backup process: {$command[0]}");
         }
 
-        return true;
+        fclose($pipes[0]);
+
+        if (isset($pipes[1])) {
+            stream_get_contents($pipes[1]);
+            fclose($pipes[1]);
+        }
+
+        $stderr = stream_get_contents($pipes[2]);
+        fclose($pipes[2]);
+
+        $exitCode = proc_close($process);
+
+        if ($exitCode !== 0) {
+            Log::error('Backup command failed', [
+                'command' => $command[0],
+                'exit_code' => $exitCode,
+                'stderr' => $stderr,
+            ]);
+
+            throw new \Exception("Backup command {$command[0]} failed (exit code {$exitCode})");
+        }
     }
 
     public function deleteOldBackups(int $days): void

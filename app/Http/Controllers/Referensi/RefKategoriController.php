@@ -23,40 +23,21 @@ class RefKategoriController extends Controller
                 //     return '<a href="' . $url . '">' . $query->nama_file . '</a>';
                 // })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('kategori.edit', encrypt($query->id_kategori));
-                    $hapus = route('kategori.destroy', encrypt($query->id_kategori));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'edit' => route('kategori.edit', encrypt($query->id_kategori)),
+                        'destroy' => route('kategori.destroy', encrypt($query->id_kategori)),
+                    ])->render();
                 })
 
                 ->editColumn('created_at', function ($query) {
                     return date('d-M-Y H:i:s', strtotime($query->created_at));
                 })
 
-
                 ->rawColumns(['opsi'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.referensi.kategori.index');
     }
 
@@ -85,13 +66,14 @@ class RefKategoriController extends Controller
 
             ];
 
-
             ref_kategori::create($data);
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Kategori Berhasil Ditambahkan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Kategori Gagal Ditambahkan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Kategori Gagal Ditambahkan!']);
         }
     }
 
@@ -109,6 +91,7 @@ class RefKategoriController extends Controller
     public function edit(string $id)
     {
         $kategori = ref_kategori::findOrFail(decrypt($id));
+
         return view('backend.referensi.kategori.edit', compact(['kategori']));
     }
 
@@ -129,9 +112,12 @@ class RefKategoriController extends Controller
 
             ];
             ref_kategori::findOrFail(decrypt($id))->update($data);
+
             return redirect()->route('kategori.index')->with('success', "Kategori $request->nama_kategori berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('kategori.index')->with(['failed' => 'Kategori Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('kategori.index')->with(['failed' => 'Kategori Gagal Di Update!']);
             // return redirect()->back()->with(['failed' => 'Data File Gagal Disimpan! error :' . $e->getMessage()]);
         }
     }
@@ -143,9 +129,12 @@ class RefKategoriController extends Controller
     {
         try {
             ref_kategori::findOrFail(decrypt($id))->delete();
-            return redirect()->route('kategori.index')->with('success', "Kategori berhasil dihapus!");
+
+            return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('kategori.index')->with(['failed' => 'Kategori Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('kategori.index')->with(['failed' => 'Kategori Yang Dihapus Tidak Ada !']);
         }
     }
 }

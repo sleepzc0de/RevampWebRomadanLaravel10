@@ -49,4 +49,17 @@ return [
         'time' => 4,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Password Pepper
+    |--------------------------------------------------------------------------
+    |
+    | Secret tambahan (pepper) untuk pre-hash HMAC password sebelum bcrypt.
+    | Nilai disimpan di .env dalam bentuk base64 agar aman dari karakter
+    | spesial saat parsing dotenv. Jangan pernah commit nilai aslinya.
+    |
+    */
+
+    'pepper' => base64_decode(env('PASSWORD_PEPPER', ''), true) ?: null,
+
 ];

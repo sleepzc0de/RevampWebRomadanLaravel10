@@ -5,17 +5,15 @@ namespace App\Http\Controllers\MenuInformasiPublik;
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuInformasiPublik\InfopublikHomeModel;
 use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class InformasiPublikController extends Controller
 {
-
     // Helper function to sanitize HTML input
-    private function sanitizeHtml($input) {
+    private function sanitizeHtml($input)
+    {
         // Remove all HTML tags except allowed ones
         $allowed_tags = '<p><br><strong><em><ul><li><ol><h1><h2><h3><h4><h5><h6>';
         $cleaned = strip_tags($input, $allowed_tags);
@@ -23,7 +21,6 @@ class InformasiPublikController extends Controller
         // Hapus htmlspecialchars karena ini mengkonversi tag HTML yang valid menjadi entitas
         return $cleaned;
     }
-
 
     /**
      * Display a listing of the resource.
@@ -36,69 +33,32 @@ class InformasiPublikController extends Controller
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('informasi-publik.edit', encrypt($query->id));
-                    $hapus = route('informasi-publik.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'edit' => route('informasi-publik.edit', encrypt($query->id)),
+                        'destroy' => route('informasi-publik.destroy', encrypt($query->id)),
+                    ])->render();
                 })
-
 
                 ->rawColumns(['opsi'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.infopub.index', compact(['data', 'data2']));
     }
+
     public function indexHome()
     {
         $query = InfopublikHomeModel::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('informasi-publik.show', encrypt($query->id));
-                    $edit = route('informasi-publik.edit-home', encrypt($query->id));
-                    $hapus = route('informasi-publik.delete-home', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'preview' => route('informasi-publik.show', encrypt($query->id)),
+                        'edit' => route('informasi-publik.edit-home', encrypt($query->id)),
+                        'destroy' => route('informasi-publik.delete-home', encrypt($query->id)),
+                    ])->render();
                 })
-
 
                 ->rawColumns(['opsi'])
                 ->addIndexColumn()
@@ -123,6 +83,7 @@ class InformasiPublikController extends Controller
     public function edit_home(string $id)
     {
         $data = InfopublikHomeModel::findOrFail(decrypt($id));
+
         return view('backend.infopub.edit-home', compact('data'));
     }
 
@@ -146,12 +107,14 @@ class InformasiPublikController extends Controller
             ];
 
             InfopublikHomeModel::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('informasi-publik.index')->with('success', "Data Home Informasi Publik berhasil diupdate!");
+
+            return redirect()->route('informasi-publik.index')->with('success', 'Data Home Informasi Publik berhasil diupdate!');
         } catch (Exception $e) {
-            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Home Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Home Informasi Publik Gagal Di Update!']);
         }
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -163,7 +126,7 @@ class InformasiPublikController extends Controller
             $request->validate([
                 'judul_list_informasi' => 'required|max:255',
                 'isi_list_informasi' => 'required|max:1000',
-                'link_list_informasi' => 'required|max:255'
+                'link_list_informasi' => 'required|max:255',
             ]);
 
             // Sanitize HTML input
@@ -175,14 +138,16 @@ class InformasiPublikController extends Controller
             $data = [
                 'judul_list_informasi' => $judul,
                 'isi_list_informasi' => $isi,
-                'link_list_informasi' => $link
+                'link_list_informasi' => $link,
             ];
 
             InformasiPublikModel::create($data);
 
             return redirect()->back()->with(['success' => 'Data Informasi Publik Berhasil Disimpan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Informasi Publik Gagal Disimpan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Data Informasi Publik Gagal Disimpan!']);
         }
     }
 
@@ -206,9 +171,12 @@ class InformasiPublikController extends Controller
             ];
 
             InfopublikHomeModel::create($data);
+
             return redirect()->back()->with(['success' => 'Data Informasi Publik Home Berhasil Disimpan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Informasi Publik Home Gagal Disimpan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Data Informasi Publik Home Gagal Disimpan!']);
         }
     }
 
@@ -226,6 +194,7 @@ class InformasiPublikController extends Controller
     public function edit(string $id)
     {
         $infopub = InformasiPublikModel::findOrFail(decrypt($id));
+
         // dd($kegiatan);
         return view('backend.infopub.edit', compact(['infopub']));
     }
@@ -240,7 +209,7 @@ class InformasiPublikController extends Controller
             $request->validate([
                 'judul_list_informasi' => 'required|max:255',
                 'isi_list_informasi' => 'required|max:1000',
-                'link_list_informasi' => 'required|max:255'
+                'link_list_informasi' => 'required|max:255',
             ]);
 
             // Sanitize HTML input
@@ -252,13 +221,16 @@ class InformasiPublikController extends Controller
             $data = [
                 'judul_list_informasi' => $judul,
                 'isi_list_informasi' => $isi,
-                'link_list_informasi' => $link
+                'link_list_informasi' => $link,
             ];
 
             InformasiPublikModel::findOrFail(decrypt($id))->update($data);
-            return redirect()->route('informasi-publik.index')->with('success', "Data Informasi Publik berhasil diupdate!");
+
+            return redirect()->route('informasi-publik.index')->with('success', 'Data Informasi Publik berhasil diupdate!');
         } catch (Exception $e) {
-            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Informasi Publik Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Informasi Publik Gagal Di Update!']);
         }
     }
 
@@ -271,9 +243,12 @@ class InformasiPublikController extends Controller
             // $data_gambar = InformasiPublikModel::findOrFail(decrypt($id));
             // File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
             InformasiPublikModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('informasi-publik.index')->with('success', "Informasi Publik berhasil dihapus!");
+
+            return redirect()->route('informasi-publik.index')->with('success', 'Informasi Publik berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada !']);
         }
     }
 
@@ -281,9 +256,12 @@ class InformasiPublikController extends Controller
     {
         try {
             InfopublikHomeModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('informasi-publik.index')->with('success', "Informasi Publik Home berhasil dihapus!");
+
+            return redirect()->route('informasi-publik.index')->with('success', 'Informasi Publik Home berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('informasi-publik.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada !']);
         }
     }
 }

@@ -295,7 +295,7 @@
                             @endif
 
                             <div class="txt-judul-kegiatan-detail t-center m-b-35 mt-5 px-4 custom-isi">
-                                {!! $data->isi !!}
+                                {!! clean($data->isi) !!}
                             </div>
                         </div>
                     </div>

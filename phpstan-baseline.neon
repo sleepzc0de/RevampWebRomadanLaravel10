@@ -1,0 +1,226 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Called 'count' on Laravel collection, but could have been retrieved as a query\\.$#"
+			count: 2
+			path: app/Http/Controllers/Backend/HomeBeController.php
+
+		-
+			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 1
+			path: app/Http/Controllers/Backend/HomeBeController.php
+
+		-
+			message: "#^Relation 'status' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 1
+			path: app/Http/Controllers/Backend/HomeBeController.php
+
+		-
+			message: "#^Relation 'tipe' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 1
+			path: app/Http/Controllers/Backend/HomeBeController.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Method Carbon\\\\Carbon\\:\\:translatedFormat\\(\\) invoked with 2 parameters, 1 required\\.$#"
+			count: 2
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel model\\.$#"
+			count: 1
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel model\\.$#"
+			count: 1
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Relation 'data_jenis_peraturan' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Relation 'images' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 3
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			count: 3
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:create\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:destroy\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 2
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:edit\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\JsonResponse\\.$#"
+			count: 1
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:show\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 1
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:store\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 2
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:update\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 2
+			path: app/Http/Controllers/Login/LoginController.php
+
+		-
+			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuFAQ\\\\FAQModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuFAQ/FAQController.php
+
+		-
+			message: "#^Relation 'data_jenis_peraturan' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuInformasiPublik/PeraturanController.php
+
+		-
+			message: "#^Relation 'data_status_peraturan' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuInformasiPublik/PeraturanController.php
+
+		-
+			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuInformasiPublik/PeraturanController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel\\>\\:\\:\\$additionalImages\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuLayanan/LayananController.php
+
+		-
+			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuLayanan/LayananController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel\\>\\:\\:\\$additionalImages\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuProfile/StrukturOrganisasiController.php
+
+		-
+			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuProfile/StrukturOrganisasiController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuProfile\\\\TentangModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuProfile\\\\TentangModel\\>\\:\\:\\$additionalImages\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuProfile/TentangController.php
+
+		-
+			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\TentangModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuProfile/TentangController.php
+
+		-
+			message: "#^Relation 'images' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\VisiMisiModel model\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuProfile/VisiMisiController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel\\>\\:\\:\\$images\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:create\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:destroy\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 2
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:edit\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\JsonResponse\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:show\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:store\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 3
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:update\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			count: 3
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Relation 'images' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 1
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 4
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Relation 'status' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 4
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Relation 'tipe' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			count: 4
+			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
+
+		-
+			message: "#^Call to an undefined method Yajra\\\\DataTables\\\\DataTableAbstract\\:\\:filterColumn\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/UserManajemen/UserController.php

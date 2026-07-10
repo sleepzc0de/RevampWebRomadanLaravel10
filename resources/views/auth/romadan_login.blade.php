@@ -342,10 +342,6 @@
                     @enderror
                 </div>
 
-                @php
-                    $captcha = app(App\Services\CaptchaService::class)->createCaptcha();
-                @endphp
-
                 <div class="input-group">
                     <label class="block text-sm font-medium text-gray-700 mb-2">CAPTCHA</label>
                     <div

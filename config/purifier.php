@@ -25,10 +25,27 @@ return [
     'settings'      => [
         'default' => [
             'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'div,b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src]',
-            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align',
-            'AutoFormat.AutoParagraph' => true,
-            'AutoFormat.RemoveEmpty'   => true,
+            // Allowlist disesuaikan dengan output CKEditor (heading, tabel,
+            // gambar, embed video) — semua selain ini dibuang saat render.
+            'HTML.Allowed'             => 'div[class|style],p[class|style],span[class|style],br,hr,'
+                . 'h1,h2,h3,h4,h5,h6,'
+                . 'b,strong,i,em,u,s,sub,sup,small,'
+                . 'a[href|title|target|rel],'
+                . 'ul[class],ol[class|start],li,'
+                . 'img[src|alt|title|width|height|class|style],'
+                . 'table[class|style|width|border|cellpadding|cellspacing],thead,tbody,tfoot,'
+                . 'tr,td[colspan|rowspan|style|width],th[colspan|rowspan|style|width|scope],'
+                . 'blockquote[class|cite],pre,code,'
+                . 'figure[class],figcaption,'
+                . 'iframe[src|width|height|frameborder|allowfullscreen|class]',
+            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,'
+                . 'padding-left,color,background-color,text-align,width,height,float,margin,margin-left,margin-right',
+            // Iframe hanya boleh dari embed YouTube/Vimeo
+            'HTML.SafeIframe'          => true,
+            'URI.SafeIframeRegexp'     => '%^(https?:)?//(www\.youtube(-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%',
+            // Jangan mutasi struktur konten yang sudah ada
+            'AutoFormat.AutoParagraph' => false,
+            'AutoFormat.RemoveEmpty'   => false,
         ],
         'test'    => [
             'Attr.EnableID' => 'true',

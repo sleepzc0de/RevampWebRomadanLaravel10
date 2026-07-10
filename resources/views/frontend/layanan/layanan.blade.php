@@ -230,7 +230,7 @@
 
                     <!-- Konten layanan -->
                     <div class="layanan-content">
-                        {!!$item->layanan!!}
+                        {!! clean($item->layanan) !!}
                     </div>
                 </div>
             </div>

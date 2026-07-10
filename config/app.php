@@ -60,6 +60,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    |
+    | Daftar IP reverse-proxy/load-balancer yang dipercaya (dipisah koma),
+    | mis. "10.0.0.5" atau "10.0.0.0/8,172.16.0.0/12". Kosong = tidak ada
+    | proxy yang dipercaya. Jangan gunakan "*" di produksi karena header
+    | X-Forwarded-For bisa dipalsukan (IP rate-limiter jadi bisa di-spoof).
+    |
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

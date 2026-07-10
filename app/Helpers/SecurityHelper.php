@@ -5,16 +5,18 @@ namespace App\Helpers;
 class SecurityHelper
 {
     /**
-     * Sanitize input to prevent XSS and SQL injection
+     * Sanitize input: buang tag HTML dan karakter kontrol.
+     *
+     * Catatan: JANGAN meng-encode entity HTML di sini — escaping adalah
+     * tanggung jawab lapisan output (Blade {{ }}). Encoding di input
+     * menyebabkan double-escaping dan merusak pencarian (mis. "R&D").
      */
     public static function sanitizeInput($input)
     {
         if (is_string($input)) {
             // Remove HTML and PHP tags
             $input = strip_tags($input);
-            // Convert special characters to HTML entities
-            $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
-            // Remove SQL injection patterns
+            // Remove control characters
             $input = preg_replace('/[\x00-\x1F\x7F]/', '', $input);
             return trim($input);
         }

@@ -6,29 +6,34 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
+use App\Services\PasswordService;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Exception;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    private const PEPPER = 'mwdun-2937h-_(&)HG)*GOIUNJ)HG)*(&F*^D&^S%#$E^RGYOIBJNPOKMO}:}?}"?:>{K)OJ()*YT^&DRFYGUIHT&^R%E%EDYF2025';
-    private const HASH_ALGO = 'sha256';
-    private const HASH_ROUNDS = 12;
     private const ALLOWED_ROLES = [
         'REDAKTUR',
         'EDITOR',
         'HUMAS',
-        'TAMU'
+        'TAMU',
     ];
+
+    protected $passwordService;
+
+    public function __construct(PasswordService $passwordService)
+    {
+        $this->passwordService = $passwordService;
+    }
 
     public function index()
     {
-        if (!request()->ajax()) {
+        if (! request()->ajax()) {
             return view('backend.users.index');
         }
 
@@ -44,10 +49,11 @@ class UserController extends Controller
                 }
 
                 $encryptedId = Crypt::encrypt($user->id);
+
                 return view('components.action-buttons', [
                     'edit' => route('users.edit', $encryptedId),
                     'hapus' => route('users.destroy', $encryptedId),
-                    'encrypted_id' => $encryptedId
+                    'encrypted_id' => $encryptedId,
                 ])->render();
             })
             ->filterColumn('role_name', function ($query, $keyword) {
@@ -63,6 +69,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::whereIn('name', self::ALLOWED_ROLES)->get();
+
         return view('backend.users.tambah_user', compact('roles'));
     }
 
@@ -76,20 +83,20 @@ class UserController extends Controller
             $role = Role::findOrFail($request->role);
             Log::info('Found role:', ['role' => $role->name]);
 
-            if (!in_array($role->name, self::ALLOWED_ROLES)) {
+            if (! in_array($role->name, self::ALLOWED_ROLES)) {
                 Log::warning('Invalid role attempted:', ['role' => $role->name]);
                 throw new Exception('Role yang dipilih tidak valid.');
             }
 
             // Create user
-            $salt = $this->generateSalt();
+            $salt = $this->passwordService->generateSalt();
             Log::info('Generated salt');
 
             $userData = [
                 'name' => strip_tags($request->name),
                 'email' => $request->email,
                 'username' => $this->generateUniqueUsername($request->name),
-                'password' => $this->hashPassword($request->password, $salt),
+                'password' => $this->passwordService->hash($request->password, $salt),
                 'salt' => $salt,
             ];
 
@@ -97,7 +104,7 @@ class UserController extends Controller
             Log::info('Attempting to create user with:', [
                 'name' => $userData['name'],
                 'email' => $userData['email'],
-                'username' => $userData['username']
+                'username' => $userData['username'],
             ]);
 
             $user = User::create($userData);
@@ -112,7 +119,7 @@ class UserController extends Controller
             return redirect()->route('users.index')
                 ->with('success', 'User berhasil ditambahkan.');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             DB::rollBack();
             Log::error('Database error:', ['error' => $e->getMessage()]);
 
@@ -136,17 +143,6 @@ class UserController extends Controller
         }
     }
 
-    private function generateSalt(): string
-    {
-        return bin2hex(random_bytes(32));
-    }
-
-    private function hashPassword(string $password, string $salt): string
-    {
-        $peppered = hash_hmac(self::HASH_ALGO, $password . $salt, self::PEPPER);
-        return Hash::make($peppered);
-    }
-
     private function generateUniqueUsername(string $name): string
     {
         $baseUsername = Str::slug($name);
@@ -154,7 +150,7 @@ class UserController extends Controller
         $counter = 1;
 
         while (User::where('username', $username)->exists()) {
-            $username = $baseUsername . '-' . $counter++;
+            $username = $baseUsername.'-'.$counter++;
         }
 
         return $username;
@@ -178,6 +174,7 @@ class UserController extends Controller
 
         } catch (Exception $e) {
             Log::error('Error editing user:', ['error' => $e->getMessage()]);
+
             return redirect()->route('users.index')
                 ->with('failed', 'Terjadi kesalahan. Silakan coba lagi.');
         }
@@ -208,11 +205,10 @@ class UserController extends Controller
             $user->name = strip_tags($request->name);
             $user->email = $request->email;
 
-
             // Update password if provided
             if ($request->filled('password')) {
-                $salt = $this->generateSalt();
-                $user->password = $this->hashPassword($request->password, $salt);
+                $salt = $this->passwordService->generateSalt();
+                $user->password = $this->passwordService->hash($request->password, $salt);
                 $user->salt = $salt;
                 Log::info('Password updated for user', ['user_id' => $user->id]);
             }
@@ -220,7 +216,7 @@ class UserController extends Controller
             // Update role if provided and valid
             if ($request->has('role')) {
                 $role = Role::findOrFail($request->role);
-                if (!in_array($role->name, self::ALLOWED_ROLES)) {
+                if (! in_array($role->name, self::ALLOWED_ROLES)) {
                     throw new Exception('Role yang dipilih tidak valid.');
                 }
                 $user->syncRoles([$role->name]);
@@ -231,12 +227,14 @@ class UserController extends Controller
             DB::commit();
 
             Log::info('User updated successfully', ['user_id' => $user->id]);
+
             return redirect()->route('users.index')
                 ->with('success', 'User berhasil diperbarui.');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             DB::rollBack();
             Log::error('Database error during user update:', ['error' => $e->getMessage()]);
+
             return redirect()->back()
                 ->withInput()
                 ->with('failed', 'Gagal memperbarui data. Silakan coba lagi.');
@@ -244,6 +242,7 @@ class UserController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error updating user:', ['error' => $e->getMessage()]);
+
             return redirect()->back()
                 ->withInput()
                 ->with('failed', $e->getMessage());

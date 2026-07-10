@@ -10,7 +10,7 @@
 						</h6>
 
 						<div class="t-center m-b-22 size3 " style="text-align: justify;">
-							{!!$item->tentang!!}
+							{!! clean($item->tentang) !!}
 
 							<a href="menu.html" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
 								Baca Profil Kami<i class="ml-3 fa fa-arrow-right"

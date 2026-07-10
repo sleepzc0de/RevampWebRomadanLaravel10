@@ -36,7 +36,7 @@
                                 <img class="mt-3 pic-blo4 hov-img-zoom bo-rad-10 pos-relative w-100" src="{{asset('storage/romadan_gambar_web/'.$data->image)}}" alt="IMG-KEGIATAN-DETAIL" height="600">
                             <br>
                                <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3" style="text-align: justify;">
-                                {!!$data->isi!!}
+                                {!! clean($data->isi) !!}
                                </div>
                             </div>
 
@@ -65,7 +65,7 @@
 							        </div>
                             <br>
                                <div class="txt-judul-kegiatan-detail t-center m-b-35 m-t-3 px-3" style="text-align: justify;">
-                                {!!$data->isi!!}
+                                {!! clean($data->isi) !!}
                                </div>
 
                             <br>

@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Backend\HomeBeController;
 use App\Http\Controllers\BackupController;
-use App\Http\Controllers\File\FileController;
 use App\Http\Controllers\Frontend\HomeFeController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Medsos\MedsosController;
@@ -18,7 +16,6 @@ use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
 use App\Http\Controllers\MenuProfile\VisiMisiController;
 use App\Http\Controllers\MenuPublikasi\PublikasiController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Referensi\RefJenisPeraturanController;
 use App\Http\Controllers\Referensi\RefKategoriController;
 use App\Http\Controllers\Referensi\RefPeraturanStatusController;
@@ -137,12 +134,6 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             // 2.1.3 USERS
             Route::resource('users', UserController::class);
 
-            // Route::group(['middleware' => ['prevent-admin-modification']], function () {
-            //     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-            //     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-            // });
-
-
             // 2.1.7 MENU LAYANAN
             Route::prefix('/layanan')->group(function () {
                 Route::resource('layanan', LayananController::class);
@@ -239,8 +230,6 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
 use App\Http\Controllers\AuthController;
 
 
-// bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==
-// l0g1n_cm5_b1r0m4d4n_k3menk3u
 Route::get('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'login']);
+Route::post('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

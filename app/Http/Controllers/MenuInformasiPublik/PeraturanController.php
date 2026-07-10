@@ -10,8 +10,8 @@ use App\Models\backend\ref_kategori;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class PeraturanController extends Controller
@@ -26,39 +26,17 @@ class PeraturanController extends Controller
             return datatables()->of($query)
 
                 ->addColumn('file_peraturan', function ($query) {
-                    $url = asset('storage/romadan_file_web/' . $query->file);
-                    return '<a href="' . $url . '" target="_blank">' . $query->nomor_peraturan . '</a>';
+                    $url = asset('storage/romadan_file_web/'.$query->file);
+
+                    return '<a href="'.$url.'" target="_blank">'.$query->nomor_peraturan.'</a>';
                 })
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('peraturan.show', encrypt($query->id));
-                    $edit = route('peraturan.edit', encrypt($query->id));
-                    $hapus = route('peraturan.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $preview . '" class="dropdown-item">
-														<i class="ph-detective me-2"></i>
-														Preview
-													</a>
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'preview' => route('peraturan.show', encrypt($query->id)),
+                        'edit' => route('peraturan.edit', encrypt($query->id)),
+                        'destroy' => route('peraturan.destroy', encrypt($query->id)),
+                    ])->render();
                 })
-
 
                 ->editColumn('tanggal_penetapan', function ($query) {
                     return Carbon::parse($query->tanggal_penetapan)->translatedFormat('d-F-Y');
@@ -71,12 +49,11 @@ class PeraturanController extends Controller
                     return Carbon::parse($query->tanggal_berlaku)->translatedFormat('d-F-Y');
                 })
 
-
-
                 ->rawColumns(['opsi', 'file_peraturan'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.infopub.peraturan.index');
     }
 
@@ -109,7 +86,7 @@ class PeraturanController extends Controller
                 'jenis_peraturan' => 'required',
                 'tanggal_penetapan' => 'required|date|date_format:Y-m-d',
                 'tanggal_berlaku' => 'required|date|after_or_equal:tanggal_penetapan|date_format:Y-m-d',
-            ],[
+            ], [
                 'nomor_peraturan.required' => 'Nomor peraturan harus diisi.',
                 'nomor_peraturan.unique' => 'Nomor peraturan sudah digunakan.',
                 'judul_peraturan.required' => 'Judul peraturan harus diisi.',
@@ -127,11 +104,11 @@ class PeraturanController extends Controller
                 'tanggal_berlaku.date_format' => 'Format tanggal berlaku harus YYYY-MM-DD (contoh: 2024-05-16).',
             ]);
 
-              // Filter HTML tags from input
-              $filteredNomor = strip_tags($request->nomor_peraturan);
-              $filteredJudul = strip_tags($request->judul_peraturan);
+            // Filter HTML tags from input
+            $filteredNomor = strip_tags($request->nomor_peraturan);
+            $filteredJudul = strip_tags($request->judul_peraturan);
 
-            //UPLOAD FILE
+            // UPLOAD FILE
             $file = $request->file('file');
             $file->storeAs('public/romadan_file_web', $file->hashName());
 
@@ -154,16 +131,17 @@ class PeraturanController extends Controller
 
             ];
 
-
             PeraturanModel::create($data);
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Data Peraturan Berhasil Disimpan!']);
         } catch (ValidationException $e) {
             // Validation failed, return to previous page with errors and input data
             return redirect()->back()->withErrors($e->validator)->withInput();
-        }catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Peraturan Gagal Disimpan! error :' . $e->getMessage()]);
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Data Peraturan Gagal Disimpan!']);
         }
     }
 
@@ -172,7 +150,7 @@ class PeraturanController extends Controller
      */
     public function show(string $id)
     {
-         return redirect()->back();
+        return redirect()->back();
     }
 
     /**
@@ -184,6 +162,7 @@ class PeraturanController extends Controller
         $jenis_peraturan = ref_jenis_peraturan::all();
         $status_peraturan = ref_peraturan_status::all();
         $peraturan = PeraturanModel::with(['kategori', 'data_jenis_peraturan', 'data_status_peraturan'])->findOrFail(decrypt($id));
+
         return view('backend.infopub.peraturan.edit', compact(['kategori', 'jenis_peraturan', 'status_peraturan', 'peraturan']));
     }
 
@@ -204,9 +183,9 @@ class PeraturanController extends Controller
                 'tanggal_berlaku' => 'required|date|after_or_equal:tanggal_penetapan|date_format:Y-m-d',
             ]);
 
-              // Filter HTML tags from input
-              $filteredNomor = strip_tags($request->nomor_peraturan);
-              $filteredJudul = strip_tags($request->judul_peraturan);
+            // Filter HTML tags from input
+            $filteredNomor = strip_tags($request->nomor_peraturan);
+            $filteredJudul = strip_tags($request->judul_peraturan);
 
             // SLUG
 
@@ -232,12 +211,12 @@ class PeraturanController extends Controller
                     'file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF, ZIP, RAR',
                 ]);
 
-                //UPLOAD IMAGE
+                // UPLOAD IMAGE
                 $file = $request->file('file');
                 $file->storeAs('public/romadan_file_web', $file->hashName());
 
                 $data_file = PeraturanModel::findOrFail(decrypt($id));
-                File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
+                File::delete(public_path('storage/romadan_file_web/').$data_file->file);
 
                 $data = [
                     'file' => $file->hashName(),
@@ -245,9 +224,12 @@ class PeraturanController extends Controller
             }
 
             PeraturanModel::findOrFail(decrypt($id))->update($data);
+
             return redirect()->route('peraturan.index')->with('success', "Data Peraturan $request->nomor_peraturan berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('peraturan.index')->with(['failed' => 'Data Peraturan Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('peraturan.index')->with(['failed' => 'Data Peraturan Gagal Di Update!']);
         }
     }
 
@@ -258,11 +240,14 @@ class PeraturanController extends Controller
     {
         try {
             $data_file = PeraturanModel::findOrFail(decrypt($id));
-            File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
+            File::delete(public_path('storage/romadan_file_web/').$data_file->file);
             PeraturanModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('peraturan.index')->with('success', "Peraturan berhasil dihapus!");
+
+            return redirect()->route('peraturan.index')->with('success', 'Peraturan berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('peraturan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('peraturan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada !']);
         }
     }
 }

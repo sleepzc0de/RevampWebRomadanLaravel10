@@ -10,6 +10,7 @@ use App\Models\backend\ref_tipe;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ class PublikasiController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -29,56 +30,37 @@ class PublikasiController extends Controller
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('image_publikasi', function ($query) {
-                    // Get the primary image or the first image
-                    $image = $query->images()->where('is_primary', true)->first();
-                    if (!$image) {
-                        $image = $query->images()->first();
-                    }
+                    // Gunakan relasi yang sudah di-eager-load (hindari N+1)
+                    $image = $query->images->firstWhere('is_primary', true)
+                        ?? $query->images->first();
 
                     if ($image) {
-                        $url = asset('storage/romadan_gambar_web/' . $image->image_path);
-                        return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
+                        $url = asset('storage/romadan_gambar_web/'.$image->image_path);
+
+                        return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
                     }
 
                     return '<span>No image</span>';
                 })
                 ->addColumn('file_publikasi', function ($query) {
-                    $judul = strlen($query->judul) > 10 ? substr($query->judul, 0, 10) . '...' : $query->judul;
+                    $judul = strlen($query->judul) > 10 ? substr($query->judul, 0, 10).'...' : $query->judul;
 
                     if ($query->file) {
-                        $url = asset('storage/romadan_file_web/' . $query->file);
-                        return '<a href="' . $url . '" target="_blank" title="' . e($query->judul) . '">' . $judul . '</a>';
+                        $url = asset('storage/romadan_file_web/'.$query->file);
+
+                        return '<a href="'.$url.'" target="_blank" title="'.e($query->judul).'">'.$judul.'</a>';
                     }
 
-                    return '<span title="' . e($query->judul) . '">' . $judul . '</span>';
+                    return '<span title="'.e($query->judul).'">'.$judul.'</span>';
                 })
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('publikasi.show', encrypt($query->id));
-                    $edit = route('publikasi.edit', encrypt($query->id));
-                    $hapus = route('publikasi.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-                                <div class="dropdown">
-                                    <a href="#" class="text-body" data-bs-toggle="dropdown">
-                                        <i class="ph-list"></i>
-                                    </a>
+                    $encryptedId = encrypt($query->id);
 
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="' . $preview . '" class="dropdown-item">
-                                            <i class="ph-detective me-2"></i>
-                                            Preview
-                                        </a>
-                                        <a href="' . $edit . '" class="dropdown-item">
-                                            <i class="ph-note-pencil me-2"></i>
-                                            Edit
-                                        </a>
-                                        <form action="' . $hapus . '" method="POST">
-                                        ' . @csrf_field() . '
-                                        ' . @method_field('DELETE') . '
-                                        <button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>';
+                    return view('components.datatable-actions', [
+                        'preview' => route('publikasi.show', $encryptedId),
+                        'edit' => route('publikasi.edit', $encryptedId),
+                        'destroy' => route('publikasi.destroy', $encryptedId),
+                    ])->render();
                 })
                 ->editColumn('created_at', function ($query) {
                     return date('d-M-Y H:i:s', strtotime($query->created_at));
@@ -87,158 +69,158 @@ class PublikasiController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.publikasi.index');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
         // $kategori = ModelsRef_kategori::get();
         $kategori = ref_kategori::get();
         $tipe = ref_tipe::get();
+
         return view('backend.publikasi.create', compact(['kategori', 'tipe']));
     }
-
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'judul' => [
+                    'required',
+                    'max:255',
+                    'unique:publikasi,judul',
+                    'regex:/^[^<>]*$/',
+                    function ($attribute, $value, $fail) {
+                        if (strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
+                'sub_judul' => [
+                    'nullable',
+                    'max:255',
+                    'regex:/^[^<>]*$/',
+                    function ($attribute, $value, $fail) {
+                        if ($value && strip_tags($value) !== $value) {
+                            $fail('The '.$attribute.' field cannot contain HTML tags.');
+                        }
+                    },
+                ],
+                'kategori' => 'required|exists:ref_kategori,id_kategori',
+                'tipe' => 'required|exists:ref_tipe,id_tipe',
+                'images' => 'required|array|min:1',
+                'images.*' => 'required|image|mimes:jpeg,png,jpg|max:20480',
+                'isi' => [
+                    'required',
+                    'min:10',
+                    'max:25000',
+                ],
+                'backdate' => 'nullable|date',
+                'file' => 'nullable|mimes:pdf,doc,docx|max:5120',
+                'embedded_media' => 'nullable|url|max:2000',
+            ], [
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+                'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
+                'images.required' => 'Minimal satu gambar harus diunggah',
+                'images.*.image' => 'File yang diunggah harus berupa gambar',
+                'images.*.mimes' => 'Gambar harus berformat jpeg, png, atau jpg',
+                'images.*.max' => 'Ukuran gambar tidak boleh melebihi 20MB',
+            ]);
 
-     public function store(Request $request)
-     {
-         try {
-             $validated = $request->validate([
-                 'judul' => [
-                     'required',
-                     'max:255',
-                     'unique:publikasi,judul',
-                     'regex:/^[^<>]*$/',
-                     function ($attribute, $value, $fail) {
-                         if (strip_tags($value) !== $value) {
-                             $fail('The '.$attribute.' field cannot contain HTML tags.');
-                         }
-                     },
-                 ],
-                 'sub_judul' => [
-                     'nullable',
-                     'max:255',
-                     'regex:/^[^<>]*$/',
-                     function ($attribute, $value, $fail) {
-                         if ($value && strip_tags($value) !== $value) {
-                             $fail('The '.$attribute.' field cannot contain HTML tags.');
-                         }
-                     },
-                 ],
-                 'kategori' => 'required|exists:ref_kategori,id_kategori',
-                 'tipe' => 'required|exists:ref_tipe,id_tipe',
-                 'images' => 'required|array|min:1',
-                 'images.*' => 'required|image|mimes:jpeg,png,jpg|max:20480',
-                 'isi' => [
-                     'required',
-                     'min:10',
-                     'max:25000',
-                 ],
-                 'backdate' => 'nullable|date',
-                 'file' => 'nullable|mimes:pdf,doc,docx|max:5120',
-                 'embedded_media' => 'nullable|url|max:2000',
-             ], [
-                 'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
-                 'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
-                 'images.required' => 'Minimal satu gambar harus diunggah',
-                 'images.*.image' => 'File yang diunggah harus berupa gambar',
-                 'images.*.mimes' => 'Gambar harus berformat jpeg, png, atau jpg',
-                 'images.*.max' => 'Ukuran gambar tidak boleh melebihi 20MB',
-             ]);
+            // Sanitize input before processing
+            $validated['judul'] = strip_tags($validated['judul']);
+            $validated['sub_judul'] = strip_tags($validated['sub_judul']);
 
-             // Sanitize input before processing
-             $validated['judul'] = strip_tags($validated['judul']);
-             $validated['sub_judul'] = strip_tags($validated['sub_judul']);
+            // Ensure images exist
+            if (! $request->hasFile('images')) {
+                throw new Exception('Minimal satu gambar harus diunggah');
+            }
 
-             // Ensure images exist
-             if (!$request->hasFile('images')) {
-                 throw new Exception('Minimal satu gambar harus diunggah');
-             }
+            // File upload (optional)
+            $filePath = $request->hasFile('file')
+                ? $request->file('file')->store('public/romadan_file_web')
+                : null;
 
-             // File upload (optional)
-             $filePath = $request->hasFile('file')
-                 ? $request->file('file')->store('public/romadan_file_web')
-                 : null;
+            // Prepare data
+            $data = [
+                'judul' => $validated['judul'],
+                'sub_judul' => $validated['sub_judul'] ?? null,
+                'kategori' => $validated['kategori'],
+                'tipe' => $validated['tipe'],
+                'image' => null, // We'll update this with the primary image path
+                'isi' => $validated['isi'],
+                'embedded_media' => $validated['embedded_media'] ?? null,
+                'slug' => Str::slug($validated['judul']),
+                'penulis' => Auth::user()->name,
+                'static_random_string' => Str::random(16),
+                'file' => $filePath ? basename($filePath) : null,
+                'views' => 0,
+            ];
 
-             // Prepare data
-             $data = [
-                 'judul' => $validated['judul'],
-                 'sub_judul' => $validated['sub_judul'] ?? null,
-                 'kategori' => $validated['kategori'],
-                 'tipe' => $validated['tipe'],
-                 'image' => null, // We'll update this with the primary image path
-                 'isi' => $validated['isi'],
-                 'embedded_media' => $validated['embedded_media'] ?? null,
-                 'slug' => Str::slug($validated['judul']),
-                 'penulis' => Auth::user()->name,
-                 'static_random_string' => Str::random(16),
-                 'file' => $filePath ? basename($filePath) : null,
-                 'views' => 0
-             ];
+            // Status and backdate handling
+            if ($request->filled('backdate')) {
+                $data['backdate'] = Carbon::parse($validated['backdate']);
+                $data['status'] = 'published';
+            } else {
+                $data['status'] = 'draft';
+            }
 
-             // Status and backdate handling
-             if ($request->filled('backdate')) {
-                 $data['backdate'] = Carbon::parse($validated['backdate']);
-                 $data['status'] = 'published';
-             } else {
-                 $data['status'] = 'draft';
-             }
+            // Create the publikasi record
+            $publikasi = PublikasiModel::create($data);
 
-             // Create the publikasi record
-             $publikasi = PublikasiModel::create($data);
+            // Process and store multiple images
+            $images = $request->file('images');
+            $isPrimary = true; // First image will be primary
+            $sortOrder = 0;
 
-             // Process and store multiple images
-             $images = $request->file('images');
-             $isPrimary = true; // First image will be primary
-             $sortOrder = 0;
+            foreach ($images as $image) {
+                $imagePath = $image->store('public/romadan_gambar_web');
+                $imageFileName = basename($imagePath);
 
-             foreach ($images as $image) {
-                 $imagePath = $image->store('public/romadan_gambar_web');
-                 $imageFileName = basename($imagePath);
+                // Create image record
+                $publikasi->images()->create([
+                    'image_path' => $imageFileName,
+                    'is_primary' => $isPrimary,
+                    'sort_order' => $sortOrder,
+                ]);
 
-                 // Create image record
-                 $publikasi->images()->create([
-                     'image_path' => $imageFileName,
-                     'is_primary' => $isPrimary,
-                     'sort_order' => $sortOrder
-                 ]);
+                // If this is the primary image, update the main publikasi record
+                if ($isPrimary) {
+                    $publikasi->update(['image' => $imageFileName]);
+                    $isPrimary = false;
+                }
 
-                 // If this is the primary image, update the main publikasi record
-                 if ($isPrimary) {
-                     $publikasi->update(['image' => $imageFileName]);
-                     $isPrimary = false;
-                 }
+                $sortOrder++;
+            }
 
-                 $sortOrder++;
-             }
+            return back()->with('success', 'Data Publikasi Berhasil Disimpan!');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
+        } catch (Exception $e) {
+            Log::error('Publikasi Creation Error: '.$e->getMessage());
 
-             return back()->with('success', 'Data Publikasi Berhasil Disimpan!');
-         } catch (ValidationException $e) {
-             return back()->withErrors($e->validator)->withInput();
-         } catch (Exception $e) {
-             Log::error('Publikasi Creation Error: ' . $e->getMessage());
-             return back()
-                 ->with('failed', 'Data Publikasi Gagal Disimpan: ' . $e->getMessage())
-                 ->withInput();
-         }
-     }
+            return back()
+                ->with('failed', 'Data Publikasi Gagal Disimpan')
+                ->withInput();
+        }
+    }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -252,7 +234,7 @@ class PublikasiController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -260,7 +242,6 @@ class PublikasiController extends Controller
         $status = ref_status::all();
         $tipe = ref_tipe::all();
         $publikasi = PublikasiModel::with(['kategori', 'status', 'tipe'])->findOrFail(decrypt($id));
-
 
         // dd($publikasi['created_at']);
 
@@ -272,9 +253,8 @@ class PublikasiController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -300,10 +280,11 @@ class PublikasiController extends Controller
                         }
                     },
                 ],
-                'kategori' => 'required',
-                'tipe' => 'required',
+                'kategori' => 'required|exists:ref_kategori,id_kategori',
+                'tipe' => 'required|exists:ref_tipe,id_tipe',
+                'status' => 'required|exists:ref_status,nama_status',
                 'new_images' => 'nullable|array',
-                'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480|dimensions:min_width=1024,min_height=600',
+                'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480|dimensions:min_width=1024,min_height=600',
                 'primary_image' => 'nullable|exists:publikasi_images,id',
                 'delete_images' => 'nullable|array',
                 'delete_images.*' => 'nullable|exists:publikasi_images,id',
@@ -319,7 +300,7 @@ class PublikasiController extends Controller
                 'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
                 'sub_judul.regex' => 'Sub judul tidak boleh mengandung tag HTML',
                 'new_images.*.image' => 'File yang diunggah harus berupa gambar',
-                'new_images.*.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau svg',
+                'new_images.*.mimes' => 'Gambar harus berformat jpeg, png, atau jpg',
                 'new_images.*.max' => 'Ukuran gambar tidak boleh melebihi 20MB',
                 'new_images.*.dimensions' => 'Dimensi gambar minimal ukuran 1024x600 piksel',
             ]);
@@ -331,17 +312,17 @@ class PublikasiController extends Controller
             // Get the publikasi record
             $publikasi = PublikasiModel::findOrFail(decrypt($id));
 
-            // Prepare data
+            // Prepare data — selalu dari $validated agar rule & sanitasi tidak ter-bypass
             $data = [
-                'judul' => $request->judul,
-                'sub_judul' => $request->sub_judul,
-                'kategori' => $request->kategori,
-                'tipe' => $request->tipe,
-                'isi' => $request->isi,
-                'embedded_media' => $request->embedded_media,
-                'status' => $request->status,
+                'judul' => $validated['judul'],
+                'sub_judul' => $validated['sub_judul'],
+                'kategori' => $validated['kategori'],
+                'tipe' => $validated['tipe'],
+                'isi' => $validated['isi'],
+                'embedded_media' => $validated['embedded_media'] ?? null,
+                'status' => $validated['status'],
                 'pengedit' => Auth::user()->name,
-                'created_at' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),
+                'created_at' => Carbon::parse($validated['created_at'])->format('Y-m-d H:i:s'),
             ];
 
             // Process file upload if provided
@@ -359,7 +340,7 @@ class PublikasiController extends Controller
 
                 // Delete old file if exists
                 if ($publikasi->file) {
-                    File::delete(public_path('storage/romadan_file_web/') . $publikasi->file);
+                    File::delete(public_path('storage/romadan_file_web/').$publikasi->file);
                 }
 
                 $data['file'] = $file->hashName();
@@ -371,7 +352,7 @@ class PublikasiController extends Controller
                     $image = $publikasi->images()->find($imageId);
                     if ($image) {
                         // Delete the file
-                        File::delete(public_path('storage/romadan_gambar_web/') . $image->image_path);
+                        File::delete(public_path('storage/romadan_gambar_web/').$image->image_path);
                         // Delete the record
                         $image->delete();
                     }
@@ -391,7 +372,7 @@ class PublikasiController extends Controller
                     $publikasi->images()->create([
                         'image_path' => $imageFileName,
                         'is_primary' => false,
-                        'sort_order' => $sortOrder
+                        'sort_order' => $sortOrder,
                     ]);
 
                     $sortOrder++;
@@ -418,34 +399,34 @@ class PublikasiController extends Controller
         } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
+            report($e);
+
             return redirect()->route('publikasi.index')
-                ->with(['failed' => 'Data Publikasi Gagal Di Update! error :' . $e->getMessage()]);
+                ->with(['failed' => 'Data Publikasi Gagal Di Update!']);
         }
     }
+
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
         try {
             $publikasi = PublikasiModel::findOrFail(decrypt($id));
 
-            // Get all images to delete later
-            $images = $publikasi->images()->get();
-
-            // Update status to draft
-            $data['status'] = 'draft';
-            $publikasi->update($data);
-
-            // Soft delete the publikasi
+            // Soft delete: turunkan status ke draft lalu hapus (file tetap ada,
+            // baru dibuang permanen saat force-delete dari halaman sampah)
+            $publikasi->update(['status' => 'draft']);
             $publikasi->delete();
 
-            return redirect()->route('publikasi.index')->with('success', "Publikasi berhasil dihapus!");
+            return redirect()->route('publikasi.index')->with('success', 'Publikasi berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('publikasi.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('publikasi.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada !']);
         }
     }
 
@@ -456,33 +437,17 @@ class PublikasiController extends Controller
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('image_publikasi', function ($query) {
-                    $url = asset('storage/romadan_gambar_web/' . $query->image);
-                    return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
+                    $url = asset('storage/romadan_gambar_web/'.$query->image);
+
+                    return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
                 ->addColumn('opsi', function ($query) {
-                    // $preview = route('berita.show', $query->id);
-                    $restore = route('publikasi.restore', encrypt($query->id));
-                    $paksahapus = route('publikasi.force-delete', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
+                    $encryptedId = encrypt($query->id);
 
-												<div class="dropdown-menu dropdown-menu-end">
-													<form action="' . $restore . '" method="POST">
-													' . @csrf_field() . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Restore</button>
-													</form>
-													<form action="' . $paksahapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Paksa Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'restore' => route('publikasi.restore', $encryptedId),
+                        'forceDelete' => route('publikasi.force-delete', $encryptedId),
+                    ])->render();
                 })
                 ->rawColumns(['opsi', 'image_publikasi'])
                 ->addIndexColumn()
@@ -498,9 +463,12 @@ class PublikasiController extends Controller
             $data['status'] = 'draft';
             PublikasiModel::onlyTrashed()->findOrFail(decrypt($id))->update($data);
             PublikasiModel::onlyTrashed()->findOrFail(decrypt($id))->restore();
-            return redirect()->route('publikasi.sampah')->with('success', "Data publikasi berhasil direstore!, silahkan cek pada publikasi aktif yah guys!");
+
+            return redirect()->route('publikasi.sampah')->with('success', 'Data publikasi berhasil direstore!, silahkan cek pada publikasi aktif yah guys!');
         } catch (Exception $e) {
-            return redirect()->route('publikasi.sampah')->with(['failed' => 'Data publikasi GAGAL di Restore ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('publikasi.sampah')->with(['failed' => 'Data publikasi GAGAL di Restore !']);
         }
     }
 
@@ -514,35 +482,41 @@ class PublikasiController extends Controller
                 $data['status'] = 'draft';
                 PublikasiModel::onlyTrashed()->update($data);
                 PublikasiModel::onlyTrashed()->restore();
-                return redirect()->route('publikasi.sampah')->with('success', "Semua Data publikasi berhasil direstore!, silahkan cek pada publikasi aktif yah guys!");
+
+                return redirect()->route('publikasi.sampah')->with('success', 'Semua Data publikasi berhasil direstore!, silahkan cek pada publikasi aktif yah guys!');
             } catch (Exception $e) {
-                return redirect()->route('publikasi.sampah')->with(['failed' => 'Semua Data publikasi GAGAL di Restore ! error :' . $e->getMessage()]);
+                report($e);
+
+                return redirect()->route('publikasi.sampah')->with(['failed' => 'Semua Data publikasi GAGAL di Restore !']);
             }
         }
+
         return redirect()->route('publikasi.sampah')->with(['failed' => 'Data yang direstore gak ada :( ']);
     }
 
     public function forceDeletePublikasi($id)
-{
-    try {
-        $publikasi = PublikasiModel::withTrashed()->findOrFail(decrypt($id));
+    {
+        try {
+            $publikasi = PublikasiModel::withTrashed()->findOrFail(decrypt($id));
 
-        // Delete all associated image files
-        foreach($publikasi->images as $image) {
-            File::delete(public_path('storage/romadan_gambar_web/') . $image->image_path);
+            // Delete all associated image files
+            foreach ($publikasi->images as $image) {
+                File::delete(public_path('storage/romadan_gambar_web/').$image->image_path);
+            }
+
+            // Delete PDF file if exists
+            if ($publikasi->file) {
+                File::delete(public_path('storage/romadan_file_web/').$publikasi->file);
+            }
+
+            // Force delete the publikasi which will cascade delete images due to foreign key constraint
+            $publikasi->forceDelete();
+
+            return redirect()->route('publikasi.sampah')->with('success', 'Data Berhasil dihapus PERMANEN');
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()->route('publikasi.sampah')->with(['failed' => 'Data GAGAL dihapus Permanen !']);
         }
-
-        // Delete PDF file if exists
-        if ($publikasi->file) {
-            File::delete(public_path('storage/romadan_file_web/') . $publikasi->file);
-        }
-
-        // Force delete the publikasi which will cascade delete images due to foreign key constraint
-        $publikasi->forceDelete();
-
-        return redirect()->route('publikasi.sampah')->with('success', "Data Berhasil dihapus PERMANEN");
-    } catch (Exception $e) {
-        return redirect()->route('publikasi.sampah')->with(['failed' => 'Data GAGAL dihapus Permanen ! error :' . $e->getMessage()]);
     }
-}
 }

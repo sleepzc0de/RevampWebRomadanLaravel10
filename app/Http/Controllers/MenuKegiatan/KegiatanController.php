@@ -22,42 +22,22 @@ class KegiatanController extends Controller
             return datatables()->of($query)
 
                 ->addColumn('image_kegiatan', function ($query) {
-                    $url = asset('storage/romadan_gambar_web/' . $query->image);
-                    return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
+                    $url = asset('storage/romadan_gambar_web/'.$query->image);
+
+                    return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
 
                 ->addColumn('file_kegiatan', function ($query) {
-                    $url = asset('storage/romadan_file_web/' . $query->file);
-                    return '<a href="' . $url . '" target="_blank">' . $query->judul . '</a>';
+                    $url = asset('storage/romadan_file_web/'.$query->file);
+
+                    return '<a href="'.$url.'" target="_blank">'.$query->judul.'</a>';
                 })
                 ->addColumn('opsi', function ($query) {
-                    $preview = route('kegiatan.show', encrypt($query->id));
-                    $edit = route('kegiatan.edit', encrypt($query->id));
-                    $hapus = route('kegiatan.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $preview . '" class="dropdown-item">
-														<i class="ph-detective me-2"></i>
-														Preview
-													</a>
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'preview' => route('kegiatan.show', encrypt($query->id)),
+                        'edit' => route('kegiatan.edit', encrypt($query->id)),
+                        'destroy' => route('kegiatan.destroy', encrypt($query->id)),
+                    ])->render();
                 })
 
                 ->editColumn('tanggal_mulai', function ($query) {
@@ -75,11 +55,11 @@ class KegiatanController extends Controller
                     return $x;
                 })
 
-
                 ->rawColumns(['opsi', 'image_kegiatan', 'file_kegiatan'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.kegiatan.index');
     }
 
@@ -103,7 +83,7 @@ class KegiatanController extends Controller
             $request->validate([
                 'judul' => 'required|unique:kegiatan',
                 'tempat' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240|dimensions:max_width=1650,max_height=990',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:10240|dimensions:max_width=1650,max_height=990',
                 'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:10240',
                 'isi' => 'required',
                 'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
@@ -113,11 +93,11 @@ class KegiatanController extends Controller
                 'image.dimensions' => 'Gambar maksimal lebar (width) 1650 pixels dan tinggi (height) 990 pixels',
             ]);
 
-            //UPLOAD IMAGE
+            // UPLOAD IMAGE
             $image = $request->file('image');
             $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
-            //UPLOAD FILE
+            // UPLOAD FILE
             $file = $request->file('file');
             $file->storeAs('public/romadan_file_web', $file->hashName());
 
@@ -125,7 +105,6 @@ class KegiatanController extends Controller
 
             $slug = Str::slug($request->judul);
             // $slug = Str::slug($request->judul).'-'.Str::random(10).uniqid().Str::random(4);
-
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
@@ -142,13 +121,14 @@ class KegiatanController extends Controller
 
             ];
 
-
             KegiatanModel::create($data);
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Data Kegiatan Berhasil Disimpan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data Kegiatan Gagal Disimpan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Data Kegiatan Gagal Disimpan!']);
         }
     }
 
@@ -167,6 +147,7 @@ class KegiatanController extends Controller
     public function edit(string $id)
     {
         $kegiatan = KegiatanModel::findOrFail(decrypt($id));
+
         // dd($kegiatan);
         return view('backend.kegiatan.edit', compact(['kegiatan']));
     }
@@ -181,7 +162,7 @@ class KegiatanController extends Controller
             $request->validate([
                 'judul' => 'required',
                 'tempat' => 'required',
-                'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                'image' => 'image|mimes:jpeg,png,jpg|max:1000',
                 'file' => 'mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'isi' => 'required',
                 'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
@@ -207,17 +188,17 @@ class KegiatanController extends Controller
             ];
             if ($request->hasFile('image')) {
                 $request->validate([
-                    'image' => 'image|mimes:jpeg,png,jpg,svg|max:1000',
+                    'image' => 'image|mimes:jpeg,png,jpg|max:1000',
                 ], [
                     'image.mimes' => 'Gambar hanya diperbolehkaan berekstensi JPEG, JPG, PNG, SVG',
                 ]);
 
-                //UPLOAD IMAGE
+                // UPLOAD IMAGE
                 $image = $request->file('image');
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
                 $data_gambar = KegiatanModel::findOrFail(decrypt($id));
-                File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+                File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
                 $data = [
                     'image' => $image->hashName(),
@@ -231,12 +212,12 @@ class KegiatanController extends Controller
                     'file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF, ZIP, RAR',
                 ]);
 
-                //UPLOAD IMAGE
+                // UPLOAD IMAGE
                 $file = $request->file('file');
                 $file->storeAs('public/romadan_file_web', $file->hashName());
 
                 $data_file = KegiatanModel::findOrFail(decrypt($id));
-                File::delete(public_path('storage/romadan_file_web/') . $data_file->file);
+                File::delete(public_path('storage/romadan_file_web/').$data_file->file);
 
                 $data = [
                     'file' => $file->hashName(),
@@ -244,10 +225,13 @@ class KegiatanController extends Controller
             }
 
             KegiatanModel::findOrFail(decrypt($id))->update($data);
+
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('kegiatan.index')->with('success', "Kegiatan $request->judul berhasil diupdate!");
         } catch (Exception $e) {
-            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Kegiatan Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Kegiatan Gagal Di Update!']);
         }
     }
 
@@ -258,12 +242,15 @@ class KegiatanController extends Controller
     {
         try {
             $data = KegiatanModel::findOrFail(decrypt($id));
-            File::delete(public_path('storage/romadan_gambar_web/') . $data->image);
-            File::delete(public_path('storage/romadan_file_web/') . $data->file);
+            File::delete(public_path('storage/romadan_gambar_web/').$data->image);
+            File::delete(public_path('storage/romadan_file_web/').$data->file);
             KegiatanModel::findOrFail(decrypt($id))->forceDelete();
-            return redirect()->route('kegiatan.index')->with('success', "Kegiatan berhasil dihapus!");
+
+            return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada !']);
         }
     }
 }

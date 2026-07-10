@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\MenuProfile;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\MenuProfile\TentangModel;
 use App\Models\backend\MenuProfile\TentangImage;
+use App\Models\backend\MenuProfile\TentangModel;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-
 
 class TentangController extends Controller
 {
@@ -26,11 +25,12 @@ class TentangController extends Controller
             return datatables()->of($query)
 
                 ->addColumn('image_tentang', function ($query) {
-                    $url = asset('storage/romadan_gambar_web/' . $query->image);
-                    return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
+                    $url = asset('storage/romadan_gambar_web/'.$query->image);
+
+                    return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
                 ->addColumn('video_url', function ($query) {
-                    return $query->video_url ? '<a href="' . $query->video_url . '" target="_blank">Lihat Video</a>' : 'Tidak ada video';
+                    return $query->video_url ? '<a href="'.$query->video_url.'" target="_blank">Lihat Video</a>' : 'Tidak ada video';
                 })
                 ->addColumn('additional_images', function ($query) {
                     $images = $query->additionalImages;
@@ -40,46 +40,28 @@ class TentangController extends Controller
 
                     $output = '';
                     foreach ($images as $image) {
-                        $url = asset('storage/romadan_gambar_web/' . $image->image_path);
-                        $output .= '<a href="' . $url . '" class="mr-2"><img src="' . $url . '" border="0" width="50" class="img-rounded" align="center"/></a>';
+                        $url = asset('storage/romadan_gambar_web/'.$image->image_path);
+                        $output .= '<a href="'.$url.'" class="mr-2"><img src="'.$url.'" border="0" width="50" class="img-rounded" align="center"/></a>';
                     }
+
                     return $output;
                 })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('tentang.edit', encrypt($query->id));
-                    $hapus = route('tentang.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'edit' => route('tentang.edit', encrypt($query->id)),
+                        'destroy' => route('tentang.destroy', encrypt($query->id)),
+                    ])->render();
                 })
 
                 ->editColumn('created_at', function ($query) {
                     return date('d-M-Y H:i:s', strtotime($query->created_at));
                 })
 
-
                 ->rawColumns(['opsi', 'image_tentang', 'video_url', 'additional_images'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.tentang.index', compact('data'));
     }
 
@@ -117,10 +99,10 @@ class TentangController extends Controller
                     'min:10',
                     'max:1000',
                 ],
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:20480', // 20MB
-                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // 20MB
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:20480', // 20MB
+                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // 20MB
                 'video_url' => 'nullable|url',
-            ],[
+            ], [
                 'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
                 'image.max' => 'Ukuran gambar maksimal 20MB',
                 'additional_images.*.max' => 'Ukuran gambar tambahan maksimal 20MB',
@@ -129,14 +111,14 @@ class TentangController extends Controller
 
             $validated['judul'] = strip_tags($validated['judul']);
 
-            //UPLOAD IMAGE
+            // UPLOAD IMAGE
             $image = $request->file('image');
             $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
             // EXCERPT TENTANG ROMADAN
             $excerpt = Str::excerpt($request->tentang, '', [
                 'radius' => 100,
-                'omission' => '(...) '
+                'omission' => '(...) ',
             ]);
 
             // Proses konten tentang
@@ -162,18 +144,19 @@ class TentangController extends Controller
                     // Buat record untuk tiap gambar tambahan
                     TentangImage::create([
                         'tentang_id' => $tentang->id,
-                        'image_path' => $additionalImage->hashName()
+                        'image_path' => $additionalImage->hashName(),
                     ]);
                 }
             }
 
             DB::commit();
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Tentang Berhasil Ditambahkan!']);
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with(['failed' => 'Tentang Gagal Ditambahkan! error :' . $e->getMessage()]);
+
+            return redirect()->back()->with(['failed' => 'Tentang Gagal Ditambahkan!']);
         }
     }
 
@@ -183,6 +166,7 @@ class TentangController extends Controller
     public function edit(string $id)
     {
         $tentang = TentangModel::with('additionalImages')->findOrFail(decrypt($id));
+
         return view('backend.tentang.edit', compact('tentang'));
     }
 
@@ -206,12 +190,12 @@ class TentangController extends Controller
                         }
                     },
                 ],
-               'tentang' => [
+                'tentang' => [
                     'required',
                     'max:1000',
                 ],
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // 20MB
-                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:20480', // 20MB
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // 20MB
+                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // 20MB
                 'video_url' => 'nullable|url',
                 'remove_additional_image' => 'nullable|array',
                 'remove_additional_image.*' => 'nullable|integer',
@@ -233,12 +217,12 @@ class TentangController extends Controller
 
             // Update main image jika ada
             if ($request->hasFile('image')) {
-                //UPLOAD IMAGE
+                // UPLOAD IMAGE
                 $image = $request->file('image');
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
                 $data_gambar = TentangModel::findOrFail(decrypt($id));
-                File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+                File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
                 $data['image'] = $image->hashName();
             }
@@ -252,7 +236,7 @@ class TentangController extends Controller
                 foreach ($request->remove_additional_image as $imageId) {
                     $additionalImage = TentangImage::find($imageId);
                     if ($additionalImage) {
-                        File::delete(public_path('storage/romadan_gambar_web/') . $additionalImage->image_path);
+                        File::delete(public_path('storage/romadan_gambar_web/').$additionalImage->image_path);
                         $additionalImage->delete();
                     }
                 }
@@ -266,18 +250,19 @@ class TentangController extends Controller
                     // Buat record untuk tiap gambar tambahan
                     TentangImage::create([
                         'tentang_id' => $tentang->id,
-                        'image_path' => $additionalImage->hashName()
+                        'image_path' => $additionalImage->hashName(),
                     ]);
                 }
             }
 
             DB::commit();
 
-            return redirect()->route('tentang.index')->with('success', "Tentang berhasil diupdate!");
+            return redirect()->route('tentang.index')->with('success', 'Tentang berhasil diupdate!');
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error("Tentang update error: " . $e->getMessage());
-            return redirect()->route('tentang.index')->with(['failed' => 'Tentang Gagal Di Update! error :' . $e->getMessage()]);
+            Log::error('Tentang update error: '.$e->getMessage());
+
+            return redirect()->route('tentang.index')->with(['failed' => 'Tentang Gagal Di Update!']);
         }
     }
 
@@ -292,21 +277,23 @@ class TentangController extends Controller
             $tentang = TentangModel::with('additionalImages')->findOrFail(decrypt($id));
 
             // Hapus gambar utama
-            File::delete(public_path('storage/romadan_gambar_web/') . $tentang->image);
+            File::delete(public_path('storage/romadan_gambar_web/').$tentang->image);
 
             // Hapus semua gambar tambahan
             foreach ($tentang->additionalImages as $image) {
-                File::delete(public_path('storage/romadan_gambar_web/') . $image->image_path);
+                File::delete(public_path('storage/romadan_gambar_web/').$image->image_path);
             }
 
             // Model TentangImage akan dihapus otomatis karena foreign key constraint
             $tentang->delete();
 
             DB::commit();
-            return redirect()->route('tentang.index')->with('success', "Tentang berhasil dihapus!");
+
+            return redirect()->route('tentang.index')->with('success', 'Tentang berhasil dihapus!');
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->route('tentang.index')->with(['failed' => 'Tentang Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+
+            return redirect()->route('tentang.index')->with(['failed' => 'Tentang Yang Dihapus Tidak Ada !']);
         }
     }
 }

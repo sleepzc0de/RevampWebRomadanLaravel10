@@ -21,13 +21,14 @@ use App\Models\backend\ref_kategori;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 
 class HomeFeController extends Controller
 {
+    private const STATUS_PUBLISHED = 'Published';
+
     public function index()
     {
         //
@@ -40,11 +41,10 @@ class HomeFeController extends Controller
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
             ->where('nama_tipe', strtolower('Berita'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_berita) . "%"])
+            ->whereRaw('LOWER(ref_status.nama_status) like ?', ['%'.strtolower($status_berita).'%'])
             ->orderBy('publikasi.updated_at', 'desc')
             ->take(3)
             ->get();
-
 
         // dd($berita_terkini);
         return view('frontend.home_fe', compact(['tentang', 'berita_terkini']));
@@ -55,6 +55,7 @@ class HomeFeController extends Controller
 
         $tentang = TentangModel::first();
         $visimisi = VisiMisiModel::latest()->take(1)->get();
+
         return view('frontend.profile.fe_visi_misi', compact(['tentang', 'visimisi']));
     }
 
@@ -63,6 +64,7 @@ class HomeFeController extends Controller
 
         $tentang = TentangModel::first();
         $sejarah = SejarahModel::latest()->take(1)->get();
+
         return view('frontend.profile.fe_sejarah', compact(['tentang', 'sejarah']));
     }
 
@@ -75,7 +77,7 @@ class HomeFeController extends Controller
             // Explicitly select columns to avoid duplicate column names
             // Don't use additionalImages relationship ordering - will do in PHP
             $organisasi = StrukturOrganisasiModel::select('struktur_organisasi.*')
-                ->with(['additionalImages' => function($query) {
+                ->with(['additionalImages' => function ($query) {
                     // Select specific columns but NO ordering in the SQL
                     $query->select(
                         'id',
@@ -95,12 +97,12 @@ class HomeFeController extends Controller
         } catch (\Exception $e) {
             Log::error('Error in profile_organisasi', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return view('frontend.profile.fe_organisasi', [
                 'tentang' => TentangModel::first(),
-                'organisasi' => collect() // Empty collection if error
+                'organisasi' => collect(), // Empty collection if error
             ])->with('error', 'Terjadi kesalahan saat memuat data struktur organisasi.');
         }
     }
@@ -110,529 +112,179 @@ class HomeFeController extends Controller
 
         // $tentang = TentangModel::first()->get();
         $tentang = TentangModel::latest()->take(1)->get();
+
         return view('frontend.profile.fe_tentang', compact(['tentang']));
     }
 
     // PUBLIKASI
 
+    /**
+     * Base query publikasi + join referensi (kategori/status/tipe),
+     * difilter berdasarkan tipe dan status published.
+     */
+    private function publikasiPublishedQuery(string $tipe)
+    {
+        return PublikasiModel::query()
+            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
+            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
+            ->where('nama_tipe', strtolower($tipe))
+            ->where('ref_status.nama_status', self::STATUS_PUBLISHED);
+    }
+
     public function publikasi_index()
     {
-        $status_artikel = 'Published';
-        $status_warta = 'Published';
-        $status_berita = 'Published';
-
-        $berita_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', strtolower('Berita'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_berita) . "%"])
-            ->orderBy("id", "DESC")->take(3)->get();
-        // dd($berita_terkini_publikasi);
-
-        $warta_terkini_publikasi = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', strtolower('Warta'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_warta) . "%"])
-            ->orderBy("id", "DESC")->take(3)->get();
-        // dd($warta_terkini_publikasi);
-
-        $artikel_terkini_publikasi =
-            PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', strtolower('Artikel'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ["%" . strtolower($status_artikel) . "%"])
-            ->orderBy("id", "DESC")->take(3)->get();
-        // dd($artikel_terkini_publikasi);
-
-        return view('frontend.publikasi.index', compact([
-            'berita_terkini_publikasi',
-            'warta_terkini_publikasi',
-            'artikel_terkini_publikasi'
-        ]));
+        return view('frontend.publikasi.index', [
+            'berita_terkini_publikasi' => $this->publikasiPublishedQuery('Berita')->orderByDesc('id')->take(3)->get(),
+            'warta_terkini_publikasi' => $this->publikasiPublishedQuery('Warta')->orderByDesc('id')->take(3)->get(),
+            'artikel_terkini_publikasi' => $this->publikasiPublishedQuery('Artikel')->orderByDesc('id')->take(3)->get(),
+        ]);
     }
 
-   public function publikasi_berita_kategori(Request $request, $kategori)
-{
-    try {
-        DB::enableQueryLog();
-        $status_berita = 'Published';
-
-        $searchValue = SecurityHelper::sanitizeInput($request->input('cari_berita'));
-        $kategori_param = SecurityHelper::sanitizeInput($kategori);
-        $isSearch = false;
-
-        Log::info('Search request received', [
-            'search_value' => SecurityHelper::escapeOutput($searchValue),
-            'kategori' => SecurityHelper::escapeOutput($kategori_param),
-            'is_ajax' => $request->ajax(),
-            'request_all' => $request->all()
-        ]);
-
-        $query = PublikasiModel::query()
-            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select(
-                'publikasi.*',
-                'ref_kategori.nama_kategori',
-                'ref_status.nama_status',
-                'ref_tipe.nama_tipe'
-            )
-            ->where('nama_tipe', '=', 'berita')
-            ->where('ref_status.nama_status', '=', $status_berita);
-
-        if ($kategori_param !== 'all') {
-            $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
-        }
-
-        if ($searchValue) {
-            $isSearch = true;
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('judul', 'like', $searchValue)
-                    ->orWhere('isi', 'like', $searchValue);
-            });
-        }
-
-        Log::info('SQL Query:', [
-            'query' => $query->toSql(),
-            'bindings' => $query->getBindings()
-        ]);
-
-        // ✅ Tambahkan withQueryString() agar parameter tidak hilang saat pindah halaman
-        $berita = $query->latest()->paginate(9)->withQueryString();
-
-        Log::info('Query results:', [
-            'count' => $berita->count(),
-            'total' => $berita->total()
-        ]);
-
-        // ✅ Transform menggunakan getCollection() agar Paginator tetap utuh
-        $berita->getCollection()->transform(function ($item) {
-            $item->judul = SecurityHelper::escapeOutput($item->judul);
-            $item->isi = SecurityHelper::escapeOutput($item->isi);
-            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
-            return $item;
-        });
-
-        if ($request->ajax()) {
-            $view = view(
-                'frontend.publikasi.partials.berita-list',
-                [
-                    'berita' => $berita, // ✅ Kirim paginator langsung, bukan hasil .map()
-                    'isSearch' => $isSearch,
-                    'searchValue' => SecurityHelper::escapeOutput($searchValue)
-                ]
-            )->render();
-
-            return response($view)->header('Content-Type', 'text/html');
-        }
-
-        $kategori_list = ref_kategori::all()->map(function ($item) {
-            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
-            return $item;
-        });
-
-        return view('frontend.publikasi.kategori-berita', [
-            'berita' => $berita, // ✅ Kirim paginator langsung, bukan hasil .map()
-            'searchValue' => SecurityHelper::escapeOutput($searchValue),
-            'isSearch' => $isSearch,
-            'kategori' => $kategori_list,
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Category search error', [
-            'message' => SecurityHelper::escapeOutput($e->getMessage()),
-            'trace' => $e->getTraceAsString(),
-            'sql' => DB::getQueryLog()
-        ]);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'error' => 'Terjadi kesalahan saat memproses pencarian.',
-                'details' => SecurityHelper::escapeOutput($e->getMessage())
-            ], 500);
-        }
-
-        return back()->with('error', 'Terjadi kesalahan saat memproses permintaan.');
+    public function publikasi_berita_kategori(Request $request, $kategori)
+    {
+        return $this->publikasiKategori($request, 'berita', $kategori);
     }
-}
 
     public function publikasi_warta_kategori(Request $request, $kategori)
-{
-    try {
-        DB::enableQueryLog();
-        $status_warta = 'Published';
-
-        $searchValue = SecurityHelper::sanitizeInput($request->input('cari_warta'));
-        $kategori_param = SecurityHelper::sanitizeInput($kategori);
-        $isSearch = false;
-
-        Log::info('Search request received', [
-            'search_value' => SecurityHelper::escapeOutput($searchValue),
-            'kategori' => SecurityHelper::escapeOutput($kategori_param),
-            'is_ajax' => $request->ajax(),
-            'request_all' => $request->all()
-        ]);
-
-        $query = PublikasiModel::query()
-            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select(
-                'publikasi.*',
-                'ref_kategori.nama_kategori',
-                'ref_status.nama_status',
-                'ref_tipe.nama_tipe'
-            )
-            ->where('nama_tipe', '=', 'warta')
-            ->where('ref_status.nama_status', '=', $status_warta);
-
-        if ($kategori_param !== 'all') {
-            $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
-        }
-
-        if ($searchValue) {
-            $isSearch = true;
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('judul', 'like', $searchValue)
-                    ->orWhere('isi', 'like', $searchValue);
-            });
-        }
-
-        Log::info('SQL Query:', [
-            'query' => $query->toSql(),
-            'bindings' => $query->getBindings()
-        ]);
-
-        // ✅ Tambahkan withQueryString() agar parameter tidak hilang saat pindah halaman
-        $warta = $query->latest()->paginate(9)->withQueryString();
-
-        Log::info('Query results:', [
-            'count' => $warta->count(),
-            'total' => $warta->total()
-        ]);
-
-        // ✅ Transform SEKALI di sini, berlaku untuk AJAX maupun non-AJAX
-        $warta->getCollection()->transform(function ($item) {
-            $item->judul = SecurityHelper::escapeOutput($item->judul);
-            $item->isi = SecurityHelper::escapeOutput($item->isi);
-            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
-            return $item;
-        });
-
-        if ($request->ajax()) {
-            $view = view(
-                'frontend.publikasi.partials.warta-list',
-                [
-                    'warta' => $warta, // ✅ Kirim paginator langsung
-                    'isSearch' => $isSearch,
-                    'searchValue' => SecurityHelper::escapeOutput($searchValue)
-                ]
-            )->render();
-
-            return response($view)->header('Content-Type', 'text/html');
-        }
-
-        $kategori_list = ref_kategori::all()->map(function ($item) {
-            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
-            return $item;
-        });
-
-        return view('frontend.publikasi.kategori-warta', [
-            'warta' => $warta, // ✅ Kirim paginator langsung
-            'searchValue' => SecurityHelper::escapeOutput($searchValue),
-            'isSearch' => $isSearch,
-            'kategori' => $kategori_list,
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Category search error', [
-            'message' => SecurityHelper::escapeOutput($e->getMessage()),
-            'trace' => $e->getTraceAsString(),
-            'sql' => DB::getQueryLog()
-        ]);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'error' => 'Terjadi kesalahan saat memproses pencarian.',
-                'details' => SecurityHelper::escapeOutput($e->getMessage())
-            ], 500);
-        }
-
-        return back()->with('error', 'Terjadi kesalahan saat memproses permintaan.');
+    {
+        return $this->publikasiKategori($request, 'warta', $kategori);
     }
-}
 
-   public function publikasi_artikel_kategori(Request $request, $kategori)
-{
-    try {
-        DB::enableQueryLog();
-        $status_artikel = 'Published';
-
-        $searchValue = SecurityHelper::sanitizeInput($request->input('cari_artikel'));
-        $kategori_param = SecurityHelper::sanitizeInput($kategori);
-        $isSearch = false;
-
-        Log::info('Search request received', [
-            'search_value' => SecurityHelper::escapeOutput($searchValue),
-            'kategori' => SecurityHelper::escapeOutput($kategori_param),
-            'is_ajax' => $request->ajax(),
-            'request_all' => $request->all()
-        ]);
-
-        $query = PublikasiModel::query()
-            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select(
-                'publikasi.*',
-                'ref_kategori.nama_kategori',
-                'ref_status.nama_status',
-                'ref_tipe.nama_tipe'
-            )
-            ->where('nama_tipe', '=', 'artikel')
-            ->where('ref_status.nama_status', '=', $status_artikel);
-
-        if ($kategori_param !== 'all') {
-            $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
-        }
-
-        if ($searchValue) {
-            $isSearch = true;
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('judul', 'like', $searchValue)
-                    ->orWhere('isi', 'like', $searchValue);
-            });
-        }
-
-        Log::info('SQL Query:', [
-            'query' => $query->toSql(),
-            'bindings' => $query->getBindings()
-        ]);
-
-        // ✅ Tambahkan withQueryString() agar parameter tidak hilang saat pindah halaman
-        $artikel = $query->latest()->paginate(9)->withQueryString();
-
-        Log::info('Query results:', [
-            'count' => $artikel->count(),
-            'total' => $artikel->total()
-        ]);
-
-        // ✅ Transform SEKALI di sini, berlaku untuk AJAX maupun non-AJAX
-        $artikel->getCollection()->transform(function ($item) {
-            $item->judul = SecurityHelper::escapeOutput($item->judul);
-            $item->isi = SecurityHelper::escapeOutput($item->isi);
-            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
-            return $item;
-        });
-
-        if ($request->ajax()) {
-            $view = view(
-                'frontend.publikasi.partials.artikel-list',
-                [
-                    'artikel' => $artikel, // ✅ Kirim paginator langsung
-                    'isSearch' => $isSearch,
-                    'searchValue' => SecurityHelper::escapeOutput($searchValue)
-                ]
-            )->render();
-
-            return response($view)->header('Content-Type', 'text/html');
-        }
-
-        $kategori_list = ref_kategori::all()->map(function ($item) {
-            $item->nama_kategori = SecurityHelper::escapeOutput($item->nama_kategori);
-            return $item;
-        });
-
-        return view('frontend.publikasi.kategori-artikel', [
-            'artikel' => $artikel, // ✅ Kirim paginator langsung
-            'searchValue' => SecurityHelper::escapeOutput($searchValue),
-            'isSearch' => $isSearch,
-            'kategori' => $kategori_list,
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Category search error', [
-            'message' => SecurityHelper::escapeOutput($e->getMessage()),
-            'trace' => $e->getTraceAsString(),
-            'sql' => DB::getQueryLog()
-        ]);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'error' => 'Terjadi kesalahan saat memproses pencarian.',
-                'details' => SecurityHelper::escapeOutput($e->getMessage())
-            ], 500);
-        }
-
-        return back()->with('error', 'Terjadi kesalahan saat memproses permintaan.');
+    public function publikasi_artikel_kategori(Request $request, $kategori)
+    {
+        return $this->publikasiKategori($request, 'artikel', $kategori);
     }
-}
 
+    /**
+     * Daftar publikasi per-kategori + pencarian (judul/isi), mendukung
+     * respons AJAX (partial HTML) maupun full-page. Dipakai bersama oleh
+     * berita/warta/artikel — hanya beda nama tipe & view.
+     */
+    private function publikasiKategori(Request $request, string $tipe, string $kategori)
+    {
+        try {
+            $searchValue = SecurityHelper::sanitizeInput($request->input('cari_'.$tipe));
+            $kategori_param = SecurityHelper::sanitizeInput($kategori);
+            $isSearch = false;
 
+            $query = $this->publikasiPublishedQuery($tipe);
+
+            if ($kategori_param !== 'all') {
+                $query->whereRaw('LOWER(ref_kategori.nama_kategori) = ?', [strtolower($kategori_param)]);
+            }
+
+            if ($searchValue) {
+                $isSearch = true;
+                $query->where(function ($q) use ($searchValue) {
+                    $q->where('judul', 'like', '%'.$searchValue.'%')
+                        ->orWhere('isi', 'like', '%'.$searchValue.'%');
+                });
+            }
+
+            // withQueryString() agar parameter tidak hilang saat pindah halaman
+            $items = $query->latest()->paginate(9)->withQueryString();
+
+            if ($request->ajax()) {
+                $view = view("frontend.publikasi.partials.{$tipe}-list", [
+                    $tipe => $items,
+                    'isSearch' => $isSearch,
+                    'searchValue' => $searchValue,
+                ])->render();
+
+                return response($view)->header('Content-Type', 'text/html');
+            }
+
+            return view("frontend.publikasi.kategori-{$tipe}", [
+                $tipe => $items,
+                'searchValue' => $searchValue,
+                'isSearch' => $isSearch,
+                'kategori' => ref_kategori::all(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Category search error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'error' => 'Terjadi kesalahan saat memproses pencarian.',
+                ], 500);
+            }
+
+            return back()->with('error', 'Terjadi kesalahan saat memproses permintaan.');
+        }
+    }
 
     public function publikasi_index_berita(Request $request)
     {
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'cari_berita' => 'nullable|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Invalid input'], 422);
-        }
-
-        $status_berita = 'Published';
-        $searchValue = SecurityHelper::sanitizeInput($request->input('cari_berita'));
-        $isSearch = false;
-
-        // Use query builder with parameterized queries
-        $query = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', '=', 'berita')
-            ->where('ref_status.nama_status', '=', $status_berita);
-
-        if ($searchValue) {
-            $isSearch = true;
-            $query->where('judul', 'like', '%' . $searchValue . '%');
-        }
-
-        // Add rate limiting
-        if (RateLimiter::tooManyAttempts('search:' . $request->ip(), 60)) {
-            return response()->json(['error' => 'Too many search attempts'], 429);
-        }
-        RateLimiter::hit('search:' . $request->ip());
-
-        $berita = $query->latest()->paginate(9);
-        $kategori = ref_kategori::all();
-
-        if ($request->ajax()) {
-            return response()->json([
-                'html' => view(
-                    'frontend.publikasi.partials.berita-list',
-                    compact('berita', 'isSearch', 'searchValue')
-                )->render(),
-                'status' => 'success'
-            ], 200);
-        }
-
-        return view(
-            'frontend.publikasi.index-berita',
-            compact('searchValue', 'isSearch', 'berita', 'kategori')
-        );
+        return $this->publikasiIndexByTipe($request, 'berita');
     }
 
     public function publikasi_index_warta(Request $request)
     {
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'cari_warta' => 'nullable|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Invalid input'], 422);
-        }
-
-        $status_warta = 'Published';
-        $searchValue = SecurityHelper::sanitizeInput($request->input('cari_warta'));
-        $isSearch = false;
-
-        // Use query builder with parameterized queries
-        $query = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', '=', 'warta')
-            ->where('ref_status.nama_status', '=', $status_warta);
-
-        if ($searchValue) {
-            $isSearch = true;
-            $query->where('judul', 'like', '%' . $searchValue . '%');
-        }
-
-        // Add rate limiting
-        if (RateLimiter::tooManyAttempts('search:' . $request->ip(), 60)) {
-            return response()->json(['error' => 'Too many search attempts'], 429);
-        }
-        RateLimiter::hit('search:' . $request->ip());
-
-        $warta = $query->latest()->paginate(9);
-        $kategori = ref_kategori::all();
-
-        if ($request->ajax()) {
-            return response()->json([
-                'html' => view(
-                    'frontend.publikasi.partials.warta-list',
-                    compact('warta', 'isSearch', 'searchValue')
-                )->render(),
-                'status' => 'success'
-            ], 200);
-        }
-
-        return view(
-            'frontend.publikasi.index-warta',
-            compact('searchValue', 'isSearch', 'warta', 'kategori')
-        );
+        return $this->publikasiIndexByTipe($request, 'warta');
     }
 
     public function publikasi_index_artikel(Request $request)
     {
-        // Validate input
+        return $this->publikasiIndexByTipe($request, 'artikel');
+    }
+
+    /**
+     * Halaman index publikasi per-tipe + pencarian judul (dengan rate limit).
+     * Dipakai bersama oleh berita/warta/artikel.
+     */
+    private function publikasiIndexByTipe(Request $request, string $tipe)
+    {
+        $inputName = 'cari_'.$tipe;
+
         $validator = Validator::make($request->all(), [
-            'cari_artikel' => 'nullable|string|max:255',
+            $inputName => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => 'Invalid input'], 422);
         }
 
-        $status_artikel = 'Published';
-        $searchValue = SecurityHelper::sanitizeInput($request->input('cari_artikel'));
+        $searchValue = SecurityHelper::sanitizeInput($request->input($inputName));
         $isSearch = false;
 
-        // Use query builder with parameterized queries
-        $query = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-            ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
-            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
-            ->where('nama_tipe', '=', 'artikel')
-            ->where('ref_status.nama_status', '=', $status_artikel);
+        $query = $this->publikasiPublishedQuery($tipe);
 
         if ($searchValue) {
             $isSearch = true;
-            $query->where('judul', 'like', '%' . $searchValue . '%');
+            $query->where('judul', 'like', '%'.$searchValue.'%');
         }
 
-        // Add rate limiting
-        if (RateLimiter::tooManyAttempts('search:' . $request->ip(), 60)) {
+        // Rate limit pencarian per-IP
+        if (RateLimiter::tooManyAttempts('search:'.$request->ip(), 60)) {
             return response()->json(['error' => 'Too many search attempts'], 429);
         }
-        RateLimiter::hit('search:' . $request->ip());
+        RateLimiter::hit('search:'.$request->ip());
 
-        $artikel = $query->latest()->paginate(9);
+        $items = $query->latest()->paginate(9);
         $kategori = ref_kategori::all();
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view(
-                    'frontend.publikasi.partials.artikel-list',
-                    compact('artikel', 'isSearch', 'searchValue')
-                )->render(),
-                'status' => 'success'
+                'html' => view("frontend.publikasi.partials.{$tipe}-list", [
+                    $tipe => $items,
+                    'isSearch' => $isSearch,
+                    'searchValue' => $searchValue,
+                ])->render(),
+                'status' => 'success',
             ], 200);
         }
 
-        return view(
-            'frontend.publikasi.index-artikel',
-            compact('searchValue', 'isSearch', 'artikel', 'kategori')
-        );
+        return view("frontend.publikasi.index-{$tipe}", [
+            $tipe => $items,
+            'searchValue' => $searchValue,
+            'isSearch' => $isSearch,
+            'kategori' => $kategori,
+        ]);
     }
 
     public function publikasi_berita($publikasi)
@@ -646,7 +298,9 @@ class HomeFeController extends Controller
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
             ->firstOrFail();
 
-        // Menambah jumlah views
+        // Menambah jumlah views tanpa menyentuh updated_at
+        // (urutan "terkini" di beranda memakai updated_at)
+        $data->timestamps = false;
         $data->increment('views');
 
         // Format tanggal
@@ -656,18 +310,19 @@ class HomeFeController extends Controller
         return view('frontend.publikasi.fe_berita', compact(['data', 'tb']));
     }
 
-
     public function publikasi_warta($publikasi)
     {
         $data = PublikasiModel::where('slug', $publikasi)
-            ->where('nama_tipe',  strtolower('Warta'))
+            ->where('nama_tipe', strtolower('Warta'))
             ->with('images')  // Add this line to load all related images
             ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
             ->firstorFail();
 
-        // Menambah jumlah views
+        // Menambah jumlah views tanpa menyentuh updated_at
+        // (urutan "terkini" di beranda memakai updated_at)
+        $data->timestamps = false;
         $data->increment('views');
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
@@ -675,25 +330,25 @@ class HomeFeController extends Controller
         return view('frontend.publikasi.fe_warta', compact(['data', 'tb']));
     }
 
-
     public function publikasi_artikel($publikasi)
-{
-    $data = PublikasiModel::where('slug', $publikasi)
-        ->where('nama_tipe',  strtolower('Artikel'))
-        ->with('images')  // Add this line to load all related images
-        ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
-        ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
-        ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
-        ->firstorFail();
+    {
+        $data = PublikasiModel::where('slug', $publikasi)
+            ->where('nama_tipe', strtolower('Artikel'))
+            ->with('images')  // Add this line to load all related images
+            ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+            ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
+            ->firstorFail();
 
-    // Menambah jumlah views
-    $data->increment('views');
+        // Menambah jumlah views tanpa menyentuh updated_at
+        // (urutan "terkini" di beranda memakai updated_at)
+        $data->timestamps = false;
+        $data->increment('views');
 
-    $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
+        $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
-    return view('frontend.publikasi.fe_artikel', compact(['data', 'tb']));
-}
-
+        return view('frontend.publikasi.fe_artikel', compact(['data', 'tb']));
+    }
 
     // LAYANAN
 
@@ -701,6 +356,7 @@ class HomeFeController extends Controller
     {
         // Get the latest layanan with its related additional images
         $layanan = LayananModel::with('additionalImages')->latest()->take(1)->get();
+
         return view('frontend.layanan.layanan', compact(['layanan']));
     }
 
@@ -711,7 +367,7 @@ class HomeFeController extends Controller
         $searchValue = strip_tags($request->input('cari_kegiatan'));
         if ($request->cari_kegiatan) {
             $search = $request->cari_kegiatan;
-            $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->latest()->paginate(9);
+            $kegiatan = KegiatanModel::where('judul', 'like', '%'.$search.'%')->latest()->paginate(9);
         } else {
             $kegiatan = KegiatanModel::latest()->paginate(9);
             // return redirect()->back()->with('message', 'Empty Search');
@@ -727,7 +383,7 @@ class HomeFeController extends Controller
 
         // dd($data);
 
-        return view('frontend.kegiatan.fe-detail', compact(['data',]));
+        return view('frontend.kegiatan.fe-detail', compact(['data']));
     }
 
     public function infopublik_index()
@@ -735,8 +391,9 @@ class HomeFeController extends Controller
 
         // $tentang = TentangModel::first()->get();
 
-        $info_publik = InfopublikHomeModel::orderBy("id", "DESC")->take(1)->first();
-        $infolist =  InformasiPublikModel::orderBy("id", "ASC")->take(3)->get();
+        $info_publik = InfopublikHomeModel::orderBy('id', 'DESC')->take(1)->first();
+        $infolist = InformasiPublikModel::orderBy('id', 'ASC')->take(3)->get();
+
         // dd($infolist);
         return view('frontend.infopublik.index', compact(['info_publik', 'infolist']));
     }
@@ -747,19 +404,19 @@ class HomeFeController extends Controller
         $jenis_peraturan = ref_jenis_peraturan::all();
         $searchValue = strip_tags($request->input('cari_peraturan'));
         $selectedKategori = $request->input('kategori'); // Mengambil nilai checkbox kategori yang dipilih
-        $selectedJenisPeraturan =  $request->input('jenis_peraturan'); // Mengambil nilai checkbox jenis_peraturan yang dipilih
+        $selectedJenisPeraturan = $request->input('jenis_peraturan'); // Mengambil nilai checkbox jenis_peraturan yang dipilih
 
         $query = PeraturanModel::with('kategori', 'data_jenis_peraturan', 'data_status_peraturan');
 
         if ($searchValue) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('nomor_peraturan', 'like', '%' . $searchValue . '%')
-                    ->orWhere('judul_peraturan', 'like', '%' . $searchValue . '%')
+                $q->where('nomor_peraturan', 'like', '%'.$searchValue.'%')
+                    ->orWhere('judul_peraturan', 'like', '%'.$searchValue.'%')
                     ->orWhereHas('kategori', function ($q) use ($searchValue) {
-                        $q->where('nama_kategori', 'like', '%' . $searchValue . '%');
+                        $q->where('nama_kategori', 'like', '%'.$searchValue.'%');
                     })
                     ->orWhereHas('data_jenis_peraturan', function ($q) use ($searchValue) {
-                        $q->where('nama_jenis_peraturan', 'like', '%' . $searchValue . '%');
+                        $q->where('nama_jenis_peraturan', 'like', '%'.$searchValue.'%');
                     });
             });
         }
@@ -788,6 +445,7 @@ class HomeFeController extends Controller
     {
 
         $data = PeraturanModel::where('slug', $peraturan)->firstorFail();
+
         return view('frontend.infopublik.peraturan-detail', compact(['data']));
     }
 
@@ -802,7 +460,7 @@ class HomeFeController extends Controller
         try {
             // Validate input
             $validated = $request->validate([
-                'cari_aplikasi' => 'nullable|string|max:100'
+                'cari_aplikasi' => 'nullable|string|max:100',
             ]);
 
             // Sanitize search value
@@ -810,7 +468,7 @@ class HomeFeController extends Controller
                 strip_tags($validated['cari_aplikasi']) : null;
 
             // Cache key
-            $cacheKey = 'portal_apps_' . md5($searchValue . $request->get('page', 1));
+            $cacheKey = 'portal_apps_'.md5($searchValue.$request->get('page', 1));
 
             // Get data with caching
             $data = Cache::remember($cacheKey, now()->addMinutes(1), function () use ($searchValue) {
@@ -836,19 +494,19 @@ class HomeFeController extends Controller
                 return response()->json([
                     'html' => view('frontend.infopublik.partials.applications-grid', compact('data'))->render(),
                     'pagination' => $data->links()->toHtml(),
-                    'status' => 'success'
+                    'status' => 'success',
                 ]);
             }
 
             return view('frontend.infopublik.aplikasi-index', compact('data'));
 
         } catch (\Exception $e) {
-            Log::error('Error in infopublik_aplikasi_index: ' . $e->getMessage());
+            Log::error('Error in infopublik_aplikasi_index: '.$e->getMessage());
 
             if ($request->ajax()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Terjadi kesalahan saat memuat data'
+                    'message' => 'Terjadi kesalahan saat memuat data',
                 ], 500);
             }
 
@@ -861,12 +519,10 @@ class HomeFeController extends Controller
 
         $tentang = TentangModel::latest()->take(1)->get();
         $faq = FAQModel::all();
+
         // dd($faq);
         return view('frontend.faq.fe-index', compact(['tentang', 'faq']));
     }
-
-
-
 
     // public function kegiatan_search(Request $request)
     // {

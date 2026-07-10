@@ -4,26 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\CaptchaService;
+use App\Services\PasswordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    private const PEPPER = 'mwdun-2937h-_(&)HG)*GOIUNJ)HG)*(&F*^D&^S%#$E^RGYOIBJNPOKMO}:}?}"?:>{K)OJ()*YT^&DRFYGUIHT&^R%E%EDYF2025';
-    private const HASH_ALGO = 'sha256';
+    private const MAX_LOGIN_ATTEMPTS = 5;
+
+    private const LOCKOUT_SECONDS = 60;
 
     protected $captchaService;
 
-    public function __construct(CaptchaService $captchaService)
+    protected $passwordService;
+
+    public function __construct(CaptchaService $captchaService, PasswordService $passwordService)
     {
         $this->captchaService = $captchaService;
+        $this->passwordService = $passwordService;
     }
 
     public function showLoginForm()
     {
-        return view('auth.romadan_login');
+        return view('auth.romadan_login', [
+            'captcha' => $this->captchaService->createCaptcha(),
+        ]);
     }
 
     public function login(Request $request)
@@ -32,11 +39,23 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
             'captcha' => 'required',
-            'captcha_token' => 'required'
+            'captcha_token' => 'required',
         ]);
 
-          // Validasi CAPTCHA dulu
-        if (!$this->captchaService->validateCaptcha($request->captcha, $request->captcha_token)) {
+        $throttleKey = $this->throttleKey($request);
+
+        if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()->withErrors([
+                'email' => "Terlalu banyak percobaan login. Silakan coba lagi dalam {$seconds} detik.",
+            ])->withInput($request->except('password'));
+        }
+
+        // Validasi CAPTCHA dulu
+        if (! $this->captchaService->validateCaptcha($request->captcha, $request->captcha_token)) {
+            RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
+
             return back()->withErrors([
                 'captcha' => 'CAPTCHA validation failed. Please try again.',
             ])->withInput($request->except('password'));
@@ -44,48 +63,49 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->withInput($request->except('password'));
-        }
+        if ($user && $this->passwordService->verify($request->password, $user->salt, $user->password)) {
+            RateLimiter::clear($throttleKey);
 
-        $peppered = hash_hmac(self::HASH_ALGO, $request->password . $user->salt, self::PEPPER);
-
-        if (Hash::check($peppered, $user->password)) {
             Auth::login($user);
+
+            // Cegah session fixation: buat session ID baru setelah autentikasi
+            $request->session()->regenerate();
+
             return redirect()->route('home');
         }
+
+        RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->withInput($request->except('password'));
     }
 
+    public function logout(Request $request)
+    {
+        Auth::logout();
 
+        // Invalidate dan regenerate session user yang login
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-public function logout(Request $request)
-{
-    Auth::logout();
+        // Hapus cookie dengan parameter yang sesuai, info sesuai urutan
+        $cookie = cookie(
+            'laravel_session',    // nama
+            '',                   // value (kosong untuk menghapus)
+            -1,                   // duration (negatif untuk expire)
+            '/',                  // path
+            null,                 // domain
+            true,                 // secure
+            true                  // httpOnly
+        );
 
-    // Invalidate dan regenerate session user yang login
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+        return redirect('/')
+            ->withCookie($cookie);
+    }
 
-    // Hapus cookie dengan parameter yang sesuai, info sesuai urutan
-    $cookie = cookie(
-        'laravel_session',    // nama
-        '',                   // value (kosong untuk menghapus)
-        -1,                   // duration (negatif untuk expire)
-        '/',                  // path
-        null,                 // domain
-        true,                 // secure
-        true                  // httpOnly
-    );
-
-    return redirect('/')
-        ->withCookie($cookie);
-}
-
-
+    private function throttleKey(Request $request): string
+    {
+        return Str::lower((string) $request->input('email')).'|'.$request->ip();
+    }
 }

@@ -240,13 +240,13 @@
                         <!-- Visi section -->
                         <h4 class="section-heading">Visi</h4>
                         <div class="txt-visi-misi mb-4">
-                            {!! $item->visi !!}
+                            {!! clean($item->visi) !!}
                         </div>
 
                         <!-- Misi section -->
                         <h4 class="section-heading">Misi</h4>
                         <div class="txt-visi-misi">
-                            {!! $item->misi !!}
+                            {!! clean($item->misi) !!}
                         </div>
                     </div>
                 </div>

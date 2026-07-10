@@ -21,37 +21,18 @@ class FAQController extends Controller
             return datatables()->of($query)
 
                 ->addColumn('opsi', function ($query) {
-                    // $preview = route('faq.show', encrypt($query->id));
-                    $edit = route('faq.edit', encrypt($query->id));
-                    $hapus = route('faq.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'preview' => route('faq.show', encrypt($query->id)),
+                        'edit' => route('faq.edit', encrypt($query->id)),
+                        'destroy' => route('faq.destroy', encrypt($query->id)),
+                    ])->render();
                 })
-
 
                 ->rawColumns(['opsi'])
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.faq.index');
     }
 
@@ -61,6 +42,7 @@ class FAQController extends Controller
     public function create()
     {
         $kategori = ref_kategori::get();
+
         return view('backend.faq.create', compact('kategori'));
     }
 
@@ -78,7 +60,6 @@ class FAQController extends Controller
                 'kategori' => 'required',
             ]);
 
-
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'faq_judul' => $request->faq_judul,
@@ -88,13 +69,14 @@ class FAQController extends Controller
 
             ];
 
-
             FAQModel::create($data);
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Data FAQ Berhasil Disimpan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Data FAQ Gagal Disimpan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Data FAQ Gagal Disimpan!']);
         }
     }
 
@@ -113,6 +95,7 @@ class FAQController extends Controller
     {
         $kategori = ref_kategori::all();
         $faq = FAQModel::with(['kategori'])->findOrFail(decrypt($id));
+
         return view('backend.faq.edit', compact('kategori', 'faq'));
     }
 
@@ -139,10 +122,13 @@ class FAQController extends Controller
             ];
 
             FAQModel::findOrFail(decrypt($id))->update($data);
+
             // $berita = Berita::find($id)->update($data);
-            return redirect()->route('faq.index')->with('success', "Data FAQ berhasil diupdate!");
+            return redirect()->route('faq.index')->with('success', 'Data FAQ berhasil diupdate!');
         } catch (Exception $e) {
-            return redirect()->route('faq.index')->with(['failed' => 'Data FAQ Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('faq.index')->with(['failed' => 'Data FAQ Gagal Di Update!']);
         }
     }
 
@@ -153,9 +139,12 @@ class FAQController extends Controller
     {
         try {
             FAQModel::findOrFail(decrypt($id))->delete();
-            return redirect()->route('faq.index')->with('success', "FAQ berhasil dihapus!");
+
+            return redirect()->route('faq.index')->with('success', 'FAQ berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('faq.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('faq.index')->with(['failed' => 'Data Yang Dihapus Tidak Ada !']);
         }
     }
 }

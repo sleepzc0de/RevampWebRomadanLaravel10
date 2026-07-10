@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\MenuProfile;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\MenuProfile\VisiMisiModel;
 use App\Models\backend\MenuProfile\VisiMisiImageModel;
+use App\Models\backend\MenuProfile\VisiMisiModel;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
 
 class VisiMisiController extends Controller
 {
@@ -23,40 +21,24 @@ class VisiMisiController extends Controller
         if (request()->ajax()) {
             return datatables()->of($query)
                 ->addColumn('image_visimisi', function ($query) {
-                    $url = asset('storage/romadan_gambar_web/' . $query->image);
-                    return '<a href="' . $url . '"><img src="' . $url . '" border="0" width="100" class="img-rounded" align="center""/></a>';
+                    $url = asset('storage/romadan_gambar_web/'.$query->image);
+
+                    return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
                 })
                 ->addColumn('has_video', function ($query) {
-                    return !empty($query->video_url) ? 'Ya' : 'Tidak';
+                    return ! empty($query->video_url) ? 'Ya' : 'Tidak';
                 })
                 ->addColumn('image_count', function ($query) {
                     // Count images including the main image
                     $additionalCount = VisiMisiImageModel::where('visimisi_id', $query->id)->count();
+
                     return 1 + $additionalCount;
                 })
                 ->addColumn('opsi', function ($query) {
-                    $edit = route('visi-misi.edit', encrypt($query->id));
-                    $hapus = route('visi-misi.destroy', encrypt($query->id));
-                    return '<div class="d-inline-flex">
-											<div class="dropdown">
-												<a href="#" class="text-body" data-bs-toggle="dropdown">
-													<i class="ph-list"></i>
-												</a>
-
-												<div class="dropdown-menu dropdown-menu-end">
-													<a href="' . $edit . '" class="dropdown-item">
-														<i class="ph-note-pencil me-2"></i>
-														Edit
-													</a>
-													<form action="' . $hapus . '" method="POST">
-													' . @csrf_field() . '
-													' . @method_field('DELETE') . '
-													<button type="submit" name="submit" class="dropdown-item"> <i class="ph-trash me-2"></i> Hapus</button>
-													</form>
-												</div>
-											</div>
-										</div>
-                ';
+                    return view('components.datatable-actions', [
+                        'edit' => route('visi-misi.edit', encrypt($query->id)),
+                        'destroy' => route('visi-misi.destroy', encrypt($query->id)),
+                    ])->render();
                 })
                 ->editColumn('created_at', function ($query) {
                     return date('d-M-Y H:i:s', strtotime($query->created_at));
@@ -65,6 +47,7 @@ class VisiMisiController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
+
         return view('backend.visimisi.index', compact('data'));
     }
 
@@ -99,13 +82,13 @@ class VisiMisiController extends Controller
                     'max:3000',
                     'unique:visimisi,misi',
                 ],
-                'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:10240',
-                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:10240',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:10240',
+                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
                 'video_url' => 'nullable|url|max:500',
             ]);
 
             // Validate video URL format if provided
-            if (!empty($validated['video_url'])) {
+            if (! empty($validated['video_url'])) {
                 $this->validateVideoUrl($validated['video_url']);
             }
 
@@ -130,10 +113,12 @@ class VisiMisiController extends Controller
                 $this->processAdditionalImages($request->file('additional_images'), $visimisi->id);
             }
 
-            //redirect to index
+            // redirect to index
             return redirect()->back()->with(['success' => 'Visi dan Misi Berhasil Ditambahkan!']);
         } catch (Exception $e) {
-            return redirect()->back()->with(['failed' => 'Visi dan Misi Gagal Ditambahkan! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->back()->with(['failed' => 'Visi dan Misi Gagal Ditambahkan!']);
         }
     }
 
@@ -143,6 +128,7 @@ class VisiMisiController extends Controller
     public function edit(string $id)
     {
         $visimisi = VisiMisiModel::with('images')->findOrFail(decrypt($id));
+
         return view('backend.visimisi.edit', compact('visimisi'));
     }
 
@@ -168,15 +154,15 @@ class VisiMisiController extends Controller
                     'required',
                     'max:3000',
                 ],
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:10240',
-                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:10240',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
+                'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
                 'video_url' => 'nullable|url|max:500',
                 'sort_order.*' => 'nullable|integer',
                 'delete_image.*' => 'nullable|boolean',
             ]);
 
             // Validate video URL format if provided
-            if (!empty($validated['video_url'])) {
+            if (! empty($validated['video_url'])) {
                 $this->validateVideoUrl($validated['video_url']);
             }
 
@@ -194,7 +180,7 @@ class VisiMisiController extends Controller
                 $image->storeAs('public/romadan_gambar_web', $image->hashName());
 
                 $data_gambar = VisiMisiModel::findOrFail($decryptedId);
-                File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+                File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
                 $data['image'] = $image->hashName();
             }
@@ -208,7 +194,7 @@ class VisiMisiController extends Controller
                     if ($shouldDelete) {
                         $imageToDelete = VisiMisiImageModel::find($imageId);
                         if ($imageToDelete) {
-                            File::delete(public_path('storage/romadan_gambar_web/') . $imageToDelete->image);
+                            File::delete(public_path('storage/romadan_gambar_web/').$imageToDelete->image);
                             $imageToDelete->delete();
                         }
                     }
@@ -227,9 +213,11 @@ class VisiMisiController extends Controller
                 $this->processAdditionalImages($request->file('additional_images'), $decryptedId);
             }
 
-            return redirect()->route('visi-misi.index')->with('success', "Visi Misi berhasil diupdate!");
+            return redirect()->route('visi-misi.index')->with('success', 'Visi Misi berhasil diupdate!');
         } catch (Exception $e) {
-            return redirect()->route('visi-misi.index')->with(['failed' => 'Visi Misi Gagal Di Update! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('visi-misi.index')->with(['failed' => 'Visi Misi Gagal Di Update!']);
         }
     }
 
@@ -245,23 +233,25 @@ class VisiMisiController extends Controller
             $data_gambar = VisiMisiModel::findOrFail($decryptedId);
 
             // Delete main image
-            File::delete(public_path('storage/romadan_gambar_web/') . $data_gambar->image);
+            File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
             // Get all additional images
             $additionalImages = VisiMisiImageModel::where('visimisi_id', $decryptedId)->get();
 
             // Delete all additional images
             foreach ($additionalImages as $image) {
-                File::delete(public_path('storage/romadan_gambar_web/') . $image->image);
+                File::delete(public_path('storage/romadan_gambar_web/').$image->image);
                 $image->delete();
             }
 
             // Delete the main record
             $data_gambar->delete();
 
-            return redirect()->route('visi-misi.index')->with('success', "Visi Misi berhasil dihapus!");
+            return redirect()->route('visi-misi.index')->with('success', 'Visi Misi berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('visi-misi.index')->with(['failed' => 'Visi Misi Yang Dihapus Tidak Ada ! error :' . $e->getMessage()]);
+            report($e);
+
+            return redirect()->route('visi-misi.index')->with(['failed' => 'Visi Misi Yang Dihapus Tidak Ada !']);
         }
     }
 
@@ -279,7 +269,7 @@ class VisiMisiController extends Controller
             VisiMisiImageModel::create([
                 'visimisi_id' => $visimisiId,
                 'image' => $image->hashName(),
-                'sort_order' => $sortOrder
+                'sort_order' => $sortOrder,
             ]);
         }
     }
@@ -293,7 +283,7 @@ class VisiMisiController extends Controller
         $youtubePattern = '/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/';
         $vimeoPattern = '/^(https?:\/\/)?(www\.)?(vimeo\.com)\/.+$/';
 
-        if (!preg_match($youtubePattern, $url) && !preg_match($vimeoPattern, $url)) {
+        if (! preg_match($youtubePattern, $url) && ! preg_match($vimeoPattern, $url)) {
             throw new Exception('URL video harus dari YouTube atau Vimeo');
         }
 
