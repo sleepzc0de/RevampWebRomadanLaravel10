@@ -225,14 +225,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h5 class="mb-0">Tren Publikasi (6 bulan terakhir)</h5>
                 <span class="badge bg-primary bg-opacity-10 text-primary">Bulanan</span>
             </div>
-            <div class="card-body"><canvas id="rmTrend" height="110"></canvas></div>
+            <div class="card-body">
+                {{-- wrapper tinggi-tetap wajib untuk Chart.js responsive + maintainAspectRatio:false --}}
+                <div style="position:relative; height:300px;"><canvas id="rmTrend"></canvas></div>
+            </div>
         </div>
     </div>
     <div class="col-lg-4">
         <div class="card h-100">
             <div class="card-header"><h5 class="mb-0">Komposisi Tipe</h5></div>
-            <div class="card-body d-flex align-items-center justify-content-center">
-                <canvas id="rmTipe" height="220"></canvas>
+            <div class="card-body">
+                <div style="position:relative; height:260px;"><canvas id="rmTipe"></canvas></div>
             </div>
         </div>
     </div>
