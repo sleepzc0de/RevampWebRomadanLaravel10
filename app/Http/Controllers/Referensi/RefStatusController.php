@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Referensi;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\ref_status;
+use App\Models\backend\RefStatus;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class RefStatusController extends Controller
      */
     public function index()
     {
-        $query = ref_status::select('*');
+        $query = RefStatus::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -66,7 +66,7 @@ class RefStatusController extends Controller
 
             ];
 
-            ref_status::create($data);
+            RefStatus::create($data);
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Status Berhasil Ditambahkan!']);
@@ -90,7 +90,7 @@ class RefStatusController extends Controller
      */
     public function edit(string $id)
     {
-        $status = ref_status::findOrFail(decrypt($id));
+        $status = RefStatus::findOrFail(decrypt($id));
 
         return view('backend.referensi.status.edit', compact(['status']));
     }
@@ -111,7 +111,7 @@ class RefStatusController extends Controller
                 'nama_status' => $request->nama_status,
 
             ];
-            ref_status::findOrFail(decrypt($id))->update($data);
+            RefStatus::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('status.index')->with('success', "Status $request->nama_status berhasil diupdate!");
         } catch (Exception $e) {
@@ -128,7 +128,7 @@ class RefStatusController extends Controller
     public function destroy(string $id)
     {
         try {
-            ref_status::findOrFail(decrypt($id))->delete();
+            RefStatus::findOrFail(decrypt($id))->delete();
 
             return redirect()->route('status.index')->with('success', 'Status berhasil dihapus!');
         } catch (Exception $e) {

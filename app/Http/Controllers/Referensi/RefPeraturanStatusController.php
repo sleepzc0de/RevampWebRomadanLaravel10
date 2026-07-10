@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Referensi;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\MenuReferensi\ref_peraturan_status;
+use App\Models\backend\MenuReferensi\RefPeraturanStatus;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class RefPeraturanStatusController extends Controller
 {
     public function index()
     {
-        $query = ref_peraturan_status::select('*');
+        $query = RefPeraturanStatus::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -57,7 +57,7 @@ class RefPeraturanStatusController extends Controller
 
             ];
 
-            ref_peraturan_status::create($data);
+            RefPeraturanStatus::create($data);
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Status Peraturan Berhasil Ditambahkan!']);
@@ -70,7 +70,7 @@ class RefPeraturanStatusController extends Controller
 
     public function edit(string $id)
     {
-        $peraturan = ref_peraturan_status::findOrFail(decrypt($id));
+        $peraturan = RefPeraturanStatus::findOrFail(decrypt($id));
 
         return view('backend.referensi.status_peraturan.edit', compact(['peraturan']));
     }
@@ -88,7 +88,7 @@ class RefPeraturanStatusController extends Controller
                 'nama_peraturan_status' => $request->nama_peraturan_status,
 
             ];
-            ref_peraturan_status::findOrFail(decrypt($id))->update($data);
+            RefPeraturanStatus::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('status-peraturan.index')->with('success', 'Status Peraturan berhasil diupdate!');
         } catch (Exception $e) {
@@ -102,7 +102,7 @@ class RefPeraturanStatusController extends Controller
     public function destroy(string $id)
     {
         try {
-            ref_peraturan_status::findOrFail(decrypt($id))->delete();
+            RefPeraturanStatus::findOrFail(decrypt($id))->delete();
 
             return redirect()->route('status-peraturan.index')->with('success', 'Status Peraturan berhasil dihapus!');
         } catch (Exception $e) {

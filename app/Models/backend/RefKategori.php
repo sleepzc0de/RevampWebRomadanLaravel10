@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Models\backend\MenuReferensi;
+namespace App\Models\backend;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ref_peraturan_status extends Model
+class RefKategori extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'id_ref_peraturan_status';
-    protected $table = 'ref_peraturan_status';
+
+    protected $primaryKey = 'id_kategori';
+
+    protected $table = 'ref_kategori';
+
     protected $guarded = [];
-    protected $fillable = ['nama_peraturan_status',];
+
+    protected $fillable = ['nama_kategori'];
 
     protected $hidden = [
         'created_at',

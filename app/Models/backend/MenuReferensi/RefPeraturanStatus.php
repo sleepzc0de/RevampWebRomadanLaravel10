@@ -5,13 +5,17 @@ namespace App\Models\backend\MenuReferensi;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ref_jenis_peraturan extends Model
+class RefPeraturanStatus extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'id_jenis_peraturan';
-    protected $table = 'ref_jenis_peraturan';
+
+    protected $primaryKey = 'id_ref_peraturan_status';
+
+    protected $table = 'ref_peraturan_status';
+
     protected $guarded = [];
-    protected $fillable = ['nama_jenis_peraturan'];
+
+    protected $fillable = ['nama_peraturan_status'];
 
     protected $hidden = [
         'created_at',

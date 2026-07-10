@@ -4,7 +4,7 @@ namespace App\Http\Controllers\MenuFAQ;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuFAQ\FAQModel;
-use App\Models\backend\ref_kategori;
+use App\Models\backend\RefKategori;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +41,7 @@ class FAQController extends Controller
      */
     public function create()
     {
-        $kategori = ref_kategori::get();
+        $kategori = RefKategori::get();
 
         return view('backend.faq.create', compact('kategori'));
     }
@@ -93,7 +93,7 @@ class FAQController extends Controller
      */
     public function edit(string $id)
     {
-        $kategori = ref_kategori::all();
+        $kategori = RefKategori::all();
         $faq = FAQModel::with(['kategori'])->findOrFail(decrypt($id));
 
         return view('backend.faq.edit', compact('kategori', 'faq'));

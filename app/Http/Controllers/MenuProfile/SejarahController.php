@@ -93,16 +93,16 @@ class SejarahController extends Controller
                     'required',
                     'min:10',
                     'max:10000', // Increased from 1000 to handle more content with images
-               ],
+                ],
                 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // Diubah dari 2000 menjadi 20480
                 'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480', // Diubah dari 2000 menjadi 20480
                 'video_urls' => 'nullable|array',
                 'video_urls.*' => 'nullable|url',
             ], [
-               'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
-               'image.max' => 'Ukuran gambar utama tidak boleh lebih dari 20MB.',
-               'images.*.max' => 'Ukuran gambar tambahan tidak boleh lebih dari 20MB.',
-           ]);
+                'judul.regex' => 'Judul tidak boleh mengandung tag HTML',
+                'image.max' => 'Ukuran gambar utama tidak boleh lebih dari 20MB.',
+                'images.*.max' => 'Ukuran gambar tambahan tidak boleh lebih dari 20MB.',
+            ]);
 
             $validated['judul'] = strip_tags($validated['judul']);
             // JANGAN strip_tags pada konten sejarah untuk mempertahankan formatting HTML
@@ -184,7 +184,7 @@ class SejarahController extends Controller
      */
     public function edit(string $id)
     {
-        // $kategori = ref_kategori::findOrFail(decrypt($id));
+        // $kategori = RefKategori::findOrFail(decrypt($id));
         $sejarah = SejarahModel::findOrFail(decrypt($id));
 
         return view('backend.sejarah.edit', compact('sejarah'));

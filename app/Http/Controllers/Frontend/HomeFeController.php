@@ -16,8 +16,8 @@ use App\Models\backend\MenuProfile\StrukturOrganisasiModel;
 use App\Models\backend\MenuProfile\TentangModel;
 use App\Models\backend\MenuProfile\VisiMisiModel;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
-use App\Models\backend\MenuReferensi\ref_jenis_peraturan;
-use App\Models\backend\ref_kategori;
+use App\Models\backend\MenuReferensi\RefJenisPeraturan;
+use App\Models\backend\RefKategori;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -200,7 +200,7 @@ class HomeFeController extends Controller
                 $tipe => $items,
                 'searchValue' => $searchValue,
                 'isSearch' => $isSearch,
-                'kategori' => ref_kategori::all(),
+                'kategori' => RefKategori::all(),
             ]);
         } catch (\Exception $e) {
             Log::error('Category search error', [
@@ -266,7 +266,7 @@ class HomeFeController extends Controller
         RateLimiter::hit('search:'.$request->ip());
 
         $items = $query->latest()->paginate(9);
-        $kategori = ref_kategori::all();
+        $kategori = RefKategori::all();
 
         if ($request->ajax()) {
             return response()->json([
@@ -400,8 +400,8 @@ class HomeFeController extends Controller
 
     public function infopublik_peraturan_index(Request $request)
     {
-        $kategori = ref_kategori::all();
-        $jenis_peraturan = ref_jenis_peraturan::all();
+        $kategori = RefKategori::all();
+        $jenis_peraturan = RefJenisPeraturan::all();
         $searchValue = strip_tags($request->input('cari_peraturan'));
         $selectedKategori = $request->input('kategori'); // Mengambil nilai checkbox kategori yang dipilih
         $selectedJenisPeraturan = $request->input('jenis_peraturan'); // Mengambil nilai checkbox jenis_peraturan yang dipilih

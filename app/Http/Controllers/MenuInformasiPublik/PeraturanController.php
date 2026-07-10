@@ -4,9 +4,9 @@ namespace App\Http\Controllers\MenuInformasiPublik;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuInformasiPublik\PeraturanModel;
-use App\Models\backend\MenuReferensi\ref_jenis_peraturan;
-use App\Models\backend\MenuReferensi\ref_peraturan_status;
-use App\Models\backend\ref_kategori;
+use App\Models\backend\MenuReferensi\RefJenisPeraturan;
+use App\Models\backend\MenuReferensi\RefPeraturanStatus;
+use App\Models\backend\RefKategori;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -62,9 +62,9 @@ class PeraturanController extends Controller
      */
     public function create()
     {
-        $kategori = ref_kategori::all();
-        $data_jenis_peraturan = ref_jenis_peraturan::all();
-        $data_status_peraturan = ref_peraturan_status::all();
+        $kategori = RefKategori::all();
+        $data_jenis_peraturan = RefJenisPeraturan::all();
+        $data_status_peraturan = RefPeraturanStatus::all();
         // dd($status_peraturan);
 
         return view('backend.infopub.peraturan.create', compact(['kategori', 'data_jenis_peraturan', 'data_status_peraturan']));
@@ -158,9 +158,9 @@ class PeraturanController extends Controller
      */
     public function edit(string $id)
     {
-        $kategori = ref_kategori::all();
-        $jenis_peraturan = ref_jenis_peraturan::all();
-        $status_peraturan = ref_peraturan_status::all();
+        $kategori = RefKategori::all();
+        $jenis_peraturan = RefJenisPeraturan::all();
+        $status_peraturan = RefPeraturanStatus::all();
         $peraturan = PeraturanModel::with(['kategori', 'data_jenis_peraturan', 'data_status_peraturan'])->findOrFail(decrypt($id));
 
         return view('backend.infopub.peraturan.edit', compact(['kategori', 'jenis_peraturan', 'status_peraturan', 'peraturan']));

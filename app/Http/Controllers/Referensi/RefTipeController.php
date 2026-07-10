@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Referensi;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\ref_tipe;
+use App\Models\backend\RefTipe;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class RefTipeController extends Controller
      */
     public function index()
     {
-        $query = ref_tipe::select('*');
+        $query = RefTipe::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -66,7 +66,7 @@ class RefTipeController extends Controller
 
             ];
 
-            ref_tipe::create($data);
+            RefTipe::create($data);
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Tipe Berhasil Ditambahkan!']);
@@ -90,7 +90,7 @@ class RefTipeController extends Controller
      */
     public function edit(string $id)
     {
-        $tipe = ref_tipe::findOrFail(decrypt($id));
+        $tipe = RefTipe::findOrFail(decrypt($id));
 
         return view('backend.referensi.tipe.edit', compact(['tipe']));
     }
@@ -111,7 +111,7 @@ class RefTipeController extends Controller
                 'nama_tipe' => $request->nama_tipe,
 
             ];
-            ref_tipe::findOrFail(decrypt($id))->update($data);
+            RefTipe::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('tipe.index')->with('success', "Tipe $request->nama_tipe berhasil diupdate!");
         } catch (Exception $e) {
@@ -128,7 +128,7 @@ class RefTipeController extends Controller
     public function destroy(string $id)
     {
         try {
-            ref_tipe::findOrFail(decrypt($id))->delete();
+            RefTipe::findOrFail(decrypt($id))->delete();
 
             return redirect()->route('tipe.index')->with('success', 'Tipe berhasil dihapus!');
         } catch (Exception $e) {

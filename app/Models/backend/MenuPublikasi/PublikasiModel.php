@@ -2,9 +2,9 @@
 
 namespace App\Models\backend\MenuPublikasi;
 
-use App\Models\backend\ref_kategori;
-use App\Models\backend\ref_status;
-use App\Models\backend\ref_tipe;
+use App\Models\backend\RefKategori;
+use App\Models\backend\RefStatus;
+use App\Models\backend\RefTipe;
 use Cohensive\OEmbed\Facades\OEmbed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,17 +40,17 @@ class PublikasiModel extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(ref_kategori::class, 'kategori', 'id_kategori');
+        return $this->belongsTo(RefKategori::class, 'kategori', 'id_kategori');
     }
 
     public function status()
     {
-        return $this->belongsTo(ref_status::class, 'status', 'nama_status');
+        return $this->belongsTo(RefStatus::class, 'status', 'nama_status');
     }
 
     public function tipe()
     {
-        return $this->belongsTo(ref_tipe::class, 'tipe', 'id_tipe');
+        return $this->belongsTo(RefTipe::class, 'tipe', 'id_tipe');
     }
 
     /**

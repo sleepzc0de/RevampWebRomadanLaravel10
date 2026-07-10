@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Referensi;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\ref_kategori;
+use App\Models\backend\RefKategori;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class RefKategoriController extends Controller
      */
     public function index()
     {
-        $query = ref_kategori::select('*');
+        $query = RefKategori::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -66,7 +66,7 @@ class RefKategoriController extends Controller
 
             ];
 
-            ref_kategori::create($data);
+            RefKategori::create($data);
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Kategori Berhasil Ditambahkan!']);
@@ -90,7 +90,7 @@ class RefKategoriController extends Controller
      */
     public function edit(string $id)
     {
-        $kategori = ref_kategori::findOrFail(decrypt($id));
+        $kategori = RefKategori::findOrFail(decrypt($id));
 
         return view('backend.referensi.kategori.edit', compact(['kategori']));
     }
@@ -111,7 +111,7 @@ class RefKategoriController extends Controller
                 'nama_kategori' => $request->nama_kategori,
 
             ];
-            ref_kategori::findOrFail(decrypt($id))->update($data);
+            RefKategori::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('kategori.index')->with('success', "Kategori $request->nama_kategori berhasil diupdate!");
         } catch (Exception $e) {
@@ -128,7 +128,7 @@ class RefKategoriController extends Controller
     public function destroy(string $id)
     {
         try {
-            ref_kategori::findOrFail(decrypt($id))->delete();
+            RefKategori::findOrFail(decrypt($id))->delete();
 
             return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus!');
         } catch (Exception $e) {

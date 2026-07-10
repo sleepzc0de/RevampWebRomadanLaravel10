@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Medsos;
 
 use App\Http\Controllers\Controller;
-use App\Models\medsos\medsos;
+use App\Models\medsos\Medsos;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class MedsosController extends Controller
      */
     public function index()
     {
-        $query = medsos::select('*');
+        $query = Medsos::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -38,7 +38,7 @@ class MedsosController extends Controller
                 ->make(true);
         }
 
-        $data = medsos::all();
+        $data = Medsos::all();
 
         return view('backend.medsos.index', compact(['data']));
     }
@@ -72,7 +72,7 @@ class MedsosController extends Controller
 
             ];
 
-            medsos::create($data);
+            Medsos::create($data);
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Medsos Berhasil Ditambahkan!']);
@@ -96,7 +96,7 @@ class MedsosController extends Controller
      */
     public function edit(string $id)
     {
-        $medsos2 = medsos::findOrFail(decrypt($id));
+        $medsos2 = Medsos::findOrFail(decrypt($id));
 
         return view('backend.medsos.edit', compact(['medsos2']));
     }
@@ -121,7 +121,7 @@ class MedsosController extends Controller
                 'logo_medsos' => $request->logo_medsos,
 
             ];
-            medsos::findOrFail(decrypt($id))->update($data);
+            Medsos::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('medsos.index')->with('success', "medsos $request->nama_medsos berhasil diupdate!");
         } catch (Exception $e) {
@@ -138,7 +138,7 @@ class MedsosController extends Controller
     public function destroy(string $id)
     {
         try {
-            medsos::findOrFail(decrypt($id))->delete();
+            Medsos::findOrFail(decrypt($id))->delete();
 
             return redirect()->route('medsos.index')->with('success', 'medsos berhasil dihapus!');
         } catch (Exception $e) {

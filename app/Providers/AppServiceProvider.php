@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\medsos\medsos;
+use App\Models\medsos\Medsos;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('medsos', Cache::remember(
                 'footer_medsos',
                 now()->addHours(6),
-                fn () => medsos::orderBy('id', 'ASC')->take(5)->get()
+                fn () => Medsos::orderBy('id', 'ASC')->take(5)->get()
             ));
         });
 

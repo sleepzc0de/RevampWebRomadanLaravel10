@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Referensi;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\MenuReferensi\ref_jenis_peraturan;
+use App\Models\backend\MenuReferensi\RefJenisPeraturan;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class RefJenisPeraturanController extends Controller
 {
     public function index()
     {
-        $query = ref_jenis_peraturan::select('*');
+        $query = RefJenisPeraturan::select('*');
         if (request()->ajax()) {
             return datatables()->of($query)
 
@@ -57,7 +57,7 @@ class RefJenisPeraturanController extends Controller
 
             ];
 
-            ref_jenis_peraturan::create($data);
+            RefJenisPeraturan::create($data);
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Jenis Peraturan Berhasil Ditambahkan!']);
@@ -70,7 +70,7 @@ class RefJenisPeraturanController extends Controller
 
     public function edit(string $id)
     {
-        $peraturan = ref_jenis_peraturan::findOrFail(decrypt($id));
+        $peraturan = RefJenisPeraturan::findOrFail(decrypt($id));
 
         return view('backend.referensi.jenis_peraturan.edit', compact(['peraturan']));
     }
@@ -88,7 +88,7 @@ class RefJenisPeraturanController extends Controller
                 'nama_jenis_peraturan' => $request->nama_jenis_peraturan,
 
             ];
-            ref_jenis_peraturan::findOrFail(decrypt($id))->update($data);
+            RefJenisPeraturan::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('jenis-peraturan.index')->with('success', 'Jenis Peraturan berhasil diupdate!');
         } catch (Exception $e) {
@@ -102,7 +102,7 @@ class RefJenisPeraturanController extends Controller
     public function destroy(string $id)
     {
         try {
-            ref_jenis_peraturan::findOrFail(decrypt($id))->delete();
+            RefJenisPeraturan::findOrFail(decrypt($id))->delete();
 
             return redirect()->route('jenis-peraturan.index')->with('success', 'Jenis Peraturan berhasil dihapus!');
         } catch (Exception $e) {

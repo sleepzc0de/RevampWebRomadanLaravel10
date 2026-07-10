@@ -4,9 +4,9 @@ namespace App\Http\Controllers\MenuPublikasi;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
-use App\Models\backend\ref_kategori;
-use App\Models\backend\ref_status;
-use App\Models\backend\ref_tipe;
+use App\Models\backend\RefKategori;
+use App\Models\backend\RefStatus;
+use App\Models\backend\RefTipe;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -81,8 +81,8 @@ class PublikasiController extends Controller
     public function create()
     {
         // $kategori = ModelsRef_kategori::get();
-        $kategori = ref_kategori::get();
-        $tipe = ref_tipe::get();
+        $kategori = RefKategori::get();
+        $tipe = RefTipe::get();
 
         return view('backend.publikasi.create', compact(['kategori', 'tipe']));
     }
@@ -238,9 +238,9 @@ class PublikasiController extends Controller
      */
     public function edit($id)
     {
-        $kategori = ref_kategori::all();
-        $status = ref_status::all();
-        $tipe = ref_tipe::all();
+        $kategori = RefKategori::all();
+        $status = RefStatus::all();
+        $tipe = RefTipe::all();
         $publikasi = PublikasiModel::with(['kategori', 'status', 'tipe'])->findOrFail(decrypt($id));
 
         // dd($publikasi['created_at']);
