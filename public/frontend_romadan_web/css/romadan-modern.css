@@ -1,0 +1,325 @@
+/* =====================================================================
+   ROMADAN — Modern Design Layer
+   Dimuat PALING AKHIR agar menimpa template lama tanpa mengubah markup.
+   Palet mengikuti identitas Kementerian Keuangan: biru + navy + emas.
+   Tujuan: tampilan lebih rapi, modern, dan responsif — tetap formal
+   (bukan gaya generik). Semua bersifat aditif & mudah di-rollback.
+   ===================================================================== */
+
+:root {
+    --rm-brand: #0f5fae;
+    --rm-brand-600: #0b4f95;
+    --rm-brand-700: #084183;
+    --rm-navy: #003060;
+    --rm-gold: #f5b800;
+    --rm-gold-soft: #ffc95f;
+    --rm-ink: #16202e;
+    --rm-muted: #5b6b7d;
+    --rm-line: #e6ebf1;
+    --rm-bg-soft: #f5f8fc;
+    --rm-white: #ffffff;
+
+    --rm-radius: 14px;
+    --rm-radius-sm: 10px;
+    --rm-shadow-sm: 0 1px 2px rgba(16, 32, 46, .06), 0 2px 8px rgba(16, 32, 46, .05);
+    --rm-shadow-md: 0 6px 18px rgba(15, 95, 174, .10), 0 2px 6px rgba(16, 32, 46, .06);
+    --rm-shadow-lg: 0 18px 40px rgba(15, 95, 174, .16);
+    --rm-ease: cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ---------- Tipografi ---------- */
+body,
+.animsition {
+    font-family: "Plus Jakarta Sans", "Montserrat", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, sans-serif;
+    color: var(--rm-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    letter-spacing: .01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Plus Jakarta Sans", "Montserrat", sans-serif;
+    letter-spacing: -.01em;
+    color: var(--rm-navy);
+}
+
+p { line-height: 1.7; }
+
+a { transition: color .2s var(--rm-ease); }
+
+/* Fokus keyboard yang jelas (aksesibilitas) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(15, 95, 174, .35);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* ---------- Header / Navbar ---------- */
+.wrap-menu-header {
+    transition: background-color .3s var(--rm-ease), box-shadow .3s var(--rm-ease),
+        backdrop-filter .3s var(--rm-ease);
+}
+/* State fixed (saat scroll) — template menambahkan class fix-menu / header-fixed */
+.wrap-menu-header.fix-menu,
+.wrap-menu-header.header-fixed,
+header .fixed-header,
+.wrap-menu-header.trans-0-10.fixed {
+    box-shadow: 0 6px 24px rgba(0, 48, 96, .12);
+    backdrop-filter: saturate(140%) blur(6px);
+}
+.main_menu > li > a {
+    position: relative;
+    font-weight: 600;
+    letter-spacing: .01em;
+}
+/* Garis-bawah animasi pada menu utama */
+.main_menu > li > a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 0;
+    background: var(--rm-gold);
+    transition: width .25s var(--rm-ease);
+}
+.main_menu > li > a:hover::after,
+.main_menu > li.active > a::after {
+    width: 100%;
+}
+.dropdown-menu-romadan {
+    border: 1px solid var(--rm-line);
+    border-radius: var(--rm-radius-sm);
+    box-shadow: var(--rm-shadow-md);
+    padding: 8px;
+    overflow: hidden;
+}
+.dropdown-menu-romadan > li > a {
+    border-radius: 8px;
+    padding: 9px 14px;
+    transition: background-color .18s var(--rm-ease), color .18s var(--rm-ease);
+}
+.dropdown-menu-romadan > li > a:hover {
+    background: var(--rm-bg-soft);
+    color: var(--rm-brand);
+}
+
+/* ---------- Tombol ---------- */
+.btn-romadan1,
+.btn-romadan-title,
+.btn-tentang-romadan,
+.btn-peraturan-download,
+.btn-romadan-search {
+    border-radius: 999px !important;
+    font-weight: 600;
+    letter-spacing: .01em;
+    transition: transform .18s var(--rm-ease), box-shadow .2s var(--rm-ease),
+        background-color .2s var(--rm-ease), filter .2s var(--rm-ease);
+    will-change: transform;
+}
+.btn-romadan1:hover,
+.btn-romadan-title:hover,
+.btn-tentang-romadan:hover,
+.btn-peraturan-download:hover,
+.btn-romadan-search:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--rm-shadow-md);
+    filter: brightness(1.03);
+}
+.btn-tentang-romadan {
+    background: linear-gradient(135deg, var(--rm-brand), var(--rm-brand-700));
+    color: #fff;
+    padding: 12px 26px;
+}
+
+/* ---------- Judul Section ---------- */
+.title-section-ourmenu { position: relative; }
+.romadan-berita,
+.romadan-judul,
+.romadan-menu,
+.romadan-faq,
+.romadan-infopublik {
+    font-weight: 800 !important;
+    color: var(--rm-navy) !important;
+    letter-spacing: -.02em;
+}
+/* Aksen garis di bawah judul section utama */
+.title-section-ourmenu.t-center .romadan-berita::after,
+.title-section-ourmenu.t-center .romadan-judul::after,
+.title-section-ourmenu.t-center .romadan-menu::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 4px;
+    margin: 14px auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--rm-brand), var(--rm-gold));
+}
+
+/* ---------- Kartu Berita / Publikasi ---------- */
+.pic-blo4,
+.wrap-pic-blo1,
+.wrap-pic-blo2 {
+    border-radius: var(--rm-radius) !important;
+    overflow: hidden;
+    box-shadow: var(--rm-shadow-sm);
+}
+.pic-blo4 img,
+.wrap-pic-blo1 img,
+.hov-img-zoom img {
+    transition: transform .6s var(--rm-ease);
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+.blo1,
+.text-blo4,
+.blo4 {
+    transition: transform .25s var(--rm-ease);
+}
+/* Angkat seluruh kartu saat hover */
+.col-md-4:hover .pic-blo4 img,
+.col-md-4:hover .wrap-pic-blo1 img,
+.hov-img-zoom:hover img {
+    transform: scale(1.06);
+}
+.berita-terkini-judul-romadan {
+    color: var(--rm-navy);
+    font-weight: 700;
+    line-height: 1.35;
+    transition: color .2s var(--rm-ease);
+}
+.berita-terkini-judul-romadan:hover { color: var(--rm-brand); }
+.txt32 {
+    color: var(--rm-muted);
+    font-weight: 500;
+    font-size: .82rem;
+}
+.berita-terkini-kategori,
+.txt32 .fa-regular,
+.txt32 .fa {
+    color: var(--rm-brand);
+}
+
+/* Kartu berbasis card Bootstrap yang dipakai halaman list */
+.card {
+    border: 1px solid var(--rm-line);
+    border-radius: var(--rm-radius);
+    box-shadow: var(--rm-shadow-sm);
+    overflow: hidden;
+    transition: transform .25s var(--rm-ease), box-shadow .25s var(--rm-ease);
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--rm-shadow-lg);
+}
+
+/* ---------- Peraturan / tabel info ---------- */
+.romadan-peraturan-utama {
+    border-radius: var(--rm-radius);
+    border: 1px solid var(--rm-line);
+    box-shadow: var(--rm-shadow-sm);
+    transition: transform .25s var(--rm-ease), box-shadow .25s var(--rm-ease);
+}
+.romadan-peraturan-utama:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--rm-shadow-md);
+}
+
+/* ---------- Form / Search ---------- */
+.form-control,
+.select2-container--default .select2-selection--single {
+    border-radius: var(--rm-radius-sm) !important;
+    border: 1px solid var(--rm-line) !important;
+    transition: border-color .2s var(--rm-ease), box-shadow .2s var(--rm-ease);
+}
+.form-control:focus {
+    border-color: var(--rm-brand) !important;
+    box-shadow: 0 0 0 4px rgba(15, 95, 174, .12) !important;
+}
+
+/* ---------- Pagination ---------- */
+.pagination { gap: 6px; }
+.page-link {
+    border: 1px solid var(--rm-line);
+    border-radius: 10px !important;
+    color: var(--rm-brand);
+    transition: background-color .18s var(--rm-ease), color .18s var(--rm-ease);
+}
+.page-item.active .page-link {
+    background: var(--rm-brand);
+    border-color: var(--rm-brand);
+    color: #fff;
+}
+.page-link:hover { background: var(--rm-bg-soft); }
+
+/* ---------- Footer ---------- */
+.footer1-romadan-bg {
+    background: linear-gradient(160deg, var(--rm-navy), #001c39) !important;
+}
+.footer1-medsos > a {
+    transition: transform .2s var(--rm-ease), color .2s var(--rm-ease);
+}
+.footer1-medsos > a:hover {
+    transform: translateY(-3px);
+    color: var(--rm-gold) !important;
+}
+
+/* ---------- Konten rich-text (isi berita/tentang) ---------- */
+.ck-content img,
+.txt-sejarah img,
+.txt-layanan img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--rm-radius-sm);
+}
+.ck-content iframe { max-width: 100%; border-radius: var(--rm-radius-sm); }
+
+/* ---------- Utilitas kecil ---------- */
+img { max-width: 100%; }
+.bo-rad-10 { border-radius: var(--rm-radius) !important; }
+
+/* =====================================================================
+   RESPONSIVE — perbaikan mobile
+   ===================================================================== */
+@media (max-width: 991.98px) {
+    .romadan-berita,
+    .romadan-judul { font-size: 1.5rem !important; }
+    .content-intro { padding-top: 44px !important; padding-bottom: 32px !important; }
+}
+
+@media (max-width: 767.98px) {
+    body { font-size: 15px; }
+    h4.berita-terkini-judul-romadan { font-size: 1.05rem; }
+    /* Target sentuh minimal 44px */
+    .main_menu > li > a,
+    .btn-romadan1,
+    .btn-tentang-romadan,
+    .page-link {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    .pic-blo4 img,
+    .wrap-pic-blo1 img { aspect-ratio: 16 / 9; }
+    /* Cegah scroll horizontal */
+    .container { overflow-x: clip; }
+}
+
+@media (max-width: 575.98px) {
+    .romadan-berita { font-size: 1.3rem !important; }
+    .title-section-ourmenu { margin-bottom: 8px; }
+}
+
+/* Hormati preferensi kurangi-animasi */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+    }
+}

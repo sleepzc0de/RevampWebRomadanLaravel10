@@ -11,6 +11,17 @@
 	<meta name="author" content="Auliya Putra Azhari, Winny Irmarooke, Kementerian Keuangan, Romadan">
 
 	<meta name="robots" content="index, follow">
+	<meta name="theme-color" content="#003060">
+
+<!-- Preconnect ke host eksternal agar aset kritis lebih cepat -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+	<link rel="dns-prefetch" href="https://code.jquery.com">
+
+<!-- Font modern (Plus Jakarta Sans) dengan display=swap -->
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!--===============================================================================================-->
 	<link rel="icon" type="image/png" href="{{asset('frontend_romadan_web/images/icons/romadanlogo.png')}}"/>
@@ -55,15 +66,16 @@
 	{{-- NEW SLICK --}}
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css" integrity="sha512-wR4oNhLBHf7smjy0K4oqzdWumd+r5/+6QO/vDda76MW5iug4PT7v86FoEkySIJft3XA0Ae6axhIvHrqwm793Nw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <!--===============================================================================================-->
-{{-- OLD LIGHTBOX --}}
-	{{-- <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/vendor/lightbox2/css/lightbox.min.css')}}"> --}}
-	{{-- NEW LIGHTBOX --}}
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.0/css/animsition.min.css" integrity="sha512-PhW416ZWZBw30eOTHRTNX+Z/14dZVYx13glqBSSFeeLAQGZP7JUCzbWt//ZbB+iaGJ2ugphHN7fH+ybXtGPVVg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{{-- LIGHTBOX (perbaikan: sebelumnya keliru memuat animsition sehingga lightbox tak berstyle) --}}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" integrity="sha512-ZKX+BvQihRJPA8CROKBhDNvoc2aDMOdAlcm7TUQY+35XYtrd3yh95QOfXfSHUifYYnLdIDfPNyrHUqfH9fzUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/util.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/main.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan.css')}}">
+    {{-- Modern design layer — dimuat paling akhir agar menimpa template lama --}}
+    <link rel="stylesheet" type="text/css" href="{{asset('frontend_romadan_web/css/romadan-modern.css')}}?v=1">
+    @stack('styles')
 
 
 <!--===============================================================================================-->
