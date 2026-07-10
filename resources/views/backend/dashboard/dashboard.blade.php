@@ -185,6 +185,17 @@ document.addEventListener('DOMContentLoaded', function() {
     .rm-list-item:last-child { border-bottom:0; }
     .rm-rank { width:26px;height:26px;border-radius:8px;background:#eef4fc;color:#0f5fae;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.8rem; flex:none;}
     .rm-badge { font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px; }
+    /* Ikon di dalam chip/kpi selalu center & tidak gepeng */
+    .rm-ico i { line-height:1; }
+    /* Tombol Aksi Cepat modern */
+    .rm-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .rm-action { display:flex; align-items:center; gap:11px; padding:12px; border:1px solid #e9eef4; border-radius:13px; background:#fff; text-decoration:none; color:#16202e; transition:transform .18s ease, box-shadow .22s ease, border-color .18s ease; }
+    .rm-action:hover { transform:translateY(-3px); box-shadow:0 10px 22px rgba(16,32,46,.12); border-color:var(--ac,#0f5fae); }
+    .rm-action-ico { flex:none; width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:1.25rem; color:var(--ac,#0f5fae); background:color-mix(in srgb, var(--ac,#0f5fae) 12%, #fff); }
+    .rm-action:hover .rm-action-ico { background:var(--ac,#0f5fae); color:#fff; }
+    .rm-action .lbl { font-weight:700; font-size:.92rem; line-height:1.15; }
+    .rm-action .sub { color:#8592a3; font-size:.72rem; }
+    @media (max-width: 400px) { .rm-actions { grid-template-columns:1fr; } }
 </style>
 
 {{-- ===== KPI utama ===== --}}
@@ -294,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ['Peraturan', $kpi['peraturan'], 'ph-scroll', '#0f5fae'],
                     ['Aplikasi', $kpi['aplikasi'], 'ph-squares-four', '#12a150'],
                     ['FAQ', $kpi['faq'], 'ph-question', '#7a4dd1'],
-                    ['Layanan', $kpi['layanan'], 'ph-hand-heart', '#e8a400'],
+                    ['Layanan', $kpi['layanan'], 'ph-headset', '#e8a400'],
                     ['Users', $kpi['users'], 'ph-users-three', '#0b7285'],
                     ['Sampah', $kpi['trashed'], 'ph-trash', '#c0392b'],
                 ];
@@ -315,13 +326,27 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="col-lg-4">
         <div class="card h-100">
             <div class="card-header"><h5 class="mb-0">Aksi Cepat</h5></div>
-            <div class="card-body d-flex flex-wrap gap-2 align-content-start">
-                <a href="{{route('publikasi.create')}}" class="btn btn-primary btn-sm"><i class="ph-plus me-1"></i>Publikasi</a>
-                <a href="{{route('faq.create')}}" class="btn btn-outline-primary btn-sm"><i class="ph-plus me-1"></i>FAQ</a>
-                @role('ADMINISTRATOR')
-                <a href="{{route('users.create')}}" class="btn btn-outline-primary btn-sm"><i class="ph-plus me-1"></i>User</a>
-                <a href="{{route('backups.index')}}" class="btn btn-outline-secondary btn-sm"><i class="ph-database me-1"></i>Backup</a>
-                @endrole
+            <div class="card-body">
+                <div class="rm-actions">
+                    <a href="{{route('publikasi.create')}}" class="rm-action" style="--ac:#0f5fae">
+                        <span class="rm-action-ico"><i class="ph-plus-circle"></i></span>
+                        <span><span class="lbl d-block">Publikasi</span><span class="sub">Tambah konten</span></span>
+                    </a>
+                    <a href="{{route('faq.create')}}" class="rm-action" style="--ac:#7a4dd1">
+                        <span class="rm-action-ico"><i class="ph-question"></i></span>
+                        <span><span class="lbl d-block">FAQ</span><span class="sub">Tanya jawab</span></span>
+                    </a>
+                    @role('ADMINISTRATOR')
+                    <a href="{{route('users.create')}}" class="rm-action" style="--ac:#0b7285">
+                        <span class="rm-action-ico"><i class="ph-user-plus"></i></span>
+                        <span><span class="lbl d-block">User</span><span class="sub">Kelola akun</span></span>
+                    </a>
+                    <a href="{{route('backups.index')}}" class="rm-action" style="--ac:#5b6b7d">
+                        <span class="rm-action-ico"><i class="ph-database"></i></span>
+                        <span><span class="lbl d-block">Backup</span><span class="sub">Cadangan data</span></span>
+                    </a>
+                    @endrole
+                </div>
             </div>
         </div>
     </div>
