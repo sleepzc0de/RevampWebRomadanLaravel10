@@ -10,7 +10,9 @@ class StrukturOrganisasiImageModel extends Model
     use HasFactory;
 
     protected $table = 'struktur_organisasi_images';
+
     protected $guarded = [];
+
     protected $fillable = ['struktur_organisasi_id', 'image_path', 'sort_order'];
 
     /**

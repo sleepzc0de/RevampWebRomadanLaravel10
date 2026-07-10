@@ -7,6 +7,7 @@ class VersionHelper
     public static function getFullVersion()
     {
         $version = config('app.version');
+
         return sprintf(
             'v%s.%s.%s-%s+build.%s',
             $version['major'],
@@ -20,6 +21,7 @@ class VersionHelper
     public static function getShortVersion()
     {
         $version = config('app.version');
+
         return sprintf(
             'v%s.%s.%s',
             $version['major'],
@@ -31,6 +33,7 @@ class VersionHelper
     public static function getBuildInfo()
     {
         $version = config('app.version');
+
         return [
             'version' => self::getFullVersion(),
             'timestamp' => $version['timestamp'],

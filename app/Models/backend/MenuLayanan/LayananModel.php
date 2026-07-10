@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class LayananModel extends Model
 {
     use HasFactory;
+
     protected $table = 'layanan';
+
     protected $guarded = [];
+
     protected $fillable = ['layanan', 'image', 'judul', 'video_url'];
 
     protected $hidden = [

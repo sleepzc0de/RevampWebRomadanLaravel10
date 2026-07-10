@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Services\BackupService;
 use Illuminate\Support\ServiceProvider;
 
-    class BackupServiceProvider extends ServiceProvider
+class BackupServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -13,7 +13,7 @@ use Illuminate\Support\ServiceProvider;
     public function register()
     {
         $this->app->singleton(BackupService::class, function ($app) {
-            return new BackupService();
+            return new BackupService;
         });
     }
 

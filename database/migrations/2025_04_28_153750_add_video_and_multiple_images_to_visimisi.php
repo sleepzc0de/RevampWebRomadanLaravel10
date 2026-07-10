@@ -25,9 +25,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('visimisi_id')
-                  ->references('id')
-                  ->on('visimisi')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('visimisi')
+                ->onDelete('cascade');
         });
     }
 

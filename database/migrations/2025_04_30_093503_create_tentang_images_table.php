@@ -22,9 +22,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('tentang_id')
-                  ->references('id')
-                  ->on('tentang')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('tentang')
+                ->onDelete('cascade');
         });
     }
 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class CheckIdleTimeout
 {
@@ -18,6 +18,7 @@ class CheckIdleTimeout
             if ($lastActivity && Carbon::now()->timestamp - $lastActivity > $idleTimeout) {
                 Auth::logout();
                 session()->flush();
+
                 return redirect()->route('login')->with('message', 'Sesi Anda telah berakhir karena tidak ada aktivitas.');
             }
 

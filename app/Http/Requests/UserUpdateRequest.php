@@ -1,15 +1,19 @@
 <?php
+
 namespace App\Http\Requests;
 
+use App\Models\User;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use App\Models\User;
 
 class UserUpdateRequest extends FormRequest
 {
     protected $decryptedId;
+
     protected $targetUser;
 
     public function authorize()
@@ -23,9 +27,9 @@ class UserUpdateRequest extends FormRequest
             }
 
             return true;
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+        } catch (DecryptException $e) {
             return false;
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return false;
         }
     }
@@ -37,18 +41,18 @@ class UserUpdateRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'not_regex:/[<>]/'
+                'not_regex:/[<>]/',
             ],
             'email' => [
                 'required',
                 'email:rfc,dns',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($this->decryptedId)
+                Rule::unique('users', 'email')->ignore($this->decryptedId),
             ],
             'role' => [
                 'required',
                 'exists:roles,id',
-                Rule::notIn(['ADMINISTRATOR'])
+                Rule::notIn(['ADMINISTRATOR']),
             ],
             'password' => $this->passwordRules(),
         ];
@@ -69,7 +73,7 @@ class UserUpdateRequest extends FormRequest
                     $personalInfo = [
                         $this->input('name'),
                         $this->input('email'),
-                        $this->targetUser->username
+                        $this->targetUser->username,
                     ];
 
                     foreach ($personalInfo as $info) {
@@ -77,9 +81,10 @@ class UserUpdateRequest extends FormRequest
                             $fail('Password tidak boleh mengandung informasi personal.');
                         }
                     }
-                }
+                },
             ];
         }
+
         return ['nullable'];
     }
 
@@ -117,13 +122,13 @@ class UserUpdateRequest extends FormRequest
 
         if ($this->has('name')) {
             $this->merge([
-                'name' => trim(strip_tags($this->name))
+                'name' => trim(strip_tags($this->name)),
             ]);
         }
 
         if ($this->has('email')) {
             $this->merge([
-                'email' => strtolower(trim($this->email))
+                'email' => strtolower(trim($this->email)),
             ]);
         }
     }

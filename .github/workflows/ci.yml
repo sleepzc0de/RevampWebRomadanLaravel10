@@ -36,11 +36,8 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
-      # Non-blocking dulu: codebase legacy belum sepenuhnya diformat.
-      # Jalankan `vendor/bin/pint` sebagai commit tersendiri, lalu hapus
-      # `|| true` di bawah agar style ditegakkan.
       - name: Check code style (Pint)
-        run: vendor/bin/pint --test || true
+        run: vendor/bin/pint --test
 
       - name: Static analysis (PHPStan / Larastan)
         run: php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress

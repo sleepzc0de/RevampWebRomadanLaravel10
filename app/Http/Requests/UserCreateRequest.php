@@ -26,7 +26,7 @@ class UserCreateRequest extends FormRequest
                     ->mixedCase()
                     ->letters()
                     ->numbers()
-                    ->symbols()
+                    ->symbols(),
             ],
         ];
     }

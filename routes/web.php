@@ -9,7 +9,6 @@ use App\Http\Controllers\MenuFAQ\FAQController;
 use App\Http\Controllers\MenuInformasiPublik\AplikasiController;
 use App\Http\Controllers\MenuInformasiPublik\InformasiPublikController;
 use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
-use App\Http\Controllers\MenuKegiatan\KegiatanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
 use App\Http\Controllers\MenuProfile\SejarahController;
 use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
@@ -36,7 +35,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 // 1. FRONT END
 Route::group(
     ['prefix' => '/'],
@@ -44,7 +42,6 @@ Route::group(
 
         // HOME
         Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
-
 
         // MENU PROFILE
         Route::prefix('/profile')->group(function () {
@@ -113,7 +110,6 @@ Route::group(
         });
     }
 );
-
 
 // 2. BACK END
 Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
@@ -213,7 +209,6 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
     });
 });
 
-
 // 3. BACKUP
 
 Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
@@ -224,11 +219,9 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
 });
 
-
 // require __DIR__ . '/auth.php';
 
 use App\Http\Controllers\AuthController;
-
 
 Route::get('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'login'])->middleware('throttle:10,1');

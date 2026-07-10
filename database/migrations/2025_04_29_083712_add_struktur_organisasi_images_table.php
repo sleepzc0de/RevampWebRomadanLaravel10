@@ -19,9 +19,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('struktur_organisasi_id')
-                  ->references('id')
-                  ->on('struktur_organisasi')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('struktur_organisasi')
+                ->onDelete('cascade');
         });
 
         // Add video support to the main struktur_organisasi table

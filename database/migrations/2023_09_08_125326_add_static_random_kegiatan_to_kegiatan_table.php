@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('kegiatan', function (Blueprint $table) {
-             $table->string('static_random_string')->nullable();
+            $table->string('static_random_string')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('kegiatan', function (Blueprint $table) {
-        $table->dropColumn('static_random_string');
+            $table->dropColumn('static_random_string');
         });
     }
 };

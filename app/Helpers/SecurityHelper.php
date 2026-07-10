@@ -18,8 +18,10 @@ class SecurityHelper
             $input = strip_tags($input);
             // Remove control characters
             $input = preg_replace('/[\x00-\x1F\x7F]/', '', $input);
+
             return trim($input);
         }
+
         return $input;
     }
 
@@ -30,6 +32,7 @@ class SecurityHelper
     {
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
         return in_array($ext, $allowed);
     }
 

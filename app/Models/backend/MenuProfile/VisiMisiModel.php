@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class VisiMisiModel extends Model
 {
     use HasFactory;
+
     protected $table = 'visimisi';
+
     protected $guarded = [];
+
     protected $fillable = ['visi', 'misi', 'image', 'judul', 'video_url'];
 
     protected $hidden = [

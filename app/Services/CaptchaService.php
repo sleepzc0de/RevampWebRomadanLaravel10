@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Illuminate\Support\Str;
@@ -6,13 +7,15 @@ use Illuminate\Support\Str;
 class CaptchaService
 {
     private $operators = ['+', '-', '*'];
+
     private $difficulties = [
         'easy' => ['min' => 1, 'max' => 9],
         'medium' => ['min' => 10, 'max' => 20],
-        'hard' => ['min' => 20, 'max' => 50]
+        'hard' => ['min' => 20, 'max' => 50],
     ];
 
     private $maxAttempts = 3;
+
     private $sessionTimeout = 300; // 5 minutes in seconds
 
     public function createCaptcha()
@@ -34,7 +37,7 @@ class CaptchaService
 
         // Ensure subtraction doesn't result in negative numbers
         if ($operator === '-' && $num1 < $num2) {
-            list($num1, $num2) = [$num2, $num1];
+            [$num1, $num2] = [$num2, $num1];
         }
 
         // Calculate answer based on operator
@@ -66,16 +69,16 @@ class CaptchaService
         session([
             'captcha_data' => [
                 'token' => $token,
-                'answer' => (string)$answer,
+                'answer' => (string) $answer,
                 'created_at' => time(),
-                'attempts' => 0
-            ]
+                'attempts' => 0,
+            ],
         ]);
 
         // Return the formatted question and token
         return [
             'question' => "$noise $question = ?",
-            'token' => $token
+            'token' => $token,
         ];
     }
 
@@ -84,10 +87,11 @@ class CaptchaService
         $captchaData = session('captcha_data');
 
         // Check if CAPTCHA exists and hasn't expired
-        if (!$captchaData ||
+        if (! $captchaData ||
             $captchaData['token'] !== $token ||
             time() - $captchaData['created_at'] > $this->sessionTimeout) {
             $this->clearCaptcha();
+
             return false;
         }
 
@@ -98,11 +102,12 @@ class CaptchaService
         // Check if max attempts exceeded
         if ($captchaData['attempts'] > $this->maxAttempts) {
             $this->clearCaptcha();
+
             return false;
         }
 
         // Validate answer
-        $isValid = $captchaData['answer'] === (string)$input;
+        $isValid = $captchaData['answer'] === (string) $input;
 
         // Clear CAPTCHA data after successful validation
         if ($isValid) {

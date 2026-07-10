@@ -16,13 +16,13 @@ class User extends Authenticatable
         'email',
         'password',
         'salt',
-        'username'
+        'username',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
-        'salt'
+        'salt',
     ];
 
     protected $casts = [

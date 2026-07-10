@@ -15,7 +15,7 @@ class PublikasiImage extends Model
         'publikasi_id',
         'image_path',
         'is_primary',
-        'sort_order'
+        'sort_order',
     ];
 
     public function publikasi()

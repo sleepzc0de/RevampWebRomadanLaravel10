@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('publikasi', function (Blueprint $table) {
-             $table->string('static_random_string')->nullable();
+            $table->string('static_random_string')->nullable();
         });
     }
 

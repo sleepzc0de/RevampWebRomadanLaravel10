@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -13,8 +12,8 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-         // Daftar nama role yang akan dibuat
-         $roles = [
+        // Daftar nama role yang akan dibuat
+        $roles = [
             'ADMINISTRATOR',
             'REDAKTUR',
             'EDITOR',

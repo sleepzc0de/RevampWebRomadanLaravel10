@@ -10,6 +10,7 @@ class LayananImage extends Model
     use HasFactory;
 
     protected $table = 'layanan_images';
+
     protected $fillable = ['layanan_id', 'image_path'];
 
     /**

@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class CleanupOldBackups extends Command
 {
     protected $signature = 'backup:cleanup';
+
     protected $description = 'Remove backups older than 1 week';
 
     protected $backupService;
@@ -26,9 +27,11 @@ class CleanupOldBackups extends Command
             $this->backupService->cleanOldBackups();
 
             $this->info('Cleanup completed successfully!');
+
             return 0;
         } catch (\Exception $e) {
-            $this->error('Cleanup failed: ' . $e->getMessage());
+            $this->error('Cleanup failed: '.$e->getMessage());
+
             return 1;
         }
     }

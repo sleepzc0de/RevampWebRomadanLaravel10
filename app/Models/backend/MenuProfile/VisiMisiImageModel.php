@@ -10,6 +10,7 @@ class VisiMisiImageModel extends Model
     use HasFactory;
 
     protected $table = 'visimisi_images';
+
     protected $fillable = ['visimisi_id', 'image', 'sort_order'];
 
     /**

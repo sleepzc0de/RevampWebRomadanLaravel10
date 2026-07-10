@@ -9,9 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class KegiatanModel extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $table = 'kegiatan';
+
     protected $guarded = [];
-    protected $fillable = ['judul', 'tempat', 'image', 'file', 'slug', 'isi', 'tanggal_mulai', 'tanggal_selesai', 'link','static_random_string'];
+
+    protected $fillable = ['judul', 'tempat', 'image', 'file', 'slug', 'isi', 'tanggal_mulai', 'tanggal_selesai', 'link', 'static_random_string'];
+
     protected $dates = ['deleted_at'];
 
     protected $hidden = [

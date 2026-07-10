@@ -10,6 +10,7 @@ class TentangImage extends Model
     use HasFactory;
 
     protected $table = 'tentang_images';
+
     protected $fillable = ['tentang_id', 'image_path'];
 
     /**

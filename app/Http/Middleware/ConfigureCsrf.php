@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class ConfigureCsrf
 {
@@ -19,7 +20,7 @@ class ConfigureCsrf
             foreach ($cookies as $cookie) {
                 if ($cookie->getName() === 'XSRF-TOKEN') {
                     $response->headers->setCookie(
-                        new \Symfony\Component\HttpFoundation\Cookie(
+                        new Cookie(
                             'XSRF-TOKEN',
                             $cookie->getValue(),
                             $cookie->getExpiresTime(),

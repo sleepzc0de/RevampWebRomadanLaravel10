@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class BackupSystem extends Command
 {
     protected $signature = 'backup:run';
+
     protected $description = 'Create backup of database and application files';
 
     protected $backupService;
@@ -27,9 +28,11 @@ class BackupSystem extends Command
             $this->backupService->createBackup();
 
             $this->info('Backup completed successfully!');
+
             return 0;
         } catch (\Exception $e) {
-            $this->error('Backup failed: ' . $e->getMessage());
+            $this->error('Backup failed: '.$e->getMessage());
+
             return 1;
         }
     }

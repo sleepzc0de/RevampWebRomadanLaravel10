@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('link_menu')->nullable();
             $table->string('jenis_menu')->nullable();
 
-
-
             $table->timestamps();
         });
     }

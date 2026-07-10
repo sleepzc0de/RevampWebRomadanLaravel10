@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class InfopublikHomeModel extends Model
 {
     use HasFactory;
+
     protected $table = 'infopublik_home';
+
     protected $guarded = [];
+
     protected $fillable = ['judul', 'isi'];
 
     protected $hidden = [

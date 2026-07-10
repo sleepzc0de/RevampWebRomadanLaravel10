@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Log;
 class StrukturOrganisasiModel extends Model
 {
     use HasFactory;
+
     protected $table = 'struktur_organisasi';
+
     protected $guarded = [];
+
     protected $fillable = ['struktur', 'image', 'judul', 'video_url', 'layout_type'];
 
     protected $hidden = [
@@ -48,7 +51,7 @@ class StrukturOrganisasiModel extends Model
         Log::debug('YouTube URL parsing', [
             'url' => $this->video_url,
             'matches' => $matches,
-            'id' => isset($matches[1]) ? $matches[1] : null
+            'id' => isset($matches[1]) ? $matches[1] : null,
         ]);
 
         return isset($matches[1]) ? $matches[1] : null;
@@ -61,21 +64,21 @@ class StrukturOrganisasiModel extends Model
      */
     public function getResponsiveClassesAttribute()
     {
-        switch($this->layout_type) {
+        switch ($this->layout_type) {
             case 'wide':
                 return [
                     'content' => 'col-md-4',
-                    'media' => 'col-md-8'
+                    'media' => 'col-md-8',
                 ];
             case 'compact':
                 return [
                     'content' => 'col-md-8',
-                    'media' => 'col-md-4'
+                    'media' => 'col-md-4',
                 ];
             default: // standard
                 return [
                     'content' => 'col-md-6',
-                    'media' => 'col-md-6'
+                    'media' => 'col-md-6',
                 ];
         }
     }

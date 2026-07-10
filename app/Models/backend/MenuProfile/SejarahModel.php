@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class SejarahModel extends Model
 {
     use HasFactory;
+
     protected $table = 'sejarah';
+
     protected $guarded = [];
+
     protected $fillable = ['sejarah', 'image', 'judul', 'media'];
 
     protected $hidden = [
