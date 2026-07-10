@@ -1,226 +1,265 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Called 'count' on Laravel collection, but could have been retrieved as a query\\.$#"
-			count: 2
-			path: app/Http/Controllers/Backend/HomeBeController.php
-
-		-
-			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
 			path: app/Http/Controllers/Backend/HomeBeController.php
 
 		-
-			message: "#^Relation 'status' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''status'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
 			path: app/Http/Controllers/Backend/HomeBeController.php
 
 		-
-			message: "#^Relation 'tipe' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''tipe'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
 			path: app/Http/Controllers/Backend/HomeBeController.php
 
 		-
-			message: "#^If condition is always true\\.$#"
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
 			count: 1
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: "#^Method Carbon\\\\Carbon\\:\\:translatedFormat\\(\\) invoked with 2 parameters, 1 required\\.$#"
-			count: 2
-			path: app/Http/Controllers/Frontend/HomeFeController.php
-
-		-
-			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel model\\.$#"
-			count: 1
-			path: app/Http/Controllers/Frontend/HomeFeController.php
-
-		-
-			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel model\\.$#"
-			count: 1
-			path: app/Http/Controllers/Frontend/HomeFeController.php
-
-		-
-			message: "#^Relation 'data_jenis_peraturan' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			message: '#^Method Carbon\\Carbon\:\:translatedFormat\(\) invoked with 2 parameters, 1 required\.$#'
+			identifier: arguments.count
 			count: 2
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: "#^Relation 'images' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuLayanan\\LayananModel model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: '#^Relation ''data_jenis_peraturan'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Frontend/HomeFeController.php
+
+		-
+			message: '#^Relation ''images'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 3
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 3
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:create\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:create\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:destroy\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:destroy\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 2
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:edit\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:edit\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\JsonResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:index\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\JsonResponse\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:index\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:show\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:show\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:store\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:store\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 2
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\Login\\\\LoginController\\:\\:update\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\Login\\LoginController\:\:update\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 2
 			path: app/Http/Controllers/Login/LoginController.php
 
 		-
-			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuFAQ\\\\FAQModel model\\.$#"
+			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuFAQ\\FAQModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuFAQ/FAQController.php
 
 		-
-			message: "#^Relation 'data_jenis_peraturan' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			message: '#^Relation ''data_jenis_peraturan'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuInformasiPublik/PeraturanController.php
 
 		-
-			message: "#^Relation 'data_status_peraturan' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			message: '#^Relation ''data_status_peraturan'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuInformasiPublik/PeraturanController.php
 
 		-
-			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuInformasiPublik\\\\PeraturanModel model\\.$#"
+			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuInformasiPublik/PeraturanController.php
 
 		-
-			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel\\>\\:\\:\\$additionalImages\\.$#"
+			message: '#^Access to an undefined property App\\Models\\backend\\MenuLayanan\\LayananModel\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\backend\\MenuLayanan\\LayananModel\>\:\:\$additionalImages\.$#'
+			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/MenuLayanan/LayananController.php
 
 		-
-			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuLayanan\\\\LayananModel model\\.$#"
+			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuLayanan\\LayananModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuLayanan/LayananController.php
 
 		-
-			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel\\>\\:\\:\\$additionalImages\\.$#"
+			message: '#^Access to an undefined property App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel\>\:\:\$additionalImages\.$#'
+			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/MenuProfile/StrukturOrganisasiController.php
 
 		-
-			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\StrukturOrganisasiModel model\\.$#"
+			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuProfile/StrukturOrganisasiController.php
 
 		-
-			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuProfile\\\\TentangModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuProfile\\\\TentangModel\\>\\:\\:\\$additionalImages\\.$#"
+			message: '#^Access to an undefined property App\\Models\\backend\\MenuProfile\\TentangModel\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\backend\\MenuProfile\\TentangModel\>\:\:\$additionalImages\.$#'
+			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/MenuProfile/TentangController.php
 
 		-
-			message: "#^Relation 'additionalImages' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\TentangModel model\\.$#"
+			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuProfile\\TentangModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuProfile/TentangController.php
 
 		-
-			message: "#^Relation 'images' is not found in App\\\\Models\\\\backend\\\\MenuProfile\\\\VisiMisiModel model\\.$#"
+			message: '#^Relation ''images'' is not found in App\\Models\\backend\\MenuProfile\\VisiMisiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuProfile/VisiMisiController.php
 
 		-
-			message: "#^Access to an undefined property App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel\\>\\:\\:\\$images\\.$#"
+			message: '#^Access to an undefined property App\\Models\\backend\\MenuPublikasi\\PublikasiModel\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\backend\\MenuPublikasi\\PublikasiModel\>\:\:\$images\.$#'
+			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:create\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:create\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:destroy\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:destroy\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 2
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:edit\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:edit\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\JsonResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:index\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\JsonResponse\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:index\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:index\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:show\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\View\\\\View\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:show\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:store\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:store\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 3
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Method App\\\\Http\\\\Controllers\\\\MenuPublikasi\\\\PublikasiController\\:\\:update\\(\\) should return Illuminate\\\\Http\\\\Response but returns Illuminate\\\\Http\\\\RedirectResponse\\.$#"
+			message: '#^Method App\\Http\\Controllers\\MenuPublikasi\\PublikasiController\:\:update\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
 			count: 3
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Relation 'images' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''images'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 1
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Relation 'kategori' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 4
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Relation 'status' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''status'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 4
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Relation 'tipe' is not found in App\\\\Models\\\\backend\\\\MenuPublikasi\\\\PublikasiModel model\\.$#"
+			message: '#^Relation ''tipe'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
+			identifier: larastan.relationExistence
 			count: 4
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-
-			message: "#^Call to an undefined method Yajra\\\\DataTables\\\\DataTableAbstract\\:\\:filterColumn\\(\\)\\.$#"
+			message: '#^Call to an undefined method Yajra\\DataTables\\DataTableAbstract\:\:filterColumn\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/UserManajemen/UserController.php
