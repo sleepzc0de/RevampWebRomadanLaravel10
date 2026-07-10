@@ -12,8 +12,8 @@ Ringkasan status: item keamanan & bug (#1–#24) dan refactor aman (#25, #28, #2
 | Item | Judul | Risiko | Estimasi | Status |
 |------|-------|--------|----------|--------|
 | #31 | Upgrade Laravel 10 → 12 | Tinggi (breaking changes) | — | ✅ **SELESAI** (12.63.0) |
-| #27 | Rename model ke konvensi StudlyCase | Sedang (churn lintas file) | 1–2 hari | Pending (6 model mati sudah dihapus) |
-| #26 | Migrasi skema password ke standar Laravel | Tinggi (bisa mengunci login) | 2–4 hari | Pending |
+| #27 | Rename model ke konvensi StudlyCase | Sedang (churn lintas file) | — | ✅ **SELESAI** |
+| #26 | Migrasi skema password ke standar Laravel | Tinggi (bisa mengunci login) | 2–4 hari | ⏸️ **Direkomendasikan TIDAK dieksekusi** (lihat di bawah) |
 
 > **Aturan umum untuk ketiganya:** kerjakan di branch terpisah, satu item per PR,
 > jalankan `php artisan test` + `vendor/bin/phpstan analyse` di setiap fase, dan
@@ -22,6 +22,22 @@ Ringkasan status: item keamanan & bug (#1–#24) dan refactor aman (#25, #28, #2
 ---
 
 ## #26 — Migrasi Skema Password ke Standar Laravel
+
+> ### ⏸️ Rekomendasi: JANGAN dieksekusi sekarang
+> Setelah perbaikan #1 (pepper ke `.env` + `PasswordService` terpusat + test),
+> skema password saat ini **sudah aman dan bersih**. Migrasi ke `Auth::attempt`
+> standar **tidak menyelesaikan masalah keamanan apa pun** — ia hanya "kerapian
+> arsitektur". Padahal:
+> - Aplikasi **tidak memakai** `Auth::attempt`, password-reset broker, maupun
+>   `password.confirm` di mana pun — jadi tidak ada fitur yang sedang terhambat.
+> - Risikonya **tinggi** (salah langkah = seluruh user tidak bisa login) dan
+>   Fase 3-nya butuh **jendela migrasi 60–90 hari** yang tak bisa dituntaskan
+>   dalam satu sesi.
+> - Kolom `salt` yang redundan bersifat **tidak berbahaya**.
+>
+> **Kesimpulan:** biaya & risiko > manfaat. Kerjakan HANYA bila muncul pemicu
+> konkret (mis. butuh fitur "lupa password" via email). Rencana di bawah tetap
+> disimpan sebagai panduan bila saat itu tiba.
 
 ### Konteks
 Saat ini password disimpan sebagai `bcrypt(hmac_sha256(password + salt, pepper))`
@@ -206,7 +222,10 @@ mengembalikan seluruh dependensi. Simpan `composer.lock` pra-upgrade sebagai tag
 
 ---
 
-## Urutan yang disarankan
+## Status akhir
 1. ~~**#31 (upgrade Laravel)**~~ — ✅ **SELESAI** (langsung ke Laravel 12, advisory keamanan tertutup).
-2. **#27 (rename model)** — paling aman; 6 model mati sudah dihapus, tinggal rename ~6 model yang dipakai.
-3. **#26 (skema password)** — paling berisiko, kerjakan terakhir dengan jendela migrasi panjang.
+2. ~~**#27 (rename model)**~~ — ✅ **SELESAI** (6 model mati dihapus, 6 model dipakai di-rename ke StudlyCase).
+3. **#26 (skema password)** — ⏸️ **direkomendasikan tidak dieksekusi** (manfaat rendah, risiko tinggi; lihat bagian #26).
+
+Dengan ini seluruh audit #1–#32 tuntas: dikerjakan, atau (untuk #26) sengaja
+tidak dikerjakan dengan alasan yang terdokumentasi.
