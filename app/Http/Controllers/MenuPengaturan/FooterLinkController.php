@@ -7,9 +7,28 @@ use App\Models\backend\MenuPengaturan\FooterLinkModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 
 class FooterLinkController extends Controller
 {
+    /**
+     * Izinkan path relatif (diawali /) atau URL absolut http(s) yang valid.
+     * Mencegah skema berbahaya seperti javascript:/data: dipakai sebagai
+     * href tautan footer (stored XSS via href).
+     */
+    private function urlOrRelativePathRule(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) {
+            if (is_string($value) && str_starts_with($value, '/')) {
+                return;
+            }
+
+            if (Validator::make(['url' => $value], ['url' => 'url'])->fails()) {
+                $fail('URL harus berupa path relatif (diawali /) atau URL lengkap yang valid (diawali http:// atau https://).');
+            }
+        };
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -53,7 +72,7 @@ class FooterLinkController extends Controller
         try {
             $request->validate([
                 'label' => 'required|max:100',
-                'url' => 'required|max:500',
+                'url' => ['required', 'max:500', $this->urlOrRelativePathRule()],
                 'sort_order' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean',
             ]);
@@ -103,7 +122,7 @@ class FooterLinkController extends Controller
         try {
             $request->validate([
                 'label' => 'required|max:100',
-                'url' => 'required|max:500',
+                'url' => ['required', 'max:500', $this->urlOrRelativePathRule()],
                 'sort_order' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean',
             ]);

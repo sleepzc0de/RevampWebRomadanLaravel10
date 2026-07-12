@@ -11,6 +11,7 @@ use App\Http\Controllers\MenuInformasiPublik\AplikasiController;
 use App\Http\Controllers\MenuInformasiPublik\InformasiPublikController;
 use App\Http\Controllers\MenuInformasiPublik\PedomanController;
 use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
+use App\Http\Controllers\MenuKegiatan\KegiatanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
 use App\Http\Controllers\MenuPengaturan\ContactInfoController;
 use App\Http\Controllers\MenuPengaturan\FooterLinkController;
@@ -84,6 +85,12 @@ Route::group(
 
             // VISI DAN MISI
             Route::get('/', [HomeFeController::class, 'faq_index'])->name('faq-index-fe');
+        });
+
+        // MENU KEGIATAN
+        Route::prefix('/kegiatan')->group(function () {
+            Route::match(['get', 'post'], '/', [HomeFeController::class, 'kegiatan_index'])->name('kegiatan-index-fe');
+            Route::get('/detail/{kegiatan}/{ranstring}', [HomeFeController::class, 'kegiatan_detail'])->name('kegiatan-detail-fe');
         });
 
         // MENU PUBLIKASI
@@ -212,6 +219,9 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
             Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
             Route::post('/restore-all-publikasi', [PublikasiController::class, 'restoreAllPublikasi'])->name('publikasi.restore-all');
+
+            // 2.1.5 KEGIATAN
+            Route::resource('kegiatan', KegiatanController::class);
         });
     });
 });

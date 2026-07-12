@@ -107,7 +107,7 @@ class LayananController extends Controller
             // Handle additional images if any
             if ($request->hasFile('additional_images')) {
                 foreach ($request->file('additional_images') as $additionalImage) {
-                    $imageName = time().'_'.$additionalImage->getClientOriginalName();
+                    $imageName = $additionalImage->hashName();
                     $additionalImage->storeAs('public/romadan_gambar_web', $imageName);
 
                     // Save the additional image
@@ -210,7 +210,7 @@ class LayananController extends Controller
             // Handle additional images upload if provided
             if ($request->hasFile('additional_images')) {
                 foreach ($request->file('additional_images') as $additionalImage) {
-                    $imageName = time().'_'.$additionalImage->getClientOriginalName();
+                    $imageName = $additionalImage->hashName();
                     $additionalImage->storeAs('public/romadan_gambar_web', $imageName);
 
                     // Save the additional image

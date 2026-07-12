@@ -88,7 +88,7 @@ class KegiatanController extends Controller
                 'isi' => 'required',
                 'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
                 'tanggal_selesai' => 'date|after_or_equal:tanggal_mulai|date_format:Y-m-d\TH:i',
-                'link' => 'required',
+                'link' => 'required|url|max:2000',
             ], [
                 'image.dimensions' => 'Gambar maksimal lebar (width) 1650 pixels dan tinggi (height) 990 pixels',
             ]);
@@ -167,6 +167,7 @@ class KegiatanController extends Controller
                 'isi' => 'required',
                 'tanggal_mulai' => 'required|date|date_format:Y-m-d\TH:i',
                 'tanggal_selesai' => 'date|after_or_equal:tanggal_mulai|date_format:Y-m-d\TH:i',
+                'link' => 'required|url|max:2000',
             ]);
 
             // SLUG
@@ -184,6 +185,7 @@ class KegiatanController extends Controller
                 'slug' => $slug,
                 'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d H:i'),
                 'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d H:i'),
+                'link' => $request->link,
 
             ];
             if ($request->hasFile('image')) {

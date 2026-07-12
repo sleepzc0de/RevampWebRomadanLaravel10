@@ -105,6 +105,12 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a href="{{route('kegiatan.index')}}" class="nav-link {{ Request::routeIs('kegiatan.*') ? 'active' : '' }}">
+                        <i class="ph-calendar-check"></i>
+                        <span>Kegiatan</span>
+                    </a>
+                </li>
                 @endif
 
                 <!-- FAQ - For ADMINISTRATOR, REDAKTUR, EDITOR -->
