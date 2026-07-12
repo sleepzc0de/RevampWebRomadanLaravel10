@@ -25,15 +25,18 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'salt',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'two_factor_confirmed_at' => 'datetime',
     ];
 
     /**
-     * logOnly(['name','email','username']) — jangan pernah log password/salt
-     * ke activity log meskipun keduanya ada di $fillable.
+     * logOnly(['name','email','username']) — jangan pernah log password/salt/
+     * kolom 2FA ke activity log meskipun ada di $fillable.
      */
     public function getActivitylogOptions(): LogOptions
     {
@@ -42,5 +45,10 @@ class User extends Authenticatable
             ->logOnlyDirty()
             ->dontLogEmptyChanges()
             ->useLogName('user');
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return ! is_null($this->two_factor_confirmed_at);
     }
 }

@@ -1,24 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Backend/HomeBeController.php
-
-		-
-			message: '#^Relation ''status'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Backend/HomeBeController.php
-
-		-
-			message: '#^Relation ''tipe'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Backend/HomeBeController.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -238,24 +220,6 @@ parameters:
 			message: '#^Relation ''images'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
-			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
-
-		-
-			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 4
-			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
-
-		-
-			message: '#^Relation ''status'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 4
-			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
-
-		-
-			message: '#^Relation ''tipe'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 4
 			path: app/Http/Controllers/MenuPublikasi/PublikasiController.php
 
 		-

@@ -33,6 +33,14 @@
                     </a>
                 </li>
 
+                <!-- Keamanan Akun (2FA) - Untuk semua role, pengaturan per-akun -->
+                <li class="nav-item">
+                    <a href="{{route('two-factor.index')}}" class="nav-link {{ Request::routeIs('two-factor.*') ? 'active' : '' }}">
+                        <i class="ph-shield-check"></i>
+                        <span>Keamanan Akun</span>
+                    </a>
+                </li>
+
                 <!-- Profile - For ADMINISTRATOR, REDAKTUR, EDITOR -->
                 @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR']))
                 <li class="nav-item nav-item-submenu {{ Request::is('backend/romadan-interface/profile/*') ? 'nav-item-open' : '' }}">
@@ -203,6 +211,18 @@
                     <a href="{{route('pengembang.index')}}" class="nav-link {{ Request::routeIs('pengembang.*') ? 'active' : '' }}">
                         <i class="ph-terminal-window"></i>
                         <span>Tim Pengembang</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('media.index')}}" class="nav-link {{ Request::routeIs('media.*') ? 'active' : '' }}">
+                        <i class="ph-image-square"></i>
+                        <span>Media Library</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('visitors.index')}}" class="nav-link {{ Request::routeIs('visitors.*') ? 'active' : '' }}">
+                        <i class="ph-users-three"></i>
+                        <span>Pengunjung</span>
                     </a>
                 </li>
                 <li class="nav-item">

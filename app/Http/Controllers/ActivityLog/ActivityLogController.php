@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\ActivityLog;
 
+use App\Helpers\ExcelExportHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ActivityLogController extends Controller
 {
@@ -82,5 +84,31 @@ class ActivityLogController extends Controller
         Activity::where('created_at', '<', now()->subDays($days))->delete();
 
         return redirect()->route('activity-log.index')->with('success', "Log aktivitas lebih dari {$days} hari berhasil dibersihkan!");
+    }
+
+    /**
+     * Ekspor log aktivitas (maks 5000 baris terbaru) ke Excel.
+     */
+    public function exportExcel(Request $request): StreamedResponse
+    {
+        $query = Activity::with('causer')->select('activity_log.*')->latest();
+
+        if ($request->filled('log_name')) {
+            $query->where('log_name', $request->log_name);
+        }
+
+        $rows = $query->limit(5000)->get()->map(fn ($activity) => [
+            $activity->created_at->format('Y-m-d H:i:s'),
+            ucwords(str_replace('_', ' ', (string) $activity->log_name)),
+            $activity->event,
+            $activity->description,
+            optional($activity->causer)->name ?? 'System',
+        ]);
+
+        return ExcelExportHelper::stream(
+            'log-aktivitas-'.now()->format('Ymd-His').'.xlsx',
+            ['Waktu', 'Modul', 'Event', 'Deskripsi', 'Pengguna'],
+            $rows
+        );
     }
 }

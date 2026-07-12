@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\MenuPublikasi;
 
+use App\Helpers\ExcelExportHelper;
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
 use App\Models\backend\RefKategori;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PublikasiController extends Controller
 {
@@ -74,6 +76,33 @@ class PublikasiController extends Controller
     }
 
     /**
+     * Ekspor daftar publikasi (maks 5000 baris terbaru) ke Excel.
+     */
+    public function exportExcel(): StreamedResponse
+    {
+        $rows = PublikasiModel::with(['kategori', 'status', 'tipe'])
+            ->latest()
+            ->limit(5000)
+            ->get()
+            ->map(fn ($publikasi) => [
+                $publikasi->judul,
+                optional($publikasi->tipe)->nama_tipe,
+                optional($publikasi->kategori)->nama_kategori,
+                optional($publikasi->status)->nama_status,
+                $publikasi->penulis,
+                $publikasi->pengedit,
+                $publikasi->views,
+                optional($publikasi->created_at)->format('Y-m-d H:i:s'),
+            ]);
+
+        return ExcelExportHelper::stream(
+            'publikasi-'.now()->format('Ymd-His').'.xlsx',
+            ['Judul', 'Tipe', 'Kategori', 'Status', 'Penulis', 'Pengedit', 'Views', 'Tanggal Dibuat'],
+            $rows
+        );
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return Response
@@ -127,6 +156,7 @@ class PublikasiController extends Controller
                     'max:25000',
                 ],
                 'backdate' => 'nullable|date',
+                'publish_at' => 'nullable|date|after:now',
                 'file' => 'nullable|mimes:pdf,doc,docx|max:5120',
                 'embedded_media' => 'nullable|url|max:2000',
             ], [
@@ -168,10 +198,13 @@ class PublikasiController extends Controller
                 'views' => 0,
             ];
 
-            // Status and backdate handling
+            // Status, backdate, dan penjadwalan publikasi
             if ($request->filled('backdate')) {
                 $data['backdate'] = Carbon::parse($validated['backdate']);
                 $data['status'] = 'published';
+            } elseif ($request->filled('publish_at')) {
+                $data['published_at'] = Carbon::parse($validated['publish_at']);
+                $data['status'] = 'scheduled';
             } else {
                 $data['status'] = 'draft';
             }
@@ -283,6 +316,7 @@ class PublikasiController extends Controller
                 'kategori' => 'required|exists:ref_kategori,id_kategori',
                 'tipe' => 'required|exists:ref_tipe,id_tipe',
                 'status' => 'required|exists:ref_status,nama_status',
+                'published_at' => 'required_if:status,scheduled|nullable|date|after:now',
                 'new_images' => 'nullable|array',
                 'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:20480|dimensions:min_width=1024,min_height=600',
                 'primary_image' => 'nullable|exists:publikasi_images,id',
@@ -321,6 +355,9 @@ class PublikasiController extends Controller
                 'isi' => $validated['isi'],
                 'embedded_media' => $validated['embedded_media'] ?? null,
                 'status' => $validated['status'],
+                'published_at' => $validated['status'] === 'scheduled'
+                    ? Carbon::parse($validated['published_at'])
+                    : null,
                 'pengedit' => Auth::user()->name,
                 'created_at' => Carbon::parse($validated['created_at'])->format('Y-m-d H:i:s'),
             ];

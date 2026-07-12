@@ -55,6 +55,12 @@
             </nav>
 
             <div class="flex flex-none items-center gap-1.5">
+                {{-- Pencarian global --}}
+                <a href="{{ route('search-fe') }}" aria-label="Cari"
+                    class="flex h-11 w-11 flex-none items-center justify-center rounded-full text-navy-800 transition hover:bg-brand-50 dark:text-slate-300 dark:hover:bg-white/10">
+                    <i class="fa-solid fa-magnifying-glass text-base"></i>
+                </a>
+
                 {{-- Toggle mode gelap/terang --}}
                 <button type="button" x-data="themeToggle" @click="toggle()" :aria-pressed="dark"
                     aria-label="Ganti tampilan gelap/terang"
@@ -94,6 +100,9 @@
 
                 <nav class="flex-1 space-y-1 px-3 py-4">
                     <a href="{{ route('homefe') }}" class="block rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 dark:text-slate-300 dark:hover:bg-brand-500/10 dark:hover:text-brand-400">Beranda</a>
+                    <a href="{{ route('search-fe') }}" class="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 dark:text-slate-300 dark:hover:bg-brand-500/10 dark:hover:text-brand-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i> Cari
+                    </a>
 
                     <div class="px-4 pt-3 pb-1 text-[11px] font-bold tracking-wide text-slate-400 uppercase dark:text-slate-500">Profil</div>
                     @foreach ($feNavProfile as $item)

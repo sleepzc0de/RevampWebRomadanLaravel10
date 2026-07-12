@@ -2,6 +2,10 @@
 
 @section('title', $data->judul . ' — Biro Manajemen BMN dan Pengadaan')
 @section('meta_description', Str::limit(strip_tags($data->isi), 155))
+@section('og_type', 'article')
+@if ($data->image)
+@section('meta_image', asset('storage/romadan_gambar_web/' . $data->image))
+@endif
 
 @section('content')
 @include('frontend.publikasi._detail-tipe', [

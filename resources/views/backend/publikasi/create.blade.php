@@ -334,6 +334,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <!-- /Embedded Media URL Input -->
 
+                <!-- Jadwalkan Publikasi -->
+                <div class="row mb-3">
+                    <label class="col-form-label col-lg-2">Jadwalkan Publikasi</label>
+                    <div class="col-lg-10">
+                        <input type="datetime-local" name="publish_at" value="{{ old('publish_at') }}" class="form-control @error('publish_at') is-invalid @enderror">
+                        <small class="text-muted">Kosongkan untuk simpan sebagai draft. Isi tanggal &amp; jam untuk otomatis dipublikasikan pada waktu tersebut.</small>
+
+                        @error('publish_at')
+                        <div class="alert alert-danger mt-2">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+                <!-- /Jadwalkan Publikasi -->
+
             </div>
 
         </div>

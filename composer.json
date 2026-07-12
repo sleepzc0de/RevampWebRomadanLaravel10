@@ -9,12 +9,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "bacon/bacon-qr-code": "^3.1",
         "cohensive/oembed": "^0.20.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "mews/purifier": "^3.4",
+        "pragmarx/google2fa": "^9.0",
         "spatie/laravel-activitylog": "^5.0",
         "spatie/laravel-permission": "^8.3",
         "yajra/laravel-datatables": "^13.0"

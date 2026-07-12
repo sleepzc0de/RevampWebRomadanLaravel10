@@ -7,6 +7,7 @@ use App\Http\Middleware\CheckIdleTimeout;
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\ConfigureCsrf;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\LogVisitor;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\SecurityHeaders;
@@ -94,5 +95,6 @@ class Kernel extends HttpKernel
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
         'role' => CheckRole::class,
+        'log.visitor' => LogVisitor::class,
     ];
 }

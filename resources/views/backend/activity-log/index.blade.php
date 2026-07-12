@@ -54,8 +54,11 @@ document.addEventListener('DOMContentLoaded', function() {
         order: [[1, 'desc']],
     });
 
+    const exportLink = document.getElementById('export-activity-log');
+    const baseExportUrl = exportLink.href;
     $('#filter-log-name').on('change', function () {
         table.draw();
+        exportLink.href = this.value ? `${baseExportUrl}?log_name=${encodeURIComponent(this.value)}` : baseExportUrl;
     });
 
     $(document).on('click', '.activity-detail-btn', function () {
@@ -81,6 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <option value="{{ $logName }}">{{ ucwords(str_replace('_', ' ', $logName)) }}</option>
                 @endforeach
             </select>
+            <a href="{{ route('activity-log.export') }}" id="export-activity-log" class="btn btn-sm btn-outline-success">
+                <i class="ph-file-xls"></i> Ekspor Excel
+            </a>
             <form action="{{ route('activity-log.clean') }}" method="post" onsubmit="return confirm('Hapus semua log lebih dari 365 hari?');">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-outline-danger">

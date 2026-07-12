@@ -8,6 +8,7 @@ use App\Models\backend\RefTipe;
 use Cohensive\OEmbed\Facades\OEmbed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -25,12 +26,13 @@ class PublikasiModel extends Model
     protected $fillable = [
         'judul', 'sub_judul', 'image', 'tipe', 'kategori', 'slug', 'isi',
         'penulis', 'pengedit', 'status', 'static_random_string', 'backdate',
-        'created_at', 'updated_at', 'file', 'views', 'embedded_media',
+        'created_at', 'updated_at', 'file', 'views', 'embedded_media', 'published_at',
     ];
 
     protected $casts = [
         'deleted_at' => 'datetime',
         'backdate' => 'datetime',
+        'published_at' => 'datetime',
     ];
 
     protected $hidden = [
@@ -40,17 +42,17 @@ class PublikasiModel extends Model
         'id',
     ];
 
-    public function kategori()
+    public function kategori(): BelongsTo
     {
         return $this->belongsTo(RefKategori::class, 'kategori', 'id_kategori');
     }
 
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(RefStatus::class, 'status', 'nama_status');
     }
 
-    public function tipe()
+    public function tipe(): BelongsTo
     {
         return $this->belongsTo(RefTipe::class, 'tipe', 'id_tipe');
     }
@@ -112,7 +114,7 @@ class PublikasiModel extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['judul', 'sub_judul', 'tipe', 'kategori', 'status', 'penulis', 'pengedit', 'backdate'])
+            ->logOnly(['judul', 'sub_judul', 'tipe', 'kategori', 'status', 'penulis', 'pengedit', 'backdate', 'published_at'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges()
             ->useLogName('publikasi');

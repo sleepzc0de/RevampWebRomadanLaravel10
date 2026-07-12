@@ -13,6 +13,7 @@ use App\Http\Controllers\MenuInformasiPublik\PedomanController;
 use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
 use App\Http\Controllers\MenuKegiatan\KegiatanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
+use App\Http\Controllers\MenuMedia\MediaController;
 use App\Http\Controllers\MenuPengaturan\ContactInfoController;
 use App\Http\Controllers\MenuPengaturan\FooterLinkController;
 use App\Http\Controllers\MenuProfile\SejarahController;
@@ -20,11 +21,13 @@ use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
 use App\Http\Controllers\MenuProfile\VisiMisiController;
 use App\Http\Controllers\MenuPublikasi\PublikasiController;
+use App\Http\Controllers\MenuVisitor\VisitorController;
 use App\Http\Controllers\Referensi\RefJenisPeraturanController;
 use App\Http\Controllers\Referensi\RefKategoriController;
 use App\Http\Controllers\Referensi\RefPeraturanStatusController;
 use App\Http\Controllers\Referensi\RefStatusController;
 use App\Http\Controllers\Referensi\RefTipeController;
+use App\Http\Controllers\Security\TwoFactorController;
 use App\Http\Controllers\Tim\PengembangController;
 use App\Http\Controllers\UserManajemen\UserController;
 use Illuminate\Support\Facades\Route;
@@ -42,11 +45,14 @@ use Illuminate\Support\Facades\Route;
 
 // 1. FRONT END
 Route::group(
-    ['prefix' => '/'],
+    ['prefix' => '/', 'middleware' => ['log.visitor']],
     function () {
 
         // HOME
         Route::get('/', [HomeFeController::class, 'index'])->name('homefe');
+
+        // PENCARIAN GLOBAL
+        Route::get('/cari', [HomeFeController::class, 'globalSearch'])->name('search-fe');
 
         // MENU PROFILE
         Route::prefix('/profile')->group(function () {
@@ -121,6 +127,10 @@ Route::group(
         });
     }
 );
+
+// Sitemap XML — di luar grup log.visitor karena endpoint ini untuk crawler,
+// bukan halaman yang perlu tercatat sebagai kunjungan pengguna.
+Route::get('/sitemap.xml', [HomeFeController::class, 'sitemap'])->name('sitemap');
 
 // 2. BACK END
 Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
@@ -214,6 +224,9 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
         // ========== ROUTES UNTUK REDAKTUR & EDITOR & ADMINISTRATOR & HUMAS ==========
         Route::middleware(['role:ADMINISTRATOR|REDAKTUR|EDITOR|HUMAS'])->group(function () {
             // 2.1.4 PUBLIKASI
+            // NB: rute /export harus didaftarkan SEBELUM Route::resource, kalau
+            // tidak akan "tertangkap" oleh wildcard {publikasi} milik show().
+            Route::get('/publikasi/export', [PublikasiController::class, 'exportExcel'])->name('publikasi.export');
             Route::resource('publikasi', PublikasiController::class);
             Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
             Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
@@ -240,6 +253,7 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
 
 Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+    Route::get('activity-log/export', [ActivityLogController::class, 'exportExcel'])->name('activity-log.export');
     Route::delete('activity-log/{id}', [ActivityLogController::class, 'destroy'])->name('activity-log.destroy');
     Route::post('activity-log/clean', [ActivityLogController::class, 'clean'])->name('activity-log.clean');
 });
@@ -254,6 +268,33 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::resource('footer-link', FooterLinkController::class);
 });
 
+// 6. VISITORS (monitoring pengunjung frontend — khusus ADMINISTRATOR)
+
+Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
+    Route::get('visitors', [VisitorController::class, 'index'])->name('visitors.index');
+    Route::get('visitors/export', [VisitorController::class, 'exportExcel'])->name('visitors.export');
+    Route::post('visitors/clean', [VisitorController::class, 'clean'])->name('visitors.clean');
+});
+
+// 6b. MEDIA LIBRARY (khusus ADMINISTRATOR)
+
+Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
+    Route::get('media', [MediaController::class, 'index'])->name('media.index');
+    Route::post('media/sync', [MediaController::class, 'sync'])->name('media.sync');
+    Route::delete('media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
+});
+
+// 7. KEAMANAN AKUN — 2FA (self-service, semua role yang sudah login)
+
+Route::middleware(['auth'])->prefix('security')->group(function () {
+    Route::get('2fa', [TwoFactorController::class, 'index'])->name('two-factor.index');
+    Route::post('2fa/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('2fa/cancel', [TwoFactorController::class, 'cancel'])->name('two-factor.setup.cancel');
+    Route::post('2fa/confirm', [TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+    Route::delete('2fa', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
+    Route::post('2fa/regenerate-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('two-factor.regenerate-codes');
+});
+
 // require __DIR__ . '/auth.php';
 
 use App\Http\Controllers\AuthController;
@@ -261,3 +302,9 @@ use App\Http\Controllers\AuthController;
 Route::get('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Tantangan 2FA saat login — TIDAK pakai middleware auth (user belum login),
+// dilindungi oleh session pending + rate limit sendiri di controller.
+Route::get('/2fa/verifikasi', [AuthController::class, 'twoFactorChallenge'])->name('two-factor.challenge');
+Route::post('/2fa/verifikasi', [AuthController::class, 'twoFactorVerify'])->middleware('throttle:10,1')->name('two-factor.verify');
+Route::post('/2fa/batal', [AuthController::class, 'twoFactorCancel'])->name('two-factor.challenge.cancel');

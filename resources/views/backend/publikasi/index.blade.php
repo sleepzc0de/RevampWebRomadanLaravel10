@@ -184,6 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                         Daftar Publikasi Terhapus
                                     </button></a>
 
+                                    <a href="{{route('publikasi.export')}}"><button type="button" class="btn btn-flat-success btn-labeled btn-labeled-start rounded-pill">
+                                        <span class="btn-labeled-icon bg-success text-white rounded-pill">
+                                            <i class="ph-file-xls"></i>
+                                        </span>
+                                        Ekspor Excel
+                                    </button></a>
+
 						</div>
 
 						<table class="table datatable-basic table-hover table-striped">

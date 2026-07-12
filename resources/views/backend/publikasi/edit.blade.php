@@ -328,6 +328,33 @@
 				</div>
 				<!-- /Status Warta -->
 
+				<!-- Jadwalkan Publikasi -->
+				<div class="row mb-3" id="wrap-published-at" style="display:none;">
+					<label class="col-form-label col-lg-2">Waktu Terbit Terjadwal <span class="text-danger">*</span></label>
+					<div class="col-lg-10">
+						<input class="form-control @error('published_at') is-invalid @enderror" id="published_at" name="published_at" type="datetime-local" value="{{ old('published_at', $publikasi->published_at ? Carbon\Carbon::parse($publikasi->published_at)->format('Y-m-d\TH:i') : '') }}">
+						<small class="text-muted">Publikasi akan otomatis berstatus "published" saat waktu ini tercapai.</small>
+						@error('published_at')
+						<div class="alert alert-danger mt-2">
+							{{ $message }}
+						</div>
+						@enderror
+					</div>
+				</div>
+				<!-- /Jadwalkan Publikasi -->
+				<script>
+					document.addEventListener('DOMContentLoaded', function () {
+						const statusSelect = document.getElementById('status');
+						const wrap = document.getElementById('wrap-published-at');
+						if (!statusSelect || !wrap) return;
+						const toggle = function () {
+							wrap.style.display = statusSelect.value === 'scheduled' ? '' : 'none';
+						};
+						statusSelect.addEventListener('change', toggle);
+						toggle();
+					});
+				</script>
+
 				<!-- Tanggal Terbit -->
 				<div class="row mb-3">
 					<label class="col-form-label col-lg-2">Tanggal Terbit <span class="text-danger">*</span></label>

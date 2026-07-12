@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Helpers\SecurityHelper;
+use App\Helpers\VisitorHelper;
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuFAQ\FAQModel;
 use App\Models\backend\MenuInformasiPublik\AplikasiModel;
@@ -18,13 +19,17 @@ use App\Models\backend\MenuProfile\TentangModel;
 use App\Models\backend\MenuProfile\VisiMisiModel;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
 use App\Models\backend\MenuReferensi\RefJenisPeraturan;
+use App\Models\backend\MenuVisitor\VisitorModel;
 use App\Models\backend\RefKategori;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class HomeFeController extends Controller
 {
@@ -301,16 +306,14 @@ class HomeFeController extends Controller
         // Mengambil data berita berdasarkan slug dengan eager loading images
         $data = PublikasiModel::where('slug', $publikasi)
             ->where('nama_tipe', strtolower('Berita'))
+            ->where('status', self::STATUS_PUBLISHED)
             ->with('images')  // Add this line to load all related images
             ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
             ->firstOrFail();
 
-        // Menambah jumlah views tanpa menyentuh updated_at
-        // (urutan "terkini" di beranda memakai updated_at)
-        $data->timestamps = false;
-        $data->increment('views');
+        $this->incrementViewsOncePerIp($data);
 
         // Format tanggal
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y');
@@ -323,16 +326,14 @@ class HomeFeController extends Controller
     {
         $data = PublikasiModel::where('slug', $publikasi)
             ->where('nama_tipe', strtolower('Warta'))
+            ->where('status', self::STATUS_PUBLISHED)
             ->with('images')  // Add this line to load all related images
             ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
             ->firstorFail();
 
-        // Menambah jumlah views tanpa menyentuh updated_at
-        // (urutan "terkini" di beranda memakai updated_at)
-        $data->timestamps = false;
-        $data->increment('views');
+        $this->incrementViewsOncePerIp($data);
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
@@ -343,20 +344,47 @@ class HomeFeController extends Controller
     {
         $data = PublikasiModel::where('slug', $publikasi)
             ->where('nama_tipe', strtolower('Artikel'))
+            ->where('status', self::STATUS_PUBLISHED)
             ->with('images')  // Add this line to load all related images
             ->join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_tipe.nama_tipe')
             ->firstorFail();
 
-        // Menambah jumlah views tanpa menyentuh updated_at
-        // (urutan "terkini" di beranda memakai updated_at)
-        $data->timestamps = false;
-        $data->increment('views');
+        $this->incrementViewsOncePerIp($data);
 
         $tb = Carbon::parse($data->created_at)->translatedFormat('d F Y', 'j F Y');
 
         return view('frontend.publikasi.fe_artikel', compact(['data', 'tb']));
+    }
+
+    /**
+     * Tambah jumlah views, tapi hanya sekali per (IP, halaman) dalam 24 jam
+     * terakhir — mencegah views naik terus saat pengunjung yang sama
+     * me-refresh halaman berkali-kali. Deteksi "sudah pernah dilihat" memakai
+     * log kunjungan (tabel visitors) yang sudah tercatat lebih dulu oleh
+     * middleware LogVisitor pada request-request sebelumnya.
+     * Bot/crawler tidak dihitung sama sekali.
+     */
+    private function incrementViewsOncePerIp(PublikasiModel $data): void
+    {
+        if (VisitorHelper::isBot(request()->userAgent())) {
+            return;
+        }
+
+        $alreadyViewed = VisitorModel::where('ip_address', request()->ip())
+            ->where('url', request()->path())
+            ->where('created_at', '>=', now()->subDay())
+            ->exists();
+
+        if ($alreadyViewed) {
+            return;
+        }
+
+        // Menambah jumlah views tanpa menyentuh updated_at
+        // (urutan "terkini" di beranda memakai updated_at)
+        $data->timestamps = false;
+        $data->increment('views');
     }
 
     // LAYANAN
@@ -564,4 +592,267 @@ class HomeFeController extends Controller
     //     $kegiatan = KegiatanModel::where('judul', 'like', "%" . $search . "%")->paginate(1);
     //     return view('frontend.kegiatan.index', compact([, 'tentang', 'kegiatan']));
     // }
+
+    private const SEARCH_LIMIT_PER_TYPE = 15;
+
+    private const SEARCH_PER_PAGE = 10;
+
+    /**
+     * Pencarian global lintas seluruh tipe konten publik.
+     */
+    public function globalSearch(Request $request)
+    {
+        $query = SecurityHelper::sanitizeInput((string) $request->input('q', ''));
+
+        $results = collect();
+
+        if (mb_strlen($query) >= 2) {
+            $throttleKey = 'global-search:'.$request->ip();
+
+            if (RateLimiter::tooManyAttempts($throttleKey, 30)) {
+                abort(429);
+            }
+            RateLimiter::hit($throttleKey, 60);
+
+            $results = collect()
+                ->merge($this->searchPublikasi($query))
+                ->merge($this->searchPeraturan($query))
+                ->merge($this->searchPedoman($query))
+                ->merge($this->searchAplikasi($query))
+                ->merge($this->searchFaq($query))
+                ->merge($this->searchKegiatan($query))
+                ->merge($this->searchLayanan($query))
+                ->sortByDesc('date')
+                ->values();
+        }
+
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = self::SEARCH_PER_PAGE;
+
+        $paginated = new LengthAwarePaginator(
+            $results->slice(($page - 1) * $perPage, $perPage)->values(),
+            $results->count(),
+            $perPage,
+            $page,
+            ['path' => LengthAwarePaginator::resolveCurrentPath(), 'query' => $request->query()]
+        );
+
+        return view('frontend.search.index', [
+            'query' => $query,
+            'results' => $paginated,
+        ]);
+    }
+
+    private function searchPublikasi(string $q): Collection
+    {
+        return PublikasiModel::join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->where('publikasi.status', self::STATUS_PUBLISHED)
+            ->where(function ($query) use ($q) {
+                $query->where('judul', 'like', "%{$q}%")->orWhere('sub_judul', 'like', "%{$q}%");
+            })
+            ->orderByDesc('publikasi.id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['publikasi.judul', 'publikasi.slug', 'publikasi.sub_judul', 'publikasi.created_at', 'ref_tipe.nama_tipe'])
+            ->map(function ($item) {
+                $namaTipe = (string) $item['nama_tipe'];
+                $routeName = match ($namaTipe) {
+                    'warta' => 'warta-fe',
+                    'artikel' => 'artikel-fe',
+                    default => 'berita-fe',
+                };
+
+                return [
+                    'type' => ucfirst($namaTipe),
+                    'title' => $item->judul,
+                    'excerpt' => $item->sub_judul,
+                    'url' => route($routeName, $item->slug),
+                    'date' => $item->created_at,
+                ];
+            });
+    }
+
+    private function searchPeraturan(string $q): Collection
+    {
+        return PeraturanModel::where(function ($query) use ($q) {
+            $query->where('judul_peraturan', 'like', "%{$q}%")->orWhere('nomor_peraturan', 'like', "%{$q}%");
+        })
+            ->orderByDesc('id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['judul_peraturan', 'slug', 'nomor_peraturan', 'created_at'])
+            ->map(fn ($item) => [
+                'type' => 'Peraturan',
+                'title' => $item->judul_peraturan,
+                'excerpt' => $item->nomor_peraturan,
+                'url' => route('informasi-publik-peraturan-detail-fe', $item->slug),
+                'date' => $item->created_at,
+            ]);
+    }
+
+    private function searchPedoman(string $q): Collection
+    {
+        return PedomanModel::where(function ($query) use ($q) {
+            $query->where('judul_pedoman', 'like', "%{$q}%")->orWhere('deskripsi', 'like', "%{$q}%");
+        })
+            ->orderByDesc('id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['judul_pedoman', 'deskripsi', 'created_at'])
+            ->map(fn ($item) => [
+                'type' => 'Pedoman',
+                'title' => $item->judul_pedoman,
+                'excerpt' => Str::limit(strip_tags((string) $item->deskripsi), 140),
+                'url' => route('informasi-publik-pedoman-index-fe'),
+                'date' => $item->created_at,
+            ]);
+    }
+
+    private function searchAplikasi(string $q): Collection
+    {
+        return AplikasiModel::where(function ($query) use ($q) {
+            $query->where('judul_aplikasi', 'like', "%{$q}%")->orWhere('sub_judul_aplikasi', 'like', "%{$q}%");
+        })
+            ->orderByDesc('id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['judul_aplikasi', 'sub_judul_aplikasi', 'created_at'])
+            ->map(fn ($item) => [
+                'type' => 'Aplikasi',
+                'title' => $item->judul_aplikasi,
+                'excerpt' => $item->sub_judul_aplikasi,
+                'url' => route('informasi-publik-aplikasi-index-fe'),
+                'date' => $item->created_at,
+            ]);
+    }
+
+    private function searchFaq(string $q): Collection
+    {
+        return FAQModel::where(function ($query) use ($q) {
+            $query->where('faq_judul', 'like', "%{$q}%")->orWhere('faq_isi', 'like', "%{$q}%");
+        })
+            ->orderByDesc('id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['faq_judul', 'faq_isi', 'created_at'])
+            ->map(fn ($item) => [
+                'type' => 'FAQ',
+                'title' => $item->faq_judul,
+                'excerpt' => Str::limit(strip_tags((string) $item->faq_isi), 140),
+                'url' => route('faq-index-fe'),
+                'date' => $item->created_at,
+            ]);
+    }
+
+    private function searchKegiatan(string $q): Collection
+    {
+        return KegiatanModel::where(function ($query) use ($q) {
+            $query->where('judul', 'like', "%{$q}%")->orWhere('tempat', 'like', "%{$q}%");
+        })
+            ->orderByDesc('id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['judul', 'tempat', 'slug', 'static_random_string', 'created_at'])
+            ->map(fn ($item) => [
+                'type' => 'Kegiatan',
+                'title' => $item->judul,
+                'excerpt' => $item->tempat,
+                'url' => route('kegiatan-detail-fe', [$item->slug, $item->static_random_string]),
+                'date' => $item->created_at,
+            ]);
+    }
+
+    private function searchLayanan(string $q): Collection
+    {
+        return LayananModel::where('judul', 'like', "%{$q}%")
+            ->orderByDesc('id')
+            ->limit(self::SEARCH_LIMIT_PER_TYPE)
+            ->get(['judul', 'layanan', 'created_at'])
+            ->map(fn ($item) => [
+                'type' => 'Layanan',
+                'title' => $item->judul,
+                'excerpt' => Str::limit(strip_tags((string) $item->layanan), 140),
+                'url' => route('layanan-fe'),
+                'date' => $item->created_at,
+            ]);
+    }
+
+    /**
+     * Sitemap XML untuk seluruh konten publik. Di-cache 1 jam karena
+     * mengagregasi banyak query dan tidak butuh presisi real-time.
+     */
+    public function sitemap()
+    {
+        $urls = Cache::remember('sitemap_urls', now()->addHour(), function () {
+            return collect()
+                ->merge($this->sitemapStaticUrls())
+                ->merge($this->sitemapPublikasiUrls())
+                ->merge($this->sitemapPeraturanUrls())
+                ->merge($this->sitemapKegiatanUrls());
+        });
+
+        return response()
+            ->view('sitemap', ['urls' => $urls])
+            ->header('Content-Type', 'text/xml');
+    }
+
+    private function sitemapStaticUrls(): Collection
+    {
+        $routes = [
+            ['name' => 'homefe', 'priority' => '1.0'],
+            ['name' => 'layanan-fe', 'priority' => '0.7'],
+            ['name' => 'informasi-publik-index-fe', 'priority' => '0.7'],
+            ['name' => 'informasi-publik-peraturan-index-fe', 'priority' => '0.7'],
+            ['name' => 'informasi-publik-pedoman-index-fe', 'priority' => '0.7'],
+            ['name' => 'informasi-publik-aplikasi-index-fe', 'priority' => '0.6'],
+            ['name' => 'publikasi-index-fe', 'priority' => '0.8'],
+            ['name' => 'publikasi-index-berita-fe', 'priority' => '0.7'],
+            ['name' => 'publikasi-index-warta-fe', 'priority' => '0.7'],
+            ['name' => 'publikasi-index-artikel-fe', 'priority' => '0.7'],
+            ['name' => 'faq-index-fe', 'priority' => '0.6'],
+            ['name' => 'kegiatan-index-fe', 'priority' => '0.7'],
+            ['name' => 'visi-misi-fe', 'priority' => '0.5'],
+            ['name' => 'sejarah-fe', 'priority' => '0.5'],
+            ['name' => 'organisasi-fe', 'priority' => '0.5'],
+            ['name' => 'tentang-fe', 'priority' => '0.5'],
+        ];
+
+        return collect($routes)->map(fn ($r) => [
+            'loc' => route($r['name']),
+            'lastmod' => null,
+            'priority' => $r['priority'],
+        ]);
+    }
+
+    private function sitemapPublikasiUrls(): Collection
+    {
+        return PublikasiModel::join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
+            ->where('publikasi.status', self::STATUS_PUBLISHED)
+            ->get(['publikasi.slug', 'publikasi.updated_at', 'ref_tipe.nama_tipe'])
+            ->map(function ($item) {
+                $routeName = match ($item['nama_tipe']) {
+                    'warta' => 'warta-fe',
+                    'artikel' => 'artikel-fe',
+                    default => 'berita-fe',
+                };
+
+                return [
+                    'loc' => route($routeName, $item->slug),
+                    'lastmod' => optional($item->updated_at)->toAtomString(),
+                    'priority' => '0.8',
+                ];
+            });
+    }
+
+    private function sitemapPeraturanUrls(): Collection
+    {
+        return PeraturanModel::get(['slug', 'updated_at'])->map(fn ($item) => [
+            'loc' => route('informasi-publik-peraturan-detail-fe', $item->slug),
+            'lastmod' => optional($item->updated_at)->toAtomString(),
+            'priority' => '0.6',
+        ]);
+    }
+
+    private function sitemapKegiatanUrls(): Collection
+    {
+        return KegiatanModel::get(['slug', 'static_random_string', 'updated_at'])->map(fn ($item) => [
+            'loc' => route('kegiatan-detail-fe', [$item->slug, $item->static_random_string]),
+            'lastmod' => optional($item->updated_at)->toAtomString(),
+            'priority' => '0.6',
+        ]);
+    }
 }
