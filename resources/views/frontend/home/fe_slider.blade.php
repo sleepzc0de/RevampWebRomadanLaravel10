@@ -22,8 +22,13 @@
             slides: @js($heroSlides),
             active: 0,
             timer: null,
-            start() { this.timer = setInterval(() => this.next(), 6000); },
-        }" x-init="start()"
+            paused: false,
+            start() {
+                if (this.slides.length <= 1) return;
+                this.timer = setInterval(() => { if (!this.paused) this.next(); }, 6000);
+            },
+            next() { this.active = (this.active + 1) % this.slides.length; },
+        }" x-init="start()" @mouseenter="paused = true" @mouseleave="paused = false"
         class="group relative min-h-[62vh] overflow-hidden bg-navy-950 sm:min-h-[72vh]">
 
         <template x-for="(slide, i) in slides" :key="i">
