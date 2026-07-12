@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\backend\RefKategori;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RefKategoriController extends Controller
 {
@@ -103,7 +104,7 @@ class RefKategoriController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_kategori' => 'required|max:255',
+                'nama_kategori' => ['required', 'max:255', Rule::unique('ref_kategori')->ignore(decrypt($id), 'id_kategori')],
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

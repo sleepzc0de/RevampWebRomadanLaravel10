@@ -1,50 +1,29 @@
+@php $about = $tentang->first(); @endphp
 
-	<section class="section-welcome p-t-120 p-b-105" style="background-color: white;">
-		<div class="container">
-			<div class="row">
-				@forelse ($tentang as $item)
+@if ($about)
+    <section class="bg-white py-20 sm:py-24 dark:bg-navy-950">
+        <div class="fe-container grid items-center gap-12 lg:grid-cols-2">
+            <div class="relative order-2 lg:order-1">
+                <div class="aspect-[4/3] overflow-hidden rounded-3xl shadow-[var(--shadow-lift)]">
+                    <img src="{{ asset('storage/romadan_gambar_web/' . $about->image) }}" alt="{{ $about->judul }}"
+                        class="h-full w-full object-cover" loading="lazy">
+                </div>
+                <div class="absolute -bottom-6 -left-6 hidden rounded-2xl bg-brand-700 px-6 py-5 text-white shadow-[var(--shadow-lift)] sm:block dark:bg-brand-600">
+                    <div class="text-2xl font-extrabold">BMN</div>
+                    <div class="text-xs font-medium text-brand-100">&amp; Pengadaan</div>
+                </div>
+            </div>
 
-
-				<div class="col-md-6 p-b-30">
-					<div class="wrap-pic-welcome size2 bo-rad-10 hov-img-zoom m-l-r-auto">
-						<a href="{{asset('storage/romadan_gambar_web/' . $item->image)}}"><img src="{{asset('storage/romadan_gambar_web/' . $item->image)}}" alt="IMG-OUR"></a>
-					</div>
-				</div>
-
-				<div class="col-md-6 p-t-45 p-b-30">
-					<div class="wrap-text-welcome">
-                        <h6 class="txt-tentang-romadan t-center m-b-35 m-t-5" style="text-align: justify;">
-                            {{ Str::limit($item->judul, 10, '...') }}
-                        </h6>
-
-						<div class="txt-tentang-romadan-isi t-center m-b-22 size3 " style="text-align: justify;">
-                            {!! Str::limit($item->excerpt, 150, '...') !!}
-
-							<a href="{{route('tentang-fe')}}" class="btn-tentang-romadan flex-c-m size1 txt3-romadan trans-0-4 mt-3">
-								Baca Profil Kami<i class="ml-3 fa fa-arrow-right"
-								aria-hidden="true"></i>
-							</a>
-						</div>
-
-
-					</div>
-				</div>
-
-				@empty
-
-                  <div class="container">
-					<div class="title-section-ourmenu t-center m-b-22">
-					<h5 class="romadan-berita m-t-2">
-						Tentang Kami
-					</h5>
-				</div>
-				<h5 class="romadan-faq m-t-2">
-					Tentang Kami Kosong !
-				</h5>
-				  </div>
-
-
-				@endforelse
-			</div>
-		</div>
-	</section>
+            <div class="order-1 lg:order-2">
+                <span class="fe-eyebrow">Tentang Kami</span>
+                <h2 class="mt-4 text-3xl font-extrabold text-navy-800 sm:text-4xl dark:text-white">{{ $about->judul }}</h2>
+                <p class="mt-5 text-[15px] leading-relaxed text-slate-600 sm:text-base dark:text-slate-400">
+                    {{ Str::limit(strip_tags($about->excerpt), 220) }}
+                </p>
+                <a href="{{ route('tentang-fe') }}" class="fe-btn fe-btn-primary mt-2">
+                    Baca Profil Kami <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+@endif

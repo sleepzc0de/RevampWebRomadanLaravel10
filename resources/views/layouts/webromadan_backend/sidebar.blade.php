@@ -77,6 +77,9 @@
                             <a href="{{route('peraturan.index')}}" class="nav-link {{ Request::routeIs('peraturan.*') ? 'active' : '' }}">Peraturan</a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{route('pedoman.index')}}" class="nav-link {{ Request::routeIs('pedoman.*') ? 'active' : '' }}">Pedoman</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route('aplikasi.index')}}" class="nav-link {{ Request::routeIs('aplikasi.*') ? 'active' : '' }}">Link Aplikasi</a>
                         </li>
                     </ul>
@@ -159,6 +162,12 @@
                         <li class="nav-item">
                             <a href="{{route('loggambar.index')}}" class="nav-link {{ Request::routeIs('loggambar.*') ? 'active' : '' }}">Gambar Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('contact-info.index')}}" class="nav-link {{ Request::routeIs('contact-info.*') ? 'active' : '' }}">Informasi Kontak</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('footer-link.index')}}" class="nav-link {{ Request::routeIs('footer-link.*') ? 'active' : '' }}">Tautan Footer</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -188,6 +197,18 @@
                     <a href="{{route('pengembang.index')}}" class="nav-link {{ Request::routeIs('pengembang.*') ? 'active' : '' }}">
                         <i class="ph-terminal-window"></i>
                         <span>Tim Pengembang</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('activity-log.index')}}" class="nav-link {{ Request::routeIs('activity-log.*') ? 'active' : '' }}">
+                        <i class="ph-clock-counter-clockwise"></i>
+                        <span>Log Aktivitas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('backups.index')}}" class="nav-link {{ Request::routeIs('backups.*') ? 'active' : '' }}">
+                        <i class="ph-database"></i>
+                        <span>Backup</span>
                     </a>
                 </li>
                 @endrole

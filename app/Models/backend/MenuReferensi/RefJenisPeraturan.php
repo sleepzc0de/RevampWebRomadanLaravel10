@@ -4,10 +4,12 @@ namespace App\Models\backend\MenuReferensi;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class RefJenisPeraturan extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $primaryKey = 'id_jenis_peraturan';
 
@@ -22,4 +24,13 @@ class RefJenisPeraturan extends Model
         'updated_at',
         'id',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('jenis_peraturan');
+    }
 }

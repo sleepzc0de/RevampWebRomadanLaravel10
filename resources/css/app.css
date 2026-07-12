@@ -1,3 +1,149 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Pastikan Tailwind memindai seluruh Blade view (termasuk view vendor pagination
+   kustom) meski letaknya di luar folder resources/css. */
+@source "../views";
+
+/* Dark mode berbasis class .dark pada <html> (toggle manual + localStorage),
+   bukan hanya prefers-color-scheme, agar pembaca bisa memilih sendiri. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    /* Brand biru Kemenkeu (#0f5fae) */
+    --color-brand-50: #eef6ff;
+    --color-brand-100: #dbebfe;
+    --color-brand-200: #bfdefe;
+    --color-brand-300: #92c8fd;
+    --color-brand-400: #5daafa;
+    --color-brand-500: #2f87f0;
+    --color-brand-600: #1968d6;
+    --color-brand-700: #0f5fae;
+    --color-brand-800: #124b85;
+    --color-brand-900: #143f6b;
+    --color-brand-950: #0d2740;
+
+    /* Navy gelap untuk teks judul & footer */
+    --color-navy-600: #0a4a86;
+    --color-navy-700: #073763;
+    --color-navy-800: #052548;
+    --color-navy-900: #031733;
+    --color-navy-950: #020e21;
+
+    /* Aksen emas */
+    --color-gold-400: #ffce54;
+    --color-gold-500: #f5b800;
+    --color-gold-600: #d69e00;
+
+    --shadow-soft: 0 1px 2px rgba(3, 23, 51, .06), 0 4px 16px rgba(3, 23, 51, .06);
+    --shadow-lift: 0 12px 28px rgba(15, 95, 174, .16);
+
+    --animate-fade-up: fade-up .6s cubic-bezier(.4,0,.2,1) both;
+    --animate-fade-in: fade-in .5s ease both;
+    --animate-shake: shake .4s ease-in-out;
+
+    @keyframes fade-up {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        75% { transform: translateX(6px); }
+    }
+}
+
+@layer base {
+    [x-cloak] { display: none !important; }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 6rem;
+        color-scheme: light;
+    }
+    html.dark {
+        color-scheme: dark;
+    }
+    body {
+        @apply bg-white text-slate-700 antialiased dark:bg-navy-950 dark:text-slate-300;
+        font-feature-settings: "cv11", "ss01";
+    }
+    ::selection {
+        @apply bg-brand-200 text-brand-900 dark:bg-brand-500/40 dark:text-white;
+    }
+    a {
+        @apply transition-colors duration-200;
+    }
+}
+
+@layer components {
+    /* Kontainer standar untuk seluruh section frontend */
+    .fe-container {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    /* Tipografi untuk konten rich-text (hasil clean()/CKEditor) */
+    .prose-fe {
+        @apply max-w-none text-[15px] leading-[1.85] text-slate-700 sm:text-base dark:text-slate-300;
+    }
+    .prose-fe :is(h1,h2,h3,h4,h5,h6) { @apply mt-6 mb-3 font-bold text-navy-800 first:mt-0 dark:text-white; }
+    .prose-fe h1 { @apply text-2xl; }
+    .prose-fe h2 { @apply text-xl; }
+    .prose-fe h3 { @apply text-lg; }
+    .prose-fe p { @apply mb-4 text-justify; }
+    .prose-fe a { @apply text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-800 dark:text-brand-400 dark:decoration-brand-700 dark:hover:text-brand-300; }
+    .prose-fe ul { @apply mb-4 list-disc space-y-1.5 pl-6; }
+    .prose-fe ol { @apply mb-4 list-decimal space-y-1.5 pl-6; }
+    .prose-fe blockquote { @apply my-4 border-l-4 border-brand-200 bg-brand-50/60 py-2 pl-4 italic text-slate-600 dark:border-brand-800 dark:bg-brand-500/10 dark:text-slate-400; }
+    .prose-fe img { @apply my-4 rounded-xl; }
+    .prose-fe iframe { @apply my-4 aspect-video w-full rounded-xl; }
+    .prose-fe table { @apply my-4 w-full border-collapse overflow-hidden rounded-lg text-sm; }
+    .prose-fe th { @apply border border-slate-200 bg-slate-50 px-3 py-2 text-left font-semibold dark:border-white/10 dark:bg-white/5; }
+    .prose-fe td { @apply border border-slate-200 px-3 py-2 dark:border-white/10; }
+
+    /* Kartu terbitan (berita/warta/artikel) */
+    .fe-card {
+        @apply flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-soft)] ring-1 ring-slate-900/5 transition duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)] dark:bg-navy-900 dark:ring-white/10;
+    }
+
+    /* Pil kategori/filter */
+    .fe-pill {
+        @apply inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:text-brand-700 dark:border-white/10 dark:bg-navy-900 dark:text-slate-300 dark:hover:border-brand-700 dark:hover:text-brand-400;
+    }
+    .fe-pill[aria-current="page"],
+    .fe-pill.is-active {
+        @apply border-brand-700 bg-brand-700 text-white hover:text-white dark:border-brand-600 dark:bg-brand-600;
+    }
+
+    /* Tombol utama — gabungkan .fe-btn dengan salah satu varian di HTML,
+       mis. class="fe-btn fe-btn-primary" (v4 tidak mendukung @apply antar
+       custom class dalam satu definisi). */
+    .fe-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200;
+    }
+    .fe-btn-primary {
+        @apply bg-brand-700 text-white shadow-[var(--shadow-soft)] hover:-translate-y-0.5 hover:bg-brand-800 hover:shadow-[var(--shadow-lift)] dark:bg-brand-600 dark:hover:bg-brand-500;
+    }
+    .fe-btn-ghost {
+        @apply border border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:text-brand-700 dark:border-white/10 dark:bg-navy-900 dark:text-slate-300 dark:hover:border-brand-700 dark:hover:text-brand-400;
+    }
+
+    /* Label eyebrow di atas judul section */
+    .fe-eyebrow {
+        @apply inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-brand-700 uppercase dark:text-brand-400;
+    }
+    .fe-eyebrow::before {
+        content: "";
+        @apply h-1.5 w-1.5 rounded-full bg-gold-500;
+    }
+}
+
+@utility no-scrollbar {
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+}

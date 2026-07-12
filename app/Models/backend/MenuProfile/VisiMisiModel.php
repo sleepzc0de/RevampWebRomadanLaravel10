@@ -4,10 +4,12 @@ namespace App\Models\backend\MenuProfile;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class VisiMisiModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'visimisi';
 
@@ -25,5 +27,14 @@ class VisiMisiModel extends Model
     public function images()
     {
         return $this->hasMany(VisiMisiImageModel::class, 'visimisi_id', 'id')->orderBy('sort_order');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('visimisi');
     }
 }

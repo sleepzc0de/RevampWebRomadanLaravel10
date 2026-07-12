@@ -218,9 +218,7 @@ class PeraturanController extends Controller
                 $data_file = PeraturanModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_file_web/').$data_file->file);
 
-                $data = [
-                    'file' => $file->hashName(),
-                ];
+                $data['file'] = $file->hashName();
             }
 
             PeraturanModel::findOrFail(decrypt($id))->update($data);

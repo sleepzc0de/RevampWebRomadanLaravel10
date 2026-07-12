@@ -345,6 +345,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="rm-action-ico"><i class="ph-database"></i></span>
                         <span><span class="lbl d-block">Backup</span><span class="sub">Cadangan data</span></span>
                     </a>
+                    <a href="{{route('activity-log.index')}}" class="rm-action" style="--ac:#c0392b">
+                        <span class="rm-action-ico"><i class="ph-clock-counter-clockwise"></i></span>
+                        <span><span class="lbl d-block">Log Aktivitas</span><span class="sub">Audit trail</span></span>
+                    </a>
                     @endrole
                 </div>
             </div>

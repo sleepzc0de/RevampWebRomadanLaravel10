@@ -200,9 +200,7 @@ class KegiatanController extends Controller
                 $data_gambar = KegiatanModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
-                $data = [
-                    'image' => $image->hashName(),
-                ];
+                $data['image'] = $image->hashName();
             }
 
             if ($request->hasFile('file')) {
@@ -219,9 +217,7 @@ class KegiatanController extends Controller
                 $data_file = KegiatanModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_file_web/').$data_file->file);
 
-                $data = [
-                    'file' => $file->hashName(),
-                ];
+                $data['file'] = $file->hashName();
             }
 
             KegiatanModel::findOrFail(decrypt($id))->update($data);

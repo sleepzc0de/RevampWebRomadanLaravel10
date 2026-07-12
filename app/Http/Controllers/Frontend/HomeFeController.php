@@ -8,6 +8,7 @@ use App\Models\backend\MenuFAQ\FAQModel;
 use App\Models\backend\MenuInformasiPublik\AplikasiModel;
 use App\Models\backend\MenuInformasiPublik\InfopublikHomeModel;
 use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
+use App\Models\backend\MenuInformasiPublik\PedomanModel;
 use App\Models\backend\MenuInformasiPublik\PeraturanModel;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuLayanan\LayananModel;
@@ -36,18 +37,26 @@ class HomeFeController extends Controller
 
         $tentang = TentangModel::latest()->take(1)->get();
 
-        $berita_terkini = PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
+        $beritaPublishedQuery = fn () => PublikasiModel::join('ref_kategori', 'publikasi.kategori', '=', 'ref_kategori.id_kategori')
             ->join('ref_status', 'publikasi.status', '=', 'ref_status.nama_status')
             ->join('ref_tipe', 'publikasi.tipe', '=', 'ref_tipe.id_tipe')
             ->select('publikasi.*', 'ref_kategori.nama_kategori', 'ref_status.nama_status', 'ref_tipe.nama_tipe')
             ->where('nama_tipe', strtolower('Berita'))
-            ->whereRaw('LOWER(ref_status.nama_status) like ?', ['%'.strtolower($status_berita).'%'])
+            ->whereRaw('LOWER(ref_status.nama_status) like ?', ['%'.strtolower($status_berita).'%']);
+
+        // Hero: 3 berita terbaru
+        $berita_terkini = $beritaPublishedQuery()
             ->orderBy('publikasi.updated_at', 'desc')
             ->take(3)
             ->get();
 
-        // dd($berita_terkini);
-        return view('frontend.home_fe', compact(['tentang', 'berita_terkini']));
+        // Section kedua: 3 berita terpopuler (dilihat dari jumlah views)
+        $berita_terpopuler = $beritaPublishedQuery()
+            ->orderBy('publikasi.views', 'desc')
+            ->take(3)
+            ->get();
+
+        return view('frontend.home_fe', compact(['tentang', 'berita_terkini', 'berita_terpopuler']));
     }
 
     public function profile_visi_misi()
@@ -449,10 +458,33 @@ class HomeFeController extends Controller
         return view('frontend.infopublik.peraturan-detail', compact(['data']));
     }
 
-    public function infopublik_pedoman_index()
+    public function infopublik_pedoman_index(Request $request)
     {
-        // return view('frontend.infopublik.pedoman-index');
-        return back();
+        $kategori = RefKategori::all();
+        $searchValue = strip_tags((string) $request->input('cari_pedoman'));
+        $selectedKategori = $request->input('kategori');
+
+        $query = PedomanModel::with('dataKategori');
+
+        if ($searchValue) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('judul_pedoman', 'like', '%'.$searchValue.'%')
+                    ->orWhere('deskripsi', 'like', '%'.$searchValue.'%')
+                    ->orWhereHas('dataKategori', function ($q) use ($searchValue) {
+                        $q->where('nama_kategori', 'like', '%'.$searchValue.'%');
+                    });
+            });
+        }
+
+        if ($selectedKategori) {
+            $query->whereHas('dataKategori', function ($q) use ($selectedKategori) {
+                $q->whereIn('nama_kategori', $selectedKategori);
+            });
+        }
+
+        $pedoman = $query->latest()->paginate(9);
+
+        return view('frontend.infopublik.pedoman-index', compact(['pedoman', 'searchValue', 'kategori', 'selectedKategori']));
     }
 
     public function infopublik_aplikasi_index(Request $request)

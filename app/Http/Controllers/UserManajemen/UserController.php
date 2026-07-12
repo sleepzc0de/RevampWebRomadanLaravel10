@@ -112,6 +112,12 @@ class UserController extends Controller
             // Assign role
             $user->assignRole($role->name);
 
+            activity('user')
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->withProperties(['role' => $role->name])
+                ->log('User dibuat dengan role '.$role->name);
+
             DB::commit();
 
             Log::info('User created successfully:', ['user_id' => $user->id]);
@@ -219,8 +225,17 @@ class UserController extends Controller
                 if (! in_array($role->name, self::ALLOWED_ROLES)) {
                     throw new Exception('Role yang dipilih tidak valid.');
                 }
+                $previousRole = $user->getRoleNames()->first();
                 $user->syncRoles([$role->name]);
                 Log::info('Role updated for user', ['user_id' => $user->id, 'new_role' => $role->name]);
+
+                if ($previousRole !== $role->name) {
+                    activity('user')
+                        ->causedBy(auth()->user())
+                        ->performedOn($user)
+                        ->withProperties(['from' => $previousRole, 'to' => $role->name])
+                        ->log("Role diubah dari {$previousRole} menjadi {$role->name}");
+                }
             }
 
             $user->save();

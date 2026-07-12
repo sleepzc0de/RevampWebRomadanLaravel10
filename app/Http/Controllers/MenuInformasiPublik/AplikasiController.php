@@ -149,9 +149,7 @@ class AplikasiController extends Controller
                 $data_gambar = AplikasiModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
-                $data = [
-                    'image' => $image->hashName(),
-                ];
+                $data['image'] = $image->hashName();
             }
             AplikasiModel::findOrFail(decrypt($id))->update($data);
 

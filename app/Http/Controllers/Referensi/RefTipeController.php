@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\backend\RefTipe;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RefTipeController extends Controller
 {
@@ -103,7 +104,7 @@ class RefTipeController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_tipe' => 'required|max:255',
+                'nama_tipe' => ['required', 'max:255', Rule::unique('ref_tipe')->ignore(decrypt($id), 'id_tipe')],
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

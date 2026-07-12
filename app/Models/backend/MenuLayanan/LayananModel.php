@@ -4,10 +4,12 @@ namespace App\Models\backend\MenuLayanan;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class LayananModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'layanan';
 
@@ -27,5 +29,14 @@ class LayananModel extends Model
     public function additionalImages()
     {
         return $this->hasMany(LayananImage::class, 'layanan_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('layanan');
     }
 }

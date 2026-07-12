@@ -8,9 +8,23 @@ use App\Models\backend\MenuInformasiPublik\InformasiPublikModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
 
 class InformasiPublikController extends Controller
 {
+    /**
+     * Daftar route tujuan yang valid untuk field link_list_informasi,
+     * dipakai sebagai whitelist validasi dan opsi dropdown di form.
+     * Nilai ini di-render sebagai route($item->link_list_informasi) di
+     * halaman publik, sehingga nilai di luar daftar ini akan
+     * menyebabkan RouteNotFoundException pada pengunjung.
+     */
+    public const LINK_OPTIONS = [
+        'informasi-publik-peraturan-index-fe' => 'Peraturan',
+        'informasi-publik-pedoman-index-fe' => 'Pedoman',
+        'informasi-publik-aplikasi-index-fe' => 'Aplikasi',
+    ];
+
     // Helper function to sanitize HTML input
     private function sanitizeHtml($input)
     {
@@ -126,19 +140,18 @@ class InformasiPublikController extends Controller
             $request->validate([
                 'judul_list_informasi' => 'required|max:255',
                 'isi_list_informasi' => 'required|max:1000',
-                'link_list_informasi' => 'required|max:255',
+                'link_list_informasi' => ['required', Rule::in(array_keys(self::LINK_OPTIONS))],
             ]);
 
             // Sanitize HTML input
             $judul = $this->sanitizeHtml($request->judul_list_informasi);
             $isi = $this->sanitizeHtml($request->isi_list_informasi);
-            $link = filter_var($request->link_list_informasi, FILTER_SANITIZE_URL);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'judul_list_informasi' => $judul,
                 'isi_list_informasi' => $isi,
-                'link_list_informasi' => $link,
+                'link_list_informasi' => $request->link_list_informasi,
             ];
 
             InformasiPublikModel::create($data);
@@ -209,19 +222,18 @@ class InformasiPublikController extends Controller
             $request->validate([
                 'judul_list_informasi' => 'required|max:255',
                 'isi_list_informasi' => 'required|max:1000',
-                'link_list_informasi' => 'required|max:255',
+                'link_list_informasi' => ['required', Rule::in(array_keys(self::LINK_OPTIONS))],
             ]);
 
             // Sanitize HTML input
             $judul = $this->sanitizeHtml($request->judul_list_informasi);
             $isi = $this->sanitizeHtml($request->isi_list_informasi);
-            $link = filter_var($request->link_list_informasi, FILTER_SANITIZE_URL);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
             $data = [
                 'judul_list_informasi' => $judul,
                 'isi_list_informasi' => $isi,
-                'link_list_informasi' => $link,
+                'link_list_informasi' => $request->link_list_informasi,
             ];
 
             InformasiPublikModel::findOrFail(decrypt($id))->update($data);

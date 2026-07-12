@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Login\LoginModel;
 use App\Models\User;
 use App\Services\CaptchaService;
 use App\Services\PasswordService;
@@ -30,6 +31,7 @@ class AuthController extends Controller
     {
         return view('auth.romadan_login', [
             'captcha' => $this->captchaService->createCaptcha(),
+            'gambar' => LoginModel::inRandomOrder()->first(),
         ]);
     }
 
@@ -71,10 +73,22 @@ class AuthController extends Controller
             // Cegah session fixation: buat session ID baru setelah autentikasi
             $request->session()->regenerate();
 
+            activity('auth')
+                ->causedBy($user)
+                ->withProperties(['ip' => $request->ip()])
+                ->log('Login berhasil');
+
             return redirect()->route('home');
         }
 
         RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
+
+        if ($user) {
+            activity('auth')
+                ->causedBy($user)
+                ->withProperties(['ip' => $request->ip()])
+                ->log('Login gagal (password salah)');
+        }
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
@@ -83,6 +97,13 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            activity('auth')
+                ->causedBy(Auth::user())
+                ->withProperties(['ip' => $request->ip()])
+                ->log('Logout');
+        }
+
         Auth::logout();
 
         // Invalidate dan regenerate session user yang login

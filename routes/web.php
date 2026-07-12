@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLog\ActivityLogController;
 use App\Http\Controllers\Backend\HomeBeController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Frontend\HomeFeController;
@@ -8,8 +9,11 @@ use App\Http\Controllers\Medsos\MedsosController;
 use App\Http\Controllers\MenuFAQ\FAQController;
 use App\Http\Controllers\MenuInformasiPublik\AplikasiController;
 use App\Http\Controllers\MenuInformasiPublik\InformasiPublikController;
+use App\Http\Controllers\MenuInformasiPublik\PedomanController;
 use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
+use App\Http\Controllers\MenuPengaturan\ContactInfoController;
+use App\Http\Controllers\MenuPengaturan\FooterLinkController;
 use App\Http\Controllers\MenuProfile\SejarahController;
 use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
 use App\Http\Controllers\MenuProfile\TentangController;
@@ -70,7 +74,7 @@ Route::group(
 
             Route::get('/detail/peraturan/{peraturan}', [HomeFeController::class, 'infopublik_peraturan_detail'])->name('informasi-publik-peraturan-detail-fe');
 
-            Route::get('/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
+            Route::match(['get', 'post'], '/pedoman', [HomeFeController::class, 'infopublik_pedoman_index'])->name('informasi-publik-pedoman-index-fe');
 
             Route::match(['get', 'post'], '/aplikasi', [HomeFeController::class, 'infopublik_aplikasi_index'])->name('informasi-publik-aplikasi-index-fe');
         });
@@ -151,6 +155,9 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
                 // 2.1.8.3 PORTAL APLIKASI
                 Route::resource('aplikasi', AplikasiController::class);
+
+                // 2.1.8.4 PEDOMAN
+                Route::resource('pedoman', PedomanController::class);
             });
 
             // 2.1.11 MEDSOS
@@ -217,6 +224,24 @@ Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
     Route::delete('backups/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');
     Route::get('backups/{filename}/download', [BackupController::class, 'download'])->name('backups.download');
     Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
+});
+
+// 4. ACTIVITY LOG
+
+Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
+    Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+    Route::delete('activity-log/{id}', [ActivityLogController::class, 'destroy'])->name('activity-log.destroy');
+    Route::post('activity-log/clean', [ActivityLogController::class, 'clean'])->name('activity-log.clean');
+});
+
+// 5. PENGATURAN (Contact Info & Footer Links)
+
+Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
+    Route::get('contact-info', [ContactInfoController::class, 'index'])->name('contact-info.index');
+    Route::get('contact-info/{id}/edit', [ContactInfoController::class, 'edit'])->name('contact-info.edit');
+    Route::put('contact-info/{id}', [ContactInfoController::class, 'update'])->name('contact-info.update');
+
+    Route::resource('footer-link', FooterLinkController::class);
 });
 
 // require __DIR__ . '/auth.php';

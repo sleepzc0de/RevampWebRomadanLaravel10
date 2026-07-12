@@ -5,10 +5,12 @@ namespace App\Models\backend\MenuFAQ;
 use App\Models\backend\RefKategori;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class FAQModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'faq';
 
@@ -25,5 +27,14 @@ class FAQModel extends Model
     public function kategori()
     {
         return $this->belongsTo(RefKategori::class, 'kategori', 'id_kategori');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('faq');
     }
 }

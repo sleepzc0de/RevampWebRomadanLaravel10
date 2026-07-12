@@ -4,10 +4,12 @@ namespace App\Models\backend\MenuProfile;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class TentangModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'tentang';
 
@@ -27,5 +29,14 @@ class TentangModel extends Model
     public function additionalImages()
     {
         return $this->hasMany(TentangImage::class, 'tentang_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('tentang');
     }
 }

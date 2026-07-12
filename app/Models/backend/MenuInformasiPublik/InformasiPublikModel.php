@@ -4,10 +4,12 @@ namespace App\Models\backend\MenuInformasiPublik;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class InformasiPublikModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'informasi_publik';
 
@@ -24,4 +26,13 @@ class InformasiPublikModel extends Model
         'updated_at',
         'id',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('informasi_publik');
+    }
 }

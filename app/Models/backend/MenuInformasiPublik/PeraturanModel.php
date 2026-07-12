@@ -7,10 +7,12 @@ use App\Models\backend\MenuReferensi\RefPeraturanStatus;
 use App\Models\backend\RefKategori;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PeraturanModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'peraturan';
 
@@ -37,5 +39,14 @@ class PeraturanModel extends Model
     public function data_status_peraturan()
     {
         return $this->belongsTo(RefPeraturanStatus::class, 'status_peraturan', 'id_ref_peraturan_status')->withDefault(['nama_peraturan_status' => 'STATUS BELUM DIISI']);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('peraturan');
     }
 }

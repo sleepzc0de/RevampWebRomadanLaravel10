@@ -5,10 +5,12 @@ namespace App\Models\medsos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Medsos extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'medsos';
 
@@ -28,5 +30,14 @@ class Medsos extends Model
         $flush = fn () => Cache::forget('footer_medsos');
         static::saved($flush);
         static::deleted($flush);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('medsos');
     }
 }

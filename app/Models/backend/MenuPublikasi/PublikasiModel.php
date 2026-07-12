@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class PublikasiModel extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $table = 'publikasi';
 
@@ -105,5 +107,14 @@ class PublikasiModel extends Model
     public function primaryImage()
     {
         return $this->hasOne(PublikasiImage::class, 'publikasi_id')->where('is_primary', true);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['judul', 'sub_judul', 'tipe', 'kategori', 'status', 'penulis', 'pengedit', 'backdate'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('publikasi');
     }
 }

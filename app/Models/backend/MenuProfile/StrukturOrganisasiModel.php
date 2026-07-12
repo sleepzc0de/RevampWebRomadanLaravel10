@@ -5,10 +5,12 @@ namespace App\Models\backend\MenuProfile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class StrukturOrganisasiModel extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'struktur_organisasi';
 
@@ -81,5 +83,14 @@ class StrukturOrganisasiModel extends Model
                     'media' => 'col-md-6',
                 ];
         }
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->useLogName('struktur_organisasi');
     }
 }

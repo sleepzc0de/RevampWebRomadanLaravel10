@@ -75,6 +75,10 @@
 
                 const data = await response.json();
 
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Failed to create backup.');
+                }
+
                 // Process steps
                 for (const step of steps) {
                     await new Promise(resolve => {
@@ -97,7 +101,7 @@
 
                 Swal.fire({
                     title: 'Success!',
-                    text: 'Backup has been created successfully',
+                    text: data.message || 'Backup has been created successfully',
                     icon: 'success',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#3B82F6'
@@ -109,7 +113,7 @@
                 this.processing = false;
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Failed to create backup. Please try again.',
+                    text: error.message || 'Failed to create backup. Please try again.',
                     icon: 'error',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#EF4444'
@@ -297,7 +301,7 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <form x-bind:action="'{{ route('backups.destroy', '') }}/' + selectedBackup" method="POST">
+                    <form x-bind:action="'{{ route('backups.destroy', '__FILENAME__') }}'.replace('__FILENAME__', encodeURIComponent(selectedBackup))" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
@@ -338,91 +342,6 @@
             });
         });
 
-        // Fungsi untuk menampilkan alert sebagai fallback jika SweetAlert2 gagal dimuat
-        function showAlert(type, title, text) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: title,
-                    text: text,
-                    icon: type,
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: type === 'success' ? '#3B82F6' : '#EF4444'
-                }).then(() => {
-                    if (type === 'success') {
-                        window.location.reload();
-                    }
-                });
-            } else {
-                alert(text);
-                if (type === 'success') {
-                    window.location.reload();
-                }
-            }
-        }
-
-        // Backup creation handler
-        function handleBackupCreation(event) {
-            const form = event.target;
-            const formData = new FormData(form);
-
-            // Set initial state
-            this.processing = true;
-            this.progress = 0;
-            this.currentStep = 'Initializing backup process...';
-
-            // Define backup process steps
-            const steps = [{
-                    message: 'Preparing files for backup...',
-                    progress: 20
-                },
-                {
-                    message: 'Compressing data...',
-                    progress: 40
-                },
-                {
-                    message: 'Encrypting backup...',
-                    progress: 60
-                },
-                {
-                    message: 'Saving backup file...',
-                    progress: 80
-                },
-                {
-                    message: 'Finalizing...',
-                    progress: 90
-                }
-            ];
-
-            // Send backup request
-            fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Process each step with delay
-                    steps.forEach((step, index) => {
-                        setTimeout(() => {
-                            this.currentStep = step.message;
-                            this.progress = step.progress;
-                        }, index * 1000);
-                    });
-
-                    // Complete the process
-                    setTimeout(() => {
-                        this.progress = 100;
-                        this.processing = false;
-                        showAlert('success', 'Success!', 'Backup has been created successfully');
-                    }, steps.length * 1000 + 500);
-                })
-                .catch(error => {
-                    this.processing = false;
-                    showAlert('error', 'Error!', 'Failed to create backup. Please try again.');
-                });
-        }
     </script>
 </body>
 

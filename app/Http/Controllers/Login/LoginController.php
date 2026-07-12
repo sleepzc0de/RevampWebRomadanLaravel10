@@ -157,9 +157,7 @@ class LoginController extends Controller
                 $data_gambar = LoginModel::findOrFail(decrypt($id));
                 File::delete(public_path('storage/romadan_gambar_web/').$data_gambar->image);
 
-                $data = [
-                    'image' => $image->hashName(),
-                ];
+                $data['image'] = $image->hashName();
             }
 
             LoginModel::findOrFail(decrypt($id))->update($data);

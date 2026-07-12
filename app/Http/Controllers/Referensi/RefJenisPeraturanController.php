@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\backend\MenuReferensi\RefJenisPeraturan;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RefJenisPeraturanController extends Controller
 {
@@ -80,7 +81,7 @@ class RefJenisPeraturanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_jenis_peraturan' => 'required|max:255',
+                'nama_jenis_peraturan' => ['required', 'max:255', Rule::unique('ref_jenis_peraturan')->ignore(decrypt($id), 'id_jenis_peraturan')],
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM

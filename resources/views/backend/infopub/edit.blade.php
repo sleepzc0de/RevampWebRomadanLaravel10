@@ -62,7 +62,12 @@
 									<div class="row mb-3">
 										<label class="col-form-label col-lg-2">Link List Informasi <span class="text-danger">*</span></label>
 										<div class="col-lg-10">
-											<input value="{{ old('link_list_informasi') ?? $infopub->link_list_informasi }}" type="text" name="link_list_informasi" class="form-control @error('link_list_informasi') is-invalid @enderror" required placeholder="Masukkan Link List Informasi">
+											<select name="link_list_informasi" class="form-select form-control @error('link_list_informasi') is-invalid @enderror" required>
+												<option value="">-- Pilih Halaman Tujuan --</option>
+												@foreach (\App\Http\Controllers\MenuInformasiPublik\InformasiPublikController::LINK_OPTIONS as $routeName => $label)
+													<option value="{{ $routeName }}" {{ (old('link_list_informasi') ?? $infopub->link_list_informasi) === $routeName ? 'selected' : '' }}>{{ $label }}</option>
+												@endforeach
+											</select>
 											<!-- error message untuk link_list_informasi -->
 											@error('link_list_informasi')
 											<div class="alert alert-danger mt-2">

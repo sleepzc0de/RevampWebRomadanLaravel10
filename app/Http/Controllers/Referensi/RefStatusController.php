@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\backend\RefStatus;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RefStatusController extends Controller
 {
@@ -103,7 +104,7 @@ class RefStatusController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'nama_status' => 'required|max:255',
+                'nama_status' => ['required', 'max:255', Rule::unique('ref_status')->ignore(decrypt($id), 'id_status')],
             ]);
 
             // TAMPUNGAN REQUEST DATA DARI FORM
