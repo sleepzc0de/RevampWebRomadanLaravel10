@@ -349,8 +349,8 @@
                                 name="image">
                             <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar utama</small>
                             <div class="mt-3">
-                                <img id="currentMainImage" src="{{ asset('storage/romadan_gambar_web/' . $visimisi->image) }}" alt="Gambar Utama"
-                                    width="300px" class="img-thumbnail">
+                                <img id="currentMainImage" data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $visimisi->image]) }}" alt="Gambar Utama"
+                                    width="300px" class="img-thumbnail" style="background:#eef1f4;">
                                 <img id="mainImagePreview" style="display: none; max-height: 300px;" class="img-thumbnail">
                             </div>
                             @error('image')
@@ -400,7 +400,7 @@
                                                     <input type="checkbox" class="form-check-input" name="delete_image[{{ $image->id }}]" value="1" id="delete_{{ $image->id }}">
                                                     <label class="form-check-label" for="delete_{{ $image->id }}">Hapus</label>
                                                 </div>
-                                                <img src="{{ asset('storage/romadan_gambar_web/' . $image->image) }}" alt="Gambar Tambahan" class="img-thumbnail" style="max-height: 150px;">
+                                                <img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $image->image]) }}" alt="Gambar Tambahan" class="img-thumbnail" style="max-height: 150px; background:#eef1f4;">
                                                 <div class="mt-1">
                                                     <label for="sort_{{ $image->id }}" class="form-label small">Urutan:</label>
                                                     <input type="number" class="form-control form-control-sm sort-input" id="sort_{{ $image->id }}" name="sort_order[{{ $image->id }}]" value="{{ $image->sort_order }}" min="0">

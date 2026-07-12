@@ -25,9 +25,9 @@ class TentangController extends Controller
             return datatables()->of($query)
 
                 ->addColumn('image_tentang', function ($query) {
-                    $url = asset('storage/romadan_gambar_web/'.$query->image);
+                    $blobUrl = route('media.blob', ['romadan_gambar_web', $query->image]);
 
-                    return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
+                    return '<a href="'.e($blobUrl).'" target="_blank"><img data-blob-src="'.e($blobUrl).'" border="0" width="100" class="img-rounded" align="center" style="background:#eef1f4;"/></a>';
                 })
                 ->addColumn('video_url', function ($query) {
                     return $query->video_url ? '<a href="'.$query->video_url.'" target="_blank">Lihat Video</a>' : 'Tidak ada video';
@@ -40,8 +40,8 @@ class TentangController extends Controller
 
                     $output = '';
                     foreach ($images as $image) {
-                        $url = asset('storage/romadan_gambar_web/'.$image->image_path);
-                        $output .= '<a href="'.$url.'" class="mr-2"><img src="'.$url.'" border="0" width="50" class="img-rounded" align="center"/></a>';
+                        $blobUrl = route('media.blob', ['romadan_gambar_web', $image->image_path]);
+                        $output .= '<a href="'.e($blobUrl).'" target="_blank" class="mr-2"><img data-blob-src="'.e($blobUrl).'" border="0" width="50" class="img-rounded" align="center" style="background:#eef1f4;"/></a>';
                     }
 
                     return $output;

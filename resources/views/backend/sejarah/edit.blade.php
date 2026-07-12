@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <div class="media-checkbox">
                                             <input type="checkbox" class="form-check-input" name="keep_media[]" value="{{ $index }}" checked>
                                         </div>
-                                        <img src="{{ asset('storage/romadan_gambar_web/' . $item['path']) }}" alt="{{ $item['original_name'] ?? 'Image' }}">
+                                        <img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $item['path']]) }}" alt="{{ $item['original_name'] ?? 'Image' }}" style="background:#eef1f4;">
                                         <div class="caption">{{ $item['original_name'] ?? 'Image' }}</div>
                                     </div>
                                 @elseif($item['type'] === 'video')
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="form-text text-muted">Format: JPEG, PNG, JPG, SVG. Ukuran maksimal: 20MB</div>
                         @if($sejarah->image)
                         <div class="mt-3">
-                            <img src="{{asset('storage/romadan_gambar_web/'.$sejarah->image)}}" alt="" class="img-fluid" style="max-width: 300px; max-height: 200px;">
+                            <img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $sejarah->image]) }}" alt="" class="img-fluid" style="max-width: 300px; max-height: 200px; background:#eef1f4;">
                         </div>
                         @endif
                         @error('image')

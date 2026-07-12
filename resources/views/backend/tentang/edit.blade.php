@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <small class="form-text text-muted">Format: JPG, JPEG, PNG, SVG. Maksimal: 20MB</small>
                         <div id="main-image-preview" class="mt-2"></div>
                         <div class="mt-3">
-                            <img src="{{asset('storage/romadan_gambar_web/'.$tentang->image)}}" alt="Gambar Utama" width="300px" class="rounded border">
+                            <img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $tentang->image]) }}" alt="Gambar Utama" width="300px" class="rounded border" style="background:#eef1f4;">
                         </div>
                         @error('image')
                         <div class="alert alert-danger mt-2">
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <input type="checkbox" name="remove_additional_image[]" value="{{ $image->id }}" class="remove-image-checkbox" id="remove-image-{{ $image->id }}">
                                     <label for="remove-image-{{ $image->id }}">Hapus</label>
                                 </div>
-                                <img src="{{ asset('storage/romadan_gambar_web/' . $image->image_path) }}" alt="Additional Image">
+                                <img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $image->image_path]) }}" alt="Additional Image" style="background:#eef1f4;">
                             </div>
                             @endforeach
                         </div>

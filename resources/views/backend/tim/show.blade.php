@@ -21,7 +21,7 @@
                         <label class="col-lg-3">Foto</label>
                         <div class="col-lg-9">
                             @if($developer->photo)
-                                <img src="{{ asset('storage/'.$developer->photo) }}" alt="Developer Photo" class="img-fluid" style="max-width: 200px">
+                                <img data-blob-src="{{ route('media.blob', ['photos', basename($developer->photo)]) }}" alt="Developer Photo" class="img-fluid" style="max-width: 200px; background:#eef1f4;">
                             @else
                                 <span>Tidak ada foto</span>
                             @endif

@@ -17,7 +17,7 @@ class PengembangController extends Controller
     public function index()
     {
         $query = DeveloperModel::select('*')->get()->map(function ($item) {
-            $item->photo = $item->photo ? asset('storage/'.$item->photo) : asset('default-photo.jpg');
+            $item->photo = $item->photo ? route('media.blob', ['photos', basename($item->photo)]) : null;
 
             return $item;
         });

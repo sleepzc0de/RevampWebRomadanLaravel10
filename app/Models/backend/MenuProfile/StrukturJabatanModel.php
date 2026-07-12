@@ -20,8 +20,8 @@ class StrukturJabatanModel extends Model
     protected $fillable = ['nama_jabatan', 'parent_id', 'urutan'];
 
     /**
-     * No SQL ordering — dilakukan di PHP (konsisten dengan model
-     * StrukturOrganisasi lain, menghindari isu ordering di SQL Server).
+     * No SQL ordering pada relasi — urutan dilakukan di PHP (menghindari
+     * isu ordering di SQL Server saat query berulang/rekursif).
      */
     public function parent(): BelongsTo
     {

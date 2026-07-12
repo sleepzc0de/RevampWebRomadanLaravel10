@@ -57,7 +57,7 @@
                             <div class="col-lg-9">
                                 @if($developer->photo)
                                     <div class="mb-2">
-                                        <img src="{{ asset('storage/'.$developer->photo) }}" alt="Current Photo" width="100">
+                                        <img data-blob-src="{{ route('media.blob', ['photos', basename($developer->photo)]) }}" alt="Current Photo" width="100" style="background:#eef1f4;">
                                     </div>
                                 @endif
                                 <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror">

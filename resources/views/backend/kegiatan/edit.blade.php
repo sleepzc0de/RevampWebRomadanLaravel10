@@ -91,7 +91,7 @@
 										<div class="col-lg-10">
 											<input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
 											<div class="mt-3">
-												<img src="{{asset('storage/romadan_gambar_web/'.$kegiatan->image)}}" alt="" width="300px">
+												<img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $kegiatan->image]) }}" alt="" width="300px" style="background:#eef1f4;">
 											</div>
 											@error('image')
 											<div class="alert alert-danger mt-2">

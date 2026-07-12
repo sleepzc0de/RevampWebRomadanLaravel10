@@ -27,18 +27,18 @@ class SejarahController extends Controller
                         $mediaItems = json_decode($query->media, true);
                         foreach ($mediaItems as $item) {
                             if ($item['type'] === 'image') {
-                                $url = asset('storage/romadan_gambar_web/'.$item['path']);
+                                $blobUrl = route('media.blob', ['romadan_gambar_web', $item['path']]);
 
-                                return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center"/></a>';
+                                return '<a href="'.e($blobUrl).'" target="_blank"><img data-blob-src="'.e($blobUrl).'" border="0" width="100" class="img-rounded" align="center" style="background:#eef1f4;"/></a>';
                             }
                         }
                     }
 
                     // Fallback to old image display method
                     if ($query->image) {
-                        $url = asset('storage/romadan_gambar_web/'.$query->image);
+                        $blobUrl = route('media.blob', ['romadan_gambar_web', $query->image]);
 
-                        return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center"/></a>';
+                        return '<a href="'.e($blobUrl).'" target="_blank"><img data-blob-src="'.e($blobUrl).'" border="0" width="100" class="img-rounded" align="center" style="background:#eef1f4;"/></a>';
                     }
 
                     return 'No image';

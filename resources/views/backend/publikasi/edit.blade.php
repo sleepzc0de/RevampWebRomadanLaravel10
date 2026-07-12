@@ -194,8 +194,8 @@
             <div class="d-flex flex-wrap gap-3 mb-3" id="current-images">
                 @foreach($publikasi->images as $image)
                 <div class="position-relative" id="image-container-{{ $image->id }}">
-                    <img src="{{ asset('storage/romadan_gambar_web/'.$image->image_path) }}"
-                         alt="" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                    <img data-blob-src="{{ route('media.blob', ['romadan_gambar_web', $image->image_path]) }}"
+                         alt="" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; background:#eef1f4;">
 
                     <div class="position-absolute top-0 start-0 d-flex">
                         @if($image->is_primary)

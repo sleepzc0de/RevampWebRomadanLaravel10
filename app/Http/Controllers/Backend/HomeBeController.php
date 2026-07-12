@@ -140,9 +140,9 @@ class HomeBeController extends Controller
 
         return datatables()->of($query)
             ->addColumn('image_publikasi', function ($query) {
-                $url = asset('storage/romadan_gambar_web/'.$query->image);
+                $blobUrl = route('media.blob', ['romadan_gambar_web', $query->image]);
 
-                return '<a href="'.$url.'"><img src="'.$url.'" border="0" width="100" class="img-rounded" align="center""/></a>';
+                return '<a href="'.e($blobUrl).'" target="_blank"><img data-blob-src="'.e($blobUrl).'" border="0" width="100" class="img-rounded" align="center" style="background:#eef1f4;"/></a>';
             })
             ->addColumn('opsi', function ($query) {
                 return view('components.datatable-actions', [

@@ -80,8 +80,8 @@ const DatatableResponsive = function() {
         name: 'photo',
         render: function(data) {
             return data
-                ? `<img src="${data}" alt="Photo" style="width: 50px; height: auto;">`
-                : '<span>No Photo</span>';
+                ? `<img data-blob-src="${data}" alt="Photo" style="width: 50px; height: auto; background:#eef1f4;">`
+                : `<img src="{{ asset('default-photo.jpg') }}" alt="Photo" style="width: 50px; height: auto;">`;
         }
     },
             { data: 'name', name: 'name' },
