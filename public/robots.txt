@@ -1,13 +1,6 @@
 User-agent: *
 Disallow: /backend/
-Disallow: /security/
 Disallow: /bDBnMW5fY201X2IxcjBtNGQ0bl9rM21lbmszdQ==
 Disallow: /2fa/
-Disallow: /visitors
-Disallow: /activity-log
-Disallow: /backups
-Disallow: /media
-Disallow: /contact-info
-Disallow: /footer-link
 
 Sitemap: https://www.romadan.kemenkeu.go.id/sitemap.xml

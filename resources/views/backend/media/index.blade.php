@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const id = $(this).data('id');
         const name = $(this).data('name');
         $('#deleteMediaName').text(name);
-        $('#deleteMediaForm').attr('action', "{{ url('media') }}/" + id);
+        $('#deleteMediaForm').attr('action', "{{ route('media.destroy', 'REPLACE_ID') }}".replace('REPLACE_ID', id));
         const modal = new bootstrap.Modal(document.getElementById('deleteMediaModal'));
         modal.show();
     });

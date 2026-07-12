@@ -6,6 +6,7 @@
 @if ($data->image)
 @section('meta_image', asset('storage/romadan_gambar_web/' . $data->image))
 @endif
+@include('frontend.publikasi._article-schema')
 
 @section('content')
 @include('frontend.publikasi._detail-tipe', [

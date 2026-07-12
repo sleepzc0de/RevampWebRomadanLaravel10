@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#052548">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="@yield('robots', 'index, follow')">
     <meta name="description" content="@yield('meta_description', 'Website resmi Biro Manajemen BMN dan Pengadaan, Kementerian Keuangan Republik Indonesia.')">
     <meta name="author" content="Kementerian Keuangan Republik Indonesia">
 
@@ -47,6 +47,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    {{-- Data terstruktur schema.org — membantu Google memahami identitas
+         organisasi (bisa muncul di Knowledge Panel). Biaya render: nol,
+         cuma teks JSON inline, tidak ada request tambahan. --}}
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'GovernmentOrganization',
+        'name' => 'Biro Manajemen BMN dan Pengadaan',
+        'alternateName' => 'Kementerian Keuangan Republik Indonesia',
+        'url' => url('/'),
+        'logo' => asset('frontend_romadan_web/images/icons/romadan/logo_3.png'),
+    ], JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    @stack('structured-data')
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')

@@ -35,8 +35,7 @@ class MediaController extends Controller
         ['visimisi', 'image', 'Visi & Misi'],
         ['visimisi_images', 'image', 'Visi & Misi (galeri)'],
         ['sejarah', 'image', 'Sejarah'],
-        ['struktur_organisasi', 'image', 'Struktur Organisasi'],
-        ['struktur_organisasi_images', 'image_path', 'Struktur Organisasi (galeri)'],
+        ['struktur_pejabat', 'foto', 'Struktur Organisasi (foto pejabat)'],
         ['developers', 'photo', 'Tim Pengembang'],
     ];
 
@@ -54,7 +53,9 @@ class MediaController extends Controller
             return datatables()->of($query)
                 ->addColumn('preview', function ($media) {
                     if ($media->isImage()) {
-                        return '<img src="'.e($media->url).'" class="img-rounded" width="60" height="60" style="object-fit:cover;border-radius:8px;">';
+                        $blobUrl = route('media.blob', [$media->folder, $media->filename]);
+
+                        return '<img data-blob-src="'.e($blobUrl).'" class="img-rounded" width="60" height="60" style="object-fit:cover;border-radius:8px;background:#eef1f4;">';
                     }
 
                     return '<i class="ph-file-text" style="font-size:1.75rem;"></i>';

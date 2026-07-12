@@ -45,7 +45,7 @@ class AuthAccessTest extends TestCase
 
     public function test_backups_require_authentication(): void
     {
-        $response = $this->get('/backups');
+        $response = $this->get(route('backups.index'));
 
         $response->assertRedirect(route('login'));
     }

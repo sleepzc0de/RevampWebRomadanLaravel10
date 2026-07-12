@@ -1,5 +1,10 @@
 @extends('layouts.webromadan_frontend.fe_master')
 
+{{-- Halaman hasil pencarian internal sengaja tidak diindeks (praktik SEO
+     standar) supaya tidak dianggap konten tipis/duplikat oleh Google. --}}
+@section('robots', 'noindex, follow')
+@section('title', 'Cari — Biro Manajemen BMN dan Pengadaan')
+
 @section('content')
 
 <section class="border-b border-slate-100 bg-slate-50/60 py-10 dark:border-white/10 dark:bg-navy-900/40 sm:py-14">

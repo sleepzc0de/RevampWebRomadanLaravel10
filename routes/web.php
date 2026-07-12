@@ -13,11 +13,12 @@ use App\Http\Controllers\MenuInformasiPublik\PedomanController;
 use App\Http\Controllers\MenuInformasiPublik\PeraturanController;
 use App\Http\Controllers\MenuKegiatan\KegiatanController;
 use App\Http\Controllers\MenuLayanan\LayananController;
+use App\Http\Controllers\MenuMedia\MediaBlobController;
 use App\Http\Controllers\MenuMedia\MediaController;
 use App\Http\Controllers\MenuPengaturan\ContactInfoController;
 use App\Http\Controllers\MenuPengaturan\FooterLinkController;
 use App\Http\Controllers\MenuProfile\SejarahController;
-use App\Http\Controllers\MenuProfile\StrukturOrganisasiController;
+use App\Http\Controllers\MenuProfile\StrukturJabatanController;
 use App\Http\Controllers\MenuProfile\TentangController;
 use App\Http\Controllers\MenuProfile\VisiMisiController;
 use App\Http\Controllers\MenuPublikasi\PublikasiController;
@@ -135,6 +136,11 @@ Route::get('/sitemap.xml', [HomeFeController::class, 'sitemap'])->name('sitemap'
 // 2. BACK END
 Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
 
+    // Streaming gambar ter-otentikasi khusus dalam CMS (lihat MediaBlobController)
+    Route::get('/media-blob/{folder}/{filename}', [MediaBlobController::class, 'show'])
+        ->where('filename', '.*')
+        ->name('media.blob');
+
     // 2.1 INTERFACE BACKEND
     Route::prefix('/romadan-interface')->group(function () {
 
@@ -194,8 +200,16 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
                 Route::resource('visi-misi', VisiMisiController::class);
                 // 2.1.6.3 SEJARAH
                 Route::resource('sejarah', SejarahController::class);
-                // 2.1.6.4 STRUKTUR ORGANISASI
-                Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
+                // 2.1.6.4 STRUKTUR ORGANISASI (hirarki card + branch)
+                Route::prefix('struktur-jabatan')->name('struktur-jabatan.')->group(function () {
+                    Route::get('/', [StrukturJabatanController::class, 'index'])->name('index');
+                    Route::post('/jabatan', [StrukturJabatanController::class, 'storeJabatan'])->name('jabatan.store');
+                    Route::put('/jabatan/{id}', [StrukturJabatanController::class, 'updateJabatan'])->name('jabatan.update');
+                    Route::delete('/jabatan/{id}', [StrukturJabatanController::class, 'destroyJabatan'])->name('jabatan.destroy');
+                    Route::post('/pejabat', [StrukturJabatanController::class, 'storePejabat'])->name('pejabat.store');
+                    Route::put('/pejabat/{id}', [StrukturJabatanController::class, 'updatePejabat'])->name('pejabat.update');
+                    Route::delete('/pejabat/{id}', [StrukturJabatanController::class, 'destroyPejabat'])->name('pejabat.destroy');
+                });
             });
 
             // 2.1.9 MENU FAQ
@@ -239,62 +253,60 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             Route::resource('kegiatan', KegiatanController::class);
         });
     });
-});
 
-// 3. BACKUP
+    // NB: Seluruh fitur CMS di bawah ini sengaja dipindah ke dalam grup
+    // prefix('backend') supaya SEMUA halaman yang diakses lewat CMS
+    // konsisten berada di bawah /backend/*, bukan tersebar di root.
 
-Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
-    Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
-    Route::post('backups', [BackupController::class, 'create'])->name('backups.create');
-    Route::delete('backups/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');
-    Route::get('backups/{filename}/download', [BackupController::class, 'download'])->name('backups.download');
-    Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
-});
+    // 3. BACKUP
+    Route::middleware(['role:ADMINISTRATOR'])->group(function () {
+        Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::post('backups', [BackupController::class, 'create'])->name('backups.create');
+        Route::delete('backups/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');
+        Route::get('backups/{filename}/download', [BackupController::class, 'download'])->name('backups.download');
+        Route::post('backups/cleanup', [BackupController::class, 'cleanup'])->name('backups.cleanup');
+    });
 
-// 4. ACTIVITY LOG
+    // 4. ACTIVITY LOG
+    Route::middleware(['role:ADMINISTRATOR'])->group(function () {
+        Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+        Route::get('activity-log/export', [ActivityLogController::class, 'exportExcel'])->name('activity-log.export');
+        Route::delete('activity-log/{id}', [ActivityLogController::class, 'destroy'])->name('activity-log.destroy');
+        Route::post('activity-log/clean', [ActivityLogController::class, 'clean'])->name('activity-log.clean');
+    });
 
-Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
-    Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
-    Route::get('activity-log/export', [ActivityLogController::class, 'exportExcel'])->name('activity-log.export');
-    Route::delete('activity-log/{id}', [ActivityLogController::class, 'destroy'])->name('activity-log.destroy');
-    Route::post('activity-log/clean', [ActivityLogController::class, 'clean'])->name('activity-log.clean');
-});
+    // 5. PENGATURAN (Contact Info & Footer Links)
+    Route::middleware(['role:ADMINISTRATOR'])->group(function () {
+        Route::get('contact-info', [ContactInfoController::class, 'index'])->name('contact-info.index');
+        Route::get('contact-info/{id}/edit', [ContactInfoController::class, 'edit'])->name('contact-info.edit');
+        Route::put('contact-info/{id}', [ContactInfoController::class, 'update'])->name('contact-info.update');
 
-// 5. PENGATURAN (Contact Info & Footer Links)
+        Route::resource('footer-link', FooterLinkController::class);
+    });
 
-Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
-    Route::get('contact-info', [ContactInfoController::class, 'index'])->name('contact-info.index');
-    Route::get('contact-info/{id}/edit', [ContactInfoController::class, 'edit'])->name('contact-info.edit');
-    Route::put('contact-info/{id}', [ContactInfoController::class, 'update'])->name('contact-info.update');
+    // 6. VISITORS (monitoring pengunjung frontend — khusus ADMINISTRATOR)
+    Route::middleware(['role:ADMINISTRATOR'])->group(function () {
+        Route::get('visitors', [VisitorController::class, 'index'])->name('visitors.index');
+        Route::get('visitors/export', [VisitorController::class, 'exportExcel'])->name('visitors.export');
+        Route::post('visitors/clean', [VisitorController::class, 'clean'])->name('visitors.clean');
+    });
 
-    Route::resource('footer-link', FooterLinkController::class);
-});
+    // 6b. MEDIA LIBRARY (khusus ADMINISTRATOR)
+    Route::middleware(['role:ADMINISTRATOR'])->group(function () {
+        Route::get('media', [MediaController::class, 'index'])->name('media.index');
+        Route::post('media/sync', [MediaController::class, 'sync'])->name('media.sync');
+        Route::delete('media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
+    });
 
-// 6. VISITORS (monitoring pengunjung frontend — khusus ADMINISTRATOR)
-
-Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
-    Route::get('visitors', [VisitorController::class, 'index'])->name('visitors.index');
-    Route::get('visitors/export', [VisitorController::class, 'exportExcel'])->name('visitors.export');
-    Route::post('visitors/clean', [VisitorController::class, 'clean'])->name('visitors.clean');
-});
-
-// 6b. MEDIA LIBRARY (khusus ADMINISTRATOR)
-
-Route::middleware(['auth', 'role:ADMINISTRATOR'])->group(function () {
-    Route::get('media', [MediaController::class, 'index'])->name('media.index');
-    Route::post('media/sync', [MediaController::class, 'sync'])->name('media.sync');
-    Route::delete('media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
-});
-
-// 7. KEAMANAN AKUN — 2FA (self-service, semua role yang sudah login)
-
-Route::middleware(['auth'])->prefix('security')->group(function () {
-    Route::get('2fa', [TwoFactorController::class, 'index'])->name('two-factor.index');
-    Route::post('2fa/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
-    Route::post('2fa/cancel', [TwoFactorController::class, 'cancel'])->name('two-factor.setup.cancel');
-    Route::post('2fa/confirm', [TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
-    Route::delete('2fa', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
-    Route::post('2fa/regenerate-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('two-factor.regenerate-codes');
+    // 7. KEAMANAN AKUN — 2FA (self-service, semua role yang sudah login)
+    Route::prefix('security')->group(function () {
+        Route::get('2fa', [TwoFactorController::class, 'index'])->name('two-factor.index');
+        Route::post('2fa/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
+        Route::post('2fa/cancel', [TwoFactorController::class, 'cancel'])->name('two-factor.setup.cancel');
+        Route::post('2fa/confirm', [TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+        Route::delete('2fa', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
+        Route::post('2fa/regenerate-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('two-factor.regenerate-codes');
+    });
 });
 
 // require __DIR__ . '/auth.php';

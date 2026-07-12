@@ -19,12 +19,6 @@ parameters:
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Frontend/HomeFeController.php
-
-		-
 			message: '#^Relation ''data_jenis_peraturan'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
 			identifier: larastan.relationExistence
 			count: 2
@@ -131,18 +125,6 @@ parameters:
 			identifier: larastan.relationExistence
 			count: 2
 			path: app/Http/Controllers/MenuLayanan/LayananController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel\>\:\:\$additionalImages\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/MenuProfile/StrukturOrganisasiController.php
-
-		-
-			message: '#^Relation ''additionalImages'' is not found in App\\Models\\backend\\MenuProfile\\StrukturOrganisasiModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 2
-			path: app/Http/Controllers/MenuProfile/StrukturOrganisasiController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\backend\\MenuProfile\\TentangModel\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\backend\\MenuProfile\\TentangModel\>\:\:\$additionalImages\.$#'

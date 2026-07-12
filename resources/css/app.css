@@ -141,9 +141,117 @@
         content: "";
         @apply h-1.5 w-1.5 rounded-full bg-gold-500;
     }
+
+    /* Kartu posisi pada bagan struktur jabatan */
+    .org-card {
+        @apply inline-block min-w-[128px] max-w-[180px] rounded-xl bg-white px-2.5 py-2 text-center shadow-[var(--shadow-soft)] ring-1 ring-slate-900/5 dark:bg-navy-900 dark:ring-white/10;
+    }
 }
 
 @utility no-scrollbar {
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
+}
+
+/* Bagan struktur jabatan — pohon hirarki murni CSS (tanpa JS/library),
+   supaya render cepat & tidak membebani performa halaman publik. Teknik
+   garis penghubung memakai border pada pseudo-element ::before/::after
+   pada tiap <li>, pola umum "pure CSS org chart". */
+.org-tree, .org-tree ul {
+    display: flex;
+    justify-content: center;
+    padding-top: 14px;
+    position: relative;
+}
+.org-tree ul {
+    padding-top: 18px;
+}
+.org-tree li {
+    list-style-type: none;
+    position: relative;
+    padding: 18px 6px 0 6px;
+    text-align: center;
+}
+.org-tree li::before,
+.org-tree li::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 50%;
+    width: 50%;
+    height: 18px;
+    border-top: 2px solid #c7cfd8;
+}
+.org-tree li::after {
+    right: auto;
+    left: 50%;
+    border-left: 2px solid #c7cfd8;
+}
+.org-tree li:only-child { padding-top: 0; }
+.org-tree li:only-child::before,
+.org-tree li:only-child::after { display: none; }
+.org-tree li:first-child::before,
+.org-tree li:last-child::after { border: 0 none; }
+.org-tree li:last-child::before {
+    border-right: 2px solid #c7cfd8;
+    border-radius: 0 6px 0 0;
+}
+.org-tree li:first-child::after { border-radius: 6px 0 0 0; }
+.org-tree ul ul::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 18px;
+    border-left: 2px solid #c7cfd8;
+}
+.org-tree > li { padding-top: 0; }
+.org-tree > li::before, .org-tree > li::after { display: none; }
+:where(.dark) .org-tree li::before,
+:where(.dark) .org-tree li::after,
+:where(.dark) .org-tree ul ul::before,
+:where(.dark) .org-tree li:last-child::before {
+    border-color: #23375a;
+}
+
+/* Daftar posisi bertumpuk vertikal (garis siku/elbow) — dipakai di bawah
+   cabang pertama supaya bagan tetap compact & tidak melebar tiap turun
+   level, mirip pola "daftar staf per direktur" pada bagan organisasi umum. */
+.vtree {
+    display: flex;
+    flex-direction: column;
+}
+.vtree-item {
+    position: relative;
+    padding-left: 20px;
+    padding-bottom: 10px;
+}
+.vtree-item:last-child {
+    padding-bottom: 0;
+}
+.vtree-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 16px;
+    height: 0;
+    border-top: 2px solid #c7cfd8;
+}
+.vtree-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-left: 2px solid #c7cfd8;
+}
+.vtree-item:last-child::after {
+    bottom: auto;
+    height: 16px;
+}
+:where(.dark) .vtree-item::before,
+:where(.dark) .vtree-item::after {
+    border-color: #23375a;
 }

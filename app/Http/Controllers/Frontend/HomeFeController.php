@@ -14,7 +14,7 @@ use App\Models\backend\MenuInformasiPublik\PeraturanModel;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
 use App\Models\backend\MenuLayanan\LayananModel;
 use App\Models\backend\MenuProfile\SejarahModel;
-use App\Models\backend\MenuProfile\StrukturOrganisasiModel;
+use App\Models\backend\MenuProfile\StrukturJabatanModel;
 use App\Models\backend\MenuProfile\TentangModel;
 use App\Models\backend\MenuProfile\VisiMisiModel;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
@@ -85,29 +85,9 @@ class HomeFeController extends Controller
     public function profile_organisasi()
     {
         try {
-            Log::info('Fetching struktur organisasi data');
-            $tentang = TentangModel::first();
+            [$jabatanRoot, $jabatanByParent] = $this->strukturJabatanTree();
 
-            // Explicitly select columns to avoid duplicate column names
-            // Don't use additionalImages relationship ordering - will do in PHP
-            $organisasi = StrukturOrganisasiModel::select('struktur_organisasi.*')
-                ->with(['additionalImages' => function ($query) {
-                    // Select specific columns but NO ordering in the SQL
-                    $query->select(
-                        'id',
-                        'struktur_organisasi_id',
-                        'image_path',
-                        'sort_order',
-                        'created_at',
-                        'updated_at'
-                    );
-                }])
-                ->orderBy('id', 'desc')
-                ->get();
-
-            Log::info('Successfully fetched struktur organisasi data', ['count' => count($organisasi)]);
-
-            return view('frontend.profile.fe_organisasi', compact(['tentang', 'organisasi']));
+            return view('frontend.profile.fe_organisasi', compact(['jabatanRoot', 'jabatanByParent']));
         } catch (\Exception $e) {
             Log::error('Error in profile_organisasi', [
                 'error' => $e->getMessage(),
@@ -115,10 +95,30 @@ class HomeFeController extends Controller
             ]);
 
             return view('frontend.profile.fe_organisasi', [
-                'tentang' => TentangModel::first(),
-                'organisasi' => collect(), // Empty collection if error
+                'jabatanRoot' => null,
+                'jabatanByParent' => collect(),
             ])->with('error', 'Terjadi kesalahan saat memuat data struktur organisasi.');
         }
+    }
+
+    /**
+     * Bagan struktur jabatan (hirarki card+branch) di-cache 1 jam — datanya
+     * jarang berubah, jadi request publik tidak perlu query+rakit tree
+     * berulang kali (jaga performa frontend).
+     */
+    private function strukturJabatanTree(): array
+    {
+        return Cache::remember('struktur_jabatan_tree', now()->addHour(), function () {
+            $nodes = StrukturJabatanModel::with('pejabat')
+                ->orderBy('urutan')
+                ->orderBy('id')
+                ->get();
+
+            $byParent = $nodes->groupBy('parent_id');
+            $root = $nodes->firstWhere('parent_id', null);
+
+            return [$root, $byParent];
+        });
     }
 
     public function profile_tentang()

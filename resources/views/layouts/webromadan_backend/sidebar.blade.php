@@ -59,7 +59,7 @@
                             <a href="{{route('sejarah.index')}}" class="nav-link {{ Request::routeIs('sejarah.*') ? 'active' : '' }}">Sejarah</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('struktur-organisasi.index')}}" class="nav-link {{ Request::routeIs('struktur-organisasi.*') ? 'active' : '' }}">Struktur Organisasi</a>
+                            <a href="{{route('struktur-jabatan.index')}}" class="nav-link {{ Request::routeIs('struktur-jabatan.*') ? 'active' : '' }}">Struktur Organisasi</a>
                         </li>
                         @role('ADMINISTRATOR')
                         <li class="nav-item">

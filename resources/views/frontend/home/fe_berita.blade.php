@@ -29,7 +29,7 @@
                             <a :href="slide.url" :title="slide.judul"
                                 class="fe-card w-full flex-none sm:flex-row">
                                 <span class="block aspect-[16/10] overflow-hidden sm:w-2/5 sm:flex-none">
-                                    <img :src="slide.image" :alt="slide.judul"
+                                    <img :src="slide.image" :alt="slide.judul" loading="lazy"
                                         class="h-full w-full object-cover transition duration-500 hover:scale-105">
                                 </span>
                                 <span class="flex flex-1 flex-col justify-center p-6 sm:p-8">

@@ -15,7 +15,7 @@
 @endphp
 
 <section class="bg-white py-16 sm:py-20 dark:bg-navy-950">
-    <div class="fe-container max-w-3xl">
+    <div class="fe-container">
         <a href="{{ route('informasi-publik-peraturan-index-fe') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800 dark:text-brand-400 dark:hover:text-brand-300">
             <i class="fa-solid fa-arrow-left text-xs"></i> Kembali ke Daftar Peraturan
         </a>

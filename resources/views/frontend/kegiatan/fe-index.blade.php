@@ -41,7 +41,7 @@
 				<div class="blo4">
 					<div class="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
 						<a href="{{route('kegiatan-detail-fe', [$item->slug,$item->static_random_string])}}">
-							<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="IMG-BLOG" width="300" height="250">
+							<img src="{{asset('storage/romadan_gambar_web/'.$item->image)}}" alt="{{ $item->judul }}" width="300" height="250" loading="lazy">
 						</a>
 
 						{{-- <div class="date-blo4-romadan flex-col-c-m">

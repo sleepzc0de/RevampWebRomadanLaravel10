@@ -16,28 +16,68 @@
             </div>
         @endif
 
-        @forelse ($organisasi as $item)
-            @php
-                $galleryItems = \App\Helpers\MediaHelper::galleryItems(
-                    $item->image,
-                    $item->additionalImages->sortBy('sort_order'),
-                    $item->video_url,
-                    'image_path',
-                    $item->judul ?? 'Struktur Organisasi'
-                );
-            @endphp
-
-            <div class="mt-14 grid gap-10 first:mt-12 lg:items-start lg:gap-14 {{ $loop->even ? 'lg:grid-cols-2' : 'lg:grid-cols-2' }}">
-                <div class="{{ $loop->even ? 'lg:order-2' : 'lg:order-1' }} order-2">
-                    <x-fe.media-gallery :items="$galleryItems" />
-                </div>
-                <div class="prose-fe {{ $loop->even ? 'lg:order-1' : 'lg:order-2' }} order-1 flex flex-col justify-center">
-                    {!! clean($item->struktur) !!}
-                </div>
+        @if ($jabatanRoot)
+            {{-- Layar kecil: daftar vertikal bertingkat (tanpa scroll horizontal) --}}
+            <div class="mt-12 space-y-3 md:hidden">
+                @include('frontend.profile._struktur-jabatan-node-mobile', ['node' => $jabatanRoot, 'byParent' => $jabatanByParent])
             </div>
-        @empty
+        @else
             <x-fe.empty-state class="mt-12" icon="fa-sitemap" title="Belum ada data" text="Data struktur organisasi belum tersedia, silakan hubungi administrator." />
-        @endforelse
+        @endif
     </div>
+
+    @if ($jabatanRoot)
+        {{-- Layar sedang ke atas: bagan pohon horizontal, diskalakan otomatis
+             supaya seluruh bagan muat dalam satu layar tanpa scroll. Dibiarkan
+             lebih lebar dari fe-container (bukan teks bacaan) supaya ruang
+             yang tersedia lebih besar & skala tidak terlalu kecil. --}}
+        <div class="mt-12 hidden px-4 md:block">
+            <div id="org-tree-viewport" class="relative mx-auto max-w-[1800px] overflow-hidden">
+                <ul id="org-tree" class="org-tree min-w-max">
+                    @include('frontend.profile._struktur-jabatan-node', ['node' => $jabatanRoot, 'byParent' => $jabatanByParent])
+                </ul>
+            </div>
+        </div>
+    @endif
 </section>
+
+@push('scripts')
+<script>
+    // Bagan bisa lebih besar dari layar — skalakan seluruh pohon (bukan
+    // scroll) supaya semuanya kelihatan sekaligus dalam satu layar.
+    (function () {
+        function fitOrgTree() {
+            const viewport = document.getElementById('org-tree-viewport');
+            const tree = document.getElementById('org-tree');
+            if (!viewport || !tree) return;
+
+            tree.style.transform = 'none';
+            tree.style.marginLeft = '0px';
+            viewport.style.height = 'auto';
+
+            const naturalWidth = tree.scrollWidth;
+            const naturalHeight = tree.scrollHeight;
+            const availableWidth = viewport.clientWidth;
+            const availableHeight = Math.max(window.innerHeight * 0.7, 340);
+
+            const scale = Math.min(1, availableWidth / naturalWidth, availableHeight / naturalHeight);
+            const offsetX = Math.max(0, (availableWidth - naturalWidth * scale) / 2);
+
+            tree.style.transformOrigin = 'top left';
+            tree.style.transform = 'scale(' + scale + ')';
+            tree.style.marginLeft = offsetX + 'px';
+            viewport.style.height = Math.ceil(naturalHeight * scale) + 'px';
+        }
+
+        let resizeTimer;
+        function scheduleFit() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(fitOrgTree, 150);
+        }
+
+        document.addEventListener('DOMContentLoaded', fitOrgTree);
+        window.addEventListener('resize', scheduleFit);
+    })();
+</script>
+@endpush
 @endsection

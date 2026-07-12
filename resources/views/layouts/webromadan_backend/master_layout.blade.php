@@ -47,6 +47,51 @@
         // document.addEventListener('scroll', resetTimer);
         document.addEventListener('click', resetTimer);
         </script>
+
+    {{-- Ubah <img data-blob-src="..."> jadi blob URL lewat fetch ter-otentikasi,
+         supaya path gambar tidak terlihat langsung di HTML source backend.
+         Dipasang dengan MutationObserver supaya gambar yang muncul belakangan
+         (baris DataTable hasil AJAX) ikut terkonversi juga. --}}
+    <script>
+        (function () {
+            const cache = new Map();
+
+            async function loadBlobImage(img) {
+                const src = img.dataset.blobSrc;
+                if (!src || img.dataset.blobLoaded) return;
+                img.dataset.blobLoaded = '1';
+
+                try {
+                    if (!cache.has(src)) {
+                        const res = await fetch(src, { credentials: 'same-origin' });
+                        if (!res.ok) throw new Error('blob fetch failed');
+                        cache.set(src, URL.createObjectURL(await res.blob()));
+                    }
+                    img.src = cache.get(src);
+                } catch (e) {
+                    img.dataset.blobLoaded = '';
+                }
+            }
+
+            function scan(root) {
+                root.querySelectorAll('img[data-blob-src]').forEach(loadBlobImage);
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                scan(document);
+
+                new MutationObserver(function (mutations) {
+                    mutations.forEach(function (m) {
+                        m.addedNodes.forEach(function (node) {
+                            if (node.nodeType !== 1) return;
+                            if (node.matches && node.matches('img[data-blob-src]')) loadBlobImage(node);
+                            if (node.querySelectorAll) scan(node);
+                        });
+                    });
+                }).observe(document.body, { childList: true, subtree: true });
+            });
+        })();
+    </script>
     @stack('scripts')
 
 

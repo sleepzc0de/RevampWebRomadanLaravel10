@@ -2,6 +2,25 @@
 
 @section('title', 'FAQ — Biro Manajemen BMN dan Pengadaan')
 
+@if ($faq->count() > 0)
+    @push('structured-data')
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => $faq->map(fn ($item) => [
+            '@type' => 'Question',
+            'name' => strip_tags($item->faq_judul),
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => strip_tags($item->faq_isi),
+            ],
+        ])->values(),
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+    @endpush
+@endif
+
 @section('content')
 <section class="bg-white py-16 sm:py-20 dark:bg-navy-950">
     <div class="fe-container">
