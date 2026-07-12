@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MenuPublikasi;
 use App\Helpers\ExcelExportHelper;
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuPublikasi\PublikasiModel;
+use App\Models\backend\MenuPublikasi\PublikasiRevisionModel;
 use App\Models\backend\RefKategori;
 use App\Models\backend\RefStatus;
 use App\Models\backend\RefTipe;
@@ -429,6 +430,9 @@ class PublikasiController extends Controller
                 }
             }
 
+            // Simpan snapshot kondisi SEBELUM diupdate, sebagai riwayat revisi
+            $this->snapshotRevision($publikasi);
+
             // Update the publikasi record
             $publikasi->update($data);
 
@@ -441,6 +445,66 @@ class PublikasiController extends Controller
             return redirect()->route('publikasi.index')
                 ->with(['failed' => 'Data Publikasi Gagal Di Update!']);
         }
+    }
+
+    /**
+     * Simpan kondisi publikasi saat ini sebagai satu baris riwayat revisi.
+     */
+    private function snapshotRevision(PublikasiModel $publikasi): void
+    {
+        PublikasiRevisionModel::create([
+            'publikasi_id' => $publikasi->id,
+            'judul' => $publikasi->judul,
+            'sub_judul' => $publikasi->sub_judul,
+            'isi' => $publikasi->isi,
+            'kategori' => $publikasi->kategori,
+            'tipe' => $publikasi->tipe,
+            'status' => $publikasi->status,
+            'image' => $publikasi->image,
+            'embedded_media' => $publikasi->embedded_media,
+            'revised_by' => optional(Auth::user())->name ?? 'System',
+            'created_at' => now(),
+        ]);
+    }
+
+    /**
+     * Tampilkan daftar riwayat revisi sebuah publikasi.
+     */
+    public function revisions(string $id)
+    {
+        $publikasi = PublikasiModel::findOrFail(decrypt($id));
+        $revisions = PublikasiRevisionModel::where('publikasi_id', $publikasi->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('backend.publikasi.revisions', compact('publikasi', 'revisions'));
+    }
+
+    /**
+     * Pulihkan publikasi ke kondisi pada sebuah revisi. Kondisi saat ini
+     * disimpan dulu sebagai revisi baru sebelum ditimpa, supaya restore
+     * tetap bisa dibatalkan (pulihkan lagi ke sebelumnya).
+     */
+    public function restoreRevision(string $id, string $revisionId)
+    {
+        $publikasi = PublikasiModel::findOrFail(decrypt($id));
+        $revision = PublikasiRevisionModel::where('publikasi_id', $publikasi->id)->findOrFail(decrypt($revisionId));
+
+        $this->snapshotRevision($publikasi);
+
+        $publikasi->update([
+            'judul' => $revision->judul,
+            'sub_judul' => $revision->sub_judul,
+            'isi' => $revision->isi,
+            'kategori' => $revision->kategori,
+            'tipe' => $revision->tipe,
+            'status' => $revision->status,
+            'image' => $revision->image,
+            'embedded_media' => $revision->embedded_media,
+            'pengedit' => optional(Auth::user())->name ?? 'System',
+        ]);
+
+        return redirect()->route('publikasi.revisions', $id)->with('success', 'Publikasi berhasil dipulihkan ke revisi tersebut.');
     }
 
     /**

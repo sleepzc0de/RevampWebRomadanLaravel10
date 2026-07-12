@@ -94,8 +94,11 @@
 
 <!-- Form validation -->
 <div class="card">
-	<div class="card-header">
+	<div class="card-header d-flex align-items-center justify-content-between">
 		<h5 class="mb-0">Edit publikasi</h5>
+		<a href="{{ route('publikasi.revisions', encrypt($publikasi->id)) }}" class="btn btn-sm btn-outline-secondary">
+			<i class="ph-clock-counter-clockwise"></i> Riwayat Revisi
+		</a>
 	</div>
 
 	<form class="form-validate-jquery" action="{{route('publikasi.update', encrypt($publikasi->id))}}" method="post" enctype="multipart/form-data" autocomplete="off">

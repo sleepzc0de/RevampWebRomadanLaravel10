@@ -228,6 +228,8 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () {
             // tidak akan "tertangkap" oleh wildcard {publikasi} milik show().
             Route::get('/publikasi/export', [PublikasiController::class, 'exportExcel'])->name('publikasi.export');
             Route::resource('publikasi', PublikasiController::class);
+            Route::get('/publikasi/{publikasi}/revisions', [PublikasiController::class, 'revisions'])->name('publikasi.revisions');
+            Route::post('/publikasi/{publikasi}/revisions/{revision}/restore', [PublikasiController::class, 'restoreRevision'])->name('publikasi.revisions.restore');
             Route::get('/publikasi-sampah', [PublikasiController::class, 'publikasiSampah'])->name('publikasi.sampah');
             Route::post('/{publikasi}/restore-publikasi', [PublikasiController::class, 'restorePublikasi'])->name('publikasi.restore');
             Route::delete('/{publikasi}/force-delete-publikasi', [PublikasiController::class, 'forceDeletePublikasi'])->name('publikasi.force-delete');
