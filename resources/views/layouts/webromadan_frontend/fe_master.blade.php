@@ -17,14 +17,14 @@
     <meta property="og:title" content="@yield('title', 'Biro Manajemen BMN dan Pengadaan')">
     <meta property="og:description" content="@yield('meta_description', 'Website resmi Biro Manajemen BMN dan Pengadaan, Kementerian Keuangan Republik Indonesia.')">
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
-    <meta property="og:image" content="@yield('meta_image', asset('frontend_romadan_web/images/icons/romadan/logo_3.png'))">
+    <meta property="og:image" content="@yield('meta_image', asset('frontend_romadan_web/images/icons/romadanlogo.png'))">
     <meta property="og:locale" content="id_ID">
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', 'Biro Manajemen BMN dan Pengadaan')">
     <meta name="twitter:description" content="@yield('meta_description', 'Website resmi Biro Manajemen BMN dan Pengadaan, Kementerian Keuangan Republik Indonesia.')">
-    <meta name="twitter:image" content="@yield('meta_image', asset('frontend_romadan_web/images/icons/romadan/logo_3.png'))">
+    <meta name="twitter:image" content="@yield('meta_image', asset('frontend_romadan_web/images/icons/romadanlogo.png'))">
 
     {{-- Terapkan tema gelap/terang sebelum CSS dimuat, agar tidak ada flash
          warna salah saat halaman pertama kali render (FOUC). --}}
@@ -58,7 +58,7 @@
         'name' => 'Biro Manajemen BMN dan Pengadaan',
         'alternateName' => 'Kementerian Keuangan Republik Indonesia',
         'url' => url('/'),
-        'logo' => asset('frontend_romadan_web/images/icons/romadan/logo_3.png'),
+        'logo' => asset('frontend_romadan_web/images/icons/romadanlogo.png'),
     ], JSON_UNESCAPED_SLASHES) !!}
     </script>
     @stack('structured-data')

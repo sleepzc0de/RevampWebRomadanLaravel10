@@ -3,7 +3,7 @@
         {{-- Brand --}}
         <div class="lg:col-span-5">
             <a href="{{ route('homefe') }}" class="flex items-center gap-3">
-                <img src="{{ asset('frontend_romadan_web/images/icons/romadan/logo_3.png') }}" alt="Logo" class="h-11 w-11 object-contain">
+                <img src="{{ asset('frontend_romadan_web/images/icons/romadanlogo.png') }}" alt="Logo" class="h-11 w-11 object-contain">
                 <span class="leading-tight">
                     <span class="block text-sm font-bold text-white">Biro Manajemen BMN &amp; Pengadaan</span>
                     <span class="block text-xs text-slate-400">Kementerian Keuangan Republik Indonesia</span>

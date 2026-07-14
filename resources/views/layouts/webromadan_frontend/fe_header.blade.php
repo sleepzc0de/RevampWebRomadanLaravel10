@@ -18,7 +18,7 @@
     <div class="fe-container flex h-18 items-center justify-between gap-4 py-2.5">
         {{-- Logo --}}
         <a href="{{ route('homefe') }}" class="flex min-w-0 items-center gap-3">
-            <img src="{{ asset('frontend_romadan_web/images/icons/romadan/logo_3.png') }}" alt="Logo"
+            <img src="{{ asset('frontend_romadan_web/images/icons/romadanlogo.png') }}" alt="Logo"
                 class="h-10 w-10 flex-none object-contain sm:h-11 sm:w-11">
             <span class="min-w-0 leading-tight">
                 <span class="block truncate text-[13px] font-bold text-navy-800 sm:text-[15px] dark:text-white">Biro Manajemen BMN &amp; Pengadaan</span>

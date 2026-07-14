@@ -17,7 +17,7 @@
 
 
 			<div class="navbar-collapse justify-content-center flex-fill order-2 order-lg-1 collapse" >
-                
+
                 {{-- PROFILE --}}
                 <div class="nav-item">
                  <div class="btn-group">
@@ -108,10 +108,10 @@
                 </div>
                 {{-- END FAQ --}}
 
-                
 
-                
-			
+
+
+
 			</div>
 
 			<div class="navbar-collapse justify-content-end flex-lg-4 order-2 order-lg-1 collapse" id="navbar_search">
@@ -124,10 +124,10 @@
 						</div>
 					</div>
                     </form>
-				
+
                 </div>
-                	
-				
+
+
 			</div>
 		</div>
 	</div>
