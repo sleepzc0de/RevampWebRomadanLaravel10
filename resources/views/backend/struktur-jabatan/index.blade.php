@@ -1,7 +1,7 @@
 @extends('layouts.webromadan_backend.master_layout')
 
 @section('content')
-<div x-data="strukturJabatanPage()" @click="handleClick($event)">
+<div x-data="strukturJabatanPage()" @click="handleClick($event)" @keydown.window.escape="modal = null">
     <div class="card mb-3">
         <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>

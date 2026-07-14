@@ -381,8 +381,11 @@ label.validation-invalid-label, label.error{ @apply mt-1 block text-xs font-medi
 .img-fluid{ @apply h-auto max-w-full; }
 
 /* ---------- Modal (dikendalikan shim bootstrap-compat di backend.js) ---------- */
-.modal{ position: fixed; inset: 0; z-index: 1055; display: none; overflow-y: auto; }
-.modal.show{ display: block; }
+/* Modal berbasis Alpine (x-show + x-cloak). JANGAN set display:none pada
+   kelas ini: saat menampilkan, x-show MENGHAPUS inline style-nya sehingga
+   nilai display dari kelas akan menang dan modal tak pernah tampil.
+   Keadaan tersembunyi ditangani [x-cloak] (pra-init) dan inline style x-show. */
+.modal{ position: fixed; inset: 0; z-index: 1055; overflow-y: auto; }
 .modal-backdrop{ position: fixed; inset: 0; z-index: 1050; background: rgb(2 14 33 / .55); }
 .modal-dialog{ @apply relative mx-auto my-8 w-[calc(100%-2rem)] max-w-lg; }
 .modal-lg{ @apply max-w-3xl; }

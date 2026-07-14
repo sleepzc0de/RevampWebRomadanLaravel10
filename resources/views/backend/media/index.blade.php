@@ -65,7 +65,7 @@
 
     {{-- Modal konfirmasi hapus --}}
     <div x-show="showDelete" x-cloak x-transition.opacity class="modal-backdrop" @click="showDelete = false"></div>
-    <div x-show="showDelete" x-cloak class="modal" style="display: block;">
+    <div x-show="showDelete" x-cloak class="modal">
         <div class="modal-dialog">
             <div class="modal-content" @click.outside="showDelete = false">
                 <div class="modal-header">

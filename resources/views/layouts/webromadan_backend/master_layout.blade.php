@@ -50,7 +50,8 @@
         {{-- ===== Sidebar (desktop tetap, mobile drawer via Alpine) ===== --}}
         <div x-data x-cloak x-show="$store.cms.sidebarOpen" x-transition.opacity
              class="fixed inset-0 z-40 bg-navy-950/70 lg:hidden"
-             @click="$store.cms.sidebarOpen = false"></div>
+             @click="$store.cms.sidebarOpen = false"
+             @keydown.window.escape="$store.cms.sidebarOpen = false"></div>
 
         <aside x-data
                class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-navy-900 transition-all duration-200 lg:translate-x-0"

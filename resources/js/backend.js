@@ -159,7 +159,24 @@ window.RomadanEditor = RomadanEditor;
 document.addEventListener('DOMContentLoaded', () => {
     document
         .querySelectorAll('textarea[id^="ckeditor"], textarea.js-rich-editor')
-        .forEach((el) => RomadanEditor.create(el).catch((e) => console.error(e)));
+        .forEach((el) => {
+            // CKEditor menyembunyikan textarea sumber (display:none) dan baru
+            // menyalin isinya saat submit. Atribut `required` pada kontrol
+            // tersembunyi-kosong membuat browser MEMBLOKIR submit tanpa pesan
+            // ("invalid form control is not focusable") — wajib dicabut;
+            // validasi wajib-isi tetap ditegakkan server di setiap controller.
+            el.removeAttribute('required');
+
+            RomadanEditor.create(el)
+                .then((editor) => {
+                    // Sinkronkan isi editor ke textarea secara realtime agar
+                    // nilai form selalu terkini, bukan hanya saat submit.
+                    editor.model.document.on('change:data', () => {
+                        el.value = editor.getData();
+                    });
+                })
+                .catch((e) => console.error(e));
+        });
 });
 
 /* ---------------------------------------------------------------------------
