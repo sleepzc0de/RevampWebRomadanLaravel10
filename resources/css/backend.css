@@ -1,0 +1,511 @@
+@import "tailwindcss";
+
+/* Pindai seluruh view backend + layout backend */
+@source "../views/backend";
+@source "../views/admin";
+@source "../views/layouts/webromadan_backend";
+@source "../views/components";
+
+/* Dark mode berbasis class .dark pada <html> (toggle di navbar + localStorage) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    /* Brand biru Kemenkeu — identitas institusional, bukan warna default
+       "AI SaaS" (indigo/violet). Dipakai konsisten untuk semua aksi utama. */
+    --color-brand-50: #eef6ff;
+    --color-brand-100: #dbebfe;
+    --color-brand-200: #bfdefe;
+    --color-brand-300: #92c8fd;
+    --color-brand-400: #5daafa;
+    --color-brand-500: #2f87f0;
+    --color-brand-600: #1968d6;
+    --color-brand-700: #0f5fae;
+    --color-brand-800: #124b85;
+    --color-brand-900: #143f6b;
+    --color-brand-950: #0d2740;
+
+    --color-navy-600: #0a4a86;
+    --color-navy-700: #073763;
+    --color-navy-800: #052548;
+    --color-navy-900: #031733;
+    --color-navy-950: #020e21;
+
+    --color-gold-400: #ffce54;
+    --color-gold-500: #f5b800;
+    --color-gold-600: #d69e00;
+}
+
+[x-cloak] { display: none !important; }
+
+@layer base {
+    body {
+        @apply bg-slate-50 text-[13.5px] text-slate-700 antialiased dark:bg-navy-950 dark:text-slate-300;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-semibold tracking-tight text-slate-800 dark:text-slate-100;
+    }
+    a { @apply text-brand-700 dark:text-brand-400; }
+    label { @apply text-slate-700 dark:text-slate-300; }
+    ::selection { @apply bg-brand-200 text-brand-900; }
+}
+
+/* ==========================================================================
+   LAPISAN KOMPATIBILITAS — kelas bergaya Bootstrap yang dipakai view lama,
+   diimplementasikan ulang dengan Tailwind supaya seluruh halaman CMS lama
+   langsung memakai skin V.2 tanpa harus menulis ulang tiap view. Sengaja
+   dibuat FLAT (border tipis, radius sedang, nyaris tanpa shadow-glow) —
+   menghindari kesan "template dashboard AI" (gradient, glassmorphism,
+   pill besar di mana-mana, badge ikon melingkar warna-warni).
+
+   Dibungkus @layer components supaya utility Tailwind (termasuk varian
+   responsif seperti lg:hidden) TETAP bisa meng-override kelas kompat ini.
+   Tanpa @layer, CSS custom yang ditulis setelah @import "tailwindcss"
+   dianggap "unlayered" dan SELALU menang atas utility Tailwind (termasuk
+   yang di dalam media query) — inilah sebab tombol toggle sidebar
+   (lg:hidden) sempat tetap tampil di lebar layar berapa pun.
+   ========================================================================== */
+@layer components {
+
+/* ---------- Grid ---------- */
+.row {
+    --gx: 1.5rem; --gy: 0;
+    display: flex; flex-wrap: wrap;
+    margin-inline: calc(var(--gx) / -2);
+    row-gap: var(--gy);
+}
+.row > * { width: 100%; max-width: 100%; flex-shrink: 0; padding-inline: calc(var(--gx) / 2); }
+.g-2 { --gx: .5rem; --gy: .5rem; }
+.g-3 { --gx: 1rem; --gy: 1rem; }
+.g-4 { --gx: 1.5rem; --gy: 1.5rem; }
+.col { flex: 1 0 0%; width: auto; }
+.col-auto { flex: 0 0 auto; width: auto; }
+.col-6 { flex: 0 0 auto; width: 50%; }
+.col-12 { flex: 0 0 auto; width: 100%; }
+@media (min-width: 576px) {
+    .col-sm-4 { flex: 0 0 auto; width: 33.3333%; }
+    .col-sm-6 { flex: 0 0 auto; width: 50%; }
+    .d-sm-inline-block { display: inline-block; }
+    .ms-sm-auto { margin-inline-start: auto; }
+}
+@media (min-width: 768px) {
+    .col-md-3 { flex: 0 0 auto; width: 25%; }
+    .col-md-5 { flex: 0 0 auto; width: 41.6667%; }
+    .col-md-6 { flex: 0 0 auto; width: 50%; }
+    .col-md-7 { flex: 0 0 auto; width: 58.3333%; }
+}
+@media (min-width: 992px) {
+    .col-lg-2 { flex: 0 0 auto; width: 16.6667%; }
+    .col-lg-3 { flex: 0 0 auto; width: 25%; }
+    .col-lg-4 { flex: 0 0 auto; width: 33.3333%; }
+    .col-lg-6 { flex: 0 0 auto; width: 50%; }
+    .col-lg-8 { flex: 0 0 auto; width: 66.6667%; }
+    .col-lg-9 { flex: 0 0 auto; width: 75%; }
+    .col-lg-10 { flex: 0 0 auto; width: 83.3333%; }
+    .col-lg-12 { flex: 0 0 auto; width: 100%; }
+    .offset-lg-3 { margin-inline-start: 25%; }
+    .d-lg-none { display: none; }
+}
+@media (min-width: 1200px) {
+    .col-xl-3 { flex: 0 0 auto; width: 25%; }
+}
+
+/* Baris form (row yang langsung memuat .col-form-label) ditumpuk vertikal —
+   label di atas, field di bawah — bukan pola lama "label 2 kolom + field 10
+   kolom sejajar" ala admin-template lawas. Ini SATU-SATUNYA perubahan yang
+   otomatis merapikan seluruh form create/edit di CMS tanpa menyentuh tiap
+   file, karena strukturnya (row > col-form-label + col-lg-10) identik
+   di ~80 halaman. Selector :has() didukung semua browser modern (2023+). */
+.row:has(> .col-form-label) {
+    flex-direction: column;
+    row-gap: .5rem;
+    margin-bottom: 1.25rem;
+}
+.row:has(> .col-form-label) > .col-form-label,
+.row:has(> .col-form-label) > [class*="col-lg-"],
+.row:has(> .col-form-label) > [class*="col-md-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+}
+.row:has(> .col-form-label) > .col-form-label { padding: 0; }
+
+/* ---------- Spacing (skala Bootstrap: 1=.25rem 2=.5rem 3=1rem 4=1.5rem 5=3rem) ---------- */
+.m-0{margin:0}.mt-0{margin-top:0}.mb-0{margin-bottom:0}
+.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:1rem}.mt-4{margin-top:1.5rem}.mt-5{margin-top:3rem}
+.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:1rem}.mb-4{margin-bottom:1.5rem}.mb-5{margin-bottom:3rem}
+.ms-1{margin-inline-start:.25rem}.ms-2{margin-inline-start:.5rem}.ms-3{margin-inline-start:1rem}.ms-4{margin-inline-start:1.5rem}.ms-auto{margin-inline-start:auto}
+.me-1{margin-inline-end:.25rem}.me-2{margin-inline-end:.5rem}.me-3{margin-inline-end:1rem}.me-4{margin-inline-end:1.5rem}.me-auto{margin-inline-end:auto}
+.my-1{margin-block:.25rem}.my-2{margin-block:.5rem}.my-3{margin-block:1rem}.my-auto{margin-block:auto}
+.mx-auto{margin-inline:auto}
+.p-0{padding:0}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-3{padding:1rem}.p-4{padding:1.5rem}.p-5{padding:3rem}
+.py-1{padding-block:.25rem}.py-2{padding-block:.5rem}.py-3{padding-block:1rem}.py-4{padding-block:1.5rem}.py-5{padding-block:3rem}
+.px-1{padding-inline:.25rem}.px-2{padding-inline:.5rem}.px-3{padding-inline:1rem}.px-4{padding-inline:1.5rem}
+.ps-1{padding-inline-start:.25rem}.ps-2{padding-inline-start:.5rem}.ps-3{padding-inline-start:1rem}
+.pe-1{padding-inline-end:.25rem}.pe-2{padding-inline-end:.5rem}.pe-3{padding-inline-end:1rem}
+.pt-2{padding-top:.5rem}.pt-3{padding-top:1rem}.pb-2{padding-bottom:.5rem}.pb-3{padding-bottom:1rem}
+.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-3{gap:1rem}
+
+/* ---------- Display / flex ---------- */
+.d-flex{display:flex}.d-block{display:block}.d-inline-block{display:inline-block}.d-inline-flex{display:inline-flex}.d-none{display:none}
+.justify-content-start{justify-content:flex-start}.justify-content-center{justify-content:center}.justify-content-end{justify-content:flex-end}.justify-content-between{justify-content:space-between}
+.align-items-center{align-items:center}.align-items-start{align-items:flex-start}.align-items-end{align-items:flex-end}
+.flex-fill{flex:1 1 auto}.flex-wrap{flex-wrap:wrap}.flex-grow-1{flex-grow:1}.flex-column{flex-direction:column}
+.h-100{height:100%}.w-100{width:100%}
+
+/* ---------- Teks & tampilan ---------- */
+.text-center{text-align:center}.text-end{text-align:right}
+.text-truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.text-uppercase{text-transform:uppercase}
+.fw-bold{font-weight:700}.fw-semibold{font-weight:600}
+.small, .fs-sm{font-size:.8125rem}
+.lh-sm{line-height:1.25}
+.opacity-50{opacity:.5}
+.text-muted{ @apply text-slate-500 dark:text-slate-400; }
+.text-body{ @apply text-slate-700 dark:text-slate-300; }
+.text-white{color:#fff}
+.text-primary{ @apply text-brand-700 dark:text-brand-400; }
+.text-danger{ @apply text-red-600 dark:text-red-400; }
+.text-warning{ @apply text-amber-600 dark:text-amber-400; }
+.text-success{ @apply text-emerald-600 dark:text-emerald-400; }
+
+.rounded{border-radius:.5rem}
+.rounded-pill{border-radius:9999px}
+.rounded-circle{border-radius:50%}
+.border{ @apply border border-solid border-slate-200 dark:border-white/10; }
+.border-0{border:0}
+.border-top{ @apply border-t border-solid border-slate-200 dark:border-white/10; }
+.border-bottom{ @apply border-b border-solid border-slate-200 dark:border-white/10; }
+.border-start{ @apply border-l border-solid border-slate-200 dark:border-white/10; }
+.border-warning{ @apply border-amber-400; }
+
+.position-relative{position:relative}.position-absolute{position:absolute}
+.top-0{top:0}.bottom-0{bottom:0}.start-0{left:0}.end-0{right:0}
+
+/* ---------- Warna latar (dukung pola `bg-x bg-opacity-10` ala Bootstrap 5) ---------- */
+.bg-primary{--bg-c:var(--color-brand-700)}
+.bg-secondary{--bg-c:#64748b}
+.bg-success{--bg-c:#059669}
+.bg-danger{--bg-c:#dc2626}
+.bg-warning{--bg-c:#d97706}
+.bg-info{--bg-c:#0891b2}
+.bg-purple{--bg-c:#7c3aed}
+.bg-pink{--bg-c:#db2777}
+.bg-dark{--bg-c:#1e293b}
+.bg-primary,.bg-secondary,.bg-success,.bg-danger,.bg-warning,.bg-info,.bg-purple,.bg-pink,.bg-dark{
+    background-color: var(--bg-c); color:#fff;
+}
+.bg-opacity-10{ background-color: color-mix(in srgb, var(--bg-c) 12%, transparent); color: var(--bg-c); }
+.bg-light{ @apply bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200; }
+.bg-white{ @apply bg-white dark:bg-navy-900; }
+
+/* ---------- Card — border tipis, radius sedang, TANPA shadow mengambang ---------- */
+.card{
+    @apply mb-5 flex flex-col rounded-lg border border-slate-200 bg-white text-slate-700 dark:border-white/10 dark:bg-navy-900 dark:text-slate-300;
+}
+.card-header{
+    @apply rounded-t-[7px] border-b border-slate-100 bg-transparent px-5 py-3.5 dark:border-white/10;
+}
+.card-header h1,.card-header h2,.card-header h3,.card-header h4,.card-header h5,.card-header h6,.card-title{
+    @apply m-0 text-[13.5px] font-bold text-slate-800 dark:text-white;
+}
+.card-body{ @apply flex-1 px-5 py-4; }
+.card-footer{ @apply rounded-b-[7px] border-t border-slate-100 px-5 py-3.5 dark:border-white/10; }
+.card-img-top{ @apply w-full rounded-t-[7px] object-cover; }
+
+/* ---------- Tombol — flat, tanpa badge-ikon melingkar, tanpa glow ---------- */
+.btn{
+    @apply inline-flex cursor-pointer select-none items-center justify-center gap-1.5 rounded-md border border-transparent px-3.5 py-2 text-[13px] font-semibold no-underline transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-sm{ @apply px-2.5 py-1.5 text-xs; }
+.btn-primary{ @apply bg-brand-700 text-white hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-500; }
+.btn-success{ @apply bg-emerald-600 text-white hover:bg-emerald-700; }
+.btn-danger{ @apply bg-red-600 text-white hover:bg-red-700; }
+.btn-warning{ @apply bg-amber-500 text-white hover:bg-amber-600; }
+.btn-info{ @apply bg-cyan-600 text-white hover:bg-cyan-700; }
+.btn-dark{ @apply bg-slate-800 text-white hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600; }
+.btn-light{ @apply border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10; }
+.btn-link{ @apply border-0 bg-transparent px-1 text-brand-700 underline-offset-2 hover:underline dark:text-brand-400; }
+.btn-outline-primary{ @apply border-brand-300 text-brand-700 hover:border-brand-700 hover:bg-brand-700 hover:text-white dark:border-brand-800 dark:text-brand-400 dark:hover:bg-brand-600; }
+.btn-outline-secondary{ @apply border-slate-300 text-slate-600 hover:border-slate-600 hover:bg-slate-600 hover:text-white dark:border-white/20 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white; }
+.btn-outline-danger{ @apply border-red-300 text-red-600 hover:border-red-600 hover:bg-red-600 hover:text-white dark:text-red-400 dark:hover:text-white; }
+.btn-outline-warning{ @apply border-amber-300 text-amber-600 hover:border-amber-500 hover:bg-amber-500 hover:text-white dark:text-amber-400 dark:hover:text-white; }
+.btn-outline-info{ @apply border-cyan-300 text-cyan-600 hover:border-cyan-600 hover:bg-cyan-600 hover:text-white dark:text-cyan-400 dark:hover:text-white; }
+/* "Flat" dipetakan ke satu bahasa warna brand — hindari palet ungu/pink acak
+   khas template dashboard generik untuk aksi "Tambah Data" yang berulang. */
+.btn-flat-purple, .btn-flat-success, .btn-flat-warning, .btn-flat-pink{
+    @apply border border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-700 hover:bg-brand-700 hover:text-white dark:border-brand-900 dark:bg-brand-500/10 dark:text-brand-300 dark:hover:bg-brand-600 dark:hover:text-white;
+}
+.btn-icon{ @apply h-8 w-8 p-0; }
+.btn-icon.btn-sm{ @apply h-7 w-7; }
+/* Tombol berlabel-ikon ala Limitless — ikon TANPA badge lingkaran terpisah,
+   cukup ikon inline sewarna teks tombol (bukan lagi lencana warna-warni). */
+.btn-labeled{ @apply relative; }
+.btn-labeled-icon{
+    @apply inline-flex h-5 w-5 items-center justify-center bg-transparent! text-current!;
+}
+/* Tombol eksplisit rounded-pill diratakan ke radius standar tombol — pil
+   besar berulang adalah ciri khas template dashboard AI generik. */
+.btn.rounded-pill{ border-radius: .375rem; }
+/* Tombol close (alert/modal) */
+.btn-close{
+    @apply relative inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0 text-current opacity-60 transition hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10;
+}
+.btn-close::before{ content:"✕"; font-size:.8rem; line-height:1; }
+
+/* ---------- Alert ---------- */
+.alert{ @apply relative mx-5 mt-4 rounded-md border px-4 py-3 text-sm; }
+.card > .alert:first-child, .card-body > .alert:first-child{ @apply mt-4; }
+.alert-heading{ @apply mb-1 text-sm font-bold; }
+.alert hr{ @apply my-2 border-current opacity-20; }
+.alert-success{ @apply border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300; }
+.alert-danger{ @apply border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300; }
+.alert-warning{ @apply border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300; }
+.alert-info{ @apply border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-300; }
+.alert-dismissible{ @apply pe-12; }
+.alert-dismissible .btn-close{ @apply absolute right-2 top-2; }
+
+/* ---------- Badge ---------- */
+.badge{
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold leading-normal;
+}
+
+/* ---------- Tabel & DataTables ---------- */
+.table{ @apply w-full border-collapse text-[13px]; }
+.table th{
+    @apply border-b border-slate-200 px-4 py-2.5 text-left text-[10.5px] font-bold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:text-slate-400;
+}
+.table td{ @apply border-b border-slate-100 px-4 py-2.5 align-middle dark:border-white/5; }
+.table-striped tbody tr:nth-child(odd) td{ @apply bg-slate-50/70 dark:bg-white/[.03]; }
+.table-hover tbody tr:hover td{ @apply bg-slate-50 dark:bg-white/[.04]; }
+.dataTables_empty{ @apply py-10 text-center text-slate-400; }
+
+.datatable-header{
+    @apply flex flex-wrap items-center gap-3 border-b border-slate-100 px-5 py-3.5 dark:border-white/10;
+}
+.datatable-footer{
+    @apply flex flex-wrap items-center justify-between gap-3 px-5 py-3.5;
+}
+.datatable-scroll{ @apply overflow-x-auto; }
+.dataTables_filter{ @apply flex items-center gap-3 text-sm; }
+.dataTables_length{ @apply flex items-center gap-2 text-sm; }
+.dataTables_length select{
+    @apply rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm dark:border-white/10 dark:bg-navy-950 dark:text-slate-200;
+}
+.form-control-feedback{ @apply relative; }
+.form-control-feedback input{
+    @apply w-56 max-w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-navy-950 dark:text-slate-200;
+}
+.form-control-feedback-end input{ @apply pe-9; }
+.form-control-feedback-icon{
+    @apply pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400;
+}
+.dataTables_info{ @apply text-xs text-slate-500 dark:text-slate-400; }
+.dataTables_paginate{ @apply flex items-center gap-1; }
+.dataTables_paginate .paginate_button{
+    @apply inline-flex min-w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 px-2.5 py-1.5 text-sm text-slate-600! no-underline transition hover:border-brand-300 hover:text-brand-700! dark:border-white/10 dark:text-slate-300!;
+}
+.dataTables_paginate .paginate_button.current{
+    @apply border-brand-700 bg-brand-700 text-white! dark:border-brand-600 dark:bg-brand-600;
+}
+.dataTables_paginate .paginate_button.disabled{ @apply cursor-not-allowed opacity-40 hover:border-slate-200 hover:text-slate-600!; }
+.dataTables_processing{
+    @apply absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold dark:border-white/10 dark:bg-navy-900;
+}
+table.dataTable{ position: relative; }
+th.sorting, th.sorting_asc, th.sorting_desc{ @apply cursor-pointer select-none pr-6; position: relative; }
+th.sorting::after{ content:"↕"; @apply absolute right-2 opacity-30; }
+th.sorting_asc::after{ content:"↑"; @apply absolute right-2 text-brand-600 opacity-100; }
+th.sorting_desc::after{ content:"↓"; @apply absolute right-2 text-brand-600 opacity-100; }
+
+/* ---------- Form ---------- */
+.form-label, .col-form-label{ @apply mb-0 inline-block text-[12.5px] font-semibold text-slate-600 dark:text-slate-300; }
+.form-control, .form-select{
+    @apply block w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-none outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-navy-950 dark:text-slate-100 dark:placeholder:text-slate-500;
+}
+textarea.form-control{ @apply min-h-24; }
+.form-control-sm, .form-select-sm{ @apply px-2.5 py-1.5 text-xs; }
+.form-select{
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right .75rem center; background-size: 14px;
+    padding-right: 2.25rem;
+}
+select.form-control{
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right .75rem center; background-size: 14px;
+    padding-right: 2.25rem;
+}
+input[type="file"].form-control{ @apply cursor-pointer p-0 file:me-3 file:cursor-pointer file:border-0 file:bg-slate-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-slate-700 dark:file:bg-white/10 dark:file:text-slate-200; }
+.form-control.is-invalid, .form-select.is-invalid{ @apply border-red-400 focus:border-red-500 focus:ring-red-100; }
+.invalid-feedback{ @apply mt-1 block text-xs text-red-600 dark:text-red-400; }
+.form-text{ @apply mt-1 block text-xs text-slate-500 dark:text-slate-400; }
+.form-check{ @apply flex items-center gap-2 py-1; }
+.form-check-inline{ @apply inline-flex me-4; }
+.form-check-input{
+    @apply h-4 w-4 shrink-0 cursor-pointer appearance-none rounded border border-slate-300 bg-white transition checked:border-brand-600 checked:bg-brand-600 dark:border-white/20 dark:bg-navy-950;
+    background-position: center; background-repeat: no-repeat; background-size: 12px;
+}
+.form-check-input:checked{
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+input[type="radio"].form-check-input{ @apply rounded-full; }
+.form-switch .form-check-input{
+    @apply h-5 w-9 rounded-full;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2394a3b8'/%3e%3c/svg%3e");
+    background-position: left .125rem center; background-size: 16px; transition: background-position .15s;
+}
+.form-switch .form-check-input:checked{
+    background-position: right .125rem center;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+.form-check-label{ @apply cursor-pointer text-sm; }
+/* Select berkelas .select (bekas select2) → tampil sebagai select native rapi */
+select.select{
+    @apply block w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-white/10 dark:bg-navy-950 dark:text-slate-100;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right .75rem center; background-size: 14px;
+    padding-right: 2.25rem;
+}
+/* Label error jquery-validate (dipakai form user) */
+label.validation-invalid-label, label.error{ @apply mt-1 block text-xs font-medium text-red-600 dark:text-red-400; }
+
+.input-group{ @apply flex w-full items-stretch; }
+.input-group > .form-control{ @apply rounded-e-none; }
+.input-group > .btn{ @apply rounded-s-none; }
+.img-thumbnail{ @apply rounded-md border border-slate-200 bg-white p-1 dark:border-white/10 dark:bg-navy-900; }
+.img-fluid{ @apply h-auto max-w-full; }
+
+/* ---------- Modal (dikendalikan shim bootstrap-compat di backend.js) ---------- */
+.modal{ position: fixed; inset: 0; z-index: 1055; display: none; overflow-y: auto; }
+.modal.show{ display: block; }
+.modal-backdrop{ position: fixed; inset: 0; z-index: 1050; background: rgb(2 14 33 / .55); }
+.modal-dialog{ @apply relative mx-auto my-8 w-[calc(100%-2rem)] max-w-lg; }
+.modal-lg{ @apply max-w-3xl; }
+.modal-dialog-scrollable .modal-content{ max-height: calc(100vh - 4rem); }
+.modal-dialog-scrollable .modal-body{ overflow-y: auto; }
+.modal-content{
+    @apply flex flex-col rounded-lg border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-navy-900;
+}
+.modal-header{ @apply flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5 dark:border-white/10; }
+.modal-title{ @apply m-0 text-[13.5px] font-bold; }
+.modal-body{ @apply px-5 py-4 text-sm; }
+.modal-footer{ @apply flex items-center justify-end gap-2 border-t border-slate-100 px-5 py-3.5 dark:border-white/10; }
+
+/* ---------- Dropdown (dikendalikan shim) ---------- */
+.dropdown{ position: relative; display: inline-block; }
+.dropdown-menu{
+    @apply absolute z-40 mt-1 hidden min-w-44 rounded-lg border border-slate-200 bg-white py-1.5 shadow-lg dark:border-white/10 dark:bg-navy-900;
+    left: 0; top: 100%;
+}
+.dropdown-menu-end{ left: auto; right: 0; }
+.dropdown-menu.show{ display: block; }
+.dropdown-item{
+    @apply flex w-full cursor-pointer items-center border-0 bg-transparent px-3.5 py-2 text-left text-sm text-slate-700 no-underline transition hover:bg-slate-50 hover:text-brand-700 dark:text-slate-200 dark:hover:bg-white/5 dark:hover:text-brand-400;
+}
+.dropdown-divider{ @apply my-1 border-t border-slate-100 dark:border-white/10; }
+
+/* ---------- Efek fade sederhana ---------- */
+.fade{ transition: opacity .15s linear; }
+
+/* ---------- CKEditor 5 ---------- */
+.ck-editor__editable_inline{ min-height: 280px; }
+.ck.ck-editor{ @apply rounded-md; }
+.dark .ck.ck-editor__main > .ck-editor__editable{ background: var(--color-navy-950); color: #e2e8f0; }
+.dark .ck.ck-toolbar{ background: var(--color-navy-900); border-color: rgb(255 255 255 / .1); }
+.dark .ck.ck-editor__main > .ck-editor__editable{ border-color: rgb(255 255 255 / .1); }
+.dark .ck.ck-button, .dark .ck.ck-dropdown__button{ color: #cbd5e1; }
+
+/* ==========================================================================
+   Komponen chrome CMS V.2 (layout: sidebar, topbar, dashboard)
+   ========================================================================== */
+
+/* Sidebar — item aktif ditandai garis aksen kiri + tint tipis, BUKAN pil
+   penuh warna dengan shadow-glow (ciri khas template dashboard generik). */
+.cms-sidebar-link{
+    @apply flex items-center gap-2.5 rounded-md border-l-2 border-transparent px-3 py-2 text-[13px] font-medium text-slate-300 no-underline transition duration-150 hover:translate-x-0.5 hover:bg-white/[.06] hover:text-white;
+}
+.cms-sidebar-link.active{
+    @apply border-brand-400 bg-white/[.08] text-white;
+}
+.cms-sidebar-link i{ @apply text-[15px] opacity-70 transition-opacity; }
+.cms-sidebar-link.active i{ @apply text-brand-300 opacity-100; }
+.cms-sidebar-sub{
+    @apply flex items-center gap-2 rounded-md px-3 py-1.5 text-[12.5px] font-medium text-slate-400 no-underline transition duration-150 hover:translate-x-0.5 hover:text-white;
+}
+.cms-sidebar-sub::before{
+    content: ""; @apply h-1 w-1 shrink-0 rounded-full bg-current opacity-40;
+}
+.cms-sidebar-sub.active{ @apply font-semibold text-gold-400; }
+.cms-sidebar-sub.active::before{ @apply opacity-100; }
+.cms-section-label{
+    @apply mt-5 mb-1.5 flex items-center gap-2 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500;
+}
+.cms-section-label::after{ content: ""; @apply h-px flex-1 bg-white/10; }
+.cms-topbar-btn{
+    @apply inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-base text-slate-500 transition duration-150 hover:scale-105 hover:bg-slate-100 hover:text-slate-800 active:scale-95 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white;
+}
+
+/* Scrollbar tipis untuk area navigasi sidebar (Firefox + WebKit) */
+.cms-sidebar-nav{
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / .15) transparent;
+}
+.cms-sidebar-nav::-webkit-scrollbar{ width: 6px; }
+.cms-sidebar-nav::-webkit-scrollbar-track{ background: transparent; }
+.cms-sidebar-nav::-webkit-scrollbar-thumb{ background-color: rgb(255 255 255 / .15); border-radius: 9999px; }
+.cms-sidebar-nav::-webkit-scrollbar-thumb:hover{ background-color: rgb(255 255 255 / .25); }
+
+/* Kotak pencarian menu di sidebar */
+.cms-sidebar-search{
+    @apply w-full rounded-md border border-white/10 bg-white/5 py-2 pl-8 pr-3 text-[12.5px] text-white outline-none transition placeholder:text-slate-500 focus:border-brand-500 focus:bg-white/10 focus:ring-2 focus:ring-brand-500/20;
+}
+
+/* Kartu statistik dashboard — angka besar, aksen warna sebagai garis kiri
+   tipis (bukan ikon dalam lingkaran gradien). */
+.cms-stat{
+    @apply relative flex flex-col gap-1 overflow-hidden rounded-lg border border-slate-200 bg-white px-4 py-3.5 dark:border-white/10 dark:bg-navy-900;
+    border-inline-start-width: 3px;
+}
+.cms-stat-label{ @apply text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400; }
+.cms-stat-value{ @apply font-mono text-2xl font-bold text-slate-800 dark:text-white; }
+.cms-stat-icon{ @apply absolute right-3 top-3 text-lg text-slate-300 dark:text-slate-700; }
+
+/* Baris ringkas (statistik sekunder / daftar terpopuler-terbaru) */
+.cms-row-item{
+    @apply flex items-center gap-3 border-b border-slate-100 py-2.5 last:border-0 dark:border-white/5;
+}
+.cms-row-rank{
+    @apply flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100 font-mono text-[11px] font-bold text-slate-500 dark:bg-white/5 dark:text-slate-400;
+}
+.cms-chip{
+    @apply flex items-center gap-3 rounded-md border border-slate-200 bg-white px-3.5 py-3 dark:border-white/10 dark:bg-navy-900;
+}
+.cms-chip-value{ @apply font-mono text-base font-bold text-slate-800 dark:text-white; }
+
+/* Tautan aksi cepat — baris datar dengan aksen border kiri saat hover,
+   bukan ubin warna-warni yang melayang (hover:-translate-y + shadow-glow). */
+.cms-quick-link{
+    @apply flex items-center gap-3 rounded-md border border-l-2 border-slate-200 border-l-transparent bg-white px-3.5 py-2.5 no-underline transition hover:border-l-brand-500 hover:bg-slate-50 dark:border-white/10 dark:border-l-transparent dark:bg-navy-900 dark:hover:bg-white/[.04];
+}
+.cms-quick-link i{ @apply text-base text-slate-400 dark:text-slate-500; }
+.cms-quick-link .lbl{ @apply block text-[13px] font-semibold text-slate-800 dark:text-slate-100; }
+.cms-quick-link .sub{ @apply block text-[11px] text-slate-500 dark:text-slate-400; }
+
+/* Baris info key-value (panel Monitor Sistem) — pengganti tabel HTML polos */
+.cms-kv-row{
+    @apply flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-2.5 text-sm last:border-0 dark:border-white/5;
+}
+.cms-kv-label{ @apply flex items-center gap-2 text-slate-500 dark:text-slate-400; }
+.cms-kv-label i{ @apply w-4 shrink-0 text-center text-base text-slate-400 dark:text-slate-500; }
+.cms-kv-value{ @apply font-mono text-[13px] font-semibold text-slate-800 dark:text-slate-100; }
+
+/* Bagan Struktur Jabatan (admin) */
+.struktur-children{ @apply border-slate-200! dark:border-white/10!; }
+.pejabat-chip{ @apply bg-slate-50 dark:bg-white/5; }
+
+} /* /@layer components */

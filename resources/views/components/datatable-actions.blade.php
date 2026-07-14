@@ -34,7 +34,7 @@
             @endif
 
             @if ($destroy)
-                <form action="{{ $destroy }}" method="POST">
+                <form action="{{ $destroy }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="dropdown-item">
@@ -44,7 +44,7 @@
             @endif
 
             @if ($forceDelete)
-                <form action="{{ $forceDelete }}" method="POST">
+                <form action="{{ $forceDelete }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus PERMANEN data ini? Tindakan ini tidak bisa dibatalkan.')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="dropdown-item">

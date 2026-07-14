@@ -97,6 +97,37 @@ class MediaController extends Controller
         return redirect()->route('media.index')->with('success', trim(Artisan::output()));
     }
 
+    /**
+     * Upload gambar dari dalam CKEditor (SimpleUploadAdapter).
+     * Balasan mengikuti format yang diminta CKEditor: {url: ...} saat sukses,
+     * {error: {message: ...}} saat gagal. Gambar konten harus URL publik
+     * karena ikut tampil di halaman frontend.
+     */
+    public function ckeditorUpload(Request $request)
+    {
+        $validated = $request->validate([
+            'upload' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+        ], [
+            'upload.image' => 'File harus berupa gambar.',
+            'upload.max' => 'Ukuran gambar maksimal 10MB.',
+        ]);
+
+        try {
+            $file = $validated['upload'];
+            $file->storeAs('public/romadan_gambar_web', $file->hashName());
+
+            return response()->json([
+                'url' => asset('storage/romadan_gambar_web/'.$file->hashName()),
+            ]);
+        } catch (Exception $e) {
+            report($e);
+
+            return response()->json([
+                'error' => ['message' => 'Upload gagal, coba lagi.'],
+            ], 500);
+        }
+    }
+
     public function destroy(string $id)
     {
         try {

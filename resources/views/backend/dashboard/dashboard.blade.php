@@ -1,228 +1,31 @@
 @extends('layouts.webromadan_backend.master_layout')
 
-@section('css')
-@endsection
-
-
-@section('script_atas')
-<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/extensions/responsive.min.js')}}"></script>
-@endsection
-
-@section('script_bawah')
-{{-- <script src="{{asset('webromadan/be/demo/pages/datatables_basic.js')}}"></script> --}}
-
-<script>
-    /* ------------------------------------------------------------------------------
- *
- *  # Basic datatables
- *
- *  Demo JS code for datatable_basic.html page
- *
- * ---------------------------------------------------------------------------- */
-
-
-// Setup module
-// ------------------------------
-
-const DatatableBasic = function() {
-
-
-    //
-    // Setup module components
-    //
-
-    // Basic Datatable examples
-    const _componentDatatableBasic = function() {
-        if (!$().DataTable) {
-            console.warn('Warning - datatables.min.js is not loaded.');
-            return;
-        }
-
-        // Setting datatable defaults
-        $.extend( $.fn.dataTable.defaults, {
-            autoWidth: false,
-            lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            columnDefs: [{
-                orderable: false,
-                width: 100,
-                targets: [0]
-            }],
-            dom: '<"datatable-header"f<"ms-sm-auto"B><"ms-sm-auto"l>><"datatable-scroll"t><"datatable-footer"ip>',
-            language: {
-                search: '<span class="me-3">Cari Data:</span> <div class=" form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
-                searchPlaceholder: 'Cari...',
-                lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
-                paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' },
-
-            },
-        });
-
-        $.ajaxSetup({
-            headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        // Basic datatable
-        $('.datatable-basic').DataTable({
-            autoWidth: true,
-            scrollY: 200,
-            scrollX: true,
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('home') }}",
-            columns: [
-			{data: 'created_at',name:'created_at'},
-			{data: 'tipe.nama_tipe', name:'tipe.nama_tipe', orderable:false,searchable:false},
-			{data: 'judul',name:'judul'},
-			{data: 'penulis',name:'penulis'},
-            {data: 'pengedit',name:'pengedit'},
-
-
-            // { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
-            //  {data: 'judul',name:'judul'},
-            // {data: 'sub_judul',name:'sub_judul'},
-            // {data: 'image_publikasi',name:'image_publikasi',orderable:false, searchable:false},
-            // {data: 'tipe.nama_tipe', name:'tipe.nama_tipe', orderable:false,searchable:false},
-            // {data: 'kategori.nama_kategori',name:'kategori.nama_kategori',orderable:false,searchable:false},
-            // {data: 'status.nama_status',name:'status.nama_status',orderable:false,searchable:false},
-            // {data: 'penulis',name:'penulis'},
-            // {data: 'pengedit',name:'pengedit'},
-            // {data: 'created_at',name:'created_at'},
-            // {data: 'opsi',name:'opsi',orderable:false,searchable:false},
-
-            // {data: 'action', name: 'action', orderable: false, searchable:false},
-            ],
-            order: [[0, 'asc']],
-            buttons: {
-                dom:{
-                    button: {
-                        className: ''
-                    },
-                },
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        className: 'btn btn-outline-success',
-                        text: '<i class="far fa-file-excel me-2"></i> Excel',
-                        exportOptions: {
-                            columns: ':visible',
-
-                        }
-                    },
-                    // {
-                    //     extend: 'pdfHtml5',
-                    //     className: 'btn btn-outline-danger',
-                    //     text: '<i class="far fa-file-pdf me-2"></i> Pdf',
-                    //     exportOptions: {
-                    //         columns: [0, 1, 2, 5]
-                    //     }
-                    // },
-                    {
-                        extend: 'colvis',
-                        text: '<i class="ph-squares-four"></i>',
-                        className: 'btn btn-outline-info dropdown-toggle',
-                        collectionLayout: 'fixed four-column'
-                    }
-                ]
-            },
-        });
-
-
-        // Scrollable datatable
-        // const table = $('.datatable-scroll-y').DataTable({
-        //     autoWidth: true,
-        //     scrollY: 300
-        // });
-
-        // Resize scrollable table when sidebar width changes
-        $('.sidebar-control').on('click', function() {
-            table.columns.adjust().draw();
-        });
-    };
-
-
-    //
-    // Return objects assigned to module
-    //
-
-    return {
-        init: function() {
-            _componentDatatableBasic();
-        }
-    }
-}();
-
-
-// Initialize module
-// ------------------------------
-
-document.addEventListener('DOMContentLoaded', function() {
-    DatatableBasic.init();
-});
-</script>
-
-
-@endsection
-
-
 @section('content')
 
-<style>
-    .rm-kpi { border: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(16,32,46,.06); transition: transform .2s ease, box-shadow .2s ease; }
-    .rm-kpi:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(15,95,174,.14); }
-    .rm-kpi .rm-ico { width: 46px; height: 46px; border-radius: 12px; display:flex; align-items:center; justify-content:center; font-size: 1.35rem; }
-    .rm-kpi h2 { font-weight: 800; letter-spacing: -.02em; }
-    .rm-accent { height: 4px; }
-    .rm-chip { border: 1px solid #e6ebf1; border-radius: 12px; padding: 12px 14px; display:flex; align-items:center; gap:10px; background:#fff; transition: box-shadow .2s ease; }
-    .rm-chip:hover { box-shadow: 0 6px 16px rgba(16,32,46,.08); }
-    .rm-list-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px dashed #eef2f6; }
-    .rm-list-item:last-child { border-bottom:0; }
-    .rm-rank { width:26px;height:26px;border-radius:8px;background:#eef4fc;color:#0f5fae;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.8rem; flex:none;}
-    .rm-badge { font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px; }
-    /* Ikon di dalam chip/kpi selalu center & tidak gepeng */
-    .rm-ico i { line-height:1; }
-    /* Tombol Aksi Cepat modern */
-    .rm-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .rm-action { display:flex; align-items:center; gap:11px; padding:12px; border:1px solid #e9eef4; border-radius:13px; background:#fff; text-decoration:none; color:#16202e; transition:transform .18s ease, box-shadow .22s ease, border-color .18s ease; }
-    .rm-action:hover { transform:translateY(-3px); box-shadow:0 10px 22px rgba(16,32,46,.12); border-color:var(--ac,#0f5fae); }
-    .rm-action-ico { flex:none; width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:1.25rem; color:var(--ac,#0f5fae); background:color-mix(in srgb, var(--ac,#0f5fae) 12%, #fff); }
-    .rm-action:hover .rm-action-ico { background:var(--ac,#0f5fae); color:#fff; }
-    .rm-action .lbl { font-weight:700; font-size:.92rem; line-height:1.15; }
-    .rm-action .sub { color:#8592a3; font-size:.72rem; }
-    @media (max-width: 400px) { .rm-actions { grid-template-columns:1fr; } }
-</style>
+<div class="mb-5 flex flex-wrap items-end justify-between gap-2">
+    <div>
+        <h1 class="mb-1 text-xl font-bold">Dashboard</h1>
+        <p class="m-0 text-sm text-slate-500 dark:text-slate-400">Ringkasan aktivitas konten CMS Romadan.</p>
+    </div>
+    <span class="font-mono text-xs text-slate-400 dark:text-slate-500">{{ now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
+</div>
 
 {{-- ===== KPI utama ===== --}}
 <div class="row g-3 mb-1">
     @php
         $cards = [
-            ['label' => 'Total Publikasi', 'value' => $kpi['publikasi_total'], 'icon' => 'ph-newspaper', 'c' => '#0f5fae'],
-            ['label' => 'Published',       'value' => $kpi['published'],       'icon' => 'ph-check-circle', 'c' => '#12a150'],
-            ['label' => 'Draft',           'value' => $kpi['draft'],           'icon' => 'ph-pencil-simple-line', 'c' => '#e8a400'],
-            ['label' => 'Total Views',     'value' => $kpi['views_total'],     'icon' => 'ph-eye', 'c' => '#7a4dd1'],
+            ['label' => 'Total Publikasi', 'value' => $kpi['publikasi_total'], 'icon' => 'ph-newspaper', 'c' => 'var(--color-brand-500)'],
+            ['label' => 'Published',       'value' => $kpi['published'],       'icon' => 'ph-check-circle', 'c' => '#059669'],
+            ['label' => 'Draft',           'value' => $kpi['draft'],           'icon' => 'ph-pencil-simple-line', 'c' => '#d69e00'],
+            ['label' => 'Total Views',     'value' => $kpi['views_total'],     'icon' => 'ph-eye', 'c' => '#64748b'],
         ];
     @endphp
     @foreach($cards as $card)
     <div class="col-xl-3 col-sm-6">
-        <div class="card rm-kpi h-100">
-            <div class="rm-accent" style="background: {{ $card['c'] }};"></div>
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <h2 class="mb-0">{{ number_format($card['value'], 0, ',', '.') }}</h2>
-                        <span class="text-muted">{{ $card['label'] }}</span>
-                    </div>
-                    <div class="rm-ico" style="background: {{ $card['c'] }}1a; color: {{ $card['c'] }};">
-                        <i class="{{ $card['icon'] }}"></i>
-                    </div>
-                </div>
-            </div>
+        <div class="cms-stat h-full" style="border-inline-start-color: {{ $card['c'] }};">
+            <i class="{{ $card['icon'] }} cms-stat-icon"></i>
+            <span class="cms-stat-label">{{ $card['label'] }}</span>
+            <span class="cms-stat-value">{{ number_format($card['value'], 0, ',', '.') }}</span>
         </div>
     </div>
     @endforeach
@@ -259,13 +62,13 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-header"><h5 class="mb-0">Terpopuler (berdasarkan views)</h5></div>
             <div class="card-body">
                 @forelse($topViewed as $i => $p)
-                    <div class="rm-list-item">
-                        <span class="rm-rank">{{ $i + 1 }}</span>
+                    <div class="cms-row-item">
+                        <span class="cms-row-rank">{{ $i + 1 }}</span>
                         <div class="flex-fill text-truncate">
                             <div class="fw-semibold text-truncate">{{ $p->judul }}</div>
                             <small class="text-muted">{{ ucfirst($p->nama_tipe ?? '-') }}</small>
                         </div>
-                        <span class="text-primary fw-semibold"><i class="ph-eye me-1"></i>{{ number_format($p->views, 0, ',', '.') }}</span>
+                        <span class="d-inline-flex align-items-center gap-1 font-mono text-xs font-semibold text-slate-500 dark:text-slate-400"><i class="ph-eye"></i>{{ number_format($p->views, 0, ',', '.') }}</span>
                     </div>
                 @empty
                     <p class="text-muted mb-0">Belum ada data.</p>
@@ -279,12 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-body">
                 @forelse($recent as $p)
                     @php $pub = strtolower($p->status) === 'published'; @endphp
-                    <div class="rm-list-item">
+                    <div class="cms-row-item">
                         <div class="flex-fill text-truncate">
                             <div class="fw-semibold text-truncate">{{ $p->judul }}</div>
                             <small class="text-muted">{{ ucfirst($p->nama_tipe ?? '-') }} &middot; {{ \Carbon\Carbon::parse($p->created_at)->locale('id')->isoFormat('D MMM Y') }}</small>
                         </div>
-                        <span class="rm-badge {{ $pub ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning' }}">
+                        <span class="badge {{ $pub ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning' }}">
                             {{ $pub ? 'Published' : 'Draft' }}
                         </span>
                     </div>
@@ -302,21 +105,19 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="row g-2">
             @php
                 $chips = [
-                    ['Peraturan', $kpi['peraturan'], 'ph-scroll', '#0f5fae'],
-                    ['Aplikasi', $kpi['aplikasi'], 'ph-squares-four', '#12a150'],
-                    ['FAQ', $kpi['faq'], 'ph-question', '#7a4dd1'],
-                    ['Layanan', $kpi['layanan'], 'ph-headset', '#e8a400'],
-                    ['Users', $kpi['users'], 'ph-users-three', '#0b7285'],
-                    ['Sampah', $kpi['trashed'], 'ph-trash', '#c0392b'],
+                    ['Peraturan', $kpi['peraturan'], 'ph-scroll'],
+                    ['Aplikasi', $kpi['aplikasi'], 'ph-squares-four'],
+                    ['FAQ', $kpi['faq'], 'ph-question'],
+                    ['Layanan', $kpi['layanan'], 'ph-headset'],
+                    ['Users', $kpi['users'], 'ph-users-three'],
+                    ['Sampah', $kpi['trashed'], 'ph-trash'],
                 ];
             @endphp
-            @foreach($chips as [$label, $val, $icon, $c])
+            @foreach($chips as [$label, $val, $icon])
             <div class="col-sm-4 col-6">
-                <div class="rm-chip">
-                    <div class="rm-ico" style="background: {{ $c }}1a; color: {{ $c }}; width:38px;height:38px;border-radius:10px;font-size:1.05rem;">
-                        <i class="{{ $icon }}"></i>
-                    </div>
-                    <div><div class="fw-bold" style="font-size:1.1rem;">{{ number_format($val, 0, ',', '.') }}</div><small class="text-muted">{{ $label }}</small></div>
+                <div class="cms-chip">
+                    <i class="{{ $icon }} text-lg text-slate-400 dark:text-slate-500"></i>
+                    <div><span class="cms-chip-value d-block">{{ number_format($val, 0, ',', '.') }}</span><small class="text-muted">{{ $label }}</small></div>
                 </div>
             </div>
             @endforeach
@@ -326,86 +127,81 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="col-lg-4">
         <div class="card h-100">
             <div class="card-header"><h5 class="mb-0">Aksi Cepat</h5></div>
-            <div class="card-body">
-                <div class="rm-actions">
-                    <a href="{{route('publikasi.create')}}" class="rm-action" style="--ac:#0f5fae">
-                        <span class="rm-action-ico"><i class="ph-plus-circle"></i></span>
-                        <span><span class="lbl d-block">Publikasi</span><span class="sub">Tambah konten</span></span>
-                    </a>
-                    <a href="{{route('faq.create')}}" class="rm-action" style="--ac:#7a4dd1">
-                        <span class="rm-action-ico"><i class="ph-question"></i></span>
-                        <span><span class="lbl d-block">FAQ</span><span class="sub">Tanya jawab</span></span>
-                    </a>
-                    @role('ADMINISTRATOR')
-                    <a href="{{route('users.create')}}" class="rm-action" style="--ac:#0b7285">
-                        <span class="rm-action-ico"><i class="ph-user-plus"></i></span>
-                        <span><span class="lbl d-block">User</span><span class="sub">Kelola akun</span></span>
-                    </a>
-                    <a href="{{route('backups.index')}}" class="rm-action" style="--ac:#5b6b7d">
-                        <span class="rm-action-ico"><i class="ph-database"></i></span>
-                        <span><span class="lbl d-block">Backup</span><span class="sub">Cadangan data</span></span>
-                    </a>
-                    <a href="{{route('activity-log.index')}}" class="rm-action" style="--ac:#c0392b">
-                        <span class="rm-action-ico"><i class="ph-clock-counter-clockwise"></i></span>
-                        <span><span class="lbl d-block">Log Aktivitas</span><span class="sub">Audit trail</span></span>
-                    </a>
-                    @endrole
-                </div>
+            <div class="card-body d-flex flex-column gap-2">
+                <a href="{{route('publikasi.create')}}" class="cms-quick-link">
+                    <i class="ph-plus-circle"></i>
+                    <span><span class="lbl">Publikasi Baru</span><span class="sub">Tambah konten berita/warta/artikel</span></span>
+                </a>
+                <a href="{{route('faq.create')}}" class="cms-quick-link">
+                    <i class="ph-question"></i>
+                    <span><span class="lbl">FAQ Baru</span><span class="sub">Tambah tanya jawab</span></span>
+                </a>
+                @role('ADMINISTRATOR')
+                <a href="{{route('users.create')}}" class="cms-quick-link">
+                    <i class="ph-user-plus"></i>
+                    <span><span class="lbl">Tambah User</span><span class="sub">Kelola akun tim</span></span>
+                </a>
+                <a href="{{route('backups.index')}}" class="cms-quick-link">
+                    <i class="ph-database"></i>
+                    <span><span class="lbl">Backup</span><span class="sub">Cadangan data sistem</span></span>
+                </a>
+                <a href="{{route('activity-log.index')}}" class="cms-quick-link">
+                    <i class="ph-clock-counter-clockwise"></i>
+                    <span><span class="lbl">Log Aktivitas</span><span class="sub">Audit trail perubahan</span></span>
+                </a>
+                @endrole
             </div>
         </div>
     </div>
     @endif
 </div>
 
-{{-- ===== Content Activity (datatable — tetap seperti semula) ===== --}}
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header"><h5 class="mb-0">Content Activity</h5></div>
-            <table class="table datatable-basic">
-                <thead>
-                    <tr>
-                        <th>TANGGAL BUAT</th>
-                        <th>TIPE</th>
-                        <th>JUDUL</th>
-                        <th>PEMBUAT</th>
-                        <th>PENGEDIT</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-</div>
+{{-- ===== Content Activity ===== --}}
+<x-data-table
+    title="Content Activity"
+    :ajax="route('home')"
+    :order="[0, 'asc']"
+    :columns="[
+        ['label' => 'Tanggal Buat', 'data' => 'created_at'],
+        ['label' => 'Tipe', 'data' => 'tipe.nama_tipe', 'name' => 'tipe.nama_tipe', 'orderable' => false, 'searchable' => false],
+        ['label' => 'Judul', 'data' => 'judul'],
+        ['label' => 'Views', 'data' => 'views'],
+        ['label' => 'Pembuat', 'data' => 'penulis'],
+        ['label' => 'Pengedit', 'data' => 'pengedit'],
+    ]"
+/>
 
-{{-- ===== Chart.js ===== --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{{-- ===== Chart.js — garis tipis datar, tanpa gradient glow =====
+     Menunggu DOMContentLoaded: backend.js (yang mengeset window.Chart) dimuat
+     sebagai <script type="module">, yang selalu ditangguhkan (defer) dan baru
+     jalan SETELAH parsing HTML selesai — kalau kode ini dijalankan langsung
+     (inline, tanpa menunggu event), window.Chart belum ada dan chart gagal
+     tampil tanpa error yang terlihat. --}}
 <script>
-    (function () {
+    document.addEventListener('DOMContentLoaded', function () {
         if (typeof Chart === 'undefined') return;
-        Chart.defaults.font.family = "'Plus Jakarta Sans','Inter',sans-serif";
-        Chart.defaults.color = '#5b6b7d';
+        const darkMode = document.documentElement.classList.contains('dark');
+        Chart.defaults.font.family = "'Inter',sans-serif";
+        Chart.defaults.color = darkMode ? '#94a3b8' : '#64748b';
 
         const trend = @json($monthly);
         const byTipe = @json($byTipe);
+        const gridColor = darkMode ? 'rgba(255,255,255,.06)' : '#f1f5f9';
 
         const ctxTrend = document.getElementById('rmTrend');
         if (ctxTrend) {
-            const g = ctxTrend.getContext('2d').createLinearGradient(0, 0, 0, 220);
-            g.addColorStop(0, 'rgba(15,95,174,.28)');
-            g.addColorStop(1, 'rgba(15,95,174,0)');
             new Chart(ctxTrend, {
                 type: 'line',
                 data: { labels: trend.labels, datasets: [{
                     label: 'Publikasi', data: trend.data,
-                    borderColor: '#0f5fae', backgroundColor: g, borderWidth: 3,
-                    fill: true, tension: .4, pointBackgroundColor: '#0f5fae',
-                    pointRadius: 4, pointHoverRadius: 6,
+                    borderColor: '#0f5fae', backgroundColor: 'transparent', borderWidth: 2,
+                    fill: false, tension: .25, pointBackgroundColor: '#0f5fae',
+                    pointRadius: 3, pointHoverRadius: 5,
                 }]},
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#eef2f6' } }, x: { grid: { display: false } } }
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: gridColor } }, x: { grid: { display: false } } }
                 }
             });
         }
@@ -416,14 +212,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 type: 'doughnut',
                 data: { labels: Object.keys(byTipe), datasets: [{
                     data: Object.values(byTipe),
-                    backgroundColor: ['#0f5fae', '#f5b800', '#12a150'],
-                    borderWidth: 0, hoverOffset: 6,
+                    backgroundColor: ['#0f5fae', '#94a3b8', '#f5b800'],
+                    borderWidth: 0, hoverOffset: 4,
                 }]},
-                options: { responsive: true, maintainAspectRatio: false, cutout: '62%',
-                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14 } } } }
+                options: { responsive: true, maintainAspectRatio: false, cutout: '68%',
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6, padding: 14 } } } }
             });
         }
-    })();
+    });
 </script>
 
 @endsection

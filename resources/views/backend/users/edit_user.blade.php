@@ -1,59 +1,31 @@
 @extends('layouts.webromadan_backend.master_layout')
 
+@php
+    $roleOptions = collect($roles)->mapWithKeys(fn ($role) => [$role->id => $role->name])->all();
+@endphp
+
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">Edit User</h5>
+        <h5 class="mb-0">Edit User</h5>
     </div>
 
-    <div class="card-body">
-            <form action="{{ route('users.update', Crypt::encrypt($user->id)) }}" method="POST">
-            @csrf
-            @method('PUT')
+    @include('layouts.webromadan_backend.session_notif')
 
-            <div class="mb-3">
-                <label class="form-label">Nama</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
-                @error('name')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+    <form action="{{ route('users.update', Crypt::encrypt($user->id)) }}" method="post" autocomplete="off">
+        @csrf
+        @method('PUT')
+        <div class="card-body">
+            <x-form.field name="name" label="Nama" :value="$user->name" required />
 
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
-                @error('email')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+            <x-form.field type="email" name="email" label="Email" :value="$user->email" required />
 
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control">
-                <small class="text-muted">Biarkan kosong jika tidak ingin mengubah password</small>
-                @error('password')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+            <x-form.field type="password" name="password" label="Password" help="Biarkan kosong jika tidak ingin mengubah password" />
 
-            <div class="mb-3">
-                <label class="form-label">Role</label>
-                <select name="role" class="form-select" required>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->id }}" {{ $userRole && $userRole->id == $role->id ? 'selected' : '' }}>
-                            {{ $role->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('role')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+            <x-form.select name="role" label="Role" :options="$roleOptions" :value="$userRole?->id" required />
+        </div>
 
-            <div class="text-end">
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-            </div>
-        </form>
-    </div>
+        <x-form.actions :back-route="route('users.index')" submit-label="Simpan Perubahan" :show-reset="false" />
+    </form>
 </div>
 @endsection

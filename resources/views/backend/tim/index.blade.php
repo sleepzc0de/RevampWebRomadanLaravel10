@@ -1,152 +1,23 @@
 @extends('layouts.webromadan_backend.master_layout')
 
-@section('css')
-@endsection
-
-
-@section('script_atas')
-<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/extensions/responsive.min.js')}}"></script>
-@endsection
-
-@section('script_bawah')
-{{-- <script src="{{asset('webromadan/be/demo/pages/datatables_extension_responsive.js')}}"></script> --}}
-
-<script>
-    /* ------------------------------------------------------------------------------
- *
- *  # Responsive extension for Datatables
- *
- *  Demo JS code for datatable_responsive.html page
- *
- * ---------------------------------------------------------------------------- */
-
-
-// Setup module
-// ------------------------------
-
-const DatatableResponsive = function() {
-
-
-    //
-    // Setup module components
-    //
-
-    // Basic Datatable examples
-    const _componentDatatableResponsive = function() {
-        if (!$().DataTable) {
-            console.warn('Warning - datatables.min.js is not loaded.');
-            return;
-        }
-
-        // Setting datatable defaults
-        $.extend( $.fn.dataTable.defaults, {
-            autoWidth: false,
-            responsive: true,
-            columnDefs: [{
-                orderable: false,
-                width: 200,
-                targets: [ 0 ]
-            }],
-            dom: '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
-            language: {
-                search: '<span class="me-3">Filter:</span> <div class="form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
-                searchPlaceholder: 'Type to filter...',
-                lengthMenu: '<span class="me-3">Show:</span> _MENU_',
-                paginate: { 'first': 'First', 'last': 'Last', 'next': document.dir == "rtl" ? '&larr;' : '&rarr;', 'previous': document.dir == "rtl" ? '&rarr;' : '&larr;' }
-            }
-        });
-
-        $.ajaxSetup({
-            headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-
-        // Basic responsive configuration
-        $('.datatable-responsive').DataTable({
-            autoWidth: true,
-            // scrollY: 200,
-            // scrollX: true,
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('pengembang.index') }}",
-            columns: [
-            { data:'DT_RowIndex', name:'DT_RowIndex', width:'10px',orderable:false,searchable:false},
-            {
-        data: 'photo',
-        name: 'photo',
-        render: function(data) {
-            return data
-                ? `<img data-blob-src="${data}" alt="Photo" style="width: 50px; height: auto; background:#eef1f4;">`
-                : `<img src="{{ asset('default-photo.jpg') }}" alt="Photo" style="width: 50px; height: auto;">`;
-        }
-    },
-            { data: 'name', name: 'name' },
-            { data: 'skill', name: 'skill' },
-            {data: 'opsi',name:'opsi',orderable:false,searchable:false},
-            ],
-            order: [[0, 'asc']],
-        });
-
-
-    };
-
-
-    //
-    // Return objects assigned to module
-    //
-
-    return {
-        init: function() {
-            _componentDatatableResponsive();
-        }
-    }
-}();
-
-
-// Initialize module
-// ------------------------------
-
-document.addEventListener('DOMContentLoaded', function() {
-    DatatableResponsive.init();
-});
-</script>
-@endsection
-
 @section('content')
-<!-- Basic responsive configuration -->
-					<div class="card">
-                        <div class="card-header text-center">
-                          <h1>TIM DEV WEBROMADAN</h1>
-                           @include('layouts.webromadan_backend.session_notif')
-						</div>
-						<div class="card-header">
-
-                                    <a href="{{route('pengembang.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
-                                        <span class="btn-labeled-icon bg-purple text-white rounded-pill">
-                                            <i class="ph-check-square-offset"></i>
-                                        </span>
-                                        Tambah Data
-                                    </button></a>
-
-						</div>
-
-						<table class="table datatable-responsive">
-							<thead>
-								<tr>
-									<th>#</th>
-									<th>Foto</th>
-									<th>Nama</th>
-                                    <th>Keahlian</th>
-									<th>Aksi</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-					<!-- /basic responsive configuration -->
+<x-data-table
+    title="Tim Pengembang"
+    :ajax="route('pengembang.index')"
+    :create-route="route('pengembang.create')"
+    create-label="Tambah Data"
+    search-placeholder="Cari pengembang..."
+    :columns="[
+        ['label' => '#', 'data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'w-12'],
+        {{-- Fallback avatar sebagai data-URI SVG — tidak bergantung file di public/ --}}
+        ['label' => 'Foto', 'data' => 'photo', 'orderable' => false, 'searchable' => false, 'image' => true, 'fallback' => 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect width=%2248%22 height=%2248%22 fill=%22%23e2e8f0%22/%3E%3Ccircle cx=%2224%22 cy=%2218%22 r=%228%22 fill=%22%2394a3b8%22/%3E%3Cpath d=%22M8 44a16 16 0 0 1 32 0z%22 fill=%22%2394a3b8%22/%3E%3C/svg%3E'],
+        ['label' => 'Nama', 'data' => 'name'],
+        ['label' => 'Keahlian', 'data' => 'skill'],
+        ['label' => 'Aksi', 'data' => 'opsi', 'orderable' => false, 'searchable' => false, 'raw' => true, 'class' => 'w-24'],
+    ]"
+>
+    <x-slot:notice>
+        @include('layouts.webromadan_backend.session_notif')
+    </x-slot:notice>
+</x-data-table>
 @endsection

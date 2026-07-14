@@ -11,20 +11,18 @@ use Illuminate\Support\Facades\Route;
 class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * The path to the "home" route for your application.
-     *
-     * Typically, users are redirected here after authentication.
-     *
-     * @var string
-     */
-    public const HOME = '/backend/romadan-interface/dashboard';
-
-    /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
     public function boot(): void
     {
         $this->configureRateLimiting();
+
+        // Segmen "create"/"edit" pada Route::resource ikut ditokenkan supaya
+        // seluruh path backend benar-benar opaque (lihat config/cms_url.php).
+        Route::resourceVerbs([
+            'create' => config('cms_url.verb_create'),
+            'edit' => config('cms_url.verb_edit'),
+        ]);
 
         $this->routes(function () {
             Route::middleware('api')

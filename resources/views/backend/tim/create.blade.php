@@ -1,96 +1,34 @@
 @extends('layouts.webromadan_backend.master_layout')
 
-@section('css')
-@endsection
-
-@section('script_atas')
-@endsection
-
-@section('script_bawah')
-@endsection
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Tambah Pengembang Baru</h4>
-                </div>
-                <div class="card-body">
-                    <form class="form-validate-jquery" action="{{ route('pengembang.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-
-                        <div class="row mb-3">
-                            <label class="col-form-label col-lg-3">Nama <span class="text-danger">*</span></label>
-                            <div class="col-lg-9">
-                                <input maxlength="100"
-                                type="text" name="name" class="form-control @error('name') is-invalid @enderror" required placeholder="Masukkan nama pengembang">
-                                @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label class="col-form-label col-lg-3">Keahlian <span class="text-danger">*</span></label>
-                            <div class="col-lg-9">
-                                <div id="skill-container">
-                                    <div class="input-group mb-2">
-                                        <input maxlength="100" type="text" name="skill[]" class="form-control @error('skill.0') is-invalid @enderror" required placeholder="Masukkan keahlian">
-                                        <button type="button" class="btn btn-success add-skill">+</button>
-                                    </div>
-                                </div>
-                                @error('skill.*')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label class="col-form-label col-lg-3">Foto</label>
-                            <div class="col-lg-9">
-                                <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror">
-                                @error('photo')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-lg-9 offset-lg-3">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                <a href="{{ route('pengembang.index') }}" class="btn btn-link">Kembali</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Tambah Tim Pengembang</h5>
     </div>
+
+    @include('layouts.webromadan_backend.session_notif')
+
+    <form action="{{ route('pengembang.store') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+        @csrf
+        <div class="card-body">
+            <x-form.field name="name" label="Nama" required maxlength="255" />
+
+            <div class="mb-4" x-data="{ skills: [''] }">
+                <label class="form-label mb-1.5 block">Keahlian <span class="text-danger">*</span></label>
+                <template x-for="(skill, i) in skills" :key="i">
+                    <div class="mb-2 flex gap-2">
+                        <input type="text" name="skill[]" x-model="skills[i]" class="form-control" placeholder="Contoh: Laravel">
+                        <button type="button" x-show="skills.length > 1" @click="skills.splice(i, 1)" class="btn btn-outline-danger btn-icon">&minus;</button>
+                        <button type="button" x-show="i === skills.length - 1" @click="skills.push('')" class="btn btn-outline-primary btn-icon">+</button>
+                    </div>
+                </template>
+                @error('skill')<span class="invalid-feedback">{{ $message }}</span>@enderror
+            </div>
+
+            <x-form.file name="photo" label="Foto" accept="image/jpeg,image/png,image/jpg,image/gif" />
+        </div>
+
+        <x-form.actions :back-route="route('pengembang.index')" submit-label="Simpan" />
+    </form>
 </div>
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Tambah skill
-    document.querySelector('.add-skill').addEventListener('click', function() {
-        const container = document.getElementById('skill-container');
-        const newSkill = document.createElement('div');
-        newSkill.className = 'input-group mb-2';
-        newSkill.innerHTML = `
-            <input type="text" name="skill[]" class="form-control" required placeholder="Masukkan keahlian">
-            <button type="button" class="btn btn-danger remove-skill">-</button>
-        `;
-        container.appendChild(newSkill);
-    });
-
-    // Hapus skill
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-skill')) {
-            e.target.parentElement.remove();
-        }
-    });
-});
-</script>
-@endpush
 @endsection

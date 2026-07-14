@@ -105,6 +105,17 @@
     .prose-fe table { @apply my-4 w-full border-collapse overflow-hidden rounded-lg text-sm; }
     .prose-fe th { @apply border border-slate-200 bg-slate-50 px-3 py-2 text-left font-semibold dark:border-white/10 dark:bg-white/5; }
     .prose-fe td { @apply border border-slate-200 px-3 py-2 dark:border-white/10; }
+    /* Output CKEditor 5: figure pembungkus gambar/tabel/media + caption */
+    .prose-fe figure { @apply my-4 max-w-full; }
+    .prose-fe figure.image { @apply mx-auto table; }
+    .prose-fe figure.image img { @apply my-0; }
+    .prose-fe figure.image-style-side { @apply float-right ml-4 max-w-[50%]; }
+    .prose-fe figure.table { @apply w-full overflow-x-auto; }
+    .prose-fe figure.table table { @apply my-0; }
+    .prose-fe figure.media { @apply aspect-video; }
+    .prose-fe figure.media iframe { @apply my-0 h-full; }
+    .prose-fe figcaption { @apply mt-1.5 text-center text-xs text-slate-500 dark:text-slate-400; }
+    .prose-fe mark { @apply rounded bg-gold-400/50 px-0.5 dark:bg-gold-500/40 dark:text-white; }
 
     /* Kartu terbitan (berita/warta/artikel) */
     .fe-card {

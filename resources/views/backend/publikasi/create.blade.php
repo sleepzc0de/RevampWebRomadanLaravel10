@@ -1,365 +1,70 @@
 @extends('layouts.webromadan_backend.master_layout')
 
-@section('css')
-<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
-@endsection
-
-
-@section('script_atas')
-<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/forms/validation/validate.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/forms/selects/select2.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/editors/ckeditor/ckeditor_classic.js')}}"></script>
-
-@endsection
-
-@section('script_bawah')
-<script src="{{asset('webromadan/be/demo/pages/form_validation_library.js')}}"></script>
-<script src="{{asset('webromadan/be/demo/pages/form_select2.js')}}"></script>
-{{-- <script src="{{asset('webromadan/be/demo/pages/editor_ckeditor_classic.js')}}"></script> --}}
-<script>
-    // Add this to your script section
-document.addEventListener('DOMContentLoaded', function() {
-    // Character counter for text inputs
-    const textInputs = document.querySelectorAll('input[type="text"], textarea');
-
-    textInputs.forEach(input => {
-        const maxLength = input.getAttribute('maxlength');
-        if (maxLength) {
-            // Create counter element
-            const counter = document.createElement('small');
-            counter.className = 'text-muted d-block mt-1';
-            counter.innerHTML = `${input.value.length}/${maxLength} characters`;
-            input.parentNode.appendChild(counter);
-
-            // Update counter on input
-            input.addEventListener('input', function() {
-                counter.innerHTML = `${this.value.length}/${maxLength} characters`;
-                if (this.value.length >= maxLength) {
-                    counter.className = 'text-danger d-block mt-1';
-                } else {
-                    counter.className = 'text-muted d-block mt-1';
-                }
-            });
-        }
-    });
-
-    // CKEditor character limit
-    if (typeof ClassicEditor !== 'undefined') {
-        ClassicEditor.create(document.querySelector('#ckeditor_classic_empty'), {
-            // Enable image and media embed plugins
-            toolbar: {
-                items: [
-                    'heading', '|',
-                    'bold', 'italic', 'strikethrough', 'underline', '|',
-                    'bulletedList', 'numberedList', '|',
-                    'outdent', 'indent', '|',
-                    'alignment', '|',
-                    'link', 'insertImage', 'mediaEmbed', '|',
-                    'blockQuote', 'insertTable', '|',
-                    'undo', 'redo'
-                ]
-            },
-            // Allow for specific media providers
-            mediaEmbed: {
-                previewsInData: true,
-                providers: [
-                    {
-                        name: 'youtube',
-                        url: /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)$/,
-                        html: match => {
-                            const id = match[1];
-                            return (
-                                '<div class="video-embed">' +
-                                '<iframe width="560" height="315" ' +
-                                `src="https://www.youtube.com/embed/${id}" ` +
-                                'frameborder="0" allow="accelerometer; autoplay; encrypted-media; ' +
-                                'gyroscope; picture-in-picture" allowfullscreen></iframe>' +
-                                '</div>'
-                            );
-                        }
-                    },
-                    {
-                        name: 'vimeo',
-                        url: /^(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/(.+)$/,
-                        html: match => {
-                            const id = match[1];
-                            return (
-                                '<div class="video-embed">' +
-                                '<iframe width="560" height="315" ' +
-                                `src="https://player.vimeo.com/video/${id}" ` +
-                                'frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>' +
-                                '</div>'
-                            );
-                        }
-                    }
-                    // Add more providers as needed
-                ]
-            },
-            // Enable image upload via URL
-            image: {
-                toolbar: [
-                    'imageTextAlternative',
-                    'imageStyle:full',
-                    'imageStyle:side'
-                ],
-                styles: [
-                    'full',
-                    'side'
-                ]
-            },
-            wordCount: {
-                onUpdate: stats => {
-                    // Update character count display
-                    const charactersLimit = 25000;
-                    const characters = stats.characters;
-                    const counterElement = document.querySelector('#editor-counter');
-                    if (counterElement) {
-                        counterElement.innerHTML = `${characters}/${charactersLimit} characters`;
-                        if (characters >= charactersLimit) {
-                            counterElement.className = 'text-danger d-block mt-1';
-                        } else {
-                            counterElement.className = 'text-muted d-block mt-1';
-                        }
-                    }
-                }
-            }
-        })
-        .then(editor => {
-            console.log('Editor initialized successfully');
-        })
-        .catch(error => {
-            console.error('Editor initialization failed:', error);
-        });
-    }
-});
-</script>
-
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Image preview functionality
-        const imageInput = document.getElementById('customFile');
-        const previewContainer = document.getElementById('preview-container');
-
-        imageInput.addEventListener('change', function() {
-            previewContainer.innerHTML = ''; // Clear previous previews
-
-            if (this.files) {
-                for (let i = 0; i < this.files.length; i++) {
-                    const file = this.files[i];
-                    if (file.type.match('image.*')) {
-                        const reader = new FileReader();
-
-                        reader.onload = function(e) {
-                            const previewDiv = document.createElement('div');
-                            previewDiv.className = 'position-relative';
-
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.className = 'img-thumbnail';
-                            img.style.width = '150px';
-                            img.style.height = '150px';
-                            img.style.objectFit = 'cover';
-
-                            const isPrimaryBadge = document.createElement('span');
-                            if (i === 0) {
-                                isPrimaryBadge.className = 'position-absolute top-0 start-0 badge bg-primary';
-                                isPrimaryBadge.textContent = 'Utama';
-                            }
-
-                            previewDiv.appendChild(img);
-                            previewDiv.appendChild(isPrimaryBadge);
-                            previewContainer.appendChild(previewDiv);
-                        };
-
-                        reader.readAsDataURL(file);
-                    }
-                }
-            }
-        });
-    });
-    </script>
-
-@endsection
+@php
+    $tipeOptions = collect($tipe)->mapWithKeys(fn ($item, $i) => [$item->id_tipe => ($i + 1).' - '.$item->nama_tipe])->all();
+    $kategoriOptions = collect($kategori)->mapWithKeys(fn ($item, $i) => [$item->id_kategori => ($i + 1).' - '.$item->nama_kategori])->all();
+@endphp
 
 @section('content')
-<!-- Form validation -->
 <div class="card">
     <div class="card-header">
         <h5 class="mb-0">Tambah Publikasi</h5>
-        @include('layouts.webromadan_backend.session_notif')
     </div>
 
-    <form class="form-validate-jquery" action="{{route('publikasi.store')}}" method="post" enctype="multipart/form-data" autocomplete="off">
+    @include('layouts.webromadan_backend.session_notif')
+
+    <form action="{{ route('publikasi.store') }}" method="post" enctype="multipart/form-data" autocomplete="off">
         @csrf
         <div class="card-body">
+            <x-form.field name="judul" label="Judul Publikasi" required maxlength="255" placeholder="Masukkan Judul publikasi" />
 
-            <div class="mb-4">
+            <x-form.field name="sub_judul" label="Sub Judul Publikasi" required maxlength="255" placeholder="Masukkan Sub Judul publikasi" />
 
-                <!-- Judul publikasi input -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Judul publikasi <span class="text-danger">*</span></label>
-                    <div class="col-lg-10">
-                        <input maxlength="255" value="{{ old('judul') }}" type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" required placeholder="Masukkan Judul publikasi">
-                        <!-- error message untuk judul -->
-                        @error('judul')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
+            <x-form.select name="tipe" label="Tipe Publikasi" :options="$tipeOptions" placeholder="-- Pilih Tipe --" required />
+
+            <x-form.select name="kategori" label="Kategori Publikasi" :options="$kategoriOptions" placeholder="-- Pilih Kategori --" required />
+
+            <div class="mb-4" x-data="multiImagePreview()">
+                <label class="form-label mb-1.5 block">Gambar Publikasi <span class="text-danger">*</span></label>
+                <input type="file" name="images[]" multiple required accept="image/jpeg,image/png,image/jpg"
+                       @change="onChange($event)"
+                       class="form-control {{ $errors->has('images') ? 'is-invalid' : '' }}">
+                <span class="form-text">Anda dapat memilih beberapa gambar sekaligus. Gambar pertama akan menjadi gambar utama.</span>
+
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <template x-for="(p, i) in previews" :key="i">
+                        <div class="relative">
+                            <img :src="p.url" class="img-thumbnail h-[150px] w-[150px] object-cover">
+                            <span x-show="p.primary" class="badge bg-primary absolute top-0 start-0">Utama</span>
                         </div>
-                        @enderror
-                    </div>
+                    </template>
                 </div>
-                <!-- /Judul publikasi input -->
 
-                <!-- Sub Judul publikasi input -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Sub Judul publikasi <span class="text-danger">*</span></label>
-                    <div class="col-lg-10">
-                        <input maxlength="255" value="{{ old('sub_judul') }}" type="text" name="sub_judul" class="form-control @error('sub_judul') is-invalid @enderror" required placeholder="Masukkan Sub Judul publikasi">
-                        <!-- error message untuk judul -->
-                            @error('sub_judul')
-                            <div class="alert alert-danger mt-2">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                    </div>
-                </div>
-                <!-- /Sub Judul publikasi input -->
-
-                <!-- Tipe Publikasi -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Tipe Publikasi <span class="text-danger">*</span></label>
-                    <div class="col-lg-10">
-                        <select value="{{ old('tipe') }}" name="tipe" class="form-control form-control-select2 select" @error('tipe') is-invalid @enderror required>
-                            <option>--PILIH--</option>
-                            @foreach ($tipe as $item)
-                            <option value="{{ $item->id_tipe }}" {{ old('tipe') == $item->id_tipe ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_tipe}}</option>
-                            @endforeach
-                        </select>
-
-                        <!-- error message untuk judul -->
-                        @error('tipe')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- /Tipe Publikasi -->
-
-                <!-- Kategori publikasi -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Kategori publikasi <span class="text-danger">*</span></label>
-                    <div class="col-lg-10">
-                        <select value="{{ old('kategori') }}" name="kategori" class="form-control form-control-select2 select" @error('kategori') is-invalid @enderror required>
-                            <option>--PILIH--</option>
-                            @foreach ($kategori as $item)
-                            <option value="{{ $item->id_kategori }}" {{ old('kategori') == $item->id_kategori ? 'selected' : null}}>{{$loop->iteration." - ".$item->nama_kategori}}</option>
-                            @endforeach
-                        </select>
-
-                        <!-- error message untuk judul -->
-                        @error('kategori')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- /Kategori publikasi -->
-
-                <!-- Multiple Images file uploader -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Gambar publikasi <span class="text-danger">*</span></label>
-                    <div class="col-lg-10">
-                        <input type="file" class="form-control @error('images') is-invalid @enderror required"
-                            id="customFile" name="images[]" multiple accept="image/jpeg,image/png,image/jpg">
-                        <small class="text-muted">Anda dapat memilih beberapa gambar sekaligus. Gambar pertama akan menjadi gambar utama.</small>
-                        <div id="preview-container" class="d-flex flex-wrap gap-2 mt-2"></div>
-                        @error('images')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                        @error('images.*')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- /Multiple images file uploader -->
-
-                <!-- File Publikasi -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">File Publikasi<span class="text-danger"></span></label>
-                    <div class="col-lg-10">
-                        <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
-                        @error('file')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- /File Kegiatan -->
-
-                <!-- Isi publikasi Input -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Isi publikasi <span class="text-danger">*</span></label>
-                    <div class="col-lg-10">
-                        {{-- <textarea rows="5" cols="5" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi">{{ old('isi') }}</textarea> --}}
-
-                        <textarea maxlength="25000" name="isi" class="form-control @error('isi') is-invalid @enderror" required placeholder="Isi publikasi" id="ckeditor_classic_empty">{{ old('isi') }}</textarea>
-                    </div>
-                </div>
-                <!-- /Isi publikasi Input -->
-
-                <!-- Embedded Media URL Input -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">URL Media (Video/Image) <span class="text-danger"></span></label>
-                    <div class="col-lg-10">
-                        <input type="url" name="embedded_media" value="{{ old('embedded_media') }}" class="form-control @error('embedded_media') is-invalid @enderror" placeholder="https://youtube.com/watch?v=example or image URL">
-                        <small class="text-muted">Masukkan URL YouTube, Vimeo, atau gambar yang ingin ditampilkan</small>
-
-                        @error('embedded_media')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- /Embedded Media URL Input -->
-
-                <!-- Jadwalkan Publikasi -->
-                <div class="row mb-3">
-                    <label class="col-form-label col-lg-2">Jadwalkan Publikasi</label>
-                    <div class="col-lg-10">
-                        <input type="datetime-local" name="publish_at" value="{{ old('publish_at') }}" class="form-control @error('publish_at') is-invalid @enderror">
-                        <small class="text-muted">Kosongkan untuk simpan sebagai draft. Isi tanggal &amp; jam untuk otomatis dipublikasikan pada waktu tersebut.</small>
-
-                        @error('publish_at')
-                        <div class="alert alert-danger mt-2">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- /Jadwalkan Publikasi -->
-
+                @error('images')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                @error('images.*')<span class="invalid-feedback">{{ $message }}</span>@enderror
             </div>
 
+            <x-form.field type="file" name="file" label="File Publikasi" accept=".pdf,.doc,.docx" />
+
+            <x-form.textarea name="isi" label="Isi Publikasi" required maxlength="25000" placeholder="Isi publikasi" rich id="ckeditor_classic_empty" />
+
+            <x-form.field
+                type="url"
+                name="embedded_media"
+                label="URL Media (Video/Image)"
+                placeholder="https://youtube.com/watch?v=example or image URL"
+                help="Masukkan URL YouTube, Vimeo, atau gambar yang ingin ditampilkan"
+            />
+
+            <x-form.field
+                type="datetime-local"
+                name="publish_at"
+                label="Jadwalkan Publikasi"
+                help="Kosongkan untuk simpan sebagai draft. Isi tanggal & jam untuk otomatis dipublikasikan pada waktu tersebut."
+            />
         </div>
 
-        <div class="card-footer d-flex justify-content-end">
-            <a href="{{route('publikasi.index') }}" class="btn btn-warning"><i class="ph-caret-double-left"></i>Kembali</a>
-            <button type="reset" class="btn btn-light ms-3" id="reset">Reset</button>
-            <button type="submit" class="btn btn-primary ms-3">Submit <i class="ph-paper-plane-tilt ms-2"></i></button>
-        </div>
+        <x-form.actions :back-route="route('publikasi.index')" submit-label="Simpan" />
     </form>
 </div>
-<!-- /form validation -->
 @endsection

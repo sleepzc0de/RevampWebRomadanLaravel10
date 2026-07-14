@@ -1,90 +1,36 @@
 @extends('layouts.webromadan_backend.master_layout')
 
-@section('css')
-@endsection
-
-@section('script_atas')
-<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/extensions/responsive.min.js')}}"></script>
-@endsection
-
-@section('script_bawah')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (!$().DataTable) {
-        console.warn('Warning - datatables.min.js is not loaded.');
-        return;
-    }
-
-    $.extend($.fn.dataTable.defaults, {
-        autoWidth: false,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        dom: '<"datatable-header"f<"ms-sm-auto"l>><"datatable-scroll"t><"datatable-footer"ip>',
-        language: {
-            search: '<span class="me-3">Cari Data:</span> <div class="form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
-            searchPlaceholder: 'Cari...',
-            lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
-            paginate: { first: 'First', last: 'Last', next: '&rarr;', previous: '&larr;' },
-        },
-    });
-
-    $.ajaxSetup({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-    });
-
-    const table = $('.datatable-activity-log').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ route('activity-log.index') }}",
-            data: function (d) {
-                d.log_name = $('#filter-log-name').val();
-            }
-        },
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '10px', orderable: false, searchable: false },
-            { data: 'waktu', name: 'created_at' },
-            { data: 'modul', name: 'log_name' },
-            { data: 'event', name: 'event' },
-            { data: 'deskripsi', name: 'description' },
-            { data: 'pengguna', name: 'causer.name' },
-            { data: 'detail', name: 'detail', orderable: false, searchable: false },
-        ],
-        order: [[1, 'desc']],
-    });
-
-    const exportLink = document.getElementById('export-activity-log');
-    const baseExportUrl = exportLink.href;
-    $('#filter-log-name').on('change', function () {
-        table.draw();
-        exportLink.href = this.value ? `${baseExportUrl}?log_name=${encodeURIComponent(this.value)}` : baseExportUrl;
-    });
-
-    $(document).on('click', '.activity-detail-btn', function () {
-        const properties = $(this).data('properties');
-        const subject = $(this).data('subject') || '-';
-        $('#activity-detail-subject').text(subject);
-        $('#activity-detail-json').text(JSON.stringify(properties, null, 2));
-        const modal = new bootstrap.Modal(document.getElementById('activityDetailModal'));
-        modal.show();
-    });
-});
-</script>
-@endsection
-
 @section('content')
-<div class="card">
-    <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-        <h5 class="mb-0">Log Aktivitas</h5>
-        <div class="d-flex align-items-center gap-2">
-            <select id="filter-log-name" class="form-select form-select-sm" style="width:auto;">
+<div x-data="{ open: false, subject: '', json: '' }"
+     @click="const btn = $event.target.closest('.activity-detail-btn'); if (btn) { subject = btn.dataset.subject || '-'; try { json = JSON.stringify(JSON.parse(btn.dataset.properties || '{}'), null, 2); } catch (e) { json = btn.dataset.properties || ''; } open = true; }"
+     @keydown.window.escape="open = false">
+    <x-data-table
+        title="Log Aktivitas"
+        :ajax="route('activity-log.index')"
+        :order="[1, 'desc']"
+        search-placeholder="Cari log..."
+        :columns="[
+            ['label' => '#', 'data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'w-12'],
+            ['label' => 'Waktu', 'data' => 'waktu', 'name' => 'created_at'],
+            ['label' => 'Modul', 'data' => 'modul', 'name' => 'log_name'],
+            ['label' => 'Event', 'data' => 'event', 'raw' => true],
+            ['label' => 'Deskripsi', 'data' => 'deskripsi', 'name' => 'description'],
+            ['label' => 'Pengguna', 'data' => 'pengguna', 'name' => 'causer.name'],
+            ['label' => 'Detail', 'data' => 'detail', 'orderable' => false, 'searchable' => false, 'raw' => true],
+        ]"
+    >
+        <x-slot:notice>
+            @include('layouts.webromadan_backend.session_notif')
+        </x-slot:notice>
+
+        <x-slot:headerActions>
+            <select class="form-select form-select-sm" style="width:auto;" x-model="extra.log_name" @change="page = 0; load()">
                 <option value="">Semua Modul</option>
                 @foreach($logNames as $logName)
                     <option value="{{ $logName }}">{{ ucwords(str_replace('_', ' ', $logName)) }}</option>
                 @endforeach
             </select>
-            <a href="{{ route('activity-log.export') }}" id="export-activity-log" class="btn btn-sm btn-outline-success">
+            <a :href="extra.log_name ? @js(route('activity-log.export')) + '?log_name=' + encodeURIComponent(extra.log_name) : @js(route('activity-log.export'))" class="btn btn-sm btn-outline-success">
                 <i class="ph-file-xls"></i> Ekspor Excel
             </a>
             <form action="{{ route('activity-log.clean') }}" method="post" onsubmit="return confirm('Hapus semua log lebih dari 365 hari?');">
@@ -93,37 +39,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="ph-broom"></i> Bersihkan Log Lama
                 </button>
             </form>
-        </div>
-    </div>
-    @include('layouts.webromadan_backend.session_notif')
+        </x-slot:headerActions>
+    </x-data-table>
 
-    <table class="table datatable-activity-log table-hover table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Waktu</th>
-                <th>Modul</th>
-                <th>Event</th>
-                <th>Deskripsi</th>
-                <th>Pengguna</th>
-                <th>Detail</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-
-<!-- Modal Detail Aktivitas -->
-<div class="modal fade" id="activityDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Detail Perubahan</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-muted mb-2">Subjek: <span id="activity-detail-subject"></span></p>
-                <pre id="activity-detail-json" class="bg-light p-3 rounded" style="white-space: pre-wrap; word-break: break-word;"></pre>
+    {{-- Modal Detail Aktivitas --}}
+    <div x-show="open" x-cloak x-transition.opacity class="modal-backdrop" @click="open = false"></div>
+    <div x-show="open" x-cloak class="modal" style="display: block;">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content" @click.outside="open = false">
+                <div class="modal-header">
+                    <h6 class="modal-title">Detail Perubahan</h6>
+                    <button type="button" class="btn-close" @click="open = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-2">Subjek: <span x-text="subject"></span></p>
+                    <pre class="rounded-md bg-slate-50 p-3 dark:bg-white/5" style="white-space: pre-wrap; word-break: break-word;" x-text="json"></pre>
+                </div>
             </div>
         </div>
     </div>

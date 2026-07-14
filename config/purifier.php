@@ -29,18 +29,19 @@ return [
             // Allowlist disesuaikan dengan output CKEditor (heading, tabel,
             // gambar, embed video) — semua selain ini dibuang saat render.
             'HTML.Allowed' => 'div[class|style],p[class|style],span[class|style],br,hr,'
-                .'h1,h2,h3,h4,h5,h6,'
-                .'b,strong,i,em,u,s,sub,sup,small,'
+                .'h1[style],h2[style],h3[style],h4[style],h5[style],h6[style],'
+                .'b,strong,i,em,u,s,sub,sup,small,mark[class|style],'
                 .'a[href|title|target|rel],'
-                .'ul[class],ol[class|start],li,'
+                .'ul[class|style],ol[class|style|start],li[style],'
                 .'img[src|alt|title|width|height|class|style],'
-                .'table[class|style|width|border|cellpadding|cellspacing],thead,tbody,tfoot,'
-                .'tr,td[colspan|rowspan|style|width],th[colspan|rowspan|style|width|scope],'
+                .'table[class|style|width|border|cellpadding|cellspacing],caption,thead,tbody,tfoot,'
+                .'tr[style],td[colspan|rowspan|style|width],th[colspan|rowspan|style|width|scope],'
                 .'blockquote[class|cite],pre,code,'
-                .'figure[class],figcaption,'
+                .'figure[class|style],figcaption,'
                 .'iframe[src|width|height|frameborder|allowfullscreen|class]',
             'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,'
-                .'padding-left,color,background-color,text-align,width,height,float,margin,margin-left,margin-right',
+                .'padding-left,color,background-color,text-align,width,height,float,margin,margin-left,margin-right,'
+                .'border,border-color,border-style,border-width,border-collapse,vertical-align,list-style-type,max-width',
             // Iframe hanya boleh dari embed YouTube/Vimeo
             'HTML.SafeIframe' => true,
             'URI.SafeIframeRegexp' => '%^(https?:)?//(www\.youtube(-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%',

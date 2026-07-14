@@ -78,7 +78,10 @@ class InformasiPublikController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        // return view('backend.infopub.index');
+
+        // Endpoint ini hanya dikonsumsi tabel AJAX pada halaman index gabungan;
+        // akses langsung tanpa AJAX diarahkan ke halaman tersebut (bukan blank).
+        return redirect()->route('informasi-publik.index');
     }
 
     /**

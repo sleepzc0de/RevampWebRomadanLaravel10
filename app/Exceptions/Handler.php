@@ -47,12 +47,10 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $exception)
-    {
-        if (! config('app.debug')) {
-            return response()->view('errors.custom', [], 500);
-        }
-
-        return parent::render($request, $exception);
-    }
+    // Tidak ada override render(): override lama memaksa SEMUA exception
+    // menjadi halaman 500 saat APP_DEBUG=false — termasuk ValidationException
+    // (harusnya redirect balik dengan pesan error form), AuthenticationException
+    // (harusnya redirect ke login), 404, 419 CSRF, dan 429 rate-limit.
+    // Penyembunyian detail error di production sudah ditangani framework:
+    // exception tak tertangani otomatis dirender ke resources/views/errors/500.blade.php.
 }

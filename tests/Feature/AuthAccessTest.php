@@ -38,7 +38,7 @@ class AuthAccessTest extends TestCase
 
     public function test_backend_requires_authentication(): void
     {
-        $response = $this->get('/backend/romadan-interface/dashboard');
+        $response = $this->get(route('home'));
 
         $response->assertRedirect(route('login'));
     }

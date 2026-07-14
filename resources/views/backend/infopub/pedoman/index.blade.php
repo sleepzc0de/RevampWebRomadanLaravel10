@@ -1,107 +1,23 @@
 @extends('layouts.webromadan_backend.master_layout')
 
-@section('css')
-@endsection
-
-@section('script_atas')
-<script src="{{asset('webromadan/be/js/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/datatables.min.js')}}"></script>
-<script src="{{asset('webromadan/be/js/vendor/tables/datatables/extensions/responsive.min.js')}}"></script>
-@endsection
-
-@section('script_bawah')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (!$().DataTable) {
-        console.warn('Warning - datatables.min.js is not loaded.');
-        return;
-    }
-
-    $.extend($.fn.dataTable.defaults, {
-        autoWidth: false,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        columnDefs: [{ orderable: false, width: 100, targets: [0] }],
-        dom: '<"datatable-header"f<"ms-sm-auto"B><"ms-sm-auto"l>><"datatable-scroll"t><"datatable-footer"ip>',
-        language: {
-            search: '<span class="me-3">Cari Data:</span> <div class="form-control-feedback form-control-feedback-end flex-fill">_INPUT_<div class="form-control-feedback-icon"><i class="ph-magnifying-glass opacity-50"></i></div></div>',
-            searchPlaceholder: 'Cari...',
-            lengthMenu: '<span class="me-3">Tampilkan:</span> _MENU_',
-            paginate: { first: 'First', last: 'Last', next: '&rarr;', previous: '&larr;' },
-        },
-    });
-
-    $.ajaxSetup({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-    });
-
-    $('.datatable-basic').DataTable({
-        autoWidth: true,
-        scrollY: 200,
-        scrollX: true,
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('pedoman.index') }}",
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '2px', orderable: false, searchable: false },
-            { data: 'judul_pedoman', name: 'judul_pedoman' },
-            { data: 'file_pedoman', name: 'file_pedoman', orderable: false, searchable: false },
-            { data: 'dataKategori.nama_kategori', name: 'dataKategori.nama_kategori', orderable: false, searchable: false },
-            { data: 'tanggal_terbit', name: 'tanggal_terbit' },
-            { data: 'opsi', name: 'opsi', orderable: false, searchable: false },
-        ],
-        order: [[0, 'asc']],
-        buttons: {
-            dom: { button: { className: '' } },
-            buttons: [
-                {
-                    extend: 'excelHtml5',
-                    className: 'btn btn-outline-success',
-                    text: '<i class="far fa-file-excel me-2"></i> Excel',
-                    exportOptions: { columns: ':visible' }
-                },
-                {
-                    extend: 'colvis',
-                    text: '<i class="ph-squares-four"></i>',
-                    className: 'btn btn-outline-info dropdown-toggle',
-                    collectionLayout: 'fixed four-column'
-                }
-            ]
-        },
-    });
-});
-</script>
-@endsection
-
 @section('content')
-<!-- Basic datatable -->
-<div class="card">
-    <div class="card-header text-center">
-        <h1>Pedoman</h1>
+<x-data-table
+    title="Pedoman"
+    :ajax="route('pedoman.index')"
+    :create-route="route('pedoman.create')"
+    create-label="Tambah Pedoman"
+    search-placeholder="Cari pedoman..."
+    :columns="[
+        ['label' => '#', 'data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'w-12'],
+        ['label' => 'Judul Pedoman', 'data' => 'judul_pedoman'],
+        ['label' => 'File Pedoman', 'data' => 'file_pedoman', 'name' => 'file_pedoman', 'orderable' => false, 'searchable' => false, 'raw' => true],
+        ['label' => 'Kategori', 'data' => 'dataKategori.nama_kategori', 'name' => 'dataKategori.nama_kategori', 'orderable' => false, 'searchable' => false],
+        ['label' => 'Tanggal Terbit', 'data' => 'tanggal_terbit'],
+        ['label' => 'Aksi', 'data' => 'opsi', 'orderable' => false, 'searchable' => false, 'raw' => true, 'class' => 'w-24'],
+    ]"
+>
+    <x-slot:notice>
         @include('layouts.webromadan_backend.session_notif')
-    </div>
-    <div class="card-header">
-        <a href="{{route('pedoman.create')}}"><button type="button" class="btn btn-flat-purple btn-labeled btn-labeled-start rounded-pill">
-            <span class="btn-labeled-icon bg-purple text-white rounded-pill">
-                <i class="ph-check-square-offset"></i>
-            </span>
-            Tambah Pedoman
-        </button></a>
-    </div>
-
-    <table class="table datatable-basic table-hover table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Judul Pedoman</th>
-                <th>File Pedoman</th>
-                <th>Kategori</th>
-                <th>Tanggal Terbit</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-<!-- /basic datatable -->
+    </x-slot:notice>
+</x-data-table>
 @endsection
