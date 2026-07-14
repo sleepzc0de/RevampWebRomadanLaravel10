@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Activitylog\Models\Concerns\LogsActivity;
-use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class PublikasiModel extends Model
 {
@@ -116,7 +116,7 @@ class PublikasiModel extends Model
         return LogOptions::defaults()
             ->logOnly(['judul', 'sub_judul', 'tipe', 'kategori', 'status', 'penulis', 'pengedit', 'backdate', 'published_at'])
             ->logOnlyDirty()
-            ->dontLogEmptyChanges()
+            ->dontSubmitEmptyLogs()
             ->useLogName('publikasi');
     }
 }

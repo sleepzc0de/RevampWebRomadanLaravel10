@@ -17,7 +17,7 @@
         "laravel/tinker": "^3.0",
         "mews/purifier": "^3.4",
         "pragmarx/google2fa": "^9.0",
-        "spatie/laravel-activitylog": "^5.0",
+        "spatie/laravel-activitylog": "^4.10 || ^5.0",
         "spatie/laravel-permission": "^8.3",
         "yajra/laravel-datatables": "^13.0"
     },
@@ -28,7 +28,7 @@
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^13.0",
+        "phpunit/phpunit": "^12.0 || ^13.0",
         "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {
@@ -70,6 +70,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.3.0"
         }
     },
     "minimum-stability": "stable",
