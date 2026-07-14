@@ -34,7 +34,6 @@ class KegiatanController extends Controller
                 })
                 ->addColumn('opsi', function ($query) {
                     return view('components.datatable-actions', [
-                        'preview' => route('kegiatan.show', encrypt($query->id)),
                         'edit' => route('kegiatan.edit', encrypt($query->id)),
                         'destroy' => route('kegiatan.destroy', encrypt($query->id)),
                     ])->render();

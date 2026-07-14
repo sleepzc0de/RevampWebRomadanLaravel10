@@ -32,7 +32,6 @@ class PeraturanController extends Controller
                 })
                 ->addColumn('opsi', function ($query) {
                     return view('components.datatable-actions', [
-                        'preview' => route('peraturan.show', encrypt($query->id)),
                         'edit' => route('peraturan.edit', encrypt($query->id)),
                         'destroy' => route('peraturan.destroy', encrypt($query->id)),
                     ])->render();

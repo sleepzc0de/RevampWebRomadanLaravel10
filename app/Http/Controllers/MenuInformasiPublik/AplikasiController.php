@@ -27,7 +27,6 @@ class AplikasiController extends Controller
 
                 ->addColumn('opsi', function ($query) {
                     return view('components.datatable-actions', [
-                        'preview' => route('aplikasi.show', encrypt($query->id)),
                         'edit' => route('aplikasi.edit', encrypt($query->id)),
                         'destroy' => route('aplikasi.destroy', encrypt($query->id)),
                     ])->render();

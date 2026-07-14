@@ -29,7 +29,6 @@ class LoginController extends Controller
                 })
                 ->addColumn('opsi', function ($query) {
                     return view('components.datatable-actions', [
-                        'preview' => route('loggambar.show', encrypt($query->id)),
                         'edit' => route('loggambar.edit', encrypt($query->id)),
                         'destroy' => route('loggambar.destroy', encrypt($query->id)),
                     ])->render();

@@ -19,7 +19,11 @@ class UserUpdateRequest extends FormRequest
     public function authorize()
     {
         try {
-            $this->decryptedId = Crypt::decrypt($this->route('user'));
+            // Parameter route resource users dinamai 'id' (lihat
+            // Route::resource(...)->parameters([...=>'id']) di routes/web.php);
+            // membaca 'user' selalu null → DecryptException → update selalu
+            // ditolak "unauthorized".
+            $this->decryptedId = Crypt::decrypt($this->route('id'));
             $this->targetUser = User::findOrFail($this->decryptedId);
 
             if ($this->targetUser->hasRole('ADMINISTRATOR')) {
@@ -113,7 +117,7 @@ class UserUpdateRequest extends FormRequest
     protected function prepareForValidation()
     {
         try {
-            $this->decryptedId = Crypt::decrypt($this->route('user'));
+            $this->decryptedId = Crypt::decrypt($this->route('id'));
             $this->targetUser = User::findOrFail($this->decryptedId);
         } catch (\Exception $e) {
             $this->decryptedId = null;

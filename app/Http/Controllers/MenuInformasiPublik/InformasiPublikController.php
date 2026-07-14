@@ -68,7 +68,6 @@ class InformasiPublikController extends Controller
             return datatables()->of($query)
                 ->addColumn('opsi', function ($query) {
                     return view('components.datatable-actions', [
-                        'preview' => route('informasi-publik.show', encrypt($query->id)),
                         'edit' => route('informasi-publik.edit-home', encrypt($query->id)),
                         'destroy' => route('informasi-publik.delete-home', encrypt($query->id)),
                     ])->render();
@@ -201,7 +200,8 @@ class InformasiPublikController extends Controller
      */
     public function show(string $id)
     {
-        return redirect()->route('infopub.index');
+        // Nama route sebelumnya 'infopub.index' tidak terdaftar → 500.
+        return redirect()->route('informasi-publik.index');
     }
 
     /**

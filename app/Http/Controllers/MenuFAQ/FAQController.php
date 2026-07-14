@@ -21,8 +21,9 @@ class FAQController extends Controller
             return datatables()->of($query)
 
                 ->addColumn('opsi', function ($query) {
+                    // Tanpa 'preview': FAQ tidak punya halaman detail (show()
+                    // tidak diimplementasikan) — tautannya dulu berujung 500.
                     return view('components.datatable-actions', [
-                        'preview' => route('faq.show', encrypt($query->id)),
                         'edit' => route('faq.edit', encrypt($query->id)),
                         'destroy' => route('faq.destroy', encrypt($query->id)),
                     ])->render();
