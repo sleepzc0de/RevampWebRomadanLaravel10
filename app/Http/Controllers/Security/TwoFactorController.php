@@ -26,7 +26,7 @@ class TwoFactorController extends Controller
         $qrCodeSvg = null;
         if ($pendingSecret) {
             $qrCodeSvg = $this->twoFactor->qrCodeSvg(
-                config('app.name', 'CMS Romadan'),
+                config('twofactor.issuer'),
                 $user->email,
                 $pendingSecret
             );
