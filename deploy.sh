@@ -78,6 +78,10 @@ ok "situs menampilkan halaman pemeliharaan"
 
 # --------------------------------------------------------------------------
 step "3/12  Mengambil source terbaru ($BRANCH)"
+# Skrip dijalankan sebagai root sementara repo biasanya milik user lain;
+# tanpa ini git menolak dengan "detected dubious ownership".
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
+
 if ! git diff --quiet || ! git diff --cached --quiet; then
   git stash push -u -m "deploy-$(date +%Y%m%d-%H%M%S)" >/dev/null
   STASHED=1
@@ -85,7 +89,10 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 git fetch origin "$BRANCH"
-git checkout "$BRANCH" >/dev/null 2>&1 || true
+git checkout "$BRANCH"
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+[ "$CURRENT_BRANCH" = "$BRANCH" ] \
+  || die "gagal pindah ke branch '$BRANCH' — saat ini berada di '$CURRENT_BRANCH'."
 git pull origin "$BRANCH"
 
 if [ "$STASHED" -eq 1 ]; then

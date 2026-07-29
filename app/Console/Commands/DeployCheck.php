@@ -202,16 +202,16 @@ class DeployCheck extends Command
     {
         $channel = config('logging.default');
 
-        // Catatan: menulis `LOG_CHANNEL=null` di .env membuat env() mengembalikan
-        // PHP null (bukan string 'null'), sehingga channel default jadi tidak
-        // valid dan Laravel terpaksa memakai emergency logger.
+        // Terukur: `LOG_CHANNEL=null` di .env dibaca env() sebagai PHP null
+        // (bukan channel bernama "null"), sehingga channel default tidak valid.
+        // Akibatnya log TIDAK dibuang — setiap penulisan memicu exception lalu
+        // ditulis lewat emergency logger lengkap dengan stack trace (~1,4 KB
+        // per baris). Jadi setelan ini justru lebih boros daripada logging biasa.
         if ($channel === null || $channel === 'null') {
             $this->resultWarn(
                 'LOG_CHANNEL',
-                $channel === null
-                    ? 'tidak valid — LOG_CHANNEL=null di .env terbaca sebagai kosong'
-                    : "bernilai 'null' — semua error dibuang",
-                'ubah menjadi LOG_CHANNEL=daily di .env agar error tercatat & bisa didiagnosa'
+                'tidak valid — log tetap ditulis via emergency logger (~1,4 KB/baris, lebih boros)',
+                'jalankan setup-server.sh, atau setel LOG_CHANNEL=daily & LOG_LEVEL=error di .env'
             );
 
             return;
