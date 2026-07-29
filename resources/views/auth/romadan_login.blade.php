@@ -35,7 +35,7 @@
             <div class="absolute inset-0 bg-gradient-to-r from-navy-950/40 via-transparent to-transparent"></div>
 
             <div class="relative z-10 flex items-center gap-3 animate-fade-in">
-                <img src="{{ asset('webromadan/fe/images/romadan/logo_3.png') }}" alt="Logo"
+                <img src="{{ asset('frontend_romadan_web/images/icons/romadanlogo.png') }}" alt="Logo"
                     class="h-12 w-12 flex-none object-contain">
                 <span class="leading-tight">
                     <span class="block text-sm font-bold text-white">Biro Manajemen BMN &amp; Pengadaan</span>
@@ -44,7 +44,7 @@
             </div>
 
             <div class="relative z-10 max-w-md animate-fade-up">
-                <span class="fe-eyebrow text-gold-400">CMS Romadan</span>
+                <span class="fe-eyebrow text-gold-400">CMS Romadan Versi 2</span>
                 <h1 class="mt-4 text-3xl font-extrabold leading-tight text-white">
                     Kelola informasi publik dengan transparan &amp; akuntabel.
                 </h1>
@@ -60,10 +60,6 @@
                     <li class="flex items-center gap-3">
                         <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-white/10"><i class="fa-solid fa-clock-rotate-left text-gold-400"></i></span>
                         Log aktivitas tercatat untuk setiap perubahan
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-white/10"><i class="fa-solid fa-database text-gold-400"></i></span>
-                        Backup data terjadwal &amp; dapat diunduh
                     </li>
                 </ul>
             </div>
@@ -83,11 +79,11 @@
                     </span>
                 </div>
 
-                <span class="fe-eyebrow">CMS Romadan</span>
+                <span class="fe-eyebrow">CMS Romadan V2</span>
                 <h2 class="mt-3 text-2xl font-extrabold text-navy-800 sm:text-3xl">Selamat Datang Kembali</h2>
-                <p class="mt-2 text-sm text-slate-500">Masuk untuk mengelola konten website.</p>
+                {{-- <p class="mt-2 text-sm text-slate-500">Masuk untuk mengelola konten website.</p> --}}
 
-                <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-5 {{ $errors->any() ? 'animate-shake' : '' }}"
+                <form method="POST" action="{{ route('login') }}" class="mt-3 space-y-5 {{ $errors->any() ? 'animate-shake' : '' }}"
                     x-data="{ showPassword: false, submitting: false }"
                     @submit="submitting = true">
                     @csrf

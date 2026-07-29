@@ -181,7 +181,7 @@ return [
 
     // Versioning Aplikasi
     'version' => [
-        'major' => env('APP_VERSION_MAJOR', '3'),
+        'major' => env('APP_VERSION_MAJOR', '4'),
         'minor' => env('APP_VERSION_MINOR', '0'),
         'patch' => env('APP_VERSION_PATCH', '0'),
         'release' => env('APP_VERSION_RELEASE', 'stable'), // alpha, beta, rc, stable
