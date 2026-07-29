@@ -6,7 +6,7 @@
     @push('structured-data')
     <script type="application/ld+json">
     {!! json_encode([
-        '@context' => 'https://schema.org',
+        '@'.'context' => 'https://schema.org',
         '@type' => 'FAQPage',
         'mainEntity' => $faq->map(fn ($item) => [
             '@type' => 'Question',
@@ -16,7 +16,8 @@
                 'text' => strip_tags($item->faq_isi),
             ],
         ])->values(),
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    {{-- JSON_HEX_* wajib — lihat catatan di _article-schema.blade.php --}}
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}
     </script>
     @endpush
 @endif

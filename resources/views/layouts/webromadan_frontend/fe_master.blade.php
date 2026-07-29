@@ -53,7 +53,7 @@
          cuma teks JSON inline, tidak ada request tambahan. --}}
     <script type="application/ld+json">
     {!! json_encode([
-        '@context' => 'https://schema.org',
+        '@'.'context' => 'https://schema.org',
         '@type' => 'GovernmentOrganization',
         'name' => 'Biro Manajemen BMN dan Pengadaan',
         'alternateName' => 'Kementerian Keuangan Republik Indonesia',
