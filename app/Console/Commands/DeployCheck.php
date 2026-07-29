@@ -2,8 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Frontend\HomeFeController;
 use Illuminate\Console\Command;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ViewErrorBag;
 use PragmaRX\Google2FA\Google2FA;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Models\Role;
@@ -42,6 +47,7 @@ class DeployCheck extends Command
         $this->checkAppKey();
         $this->checkAppEnv();
         $this->checkAppDebug();
+        $this->checkLogChannel();
 
         $this->section('Aset frontend (hasil build Vite)');
         $this->checkViteManifest();
@@ -57,6 +63,9 @@ class DeployCheck extends Command
             $this->section('Database');
             $this->checkDatabase();
         }
+
+        $this->section('Uji render halaman (simulasi pengunjung)');
+        $this->checkSmokeRender();
 
         return $this->summary();
     }
@@ -151,6 +160,64 @@ class DeployCheck extends Command
         class_exists(Google2FA::class)
             ? $this->resultOk('pragmarx/google2fa', 'tersedia (2FA)')
             : $this->resultFail('pragmarx/google2fa', 'tidak ditemukan', 'composer install --no-dev --optimize-autoloader');
+    }
+
+    /**
+     * Render halaman publik yang paling kritis persis seperti saat diakses
+     * pengunjung, lalu tangkap exception-nya. Ini menangkap kelas kegagalan
+     * yang tidak terlihat dari pemeriksaan berkas — manifest Vite hilang,
+     * trait vendor tak cocok, kolom database kurang, view rusak — dan
+     * menampilkan pesan aslinya walaupun APP_DEBUG=false.
+     */
+    private function checkSmokeRender(): void
+    {
+        $pages = [
+            'Halaman login' => fn () => app(AuthController::class)->showLoginForm(),
+            'Halaman depan' => fn () => app(HomeFeController::class)->index(),
+        ];
+
+        foreach ($pages as $label => $render) {
+            try {
+                $request = Request::create('/', 'GET');
+                $request->setLaravelSession(app('session')->driver('array'));
+                app()->instance('request', $request);
+                View::share('errors', new ViewErrorBag);
+
+                $html = $render()->render();
+
+                strlen($html) > 500
+                    ? $this->resultOk($label, number_format(strlen($html)).' bytes ter-render')
+                    : $this->resultFail($label, 'hasil render mencurigakan (hanya '.strlen($html).' bytes)', 'periksa view terkait');
+            } catch (\Throwable $e) {
+                $this->resultFail(
+                    $label,
+                    class_basename($e).': '.$e->getMessage(),
+                    'sumber: '.basename($e->getFile()).':'.$e->getLine()
+                );
+            }
+        }
+    }
+
+    private function checkLogChannel(): void
+    {
+        $channel = config('logging.default');
+
+        // Catatan: menulis `LOG_CHANNEL=null` di .env membuat env() mengembalikan
+        // PHP null (bukan string 'null'), sehingga channel default jadi tidak
+        // valid dan Laravel terpaksa memakai emergency logger.
+        if ($channel === null || $channel === 'null') {
+            $this->resultWarn(
+                'LOG_CHANNEL',
+                $channel === null
+                    ? 'tidak valid — LOG_CHANNEL=null di .env terbaca sebagai kosong'
+                    : "bernilai 'null' — semua error dibuang",
+                'ubah menjadi LOG_CHANNEL=daily di .env agar error tercatat & bisa didiagnosa'
+            );
+
+            return;
+        }
+
+        $this->resultOk('LOG_CHANNEL', $channel);
     }
 
     private function checkWritablePaths(): void
