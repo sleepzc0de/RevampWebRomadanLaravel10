@@ -17,7 +17,7 @@
                 </a>
                 <div class="flex flex-1 flex-col p-5">
                     <div class="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
-                        <span>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('j F Y') }}</span>
+                        <span>{{ \Carbon\Carbon::parse($item->tanggal_terbit)->translatedFormat('j F Y') }}</span>
                         <span class="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                         <span class="font-semibold text-brand-700 dark:text-brand-400">
                             {{ strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)) }}

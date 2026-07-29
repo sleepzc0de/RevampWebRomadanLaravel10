@@ -9,7 +9,7 @@
     'headline' => $data->judul,
     'description' => Str::limit(strip_tags($data->isi), 155),
     'image' => $data->image ? [asset('storage/romadan_gambar_web/' . $data->image)] : [],
-    'datePublished' => optional($data->created_at)->toAtomString(),
+    'datePublished' => optional($data->tanggal_terbit)->toAtomString(),
     'dateModified' => optional($data->updated_at)->toAtomString(),
     'author' => [
         '@type' => 'Organization',

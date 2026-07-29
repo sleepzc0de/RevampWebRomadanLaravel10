@@ -49,9 +49,9 @@ class HomeFeController extends Controller
             ->where('nama_tipe', strtolower('Berita'))
             ->whereRaw('LOWER(ref_status.nama_status) like ?', ['%'.strtolower($status_berita).'%']);
 
-        // Hero: 3 berita terbaru
+        // Hero: 3 berita terbaru (urut tanggal terbit — lihat scope terbaru())
         $berita_terkini = $beritaPublishedQuery()
-            ->orderBy('publikasi.updated_at', 'desc')
+            ->terbaru()
             ->take(3)
             ->get();
 
@@ -150,9 +150,9 @@ class HomeFeController extends Controller
     public function publikasi_index()
     {
         return view('frontend.publikasi.index', [
-            'berita_terkini_publikasi' => $this->publikasiPublishedQuery('Berita')->orderByDesc('id')->take(3)->get(),
-            'warta_terkini_publikasi' => $this->publikasiPublishedQuery('Warta')->orderByDesc('id')->take(3)->get(),
-            'artikel_terkini_publikasi' => $this->publikasiPublishedQuery('Artikel')->orderByDesc('id')->take(3)->get(),
+            'berita_terkini_publikasi' => $this->publikasiPublishedQuery('Berita')->terbaru()->take(3)->get(),
+            'warta_terkini_publikasi' => $this->publikasiPublishedQuery('Warta')->terbaru()->take(3)->get(),
+            'artikel_terkini_publikasi' => $this->publikasiPublishedQuery('Artikel')->terbaru()->take(3)->get(),
         ]);
     }
 
@@ -198,7 +198,7 @@ class HomeFeController extends Controller
             }
 
             // withQueryString() agar parameter tidak hilang saat pindah halaman
-            $items = $query->latest()->paginate(9)->withQueryString();
+            $items = $query->terbaru()->paginate(9)->withQueryString();
 
             if ($request->ajax()) {
                 $view = view("frontend.publikasi.partials.{$tipe}-list", [
@@ -279,7 +279,7 @@ class HomeFeController extends Controller
         }
         RateLimiter::hit('search:'.$request->ip());
 
-        $items = $query->latest()->paginate(9);
+        $items = $query->terbaru()->paginate(9);
         $kategori = RefKategori::all();
 
         if ($request->ajax()) {

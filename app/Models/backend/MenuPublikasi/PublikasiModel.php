@@ -5,7 +5,9 @@ namespace App\Models\backend\MenuPublikasi;
 use App\Models\backend\RefKategori;
 use App\Models\backend\RefStatus;
 use App\Models\backend\RefTipe;
+use Carbon\Carbon;
 use Cohensive\OEmbed\Facades\OEmbed;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,6 +43,41 @@ class PublikasiModel extends Model
         'deleted_at',
         'id',
     ];
+
+    /**
+     * Tanggal terbit efektif sebuah publikasi:
+     *   1. backdate     — bila admin menetapkan tanggal terbit khusus
+     *   2. published_at — bila publikasi dijadwalkan tayang
+     *   3. created_at   — unggahan biasa
+     *
+     * Dipakai untuk TAMPILAN maupun URUTAN supaya keduanya tidak pernah
+     * saling bertentangan (dulu daftar diurutkan updated_at tapi yang
+     * ditampilkan created_at, sehingga tanggalnya terlihat acak).
+     */
+    public function getTanggalTerbitAttribute(): ?Carbon
+    {
+        $tanggal = $this->backdate ?? $this->published_at ?? $this->created_at;
+
+        // Carbon::parse() wajib: pada query ber-join yang memakai select()
+        // eksplisit, created_at bisa terhidrasi sebagai string mentah
+        // (bukan objek Carbon), sehingga mengembalikannya langsung akan fatal.
+        return $tanggal ? Carbon::parse($tanggal) : null;
+    }
+
+    /**
+     * Urutkan dari yang paling baru terbit.
+     *
+     * Sengaja TIDAK memakai updated_at: menyunting artikel lama (perbaikan
+     * salah ketik sekalipun) akan melemparkannya ke posisi teratas "Berita
+     * Terkini", padahal ia bukan berita baru. Juga tidak memakai id, agar
+     * publikasi terjadwal muncul sesuai waktu tayangnya, bukan waktu dibuat.
+     */
+    public function scopeTerbaru(Builder $query): Builder
+    {
+        return $query->orderByRaw(
+            'COALESCE(publikasi.backdate, publikasi.published_at, publikasi.created_at) DESC'
+        );
+    }
 
     public function kategori(): BelongsTo
     {

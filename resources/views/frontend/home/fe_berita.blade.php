@@ -4,7 +4,7 @@
         'judul' => $item->judul,
         'slug' => $item->slug,
         'url' => route('berita-fe', $item->slug),
-        'date' => \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y'),
+        'date' => \Carbon\Carbon::parse($item->tanggal_terbit)->translatedFormat('d F Y'),
         'kategori' => strlen($item->nama_kategori) <= 3 ? strtoupper($item->nama_kategori) : ucfirst(strtolower($item->nama_kategori)),
         'views' => $item->views,
     ])->values();
