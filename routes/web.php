@@ -32,6 +32,7 @@ use App\Http\Controllers\Referensi\RefTipeController;
 use App\Http\Controllers\Security\TwoFactorController;
 use App\Http\Controllers\SystemMonitorController;
 use App\Http\Controllers\Tim\PengembangController;
+use App\Http\Controllers\Tim\TimKontenController;
 use App\Http\Controllers\UserManajemen\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -288,6 +289,11 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth']], function () use 
 
         // ========== ROUTES UNTUK REDAKTUR & EDITOR & ADMINISTRATOR & HUMAS ==========
         Route::middleware(['role:ADMINISTRATOR|REDAKTUR|EDITOR|HUMAS'])->group(function () use ($u) {
+            // 2.1.3b TIM KONTEN PUBLIKASI (hanya baca — keanggotaan diturunkan
+            // dari role pengguna, dikelola lewat modul User Manajemen)
+            Route::get('/'.$u('tim').'/'.$u('tim_konten'), [TimKontenController::class, 'index'])
+                ->name('tim-konten.index');
+
             // 2.1.4 PUBLIKASI
             // NB: rute export harus didaftarkan SEBELUM Route::resource, kalau
             // tidak akan "tertangkap" oleh wildcard {publikasi} milik show().

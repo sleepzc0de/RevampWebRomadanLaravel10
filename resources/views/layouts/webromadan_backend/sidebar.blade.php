@@ -98,7 +98,7 @@
         @if(auth()->user()->hasRole(['ADMINISTRATOR', 'REDAKTUR', 'EDITOR', 'HUMAS']) || str_starts_with(auth()->user()->roles->first()->name, 'HUMAS'))
             @php
                 $pubOpen = Request::routeIs('publikasi.*');
-                $pubBlob = strtolower('Publikasi Semua Publikasi Sampah');
+                $pubBlob = strtolower('Publikasi Semua Publikasi Sampah Tim Konten Redaktur Editor Humas');
             @endphp
             <div x-data="{ open: {{ $pubOpen ? 'true' : 'false' }} }"
                  x-show="!q || @js($pubBlob).includes(q.toLowerCase())"
@@ -112,6 +112,7 @@
                 <div x-show="open && !$store.cms.isRailCollapsed" x-collapse class="mb-1 ml-6 border-l border-white/10 pl-3">
                     <a href="{{ route('publikasi.index') }}" class="cms-sidebar-sub {{ Request::routeIs('publikasi.index', 'publikasi.create', 'publikasi.edit', 'publikasi.show', 'publikasi.revisions') ? 'active' : '' }}">Semua Publikasi</a>
                     <a href="{{ route('publikasi.sampah') }}" class="cms-sidebar-sub {{ Request::routeIs('publikasi.sampah') ? 'active' : '' }}">Sampah</a>
+                    <a href="{{ route('tim-konten.index') }}" class="cms-sidebar-sub {{ Request::routeIs('tim-konten.*') ? 'active' : '' }}">Tim Konten</a>
                 </div>
             </div>
 

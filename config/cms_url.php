@@ -22,6 +22,7 @@ return [
 
     'tim' => 'tR5jL0aQ6e',
     'pengembang' => 'pG9dF4hN2u',
+    'tim_konten' => 'zK4mR8vD6t',
     'users' => 'uB6mC1vX7k',
 
     'layanan_group' => 'lY4tE8oI3w',
