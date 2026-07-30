@@ -90,9 +90,20 @@ class DeployCheck extends Command
 
     private function checkAppDebug(): void
     {
-        config('app.debug')
-            ? $this->resultFail('APP_DEBUG', 'aktif — detail error bocor ke publik', 'ubah APP_DEBUG=false di .env')
-            : $this->resultOk('APP_DEBUG', 'nonaktif');
+        $debug = config('app.debug');
+        $produksi = config('app.env') === 'production';
+
+        if (! $debug) {
+            $this->resultOk('APP_DEBUG', 'nonaktif');
+
+            return;
+        }
+
+        // APP_DEBUG=true wajar (bahkan diperlukan) di lingkungan pengembangan;
+        // hanya berbahaya bila lingkungannya production.
+        $produksi
+            ? $this->resultFail('APP_DEBUG', 'aktif di production — detail error bocor ke publik', 'ubah APP_DEBUG=false di .env')
+            : $this->resultOk('APP_DEBUG', "aktif (wajar untuk APP_ENV=".config('app.env').')');
     }
 
     private function checkViteManifest(): void
