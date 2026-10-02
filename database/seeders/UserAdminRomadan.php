@@ -3,57 +3,51 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Services\PasswordService;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 
+/**
+ * Membuat akun ADMINISTRATOR awal.
+ *
+ * Tidak ada kredensial atau pepper yang ditulis di sini: password dibangkitkan
+ * acak lalu ditampilkan SEKALI di konsol, dan hash dibuat lewat PasswordService
+ * (pepper dibaca dari PASSWORD_PEPPER di .env) — skema yang sama dengan login.
+ * Seeder ini idempoten: bila admin sudah ada, tidak melakukan apa pun.
+ */
 class UserAdminRomadan extends Seeder
 {
-    private const PEPPER = 'mwdun-2937h-_(&)HG)*GOIUNJ)HG)*(&F*^D&^S%#$E^RGYOIBJNPOKMO}:}?}"?:>{K)OJ()*YT^&DRFYGUIHT&^R%E%EDYF2025'; // Pastikan nilai ini sama dengan yang ada di UserController
+    private const ADMIN_EMAIL = 'admin@romadan.kemenkeu.go.id';
 
-    private const HASH_ALGO = 'sha256';
-
-    private const HASH_ROUNDS = 12;
-
-    private function generateSalt(): string
+    public function run(PasswordService $passwordService): void
     {
-        return bin2hex(random_bytes(32));
-    }
+        if (User::where('email', self::ADMIN_EMAIL)->exists()) {
+            $this->command?->warn('Admin '.self::ADMIN_EMAIL.' sudah ada — seeder dilewati.');
 
-    private function hashPassword(string $password, string $salt): string
-    {
-        $peppered = hash_hmac(self::HASH_ALGO, $password.$salt, self::PEPPER);
+            return;
+        }
 
-        return Hash::make($peppered, [
-            'rounds' => self::HASH_ROUNDS,
-            'memory' => 1024,
-            'time' => 2,
-            'threads' => 2,
-        ]);
-    }
+        Role::firstOrCreate(['name' => 'ADMINISTRATOR']);
 
-    public function run(): void
-    {
-        // Buat role ADMINISTRATOR jika belum ada
-        $adminRole = Role::firstOrCreate(['name' => 'ADMINISTRATOR']);
+        $password = Str::password(24);
+        $salt = $passwordService->generateSalt();
 
-        // Generate salt untuk admin
-        $salt = $this->generateSalt();
-
-        // Generate username unik
-        $username = Str::slug('Admin Romadan').'-'.Str::random(6);
-
-        // Buat user admin dengan salt
         $admin = User::create([
             'name' => 'Admin Romadan',
-            'email' => 'admin@romadan.kemenkeu.go.id',
-            'username' => $username,
-            'password' => $this->hashPassword('4dM!nR00M4D4N2O24!))(!((^!#!$!(', $salt),
+            'email' => self::ADMIN_EMAIL,
+            'username' => Str::slug('Admin Romadan').'-'.Str::random(6),
+            'password' => $passwordService->hash($password, $salt),
             'salt' => $salt,
         ]);
 
-        // Assign role ADMINISTRATOR ke user admin
         $admin->assignRole('ADMINISTRATOR');
+
+        $this->command?->warn('Akun admin dibuat: '.self::ADMIN_EMAIL);
+        $this->command?->warn('Password awal (hanya tampil SEKALI, segera catat, ganti, dan aktifkan 2FA):');
+        // escape(): password acak bisa memuat "<...>" atau "\" yang kalau tidak di-escape
+        // ditafsirkan formatter konsol sebagai tag gaya sehingga yang tampil ≠ yang tersimpan.
+        $this->command?->line(OutputFormatter::escape($password));
     }
 }
