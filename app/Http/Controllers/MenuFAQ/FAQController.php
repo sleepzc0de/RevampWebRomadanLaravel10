@@ -8,6 +8,7 @@ use App\Models\backend\RefKategori;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class FAQController extends Controller
 {
@@ -74,6 +75,8 @@ class FAQController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Data FAQ Berhasil Disimpan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -126,6 +129,8 @@ class FAQController extends Controller
 
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('faq.index')->with('success', 'Data FAQ berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

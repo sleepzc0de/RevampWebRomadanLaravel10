@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class InformasiPublikController extends Controller
 {
@@ -125,6 +126,8 @@ class InformasiPublikController extends Controller
             InfopublikHomeModel::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('informasi-publik.index')->with('success', 'Data Home Informasi Publik berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -159,6 +162,8 @@ class InformasiPublikController extends Controller
             InformasiPublikModel::create($data);
 
             return redirect()->back()->with(['success' => 'Data Informasi Publik Berhasil Disimpan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -188,6 +193,8 @@ class InformasiPublikController extends Controller
             InfopublikHomeModel::create($data);
 
             return redirect()->back()->with(['success' => 'Data Informasi Publik Home Berhasil Disimpan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -242,6 +249,8 @@ class InformasiPublikController extends Controller
             InformasiPublikModel::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('informasi-publik.index')->with('success', 'Data Informasi Publik berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

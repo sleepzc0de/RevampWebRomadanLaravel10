@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class LayananController extends Controller
 {
@@ -122,6 +123,9 @@ class LayananController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Layanan Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error adding layanan: '.$e->getMessage());
@@ -227,6 +231,9 @@ class LayananController extends Controller
             DB::commit();
 
             return redirect()->route('layanan.index')->with('success', 'Layanan berhasil diupdate!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error updating layanan: '.$e->getMessage());

@@ -7,6 +7,7 @@ use App\Models\backend\MenuInformasiPublik\PeraturanModel;
 use App\Models\backend\MenuReferensi\RefJenisPeraturan;
 use App\Models\backend\MenuReferensi\RefPeraturanStatus;
 use App\Models\backend\RefKategori;
+use App\Rules\UniqueSlug;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -79,7 +80,7 @@ class PeraturanController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'nomor_peraturan' => 'required|unique:peraturan|max:100',
-                'judul_peraturan' => 'required|max:255',
+                'judul_peraturan' => ['required', 'max:255', new UniqueSlug('peraturan')],
                 'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
@@ -174,7 +175,7 @@ class PeraturanController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'nomor_peraturan' => 'required|max:100',
-                'judul_peraturan' => 'required|max:255',
+                'judul_peraturan' => ['required', 'max:255', new UniqueSlug('peraturan', decrypt($id))],
                 'file' => 'mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
                 'kategori' => 'required',
                 'jenis_peraturan' => 'required',
@@ -204,13 +205,11 @@ class PeraturanController extends Controller
             ];
 
             if ($request->hasFile('file')) {
-                $request->validate([
-                    'file' => 'mimes:csv,xlx,xls,xlsx,pdf,zip,rar|max:250000',
-                ], [
-                    'file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF, ZIP, RAR',
-                ]);
+                // Tipe & ukuran file sudah divalidasi di atas. Jangan validasi ulang
+                // dengan daftar mimes yang berbeda: dulu duplikat ini menolak
+                // doc/docx/ppt/pptx yang sebenarnya diizinkan.
 
-                // UPLOAD IMAGE
+                // UPLOAD FILE
                 $file = $request->file('file');
                 $file->storeAs('public/romadan_file_web', $file->hashName());
 
@@ -223,6 +222,8 @@ class PeraturanController extends Controller
             PeraturanModel::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('peraturan.index')->with('success', "Data Peraturan $request->nomor_peraturan berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

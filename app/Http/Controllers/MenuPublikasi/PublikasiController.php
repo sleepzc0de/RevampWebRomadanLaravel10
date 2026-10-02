@@ -9,6 +9,7 @@ use App\Models\backend\MenuPublikasi\PublikasiRevisionModel;
 use App\Models\backend\RefKategori;
 use App\Models\backend\RefStatus;
 use App\Models\backend\RefTipe;
+use App\Rules\UniqueSlug;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -51,10 +52,10 @@ class PublikasiController extends Controller
                     if ($query->file) {
                         $url = asset('storage/romadan_file_web/'.$query->file);
 
-                        return '<a href="'.$url.'" target="_blank" title="'.e($query->judul).'">'.$judul.'</a>';
+                        return '<a href="'.$url.'" target="_blank" title="'.e($query->judul).'">'.e($judul).'</a>';
                     }
 
-                    return '<span title="'.e($query->judul).'">'.$judul.'</span>';
+                    return '<span title="'.e($query->judul).'">'.e($judul).'</span>';
                 })
                 ->addColumn('opsi', function ($query) {
                     $encryptedId = encrypt($query->id);
@@ -130,6 +131,7 @@ class PublikasiController extends Controller
                     'required',
                     'max:255',
                     'unique:publikasi,judul',
+                    new UniqueSlug('publikasi'),
                     'regex:/^[^<>]*$/',
                     function ($attribute, $value, $fail) {
                         if (strip_tags($value) !== $value) {
@@ -347,6 +349,34 @@ class PublikasiController extends Controller
             // Get the publikasi record
             $publikasi = PublikasiModel::findOrFail(decrypt($id));
 
+            // Publikasi yang sudah punya gambar tidak boleh berakhir tanpa gambar
+            // (kolom `image` akan menunjuk file yang sudah dihapus). Dicek SEBELUM
+            // ada file yang disentuh. Publikasi lama tanpa baris gambar tetap bisa diedit.
+            $hapusIds = array_filter((array) $request->input('delete_images', []));
+            $sisaGambar = $publikasi->images()->whereNotIn('id', $hapusIds)->count()
+                + count((array) $request->file('new_images', []));
+
+            if ($sisaGambar < 1 && $publikasi->images()->exists()) {
+                throw ValidationException::withMessages([
+                    'delete_images' => 'Minimal satu gambar harus tetap ada pada publikasi.',
+                ]);
+            }
+
+            // Tanggal tayang (published_at) ikut menentukan urutan "Berita Terkini":
+            //  - dijadwalkan  → pakai waktu dari form
+            //  - sudah tayang → pertahankan nilai yang ada (jangan dihapus hanya karena
+            //                   artikel disunting); bila dipublikasikan manual sebelum
+            //                   jadwalnya, tayang sekarang
+            //  - draft        → jadwal dibatalkan
+            $statusBaru = strtolower($validated['status']);
+            $publishedAt = match (true) {
+                $statusBaru === 'scheduled' => Carbon::parse($validated['published_at']),
+                $statusBaru === 'published' => strtolower((string) $publikasi->status) === 'scheduled'
+                    ? now()
+                    : $publikasi->published_at,
+                default => null,
+            };
+
             // Prepare data — selalu dari $validated agar rule & sanitasi tidak ter-bypass
             $data = [
                 'judul' => $validated['judul'],
@@ -356,9 +386,7 @@ class PublikasiController extends Controller
                 'isi' => $validated['isi'],
                 'embedded_media' => $validated['embedded_media'] ?? null,
                 'status' => $validated['status'],
-                'published_at' => $validated['status'] === 'scheduled'
-                    ? Carbon::parse($validated['published_at'])
-                    : null,
+                'published_at' => $publishedAt,
                 'pengedit' => Auth::user()->name,
                 'created_at' => Carbon::parse($validated['created_at'])->format('Y-m-d H:i:s'),
             ];
@@ -428,6 +456,14 @@ class PublikasiController extends Controller
                     $primaryImage->update(['is_primary' => true]);
                     $data['image'] = $primaryImage->image_path;
                 }
+            }
+
+            // Gambar utama yang baru saja dihapus (atau pilihan primary yang tidak valid)
+            // tidak boleh meninggalkan publikasi tanpa gambar utama: angkat gambar pertama.
+            if ($publikasi->images()->exists() && ! $publikasi->images()->where('is_primary', true)->exists()) {
+                $pengganti = $publikasi->images()->orderBy('sort_order')->orderBy('id')->first();
+                $pengganti->update(['is_primary' => true]);
+                $data['image'] = $pengganti->image_path;
             }
 
             // Simpan snapshot kondisi SEBELUM diupdate, sebagai riwayat revisi

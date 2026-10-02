@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class FooterLinkController extends Controller
 {
@@ -19,7 +20,9 @@ class FooterLinkController extends Controller
     private function urlOrRelativePathRule(): \Closure
     {
         return function (string $attribute, mixed $value, \Closure $fail) {
-            if (is_string($value) && str_starts_with($value, '/')) {
+            // Path relatif internal saja: "//host" dan "/\host" dibaca browser sebagai
+            // URL protokol-relatif ke situs LAIN, bukan path di situs ini.
+            if (is_string($value) && str_starts_with($value, '/') && ! preg_match('#^/[/\\\\]#', $value)) {
                 return;
             }
 
@@ -89,6 +92,8 @@ class FooterLinkController extends Controller
             Cache::forget('footer_links');
 
             return redirect()->route('footer-link.index')->with(['success' => 'Tautan footer berhasil ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -139,6 +144,8 @@ class FooterLinkController extends Controller
             Cache::forget('footer_links');
 
             return redirect()->route('footer-link.index')->with('success', 'Tautan footer berhasil diperbarui!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

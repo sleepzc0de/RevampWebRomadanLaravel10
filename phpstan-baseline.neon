@@ -19,12 +19,6 @@ parameters:
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-
-			message: '#^Relation ''data_jenis_peraturan'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
-			identifier: larastan.relationExistence
-			count: 2
-			path: app/Http/Controllers/Frontend/HomeFeController.php
-
-		-
 			message: '#^Relation ''images'' is not found in App\\Models\\backend\\MenuPublikasi\\PublikasiModel model\.$#'
 			identifier: larastan.relationExistence
 			count: 3
@@ -33,7 +27,7 @@ parameters:
 		-
 			message: '#^Relation ''kategori'' is not found in App\\Models\\backend\\MenuInformasiPublik\\PeraturanModel model\.$#'
 			identifier: larastan.relationExistence
-			count: 3
+			count: 1
 			path: app/Http/Controllers/Frontend/HomeFeController.php
 
 		-

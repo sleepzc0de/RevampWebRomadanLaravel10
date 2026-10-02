@@ -7,6 +7,7 @@ use App\Models\backend\MenuReferensi\RefJenisPeraturan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RefJenisPeraturanController extends Controller
 {
@@ -62,6 +63,8 @@ class RefJenisPeraturanController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Jenis Peraturan Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -92,6 +95,8 @@ class RefJenisPeraturanController extends Controller
             RefJenisPeraturan::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('jenis-peraturan.index')->with('success', 'Jenis Peraturan berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

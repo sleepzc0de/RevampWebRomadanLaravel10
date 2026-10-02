@@ -153,6 +153,8 @@ class PedomanController extends Controller
             PedomanModel::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('pedoman.index')->with('success', "Data Pedoman $request->judul_pedoman berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

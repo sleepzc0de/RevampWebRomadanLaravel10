@@ -7,6 +7,7 @@ use App\Models\backend\RefTipe;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RefTipeController extends Controller
 {
@@ -71,6 +72,8 @@ class RefTipeController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Tipe Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -115,6 +118,8 @@ class RefTipeController extends Controller
             RefTipe::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('tipe.index')->with('success', "Tipe $request->nama_tipe berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

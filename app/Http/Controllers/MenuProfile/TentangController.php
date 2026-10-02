@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class TentangController extends Controller
 {
@@ -153,6 +154,9 @@ class TentangController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Tentang Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -258,6 +262,9 @@ class TentangController extends Controller
             DB::commit();
 
             return redirect()->route('tentang.index')->with('success', 'Tentang berhasil diupdate!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Tentang update error: '.$e->getMessage());

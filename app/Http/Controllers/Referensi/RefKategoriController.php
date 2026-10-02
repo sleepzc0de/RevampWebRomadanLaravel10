@@ -7,6 +7,7 @@ use App\Models\backend\RefKategori;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RefKategoriController extends Controller
 {
@@ -71,6 +72,8 @@ class RefKategoriController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Kategori Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -115,6 +118,8 @@ class RefKategoriController extends Controller
             RefKategori::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('kategori.index')->with('success', "Kategori $request->nama_kategori berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

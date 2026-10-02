@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class StrukturJabatanController extends Controller
 {
@@ -85,6 +86,9 @@ class StrukturJabatanController extends Controller
             Log::info('Jabatan created successfully');
 
             return redirect()->route('struktur-jabatan.index')->with('success', 'Jabatan berhasil ditambahkan!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error creating jabatan', ['error' => $e->getMessage()]);
@@ -117,6 +121,9 @@ class StrukturJabatanController extends Controller
             Log::info('Jabatan updated successfully', ['id' => $decryptedId]);
 
             return redirect()->route('struktur-jabatan.index')->with('success', 'Jabatan berhasil diupdate!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error updating jabatan', ['error' => $e->getMessage(), 'id' => $id]);
@@ -194,6 +201,9 @@ class StrukturJabatanController extends Controller
             Log::info('Pejabat created successfully');
 
             return redirect()->route('struktur-jabatan.index')->with('success', 'Pejabat berhasil ditambahkan!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error creating pejabat', ['error' => $e->getMessage()]);
@@ -242,6 +252,9 @@ class StrukturJabatanController extends Controller
             Log::info('Pejabat updated successfully', ['id' => $decryptedId]);
 
             return redirect()->route('struktur-jabatan.index')->with('success', 'Pejabat berhasil diupdate!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error updating pejabat', ['error' => $e->getMessage(), 'id' => $id]);

@@ -7,6 +7,7 @@ use App\Models\backend\MenuReferensi\RefPeraturanStatus;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RefPeraturanStatusController extends Controller
 {
@@ -62,6 +63,8 @@ class RefPeraturanStatusController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Status Peraturan Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -92,6 +95,8 @@ class RefPeraturanStatusController extends Controller
             RefPeraturanStatus::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('status-peraturan.index')->with('success', 'Status Peraturan berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

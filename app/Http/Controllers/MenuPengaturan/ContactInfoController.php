@@ -7,6 +7,7 @@ use App\Models\backend\MenuPengaturan\ContactInfoModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\ValidationException;
 
 class ContactInfoController extends Controller
 {
@@ -48,6 +49,8 @@ class ContactInfoController extends Controller
             Cache::forget('footer_contact_info');
 
             return redirect()->route('contact-info.edit', $id)->with('success', 'Informasi kontak berhasil diperbarui!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

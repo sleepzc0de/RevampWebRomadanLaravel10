@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\medsos\Medsos;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class MedsosController extends Controller
 {
@@ -60,7 +61,7 @@ class MedsosController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'nama_medsos' => 'required|unique:medsos|max:255',
-                'link_medsos' => 'required|max:1000',
+                'link_medsos' => 'required|max:1000|url',
                 'logo_medsos' => 'required|max:255',
             ]);
 
@@ -76,6 +77,8 @@ class MedsosController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Medsos Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -110,7 +113,7 @@ class MedsosController extends Controller
             // VALIDASI DATA
             $request->validate([
                 'nama_medsos' => 'required|max:255',
-                'link_medsos' => 'required|max:1000',
+                'link_medsos' => 'required|max:1000|url',
                 'logo_medsos' => 'required|max:255',
             ]);
 
@@ -124,6 +127,8 @@ class MedsosController extends Controller
             Medsos::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('medsos.index')->with('success', "medsos $request->nama_medsos berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

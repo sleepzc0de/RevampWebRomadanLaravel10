@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -87,6 +88,8 @@ class LoginController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Data Gambar Berhasil Disimpan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -163,6 +166,8 @@ class LoginController extends Controller
 
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('loggambar.index')->with('success', "Gambar $request->nama_gambar berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

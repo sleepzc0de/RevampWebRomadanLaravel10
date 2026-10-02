@@ -7,6 +7,7 @@ use App\Models\backend\RefStatus;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RefStatusController extends Controller
 {
@@ -71,6 +72,8 @@ class RefStatusController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Status Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -115,6 +118,8 @@ class RefStatusController extends Controller
             RefStatus::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('status.index')->with('success', "Status $request->nama_status berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

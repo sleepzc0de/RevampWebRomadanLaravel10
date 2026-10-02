@@ -4,11 +4,13 @@ namespace App\Http\Controllers\MenuKegiatan;
 
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuKegiatan\KegiatanModel;
+use App\Rules\UniqueSlug;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class KegiatanController extends Controller
 {
@@ -80,7 +82,7 @@ class KegiatanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required|unique:kegiatan',
+                'judul' => ['required', 'unique:kegiatan', new UniqueSlug('kegiatan', stripTags: false)],
                 'tempat' => 'required',
                 'image' => 'required|image|mimes:jpeg,png,jpg|max:10240|dimensions:max_width=1650,max_height=990',
                 'file' => 'required|mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:10240',
@@ -124,6 +126,8 @@ class KegiatanController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Data Kegiatan Berhasil Disimpan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -159,7 +163,7 @@ class KegiatanController extends Controller
         try {
             // VALIDASI DATA
             $request->validate([
-                'judul' => 'required',
+                'judul' => ['required', new UniqueSlug('kegiatan', decrypt($id), stripTags: false)],
                 'tempat' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg|max:1000',
                 'file' => 'mimes:doc,docx,ppt,pptx,csv,xlx,xls,xlsx,pdf,zip,rar|max:100000',
@@ -205,13 +209,11 @@ class KegiatanController extends Controller
             }
 
             if ($request->hasFile('file')) {
-                $request->validate([
-                    'file' => 'mimes:csv,xlx,xls,xlsx,pdf,zip,rar|max:250000',
-                ], [
-                    'file.mimes' => 'File hanya diperbolehkaan berekstensi CSV, XLX, XLS, XLSX, PDF, ZIP, RAR',
-                ]);
+                // Tipe & ukuran file sudah divalidasi di atas. Jangan validasi ulang
+                // dengan daftar mimes yang berbeda: dulu duplikat ini menolak
+                // doc/docx/ppt/pptx yang sebenarnya diizinkan.
 
-                // UPLOAD IMAGE
+                // UPLOAD FILE
                 $file = $request->file('file');
                 $file->storeAs('public/romadan_file_web', $file->hashName());
 
@@ -225,6 +227,8 @@ class KegiatanController extends Controller
 
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('kegiatan.index')->with('success', "Kegiatan $request->judul berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

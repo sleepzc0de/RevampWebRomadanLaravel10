@@ -8,6 +8,7 @@ use App\Models\backend\MenuProfile\VisiMisiModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\ValidationException;
 
 class VisiMisiController extends Controller
 {
@@ -115,6 +116,8 @@ class VisiMisiController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Visi dan Misi Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -214,6 +217,8 @@ class VisiMisiController extends Controller
             }
 
             return redirect()->route('visi-misi.index')->with('success', 'Visi Misi berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

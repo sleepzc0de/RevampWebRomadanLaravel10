@@ -440,40 +440,16 @@ class HomeFeController extends Controller
         $kategori = RefKategori::all();
         $jenis_peraturan = RefJenisPeraturan::all();
         $searchValue = strip_tags($request->input('cari_peraturan'));
-        $selectedKategori = $request->input('kategori'); // Mengambil nilai checkbox kategori yang dipilih
-        $selectedJenisPeraturan = $request->input('jenis_peraturan'); // Mengambil nilai checkbox jenis_peraturan yang dipilih
+        // Checkbox yang dipilih. (array) + filter: nilai non-array (mis. ?kategori=x)
+        // atau elemen kosong tidak boleh membuat whereIn() error.
+        $selectedKategori = array_values(array_filter((array) $request->input('kategori'), 'is_string'));
+        $selectedJenisPeraturan = array_values(array_filter((array) $request->input('jenis_peraturan'), 'is_string'));
 
-        $query = PeraturanModel::with('kategori', 'data_jenis_peraturan', 'data_status_peraturan');
-
-        if ($searchValue) {
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('nomor_peraturan', 'like', '%'.$searchValue.'%')
-                    ->orWhere('judul_peraturan', 'like', '%'.$searchValue.'%')
-                    ->orWhereHas('kategori', function ($q) use ($searchValue) {
-                        $q->where('nama_kategori', 'like', '%'.$searchValue.'%');
-                    })
-                    ->orWhereHas('data_jenis_peraturan', function ($q) use ($searchValue) {
-                        $q->where('nama_jenis_peraturan', 'like', '%'.$searchValue.'%');
-                    });
-            });
-        }
-
-        if ($selectedKategori) {
-            $query->orWhereHas('kategori', function ($q) use ($selectedKategori) {
-                $q->whereIn('nama_kategori', $selectedKategori);
-            });
-            // Menggunakan kolom yang sesuai di tabel PeraturanModel
-        }
-
-        if ($selectedJenisPeraturan) {
-            $query->orWhereHas('data_jenis_peraturan', function ($q) use ($selectedJenisPeraturan) {
-                $q->whereIn('nama_jenis_peraturan', $selectedJenisPeraturan);
-            });
-            // Menggunakan kolom yang sesuai di tabel PeraturanModel
-        }
-
-        $peraturan = $query->latest()->paginate(9);
-        // dd($peraturan);
+        $peraturan = PeraturanModel::with('kategori', 'data_jenis_peraturan', 'data_status_peraturan')
+            ->filterPublik($searchValue, $selectedKategori, $selectedJenisPeraturan)
+            ->latest()
+            ->paginate(9)
+            ->withQueryString();
 
         return view('frontend.infopublik.peraturan-index', compact(['peraturan', 'searchValue', 'kategori', 'jenis_peraturan', 'selectedKategori', 'selectedJenisPeraturan']));
     }

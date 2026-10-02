@@ -7,6 +7,7 @@ use App\Models\backend\MenuInformasiPublik\AplikasiModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\ValidationException;
 
 class AplikasiController extends Controller
 {
@@ -83,6 +84,8 @@ class AplikasiController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Data Aplikasi Berhasil Disimpan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 
@@ -154,6 +157,8 @@ class AplikasiController extends Controller
 
             // $berita = Berita::find($id)->update($data);
             return redirect()->route('aplikasi.index')->with('success', "Aplikasi $request->judul_aplikasi berhasil diupdate!");
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             report($e);
 

@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class SejarahController extends Controller
 {
@@ -163,6 +164,8 @@ class SejarahController extends Controller
 
             // redirect to index
             return redirect()->back()->with(['success' => 'Sejarah Berhasil Ditambahkan!']);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             // Log error untuk debugging
             Log::error('Error saat menyimpan sejarah: '.$e->getMessage());
@@ -305,6 +308,8 @@ class SejarahController extends Controller
             SejarahModel::findOrFail(decrypt($id))->update($data);
 
             return redirect()->route('sejarah.index')->with('success', 'Sejarah berhasil diupdate!');
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             // Log error untuk debugging
             Log::error('Error saat mengupdate sejarah: '.$e->getMessage());
