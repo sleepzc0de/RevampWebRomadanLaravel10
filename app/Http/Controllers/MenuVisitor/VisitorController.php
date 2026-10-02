@@ -5,7 +5,6 @@ namespace App\Http\Controllers\MenuVisitor;
 use App\Helpers\ExcelExportHelper;
 use App\Http\Controllers\Controller;
 use App\Models\backend\MenuVisitor\VisitorModel;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -88,37 +87,27 @@ class VisitorController extends Controller
     }
 
     /**
-     * Tren kunjungan 7 hari terakhir. Bucket dilakukan di PHP agar portabel
-     * lintas DB (MySQL/SQL Server/PgSQL), konsisten dengan dashboard analitik.
+     * Tren kunjungan 7 hari terakhir: satu COUNT per hari (portabel lintas DB).
+     * Dulu semua baris 7 hari dimuat ke memori PHP lalu dihitung satu per satu —
+     * pada situs ramai itu puluhan ribu baris setiap kali dasbor dibuka.
      */
     private function dailyTrend(): array
     {
         $start = now()->startOfDay()->subDays(6);
 
-        $rows = VisitorModel::human()
-            ->where('created_at', '>=', $start)
-            ->pluck('created_at');
+        $labels = [];
+        $data = [];
 
-        $buckets = [];
         for ($i = 0; $i < 7; $i++) {
-            $d = (clone $start)->addDays($i);
-            $buckets[$d->format('Y-m-d')] = [
-                'label' => $d->locale('id')->isoFormat('D MMM'),
-                'count' => 0,
-            ];
+            $day = (clone $start)->addDays($i);
+
+            $labels[] = $day->locale('id')->isoFormat('D MMM');
+            $data[] = VisitorModel::human()
+                ->whereBetween('created_at', [$day->copy()->startOfDay(), $day->copy()->endOfDay()])
+                ->count();
         }
 
-        foreach ($rows as $createdAt) {
-            $key = Carbon::parse($createdAt)->format('Y-m-d');
-            if (isset($buckets[$key])) {
-                $buckets[$key]['count']++;
-            }
-        }
-
-        return [
-            'labels' => array_values(array_column($buckets, 'label')),
-            'data' => array_values(array_column($buckets, 'count')),
-        ];
+        return ['labels' => $labels, 'data' => $data];
     }
 
     /**
@@ -126,9 +115,18 @@ class VisitorController extends Controller
      */
     public function clean(Request $request)
     {
-        $days = (int) $request->input('days', 90);
+        // Batas bawah 7 hari: days=0 atau negatif akan mengosongkan seluruh tabel.
+        $validated = $request->validate([
+            'days' => 'nullable|integer|min:7|max:3650',
+        ]);
+        $days = (int) ($validated['days'] ?? 90);
 
-        VisitorModel::where('created_at', '<', now()->subDays($days))->delete();
+        $deleted = VisitorModel::where('created_at', '<', now()->subDays($days))->delete();
+
+        activity('audit')
+            ->causedBy($request->user())
+            ->withProperties(['days' => $days, 'deleted' => $deleted])
+            ->log("Membersihkan data pengunjung lebih dari {$days} hari ({$deleted} baris)");
 
         return redirect()->route('visitors.index')->with('success', "Data pengunjung lebih dari {$days} hari berhasil dibersihkan!");
     }

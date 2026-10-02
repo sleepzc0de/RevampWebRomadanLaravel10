@@ -71,6 +71,12 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+        // Email tak terdaftar tetap menjalankan bcrypt agar waktu respons tidak membocorkan
+        // apakah email itu ada.
+        if (! $user) {
+            $this->passwordService->equalizeTiming((string) $request->password);
+        }
+
         if ($user && $this->passwordService->verify($request->password, $user->salt, $user->password)) {
             RateLimiter::clear($throttleKey);
 
@@ -161,7 +167,7 @@ class AuthController extends Controller
 
         $code = trim((string) $request->code);
         $isValidTotp = preg_match('/^\d{6}$/', $code)
-            && $this->twoFactor->verifyCode($this->twoFactor->decryptSecret($user->two_factor_secret), $code);
+            && $this->twoFactor->verifyCodeOnce($user, $code);
         $isValidRecovery = ! $isValidTotp && $this->twoFactor->consumeRecoveryCode($user, $code);
 
         if (! $isValidTotp && ! $isValidRecovery) {

@@ -2,7 +2,10 @@
 
 namespace App\Helpers;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -17,13 +20,13 @@ class ExcelExportHelper
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->fromArray($headers, null, 'A1');
+        self::writeRow($sheet, 1, $headers);
         $lastColumn = $sheet->getHighestColumn();
         $sheet->getStyle("A1:{$lastColumn}1")->getFont()->setBold(true);
 
         $rowIndex = 2;
         foreach ($rows as $row) {
-            $sheet->fromArray($row, null, "A{$rowIndex}");
+            self::writeRow($sheet, $rowIndex, $row);
             $rowIndex++;
         }
 
@@ -40,5 +43,30 @@ class ExcelExportHelper
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
             'Cache-Control' => 'max-age=0',
         ]);
+    }
+
+    /**
+     * Tulis satu baris dengan semua nilai string disimpan sebagai TEKS.
+     *
+     * Sheet::fromArray() memperlakukan string berawalan "=" sebagai formula,
+     * padahal sebagian kolom ekspor berisi input pihak luar (mis. header
+     * Referer pengunjung anonim). Tanpa ini, isi seperti =HYPERLINK(...) akan
+     * dieksekusi saat admin membuka file di Excel (formula/CSV injection).
+     *
+     * @param  array<int, mixed>  $row
+     */
+    private static function writeRow(Worksheet $sheet, int $rowIndex, array $row): void
+    {
+        $columnIndex = 1;
+
+        foreach ($row as $value) {
+            $coordinate = Coordinate::stringFromColumnIndex($columnIndex++).$rowIndex;
+
+            if (is_string($value)) {
+                $sheet->setCellValueExplicit($coordinate, $value, DataType::TYPE_STRING);
+            } else {
+                $sheet->setCellValue($coordinate, $value);
+            }
+        }
     }
 }

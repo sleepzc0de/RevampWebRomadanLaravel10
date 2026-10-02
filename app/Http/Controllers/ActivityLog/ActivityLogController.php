@@ -79,9 +79,20 @@ class ActivityLogController extends Controller
      */
     public function clean(Request $request)
     {
-        $days = (int) $request->input('days', config('activitylog.clean_after_days', 365));
+        // Batas bawah 30 hari: tanpa ini days=0 (atau negatif) menghapus SELURUH jejak audit.
+        $validated = $request->validate([
+            'days' => 'nullable|integer|min:30|max:3650',
+        ]);
+        $days = (int) ($validated['days'] ?? config('activitylog.clean_after_days', 365));
 
-        Activity::where('created_at', '<', now()->subDays($days))->delete();
+        $deleted = Activity::where('created_at', '<', now()->subDays($days))->delete();
+
+        // Pembersihan jejak audit harus meninggalkan jejak. Dicatat SETELAH penghapusan
+        // sehingga entri ini sendiri tidak ikut terhapus.
+        activity('audit')
+            ->causedBy($request->user())
+            ->withProperties(['days' => $days, 'deleted' => $deleted])
+            ->log("Membersihkan log aktivitas lebih dari {$days} hari ({$deleted} baris)");
 
         return redirect()->route('activity-log.index')->with('success', "Log aktivitas lebih dari {$days} hari berhasil dibersihkan!");
     }

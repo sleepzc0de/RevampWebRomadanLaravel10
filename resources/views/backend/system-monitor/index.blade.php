@@ -304,6 +304,12 @@
                         headers: { 'X-Requested-With': 'XMLHttpRequest' },
                         credentials: 'same-origin',
                     });
+                    if (response.status === 401) {
+                        // Sesi habis karena idle (polling ini sengaja tidak memperpanjang sesi).
+                        this.stopTimer();
+                        window.location.href = '{{ route('login') }}';
+                        return;
+                    }
                     const data = await response.json();
                     this.app = { ...this.app, ...data.app };
                     this.database = { ...this.database, ...data.database };

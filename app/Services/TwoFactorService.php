@@ -7,6 +7,7 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA;
@@ -50,6 +51,23 @@ class TwoFactorService
     {
         // window=1 -> toleransi ±30 detik untuk selisih jam perangkat
         return (bool) $this->engine->verifyKey($secret, $code, 1);
+    }
+
+    /**
+     * Verifikasi kode TOTP milik user dan tandai SEKALI PAKAI.
+     *
+     * verifyCode() menerima kode yang sama berulang kali selama masih dalam
+     * jendela waktu (±30 detik → sampai ~90 detik). Tanpa ini, kode yang
+     * terintip/tersadap bisa dipakai ulang oleh orang lain dalam jendela itu.
+     */
+    public function verifyCodeOnce(User $user, string $code): bool
+    {
+        if (! $this->verifyCode($this->decryptSecret($user->two_factor_secret), $code)) {
+            return false;
+        }
+
+        // add() hanya berhasil bila kunci belum ada → pemakaian kedua ditolak.
+        return Cache::add('2fa:used:'.$user->id.':'.$code, true, now()->addSeconds(120));
     }
 
     public function encryptSecret(string $secret): string

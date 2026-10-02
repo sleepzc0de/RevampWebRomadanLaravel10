@@ -18,6 +18,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('backup:run')->dailyAt('01:00')->withoutOverlapping();
         $schedule->command('backup:cleanup')->dailyAt('02:00');
         $schedule->command('media:sync')->hourly();
+        // Tabel visitors menyimpan satu baris per kunjungan; tanpa ini tumbuh tanpa batas.
+        $schedule->command('visitors:prune --days=90')->dailyAt('03:00')->withoutOverlapping();
         $schedule->command('publikasi:publish-scheduled')->everyMinute();
 
     }

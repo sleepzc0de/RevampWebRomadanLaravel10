@@ -24,6 +24,18 @@ class PasswordService
         return Hash::check($this->pepperedHash($password, $salt), $hashedPassword);
     }
 
+    /**
+     * Habiskan waktu yang sama dengan verify() untuk akun yang TIDAK ada.
+     *
+     * Tanpa ini, login dengan email tak terdaftar kembali jauh lebih cepat
+     * (tidak ada bcrypt) daripada email terdaftar + password salah, sehingga
+     * penyerang bisa menebak email mana yang valid dari waktu respons.
+     */
+    public function equalizeTiming(string $password): void
+    {
+        $this->hash($password, str_repeat('0', 64));
+    }
+
     private function pepperedHash(string $password, string $salt): string
     {
         return hash_hmac(self::HASH_ALGO, $password.$salt, $this->pepper());

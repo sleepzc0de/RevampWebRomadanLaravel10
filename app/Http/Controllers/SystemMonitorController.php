@@ -22,7 +22,7 @@ class SystemMonitorController extends Controller
      */
     public function data()
     {
-        $data = $this->gather();
+        $data = $this->gather(light: true);
 
         return response()->json([
             'checked_at' => $data['checked_at'],
@@ -36,13 +36,13 @@ class SystemMonitorController extends Controller
         ]);
     }
 
-    private function gather(): array
+    private function gather(bool $light = false): array
     {
         return [
             'checked_at' => now()->toIso8601String(),
             'app' => $this->applicationMetrics(),
-            'database' => $this->databaseMetrics(),
-            'storage' => $this->storageChecks(),
+            'database' => $this->databaseMetrics(withTables: ! $light),
+            'storage' => $light ? [] : $this->storageChecks(),
         ];
     }
 
@@ -92,7 +92,7 @@ class SystemMonitorController extends Controller
         }
     }
 
-    private function databaseMetrics(): array
+    private function databaseMetrics(bool $withTables = true): array
     {
         $driver = DB::connection()->getDriverName();
 
@@ -119,9 +119,9 @@ class SystemMonitorController extends Controller
         }
 
         if ($driver === 'sqlsrv') {
-            $this->fillSqlServerMetrics($metrics);
+            $this->fillSqlServerMetrics($metrics, $withTables);
         } elseif ($driver === 'mysql') {
-            $this->fillMysqlMetrics($metrics);
+            $this->fillMysqlMetrics($metrics, $withTables);
         }
 
         $metrics['pending_migrations'] = $this->pendingMigrationsCount();
@@ -129,7 +129,7 @@ class SystemMonitorController extends Controller
         return $metrics;
     }
 
-    private function fillSqlServerMetrics(array &$metrics): void
+    private function fillSqlServerMetrics(array &$metrics, bool $withTables = true): void
     {
         try {
             $version = DB::selectOne('SELECT @@VERSION AS version')?->version;
@@ -157,6 +157,11 @@ class SystemMonitorController extends Controller
             // Butuh izin VIEW SERVER STATE — kalau user DB tidak punya, biarkan null.
         }
 
+        // Daftar tabel mahal (join sys.* + agregasi) dan tidak ikut payload polling.
+        if (! $withTables) {
+            return;
+        }
+
         try {
             $metrics['tables'] = collect(DB::select('
                 SELECT
@@ -180,7 +185,7 @@ class SystemMonitorController extends Controller
         }
     }
 
-    private function fillMysqlMetrics(array &$metrics): void
+    private function fillMysqlMetrics(array &$metrics, bool $withTables = true): void
     {
         try {
             $metrics['version'] = DB::selectOne('SELECT VERSION() AS version')?->version;
@@ -201,6 +206,10 @@ class SystemMonitorController extends Controller
             $conn = DB::selectOne("SHOW STATUS LIKE 'Threads_connected'");
             $metrics['active_connections'] = $conn->Value ?? null;
         } catch (\Throwable $e) {
+        }
+
+        if (! $withTables) {
+            return;
         }
 
         try {
