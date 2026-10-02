@@ -34,7 +34,11 @@ class BackupService
         }
     }
 
-    public function createBackup(): string
+    /**
+     * @param  bool  $databaseOnly  true = hanya dump database (cepat; untuk snapshot sebelum
+     *                              migrasi saat deploy), tanpa kode aplikasi & file unggahan.
+     */
+    public function createBackup(bool $databaseOnly = false): string
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
         $backupFileName = "backup_{$timestamp}.zip";
@@ -57,11 +61,17 @@ class BackupService
                 $zip->addFile($databaseFilePath, $databaseFileName);
             }
 
-            // Add application files
-            $finder = new Finder;
-            $finder->files()->in(base_path())->exclude(['vendor', 'node_modules', 'storage']);
-            foreach ($finder as $file) {
-                $zip->addFile($file->getRealPath(), $file->getRelativePathname());
+            if (! $databaseOnly) {
+                // Add application files
+                $finder = new Finder;
+                $finder->files()->in(base_path())->exclude(['vendor', 'node_modules', 'storage']);
+                foreach ($finder as $file) {
+                    $zip->addFile($file->getRealPath(), $file->getRelativePathname());
+                }
+
+                // Add uploaded media. storage/ dikecualikan di atas, padahal di sinilah gambar
+                // & dokumen unggahan berada — tanpa ini backup tidak bisa memulihkan konten.
+                $this->addUploadedFiles($zip);
             }
 
             $zip->close();
@@ -85,6 +95,25 @@ class BackupService
                 'trace' => $e->getTraceAsString(),
             ]);
             throw $e;
+        }
+    }
+
+    /**
+     * Masukkan seluruh berkas unggahan (disk "public": gambar, dokumen) ke zip
+     * di bawah folder uploads/. Folder ini yang dilayani lewat public/storage.
+     */
+    protected function addUploadedFiles(ZipArchive $zip): void
+    {
+        $root = Storage::disk('public')->path('');
+
+        if (! is_dir($root)) {
+            return;
+        }
+
+        $finder = (new Finder)->files()->in($root)->ignoreDotFiles(false);
+
+        foreach ($finder as $file) {
+            $zip->addFile($file->getRealPath(), 'uploads/'.str_replace('\\', '/', $file->getRelativePathname()));
         }
     }
 
@@ -159,39 +188,79 @@ class BackupService
             return true;
         }
 
-        // Linux backup using PHP SQL queries
+        return $this->dumpSqlServerDataViaPhp($outputPath);
+    }
+
+    /**
+     * Dump DATA SQL Server lewat PHP (jalur Linux). BACKUP DATABASE native
+     * menulis ke disk milik server SQL, bukan server aplikasi, sehingga tidak
+     * bisa dipakai di sini.
+     *
+     * Berkas hasilnya HANYA berisi data. Skema tidak ikut karena sumber
+     * kebenarannya adalah migrasi (OBJECT_DEFINITION tidak mengembalikan DDL
+     * tabel, jadi dump lama tidak pernah memuat skema). Cara memulihkan:
+     *   1. buat database kosong lalu `php artisan migrate --force` (tanpa seed)
+     *   2. sqlcmd -f 65001 -i <berkas>.sql
+     *
+     * Ditulis per baris (cursor) agar tabel besar (visitors, activity_log) tidak
+     * menghabiskan memori. Constraint FK dimatikan selama import supaya urutan
+     * tabel tidak menjadi masalah, lalu divalidasi ulang di akhir.
+     */
+    protected function dumpSqlServerDataViaPhp(string $outputPath): bool
+    {
+        $handle = fopen($outputPath, 'wb');
+        if ($handle === false) {
+            throw new \Exception("Tidak bisa menulis berkas dump: {$outputPath}");
+        }
+
         try {
-            $tables = DB::select("SELECT name FROM sys.tables WHERE type = 'U'");
-            $output = '-- SQL Server Backup Generated '.date('Y-m-d H:i:s')."\n\n";
+            // `migrations` dikecualikan: barisnya sudah dibuat oleh `migrate` saat pemulihan.
+            $tables = DB::select(
+                "SELECT t.name AS name, OBJECTPROPERTY(t.object_id, 'TableHasIdentity') AS has_identity
+                 FROM sys.tables t
+                 WHERE t.type = 'U' AND t.name <> 'migrations'
+                 ORDER BY t.name"
+            );
+
+            fwrite($handle, '-- Dump data SQL Server — dibuat '.date('Y-m-d H:i:s')."\n");
+            fwrite($handle, "-- Hanya berisi DATA. Buat skema dulu dengan `php artisan migrate --force`.\n");
+            fwrite($handle, "-- Jalankan dengan: sqlcmd -f 65001 -i <berkas>.sql\n\n");
 
             foreach ($tables as $table) {
-                // Get table creation SQL
-                $tableName = $table->name;
-                $createTable = DB::select("SELECT OBJECT_DEFINITION (OBJECT_ID(N'$tableName')) AS CreateTable");
-                $output .= $createTable[0]->CreateTable.";\n\n";
+                fwrite($handle, 'ALTER TABLE '.SqlServerDumpFormatter::identifier($table->name)." NOCHECK CONSTRAINT ALL;\n");
+            }
+            fwrite($handle, "\n");
 
-                // Get table data (escaping T-SQL: gandakan tanda kutip tunggal)
-                $rows = DB::table($tableName)->get();
-                foreach ($rows as $row) {
-                    $values = implode(', ', array_map(function ($value) {
-                        if ($value === null) {
-                            return 'NULL';
-                        }
+            foreach ($tables as $table) {
+                $quoted = SqlServerDumpFormatter::identifier($table->name);
+                $hasIdentity = (int) $table->has_identity === 1;
 
-                        return "N'".str_replace("'", "''", (string) $value)."'";
-                    }, (array) $row));
-                    $output .= "INSERT INTO [$tableName] VALUES ($values);\n";
+                if ($hasIdentity) {
+                    fwrite($handle, "SET IDENTITY_INSERT {$quoted} ON;\n");
                 }
-                $output .= "\n";
+
+                foreach (DB::table($table->name)->cursor() as $row) {
+                    fwrite($handle, SqlServerDumpFormatter::insert($table->name, (array) $row)."\n");
+                }
+
+                if ($hasIdentity) {
+                    fwrite($handle, "SET IDENTITY_INSERT {$quoted} OFF;\n");
+                }
+
+                fwrite($handle, "\n");
             }
 
-            file_put_contents($outputPath, $output);
-
-            return true;
-        } catch (\Exception $e) {
+            foreach ($tables as $table) {
+                fwrite($handle, 'ALTER TABLE '.SqlServerDumpFormatter::identifier($table->name)." WITH CHECK CHECK CONSTRAINT ALL;\n");
+            }
+        } catch (\Throwable $e) {
             Log::error('Database backup error', ['error' => $e->getMessage()]);
             throw $e;
+        } finally {
+            fclose($handle);
         }
+
+        return true;
     }
 
     protected function backupMySql(string $outputPath)

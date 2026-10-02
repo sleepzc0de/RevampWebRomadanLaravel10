@@ -119,6 +119,15 @@ ok "public/build/manifest.json terbentuk"
 
 # --------------------------------------------------------------------------
 step "7/12  Menjalankan migrasi database"
+# Snapshot database SEBELUM migrasi: migrasi yang gagal/merusak tidak bisa di-rollback
+# tanpa titik pulih. Hanya dump DB (cepat). Lewati dengan: SKIP_PRE_MIGRATE_BACKUP=1
+if [ "${SKIP_PRE_MIGRATE_BACKUP:-0}" = "1" ]; then
+  info "snapshot sebelum migrasi DILEWATI (SKIP_PRE_MIGRATE_BACKUP=1)"
+else
+  php artisan backup:run --db-only \
+    || die "snapshot database sebelum migrasi gagal — migrasi dibatalkan agar data tidak berisiko. Perbaiki penyebabnya, atau jalankan ulang dengan SKIP_PRE_MIGRATE_BACKUP=1 bila Anda sudah punya backup sendiri."
+  ok "snapshot database tersimpan (storage/app/backups)"
+fi
 php artisan migrate --force
 ok "skema database terbaru"
 
@@ -129,9 +138,11 @@ ok "public/storage tersedia"
 
 # --------------------------------------------------------------------------
 step "9/12  Membersihkan log lama & cache"
-rm -f storage/logs/*.log
+# Hanya log yang lebih tua dari retensi (LOG_DAILY_DAYS, default 7 hari). Dulu SEMUA log
+# dihapus tiap deploy, termasuk jejak error yang justru dibutuhkan untuk investigasi.
+find storage/logs -name '*.log' -mtime +7 -delete
 php artisan optimize:clear
-ok "cache lama dibersihkan"
+ok "log lebih dari 7 hari & cache lama dibersihkan"
 
 # --------------------------------------------------------------------------
 step "10/12  Membangun cache production"

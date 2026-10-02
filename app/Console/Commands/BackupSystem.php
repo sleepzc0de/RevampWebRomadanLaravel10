@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class BackupSystem extends Command
 {
-    protected $signature = 'backup:run';
+    protected $signature = 'backup:run {--db-only : Hanya dump database (tanpa kode aplikasi & file unggahan)}';
 
     protected $description = 'Create backup of database and application files';
 
@@ -25,7 +25,7 @@ class BackupSystem extends Command
             $this->info('Starting backup process...');
 
             // Execute backup
-            $this->backupService->createBackup();
+            $this->backupService->createBackup((bool) $this->option('db-only'));
 
             $this->info('Backup completed successfully!');
 

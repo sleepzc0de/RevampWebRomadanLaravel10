@@ -67,7 +67,9 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'error'),
-            'days' => 1,
+            // setup-server.sh menyetel LOG_DAILY_DAYS=7; nilai 1 yang tertanam dulu
+            // mengabaikannya sehingga log lebih dari sehari lenyap saat investigasi insiden.
+            'days' => (int) env('LOG_DAILY_DAYS', 7),
         ],
 
         'slack' => [

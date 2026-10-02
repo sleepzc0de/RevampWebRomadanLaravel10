@@ -8,9 +8,11 @@ use App\Models\medsos\Medsos;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,9 +51,17 @@ class AppServiceProvider extends ServiceProvider
             ));
         });
 
-        // Jalankan storage:link jika symbolic link belum ada
+        // Jalankan storage:link jika symbolic link belum ada. Kegagalan (mis. host tanpa
+        // izin membuat symlink) TIDAK boleh menjatuhkan request: dulu exception-nya
+        // membuat SELURUH halaman 500 di setiap request. Dicatat paling sering sekali/jam.
         if (! file_exists(public_path('storage'))) {
-            Artisan::call('storage:link');
+            try {
+                Artisan::call('storage:link');
+            } catch (Throwable $e) {
+                if (Cache::add('storage_link_failed', true, now()->addHour())) {
+                    Log::warning('Gagal membuat symlink public/storage: '.$e->getMessage());
+                }
+            }
         }
 
         if (config('app.env') === 'production') {
