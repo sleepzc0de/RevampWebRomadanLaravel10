@@ -85,6 +85,10 @@ ok "LOG_CHANNEL=daily, LOG_LEVEL=error, LOG_DAILY_DAYS=7"
 step "3/5  Symlink storage"
 if [ -e public/storage ]; then
   ok "public/storage sudah ada"
+elif [ ! -f vendor/autoload.php ]; then
+  # VPS baru: composer install belum pernah dijalankan, jadi `php artisan` belum bisa
+  # dipakai. deploy.sh (langkah 8) yang akan membuat symlink-nya.
+  info "vendor/ belum ada (VPS baru) — symlink akan dibuat oleh deploy.sh"
 else
   php artisan storage:link
   ok "public/storage dibuat"
@@ -92,6 +96,12 @@ fi
 
 # --------------------------------------------------------------------------
 step "4/5  Cron scheduler Laravel"
+# Image VPS minimal sering tidak menyertakan cron.
+if ! command -v crontab >/dev/null 2>&1; then
+  info "cron belum terpasang — memasang…"
+  apt-get install -y cron >/dev/null
+  systemctl enable --now cron >/dev/null 2>&1 || true
+fi
 CRON_LINE="* * * * * cd ${APP_DIR} && php artisan schedule:run >> /dev/null 2>&1"
 if crontab -u "$WEB_USER" -l 2>/dev/null | grep -Fq "artisan schedule:run"; then
   info "entri lama ditemukan, akan diganti agar path selalu benar"
