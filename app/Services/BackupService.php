@@ -119,15 +119,18 @@ class BackupService
 
     /**
      * Ekstensi file dump database mentah sebelum dimasukkan ke zip.
-     * SQL Server menghasilkan file backup native biner (.bak), sedangkan
-     * MySQL/Postgres menghasilkan dump SQL teks biasa (.sql).
+     *
+     * .bak hanya untuk SQL Server di Windows, yang menghasilkan file backup native biner
+     * lewat sqlcmd. Di Linux (dumpSqlServerDataViaPhp) isinya skrip T-SQL berupa teks,
+     * jadi ekstensinya .sql — sama seperti MySQL/Postgres. Dulu semua SQL Server diberi
+     * .bak sehingga berkas teks di Linux tampak seperti backup biner dan menyesatkan.
      */
     protected function databaseFileExtension(): string
     {
         $connection = config('database.default');
         $driver = config("database.connections.{$connection}.driver");
 
-        return $driver === 'sqlsrv' ? 'bak' : 'sql';
+        return ($driver === 'sqlsrv' && $this->isWindows) ? 'bak' : 'sql';
     }
 
     protected function backupDatabase(string $outputPath)

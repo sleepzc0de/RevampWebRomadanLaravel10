@@ -55,6 +55,27 @@ class BackupServiceTest extends TestCase
         );
     }
 
+    public function test_sql_server_dump_is_named_bak_only_on_windows(): void
+    {
+        $service = new class extends BackupService
+        {
+            public function extensionFor(bool $windows): string
+            {
+                $this->isWindows = $windows;
+
+                return $this->databaseFileExtension();
+            }
+        };
+
+        config(['database.default' => 'sqlsrv']);
+        $this->assertSame('sql', $service->extensionFor(false), 'Linux menulis skrip T-SQL teks');
+        $this->assertSame('bak', $service->extensionFor(true), 'Windows memakai BACKUP DATABASE native');
+
+        config(['database.default' => 'mysql']);
+        $this->assertSame('sql', $service->extensionFor(true));
+        $this->assertSame('sql', $service->extensionFor(false));
+    }
+
     public function test_database_only_backup_contains_just_the_dump(): void
     {
         // Ganti langkah dump (butuh mysqldump/SQL Server sungguhan) dengan berkas palsu.
