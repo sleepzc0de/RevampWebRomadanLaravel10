@@ -103,7 +103,10 @@ ok "commit sekarang: $(git rev-parse --short HEAD) — $(git log -1 --pretty=%s 
 
 # --------------------------------------------------------------------------
 step "4/12  Memasang dependensi PHP (composer)"
-composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# --no-progress: bar progres Composer lama (mis. 2.2.x bawaan apt Ubuntu 22.04) memakai
+# Symfony String yang butuh ekstensi intl → fatal "Class Normalizer not found" di PHP 8.4+.
+# COMPOSER_ALLOW_SUPERUSER: skrip ini memang dijalankan sebagai root (sudo).
+COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
 ok "vendor/ sinkron dengan composer.lock"
 
 # --------------------------------------------------------------------------

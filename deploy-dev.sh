@@ -99,7 +99,7 @@ IS_ROOT=0; [ "$(id -u)" -eq 0 ] && IS_ROOT=1
 
 # Pengaman: dijalankan SEBELUM langkah apa pun yang mengubah server (git pull, composer,
 # migrasi), supaya skrip dev yang salah dijalankan di PRODUCTION tidak sempat berbuat apa-apa.
-if [ -f .env ] && grep -qE '^APP_ENV=production' .env && [ "$ALLOW_PROD_ENV" -ne 1 ]; then
+if [ -f .env ] && grep -qiE "^APP_ENV=[\"' ]*production" .env && [ "$ALLOW_PROD_ENV" -ne 1 ]; then
   die "APP_ENV=production di .env — ini tampak seperti server PRODUCTION. Pakai deploy.sh. Bila ini memang staging yang meniru production, jalankan dengan --allow-production-env."
 fi
 
@@ -165,7 +165,7 @@ if [ ! -f .env ]; then
   warn ".env belum ada → dibuat dari .env.example (APP_ENV=local, APP_DEBUG=true)"
 else
   ok ".env sudah ada (tidak diubah)"
-  if grep -qE '^APP_ENV=production' .env; then
+  if grep -qiE "^APP_ENV=[\"' ]*production" .env; then
     warn "APP_ENV=production di skrip DEVELOPMENT — dilanjutkan karena --allow-production-env"
   fi
 fi
@@ -181,7 +181,7 @@ set_env() {
 
 # --------------------------------------------------------------------------
 step "4/9  Memasang dependensi PHP (composer, termasuk paket dev)"
-composer install --no-interaction --prefer-dist --no-progress
+COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist --no-progress
 ok "vendor/ sinkron dengan composer.lock"
 
 if ! grep -qE '^APP_KEY=.+' .env; then
